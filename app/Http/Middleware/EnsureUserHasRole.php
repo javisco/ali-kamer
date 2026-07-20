@@ -13,9 +13,9 @@ class EnsureUserHasRole
      *
      * @param  Closure(Request): (Response)  $next
      */
-    public function handle(Request $request, Closure $next, string $role): Response
+    public function handle(Request $request, Closure $next, string ...$role): Response
     {
-        if ($request->user() && $request->user()->role === $role)
+        if ($request->user() && in_array($request->user()->role, $role, true))
             return $next($request);
         abort(403, 'vous n\'avez pas le droit d\'effectuer cette action');
     }

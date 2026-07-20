@@ -10,6 +10,7 @@ use App\Models\User;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\View\View;
 
 class AuthController extends Controller
 {
@@ -63,20 +64,18 @@ class AuthController extends Controller
 
         return back()->with('fail', 'mot de passe ou email incorrecte');
     }
-    public function showDashboard()
-    {
-        if (Auth::check()) {
-            $user = Auth::user();
-            if ($user->role === 'seller')
-                return view('blog.sellerDashboard',compact('user'));
-            else
-                return view('blog.buyerDashboard',compact('user'));
-        }
-        return route('showFormLogin');
-    }
     public function logout()
     {
         Auth::logout();
         return redirect()->route('index');
+    }
+    public function showDashboard()
+    {
+        $user = Auth::user();
+
+        if ($user->role === 'candidate') {
+            return View('seller.kyc');
+        } else if ($user->role === 'buyer')
+            return view('buyer.dashboard');
     }
 }

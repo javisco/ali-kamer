@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('phone')->unique();
             $table->enum('role', ['buyer', 'candidate', 'seller', 'secretary', 'admin'])->default('buyer');
             $table->enum('status', ['active', 'candidate', 'suspended', 'banned'])->default('active');
-            // $table->string('phone_momo')->nullable();
+            $table->string('phone_momo')->nullable();
             // $table->string('momo_operator')->nullable(); // MTN, Orange
             $table->boolean('is_banned')->default(false);
             $table->integer('kyc_level')->default(0);

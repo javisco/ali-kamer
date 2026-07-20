@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\VerifiedEmailController;
+use App\Http\Controllers\Dashboard\DashboardController;
+use App\Http\Controllers\Seller\Sellercontroller;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -39,9 +41,13 @@ Route::middleware(['auth',])->group(function () {
 });
 
 
-Route::get('/dashboard',[AuthController::class,'showDashboard'])->middleware(['auth','verified'])->name('dashboard');
+Route::get('/dashboard', [AuthController::class, 'showDashboard'])->middleware([
+        'auth',
+        'verified',
+        'role:buyer,candidate,secretary'
+])->name('dashboard');
 
-
+Route::post('/seller/kyc/store',[Sellercontroller::class,'kycSotre'])->name('seller.kyc.store');
 
 
 

@@ -29,7 +29,7 @@ class RegisterRequest extends FormRequest
             'email'    => "required|email|unique:users,email",
             'phone'    => "required|string|max:15|unique:users,phone",
             'password' => 'required|confirmed|min:8',
-            'role' => 'required|in:seller,buyer',
+            'role' => 'required|in:candidate,buyer,secretary',
 
         ];
     }
@@ -42,7 +42,7 @@ class RegisterRequest extends FormRequest
             'email.unique' => 'l\'email exite deja',
             'phone.required' => 'le numero de telephone est obligatoire',
             'phone.max' => 'le numero de telephone ne doit pas avoir plus de 15  caracters',
-            'role.required' => 'veillez cochez un case entre vendeur et acheteur',
+            'role.required' => 'veillez cochez une ',
             'role.in' => 'choix invalide',
         ];
     }

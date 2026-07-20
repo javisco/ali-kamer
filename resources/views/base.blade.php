@@ -10,7 +10,7 @@
 </head>
 
 <body>
-    <div class="flex justify-between items-center bg-white w-full h-14 shadow-2xl p-6 ">
+    <div class="flex justify-between items-center bg-white w-full h-14 shadow-2xl p-6 fixed top-0">
         <p class="text-blue-600 text-xl">ali-kamer</p>
         <ul class="flex gap-4">
             <li><a href="{{ route('index') }}" class="rounded px-8 py-1 text-blue-600">acceuil</a></li>
