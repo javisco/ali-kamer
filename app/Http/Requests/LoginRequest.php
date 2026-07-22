@@ -31,6 +31,7 @@ class LoginRequest extends FormRequest
     {
         return [
             'email.required' => 'l\'mail est obligatoire',
+            'password.required' => 'le mot de passe est obligatoire',
         ];
     }
 }

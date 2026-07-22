@@ -46,7 +46,7 @@
                 </p>
                 <p>
                     <label for="seller">vendeur</label>
-                    <input type="radio" name="role" id="candidate" value="candidate">
+                    <input type="radio" name="role" id="seller" value="seller">
                 </p>
                 <p>
                     <label for="seller">secretaire</label>

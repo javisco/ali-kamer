@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Models;
-
-
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -49,5 +47,14 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function kycDocument()
+    {
+        return $this->hasOne(KycDocument::class);
+    }
+    public function hasRole(string $role): bool
+    {
+        return $this->role === $role;
     }
 }

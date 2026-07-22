@@ -3,17 +3,19 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
-
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\View\View;
+use App\Services\DashboardService;
 
 class AuthController extends Controller
 {
+
+    public function __construct(protected DashboardService $dashboard_service) {}
+
+
     public function index()
     {
         return view('index');
@@ -21,7 +23,8 @@ class AuthController extends Controller
     public function showFormRegister()
     {
         if (Auth::check()) {
-            return redirect()->route('dashboard');
+            $user = Auth::user();
+            return   $this->dashboard_service->dashboard($user);
         }
         return view('auth.register');
     }
@@ -42,13 +45,16 @@ class AuthController extends Controller
     public function showFormLogin()
     {
         if (Auth::check()) {
-            return redirect()->route('dashboard');
+            $user = Auth::user();
+
+            return $this->dashboard_service->dashboard($user);
         }
         return view('auth.login');
     }
     public function login(LoginRequest $request)
     {
         $validate = $request->validated();
+
         if (Auth::attempt($validate)) {
             $request->session()->regenerate();
             $user = Auth::user();
@@ -58,8 +64,7 @@ class AuthController extends Controller
 
                 return redirect()->route('verification.notice');
             }
-
-            return redirect()->route('dashboard');
+            return   $this->dashboard_service->dashboard($user);
         }
 
         return back()->with('fail', 'mot de passe ou email incorrecte');
@@ -68,14 +73,5 @@ class AuthController extends Controller
     {
         Auth::logout();
         return redirect()->route('index');
-    }
-    public function showDashboard()
-    {
-        $user = Auth::user();
-
-        if ($user->role === 'candidate') {
-            return View('seller.kyc');
-        } else if ($user->role === 'buyer')
-            return view('buyer.dashboard');
     }
 }

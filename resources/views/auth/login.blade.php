@@ -3,9 +3,13 @@
 @section('title', 'register')
 @section('content')
 
-@if (@session('register'))
-    <div class="text-center bg-green-400 w-full h-10 mt-20 items-center p-2">{{session('register')}}</div>
-@endif
+    @if (@session('fail'))
+        <div class="text-center bg-red-400 w-full h-10 mt-20 items-center p-2">{{ session('fail') }}</div>
+    @endif
+
+    @if (@session('register'))
+        <div class="text-center bg-green-400 w-full h-10 mt-20 items-center p-2">{{ session('register') }}</div>
+    @endif
     <div class="mx-auto shadow-2xl w-md my-20 bg-white rounded-xl  p-6">
         <form action="{{ route('login') }}" method="POST" class=" ">
             @csrf

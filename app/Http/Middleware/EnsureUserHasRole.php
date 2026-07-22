@@ -17,6 +17,6 @@ class EnsureUserHasRole
     {
         if ($request->user() && in_array($request->user()->role, $role, true))
             return $next($request);
-        abort(403, 'vous n\'avez pas le droit d\'effectuer cette action');
+        abort(403,"acces non autoriser" );
     }
 }

@@ -2,19 +2,24 @@
 
 namespace App\Http\Controllers\Auth;
 
+
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Services\DashboardService;
 
 class VerifiedEmailController extends Controller
 {
+    public function __construct(protected DashboardService $dashboard_service) {}
+
     public function verifiedEmail()
     {
-        
+
         if (Auth::user()->hasVerifiedEmail()) {
-            return redirect()->route('dashboard');
+            $user = Auth::user();
+            return  $this->dashboard_service->dashboard($user);
         }
         return view('auth.verifiedEmail');
     }
@@ -25,7 +30,9 @@ class VerifiedEmailController extends Controller
         // Elle remplit la colonne `email_verified_at` et déclenche l'événement "Verified".
         $request->fulfill();
 
-        return redirect()->route('dashboard')->with('success', 'Votre adresse e-mail a été validée avec succès !');
+        $user = Auth::user();
+
+        return  $this->dashboard_service->dashboard($user);
     }
 
 
@@ -35,7 +42,8 @@ class VerifiedEmailController extends Controller
 
         // Si l'utilisateur est déjà vérifié, inutile de lui renvoyer un mail
         if ($user->hasVerifiedEmail()) {
-            return redirect()->route('dashboard');
+            $user = Auth::user();
+            return   $this->dashboard_service->dashboard($user);
         }
 
         // On déclenche l'envoi de la notification de validation

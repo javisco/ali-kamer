@@ -14,13 +14,10 @@
         <p class="text-blue-600 text-xl">ali-kamer</p>
         <ul class="flex gap-4">
             <li><a href="{{ route('index') }}" class="rounded px-8 py-1 text-blue-600">acceuil</a></li>
-            @auth
-                <li><a href="{{ route('dashboard') }}" class="rounded px-8 py-1 text-blue-600">dashboard</a></li>
-            @endauth
-            @guest
 
-                <li><a href="{{ route('login.show') }}" class="rounded px-8 py-1 text-blue-600">dashboard</a></li>
-            @endguest
+
+            <li><a href="{{ route('login.show') }}" class="rounded px-8 py-1 text-blue-600">dashboard</a></li>
+
 
         </ul>
         <ol class="flex gap-4">

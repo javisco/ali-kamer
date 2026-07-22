@@ -60,8 +60,6 @@
                     class="w-full border border-gray-300 rounded-lg p-2">
             </div>
 
-            {{-- Numéro MoMo --}}
-
 
             <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700">
                 Soumettre mon dossier
