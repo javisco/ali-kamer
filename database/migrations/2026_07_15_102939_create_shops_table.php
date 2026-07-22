@@ -9,23 +9,28 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
+
     public function up(): void
     {
         Schema::create('shops', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('name')->unique();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('name');
             $table->string('slug')->unique();
-            $table->text('description')->nullable();
             $table->string('city');
-            $table->string('category'); // Catégorie principale
-            $table->string('logo_url')->nullable();
-            $table->enum('status', ['active', 'suspended', 'under_surveillance'])->default('active');
-            $table->integer('score')->default(100);
+            $table->string('phone');
+            $table->text('address')->nullable();
+            $table->text('description')->nullable();
+            $table->string('logo')->nullable();
+            $table->enum('status', ['pending', 'active', 'suspended', 'rejected', 'banned'])
+                ->default('pending');
             $table->timestamp('verified_at')->nullable();
             $table->timestamps();
+
+            $table->index('status');
         });
     }
+
 
     public function down(): void
     {

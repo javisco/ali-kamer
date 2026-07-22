@@ -9,14 +9,19 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-  public function up(): void
+    public function up(): void
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('parent_id')->nullable()->constrained('categories')->onDelete('cascade');
+            $table->foreignId('parent_id')
+                ->nullable()
+                ->constrained('categories')
+                ->nullOnDelete();
             $table->string('name');
             $table->string('slug')->unique();
+            $table->string('icon')->nullable();
             $table->boolean('is_active')->default(true);
+            $table->unsignedSmallInteger('sort_order')->default(0);
             $table->timestamps();
         });
     }

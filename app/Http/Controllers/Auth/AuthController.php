@@ -15,11 +15,6 @@ class AuthController extends Controller
 
     public function __construct(protected DashboardService $dashboard_service) {}
 
-
-    public function index()
-    {
-        return view('index');
-    }
     public function showFormRegister()
     {
         if (Auth::check()) {
@@ -36,7 +31,7 @@ class AuthController extends Controller
         }
 
         $validate = $request->validated();
-        $validate['password'] = Hash::make($request->password);
+        // $validate['password'] = Hash::make($request->password);
         User::create($validate);
         return redirect()->route('login.show')->with('register', "compte creer avec success.connetez-vous pour continuer");
     }
@@ -72,6 +67,6 @@ class AuthController extends Controller
     public function logout()
     {
         Auth::logout();
-        return redirect()->route('index');
+        return redirect()->route('buyer.home');
     }
 }

@@ -11,13 +11,18 @@ class DashboardService
     public function dashboard(User $user)
     {
         if ($user->role === 'buyer') {
-            return redirect()->route('buyer.dashboard');
+            return redirect()->route('buyer.home');
         } else
         if ($user->role === 'seller') {
             $kyc = $user->kycDocument;
-
+            if (!$user->shop) {
+                return redirect()->route('seller.shop.create');
+            } else
+            // if ($user->shop && $user->shop->isActive()) {
+            //     return "javisco viens gérer le cas ci.";
+            // }
             if ($kyc?->isApproved()) {
-                return redirect()->route('seller.dashboard');
+                return redirect()->route('seller.products.index');
             } else
             if ($kyc?->isPending()) {
                 return redirect()->route('seller.kyc.pending');
@@ -32,7 +37,7 @@ class DashboardService
             return redirect()->route('secretary.dashboard');
         } else
         if ($user->role === 'admin') {
-            return redirect()->route('admin.dashboard');
+            return redirect()->route('admin.kyc.index');
         } else abort(403, 'vous n\'exister pas');
     }
 }

@@ -10,22 +10,22 @@
 </head>
 
 <body>
-    <div class="flex justify-between items-center bg-white w-full h-14 shadow-2xl p-6 fixed top-0">
-        <p class="text-blue-600 text-xl">ali-kamer</p>
+    <div class="flex justify-between items-center bg-white w-full h-14 shadow-md p-6 fixed top-0">
+        <p class="text-blue-600 text-2xl font-bold ">ALI-KAMER</p>
         <ul class="flex gap-4">
-            <li><a href="{{ route('index') }}" class="rounded px-8 py-1 text-blue-600">acceuil</a></li>
+            <li><a href="{{ route('buyer.home') }}" class="hover:text-blue-700 px-8 py-1  ">acceuil</a></li>
 
 
-            <li><a href="{{ route('login.show') }}" class="rounded px-8 py-1 text-blue-600">dashboard</a></li>
+            <li><a href="{{ route('login.show') }}" class="hover:text-blue-700 px-8 py-1 ">dashboard</a></li>
 
 
         </ul>
         <ol class="flex gap-4">
             @guest
-                <li><a href="{{ route('register.show') }}" class=" rounded  px-4 py-1 text-blue-600">
+                <li><a href="{{ route('register.show') }}" class=" hover:text-blue-700  px-4 py-1 ">
                         s'inscrire</a>
                 </li>
-                <li> <a href="{{ route('login.show') }}" class=" rounded  px-4 py-1 text-blue-600">se connecter</a> </li>
+                <li> <a href="{{ route('login.show') }}" class=" hover:text-blue-700  px-4 py-1 ">se connecter</a> </li>
             @endguest
             @auth
                 <li>
@@ -37,7 +37,7 @@
             @endauth
 
         </ol>
-    </div>
+    </div><div class="mb-20"></div>
     @yield('content')
 </body>
 

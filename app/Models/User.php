@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -56,5 +57,9 @@ class User extends Authenticatable implements MustVerifyEmail
     public function hasRole(string $role): bool
     {
         return $this->role === $role;
+    }
+    public function shop()
+    {
+        return $this->hasOne(Shop::class);
     }
 }

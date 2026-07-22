@@ -13,26 +13,29 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('shop_id')->constrained()->onDelete('cascade');
-            $table->foreignId('category_id')->constrained()->onDelete('restrict');
+            $table->foreignId('shop_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('category_id')->constrained()->restrictOnDelete();
             $table->string('title');
             $table->text('description');
-            $table->unsignedInteger('price'); // FCFA entier
+            $table->string('city');
+            $table->unsignedInteger('price');
             $table->unsignedInteger('old_price')->nullable();
-            $table->integer('stock')->default(0);
-            $table->integer('stock_reserved')->default(0);
-            $table->integer('min_quantity')->default(1);
-            $table->string('city'); // Impacte les calculs de livraison
+            $table->unsignedInteger('stock')->default(0);
+            $table->unsignedInteger('stock_reserved')->default(0);
+            $table->unsignedSmallInteger('min_quantity')->default(1);
             $table->boolean('shipping_included')->default(false);
-            $table->integer('shipping_threshold_qty')->nullable();
-            $table->enum('status', ['visible', 'hidden'])->default('hidden');
-            $table->string('images'); // Tableau d'URLs compressées WebP
-            // $table->jsonb('specifications')->nullable(); // Paires clé-valeur (taille, couleur, etc.)
+            $table->unsignedSmallInteger('shipping_threshold_qty')->nullable();
+            $table->json('specifications')->nullable();
+            $table->enum('status', ['hidden', 'visible', 'sold_out', 'banned'])
+                ->default('hidden');
+            $table->unsignedInteger('views_count')->default(0);
+            $table->unsignedInteger('orders_count')->default(0);
             $table->timestamps();
+            $table->softDeletes();
 
-            // Indexations cruciales pour la recherche et la performance de filtrage
             $table->index(['status', 'city']);
-            $table->index('price');
+            $table->index(['shop_id', 'status']);
+            $table->index(['category_id', 'status']);
         });
     }
 

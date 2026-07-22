@@ -46,9 +46,4 @@ class KycSellerController extends Controller
         $kyc = $user->kycDocument;
         return view('seller.kyc.rejected', compact('user', "kyc"))->with('fail', "votre document a ete rejeter");
     }
-
-    public function dashboard(){
-        $user=Auth::user();
-        return view('seller.dashboard',compact('user'));
-    }
 }
