@@ -16,11 +16,11 @@ class KycService
         return DB::transaction(function () use ($user, $data) {
 
             // Stocker les fichiers en local (storage/app/private/kyc/)
-            $cni_front = $data['cni_front_url']->store("kyc/{$user->id}", 'public');
-            $cni_back  = $data['cni_back_url']->store("kyc/{$user->id}", 'public');
-            $selfie    = $data['selfie_url']->store("kyc/{$user->id}", 'public');
+            $cni_front = $data['cni_front_url']->store("kyc/{$user->id}",'local');
+            $cni_back  = $data['cni_back_url']->store("kyc/{$user->id}",'local');
+            $selfie    = $data['selfie_url']->store("kyc/{$user->id}",'local');
             $rccm      = isset($data['rccm_url'])
-                ? $data['rccm_url']->store("kyc/{$user->id}", 'public')
+                ? $data['rccm_url']->store("kyc/{$user->id}",'local')
                 : null;
 
             // Créer ou remplacer le dossier KYC

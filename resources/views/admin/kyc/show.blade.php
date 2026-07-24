@@ -4,102 +4,35 @@
 
 @section('content')
 
-<div class="max-w-7xl mx-auto py-8">
+    <div class="max-w-7xl mx-auto py-8">
 
-    <!-- En-tête -->
-    <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+        <!-- En-tête -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
 
-        <div class="flex justify-between items-start">
+            <div class="flex justify-between items-start">
 
-            <div>
+                <div>
 
-                <h1 class="text-3xl font-bold text-gray-800">
-                    Dossier KYC
-                </h1>
+                    <h1 class="text-3xl font-bold text-gray-800">
+                        Dossier KYC
+                    </h1>
 
-                <p class="text-gray-500 mt-2">
-                    Vérification d'identité du vendeur
-                </p>
+                    <p class="text-gray-500 mt-2">
+                        Vérification d'identité du vendeur
+                    </p>
 
-            </div>
+                </div>
 
-            <div class="text-right">
+                <div class="text-right">
 
-                <h2 class="text-xl font-semibold">
-                    {{ $kyc->user->name }}
-                </h2>
+                    <h2 class="text-xl font-semibold">
+                        {{ $kyc->user->name }}
+                    </h2>
 
-                <p class="text-gray-500">
-                    Soumis le
-                    {{ $kyc->created_at->format('d/m/Y à H:i') }}
-                </p>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- Informations -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-
-        <div class="lg:col-span-1">
-
-            <div class="bg-white rounded-2xl shadow-lg p-6">
-
-                <h3 class="text-lg font-bold text-gray-700 mb-5">
-                    Informations du vendeur
-                </h3>
-
-                <div class="space-y-4">
-
-                    <div>
-
-                        <p class="text-sm text-gray-500">
-                            Nom
-                        </p>
-
-                        <p class="font-semibold">
-                            {{ $kyc->user->name }}
-                        </p>
-
-                    </div>
-
-                    <div>
-
-                        <p class="text-sm text-gray-500">
-                            Téléphone
-                        </p>
-
-                        <p class="font-semibold">
-                            {{ $kyc->user->phone }}
-                        </p>
-
-                    </div>
-
-                    <div>
-
-                        <p class="text-sm text-gray-500">
-                            Numéro Mobile Money
-                        </p>
-
-                        <p class="font-semibold">
-                            {{ $kyc->momo_number }}
-                        </p>
-
-                    </div>
-
-                    <div>
-
-                        <p class="text-sm text-gray-500">
-                            Date de soumission
-                        </p>
-
-                        <p class="font-semibold">
-                            {{ $kyc->created_at->format('d/m/Y H:i') }}
-                        </p>
-
-                    </div>
+                    <p class="text-gray-500">
+                        Soumis le
+                        {{ $kyc->created_at->format('d/m/Y à H:i') }}
+                    </p>
 
                 </div>
 
@@ -107,83 +40,126 @@
 
         </div>
 
-        <div class="lg:col-span-2">
+        <!-- Informations -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
 
-            <div class="bg-white rounded-2xl shadow-lg p-6">
+            <div class="lg:col-span-1">
 
-                <h3 class="text-lg font-bold text-gray-700 mb-6">
-                    Documents fournis
-                </h3>
+                <div class="bg-white rounded-2xl shadow-lg p-6">
 
-                <div class="grid md:grid-cols-2 gap-6">
+                    <h3 class="text-lg font-bold text-gray-700 mb-5">
+                        Informations du vendeur
+                    </h3>
 
-                    <div>
+                    <div class="space-y-4">
 
-                        <p class="font-medium mb-2">
-                            CNI Recto
-                        </p>
+                        <div>
 
-                        <a href="{{ asset('storage/'.$kyc->cni_front_url) }}" target="_blank">
+                            <p class="text-sm text-gray-500">
+                                Nom
+                            </p>
 
-                            <img
-                                src="{{ asset('storage/'.$kyc->cni_front_url) }}"
-                                class="rounded-xl border hover:shadow-lg transition cursor-pointer">
+                            <p class="font-semibold">
+                                {{ $kyc->user->name }}
+                            </p>
 
-                        </a>
+                        </div>
+
+                        <div>
+
+                            <p class="text-sm text-gray-500">
+                                Téléphone
+                            </p>
+
+                            <p class="font-semibold">
+                                {{ $kyc->user->phone }}
+                            </p>
+
+                        </div>
+
+                        <div>
+
+                            <p class="text-sm text-gray-500">
+                                Numéro Mobile Money
+                            </p>
+
+                            <p class="font-semibold">
+                                {{ $kyc->momo_number }}
+                            </p>
+
+                        </div>
+
+                        <div>
+
+                            <p class="text-sm text-gray-500">
+                                Date de soumission
+                            </p>
+
+                            <p class="font-semibold">
+                                {{ $kyc->created_at->format('d/m/Y H:i') }}
+                            </p>
+
+                        </div>
 
                     </div>
 
-                    <div>
+                </div>
 
-                        <p class="font-medium mb-2">
-                            CNI Verso
-                        </p>
+            </div>
 
-                        <a href="{{ asset('storage/'.$kyc->cni_back_url) }}" target="_blank">
+            <div class="lg:col-span-2">
 
-                            <img
-                                src="{{ asset('storage/'.$kyc->cni_back_url) }}"
-                                class="rounded-xl border hover:shadow-lg transition cursor-pointer">
+                <div class="bg-white rounded-2xl shadow-lg p-6">
 
-                        </a>
+                    <h3 class="text-lg font-bold text-gray-700 mb-6">
+                        Documents fournis
+                    </h3>
 
-                    </div>
-
-                    <div>
-
-                        <p class="font-medium mb-2">
-                            Selfie avec CNI
-                        </p>
-
-                        <a href="{{ asset('storage/'.$kyc->selfie_url) }}" target="_blank">
-
-                            <img
-                                src="{{ asset('storage/'.$kyc->selfie_url) }}"
-                                class="rounded-xl border hover:shadow-lg transition cursor-pointer">
-
-                        </a>
-
-                    </div>
-
-                    @if($urls['rccm'])
+                    <div class="grid md:grid-cols-2 gap-6">
 
                         <div>
 
                             <p class="font-medium mb-2">
-                                RCCM
+                                CNI Recto
                             </p>
 
-                            <a href="{{ asset('storage/'.$kyc->rccm_url) }}" target="_blank">
-
-                                <img
-                                    src="{{ asset('storage/'.$kyc->rccm_url) }}"
+                            <a href="{{ $urls['cni_front_url'] }}">
+                                <img src="{{ $urls['cni_front_url'] }}"
                                     class="rounded-xl border hover:shadow-lg transition cursor-pointer">
-
                             </a>
-
                         </div>
+                        <div>
+                            <p class="font-medium mb-2">
+                                CNI Verso
+                            </p>
+                            <a href="{{ $urls['cni_back_url'] }}">
+                                <img src="{{ $urls['cni_back_url'] }}"
+                                    class="rounded-xl border hover:shadow-lg transition cursor-pointer">
+                            </a>
+                        </div>
+                        <div>
+                            <p class="font-medium mb-2">
+                                Selfie avec CNI
+                            </p>
+                            <a href="{{ $urls['selfie_url'] }}">
+                                <img src="{{ $urls['selfie_url'] }}"
+                                    class="rounded-xl border hover:shadow-lg transition cursor-pointer">
+                            </a>
+                        </div>
+                        @if ($kyc->rccm_url)
+                            <div>
+                                <p class="font-medium mb-2">
+                                    RCCM
+                                </p>
+                                <a href="{{ $urls['rccm_url'] }}">
+                                    <img src="{{ $urls['rccm_url'] }}"
+                                        class="rounded-xl border hover:shadow-lg transition cursor-pointer">
+                                </a>
 
-                    @endif
+                            </div>
+                        @endif
+
+                    </div>
 
                 </div>
 
@@ -191,62 +167,52 @@
 
         </div>
 
-    </div>
+        <!-- Décision -->
+        <div class="bg-white rounded-2xl shadow-lg p-8">
 
-    <!-- Décision -->
-    <div class="bg-white rounded-2xl shadow-lg p-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-6">
+                Décision
+            </h2>
 
-        <h2 class="text-xl font-bold text-gray-800 mb-6">
-            Décision
-        </h2>
+            <div class="grid lg:grid-cols-2 gap-8">
 
-        <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Validation -->
 
-            <!-- Validation -->
+                <form action="{{ route('admin.kyc.approve', $kyc) }}" method="POST">
 
-            <form
-                action="{{ route('admin.kyc.approve',$kyc) }}"
-                method="POST">
+                    @csrf
 
-                @csrf
+                    <button
+                        class="w-full rounded-xl bg-green-600 py-4 text-lg font-semibold text-white transition hover:bg-green-700">
 
-                <button
-                    class="w-full rounded-xl bg-green-600 py-4 text-lg font-semibold text-white transition hover:bg-green-700">
+                        ✓ Approuver le dossier
 
-                    ✓ Approuver le dossier
+                    </button>
 
-                </button>
+                </form>
 
-            </form>
+                <!-- Rejet -->
 
-            <!-- Rejet -->
+                <form action="{{ route('admin.kyc.reject', $kyc) }}" method="POST">
 
-            <form
-                action="{{ route('admin.kyc.reject',$kyc) }}"
-                method="POST">
+                    @csrf
 
-                @csrf
+                    <textarea name="reason" rows="4" required placeholder="Expliquez clairement le motif du rejet..."
+                        class="w-full rounded-xl border border-gray-300 p-4 focus:outline-none focus:ring-2 focus:ring-red-500"></textarea>
 
-                <textarea
-                    name="reason"
-                    rows="4"
-                    required
-                    placeholder="Expliquez clairement le motif du rejet..."
-                    class="w-full rounded-xl border border-gray-300 p-4 focus:outline-none focus:ring-2 focus:ring-red-500"></textarea>
+                    <button
+                        class="mt-4 w-full rounded-xl bg-red-600 py-4 text-lg font-semibold text-white transition hover:bg-red-700">
 
-                <button
-                    class="mt-4 w-full rounded-xl bg-red-600 py-4 text-lg font-semibold text-white transition hover:bg-red-700">
+                        ✗ Rejeter le dossier
 
-                    ✗ Rejeter le dossier
+                    </button>
 
-                </button>
+                </form>
 
-            </form>
+            </div>
 
         </div>
 
     </div>
-
-</div>
 
 @endsection

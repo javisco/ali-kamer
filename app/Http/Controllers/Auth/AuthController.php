@@ -31,7 +31,7 @@ class AuthController extends Controller
         }
 
         $validate = $request->validated();
-        // $validate['password'] = Hash::make($request->password);
+        $validate['password'] = Hash::make($request->password);
         User::create($validate);
         return redirect()->route('login.show')->with('register', "compte creer avec success.connetez-vous pour continuer");
     }

@@ -22,7 +22,7 @@ class DashboardService
             //     return "javisco viens gérer le cas ci.";
             // }
             if ($kyc?->isApproved()) {
-                return redirect()->route('seller.products.index');
+                return redirect()->route('seller.dashboard');
             } else
             if ($kyc?->isPending()) {
                 return redirect()->route('seller.kyc.pending');

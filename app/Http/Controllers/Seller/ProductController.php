@@ -18,7 +18,7 @@ class ProductController extends Controller
     // Liste des produits du vendeur
     public function index()
     {
-    
+
         $products = Auth::user()->shop
             ->products()
             ->with(['category', 'images'])
@@ -106,5 +106,13 @@ class ProductController extends Controller
             403,
             'Ce produit ne vous appartient pas.'
         );
+    }
+    public function dashboard()
+    {
+        $shop=Auth::user()->shop;
+        $productsCount = $shop->products()->count();
+        $visibleCount  = $shop->products()->where('status', 'visible')->count();
+
+        return view('seller.dashboard', compact('shop', 'productsCount', 'visibleCount'));
     }
 }

@@ -188,9 +188,9 @@
     </div>
 
     {{-- Pagination --}}
-    {{-- <div class="mt-6">
+    <div class="mt-6">
         {{ $dossiers->links() }}
-    </div> --}}
+    </div>
 
 </div>
 

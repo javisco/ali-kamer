@@ -3,184 +3,109 @@
 @section('title', 'Connexion')
 
 @section('content')
-
-<div class="min-h-[80vh] flex items-center justify-center px-4">
-
+<div class="min-h-[85vh] flex items-center justify-center px-4 py-8">
     <div class="w-full max-w-md">
 
-        @if(session('fail'))
-            <div class="mb-6 rounded-lg border border-red-300 bg-red-50 px-5 py-4 text-red-700 shadow">
-                {{ session('fail') }}
+        {{-- Alerte d'erreur --}}
+        @if (session('fail'))
+            <div class="mb-5 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-sm">
+                <svg class="h-5 w-5 shrink-0 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{{ session('fail') }}</span>
             </div>
         @endif
 
-        @if(session('register'))
-            <div class="mb-6 rounded-lg border border-green-300 bg-green-50 px-5 py-4 text-green-700 shadow">
-                {{ session('register') }}
+        {{-- Alerte de succès --}}
+        @if (session('success'))
+            <div class="mb-5 flex items-center gap-3 rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-700 shadow-sm">
+                <svg class="h-5 w-5 shrink-0 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>{{ session('success') }}</span>
             </div>
         @endif
 
-        <div class="rounded-2xl bg-white shadow-xl border border-gray-100 p-8">
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
 
-            <!-- Logo -->
-
-            <div class="text-center mb-8">
-
-                <h1 class="text-4xl font-bold text-blue-600">
-                    ALI-KAMER
-                </h1>
-
-                <p class="mt-2 text-gray-500">
-                    Connectez-vous à votre espace personnel
-                </p>
-
+            <!-- En-tête -->
+            <div class="bg-blue-600 px-6 py-7 text-center">
+                <h1 class="text-3xl font-bold tracking-tight text-white">ALI-KAMER</h1>
+                <p class="text-sm text-blue-100 mt-1">Connectez-vous à votre espace personnel</p>
             </div>
 
-            <form
-                action="{{ route('login') }}"
-                method="POST"
-                class="space-y-6">
+            <!-- Formulaire -->
+            <div class="p-6 sm:p-8">
+                <form action="{{ route('login') }}" method="POST" class="space-y-5">
+                    @csrf
 
-                @csrf
+                    <!-- Email -->
+                    <div>
+                        <label for="email" class="block mb-2 font-medium text-gray-700">
+                            Adresse e-mail
+                        </label>
+                        <input type="email" name="email" id="email" value="{{ old('email') }}"
+                            placeholder="exemple@email.com"
+                            class="w-full rounded-xl border px-4 py-3 text-base shadow-sm transition
+                            @error('email') border-red-500 focus:ring-red-500 @else border-gray-300 focus:ring-blue-500 @enderror
+                            focus:outline-none focus:ring-2">
 
-                <!-- Email -->
-
-                <div>
-
-                    <label
-                        for="email"
-                        class="block mb-2 font-semibold text-gray-700">
-
-                        Adresse e-mail
-
-                    </label>
-
-                    <input
-                        type="email"
-                        name="email"
-                        id="email"
-                        value="{{ old('email') }}"
-                        placeholder="exemple@email.com"
-                        class="w-full rounded-xl border px-4 py-3
                         @error('email')
-                        border-red-500
-                        @else
-                        border-gray-300
+                            <p class="mt-1.5 text-sm text-red-600 font-medium">
+                                {{ $message }}
+                            </p>
                         @enderror
-                        focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
 
-                    @error('email')
+                    <!-- Mot de passe -->
+                    <div>
+                        <label for="password" class="block mb-2 font-medium text-gray-700">
+                            Mot de passe
+                        </label>
+                        <input type="password" name="password" id="password" placeholder="••••••••"
+                            class="w-full rounded-xl border px-4 py-3 text-base shadow-sm transition
+                            @error('password') border-red-500 focus:ring-red-500 @else border-gray-300 focus:ring-blue-500 @enderror
+                            focus:outline-none focus:ring-2">
 
-                        <p class="mt-2 text-sm text-red-600">
-
-                            {{ $message }}
-
-                        </p>
-
-                    @enderror
-
-                </div>
-
-                <!-- Password -->
-
-                <div>
-
-                    <label
-                        for="password"
-                        class="block mb-2 font-semibold text-gray-700">
-
-                        Mot de passe
-
-                    </label>
-
-                    <input
-                        type="password"
-                        name="password"
-                        id="password"
-                        placeholder="********"
-                        class="w-full rounded-xl border px-4 py-3
                         @error('password')
-                        border-red-500
-                        @else
-                        border-gray-300
+                            <p class="mt-1.5 text-sm text-red-600 font-medium">
+                                {{ $message }}
+                            </p>
                         @enderror
-                        focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
 
-                    @error('password')
+                    <!-- Options (Se souvenir / Mdp oublié) -->
+                    <div class="flex items-center justify-between pt-1">
+                        <label class="flex items-center gap-2 cursor-pointer select-none">
+                            <input type="checkbox" name="remember"
+                                class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                            <span class="text-sm text-gray-600 font-medium">
+                                Se souvenir de moi
+                            </span>
+                        </label>
 
-                        <p class="mt-2 text-sm text-red-600">
+                        <a href="{{ route('password.request') }}" class="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline">
+                            Mot de passe oublié ?
+                        </a>
+                    </div>
 
-                            {{ $message }}
+                    <!-- Bouton Submit -->
+                    <button type="submit"
+                        class="w-full rounded-xl bg-blue-600 py-3.5 text-base font-semibold text-white shadow-md transition hover:bg-blue-700 active:scale-[0.99]">
+                        Se connecter
+                    </button>
+                </form>
 
-                        </p>
-
-                    @enderror
-
-                </div>
-
-                <!-- Options -->
-
-                <div class="flex items-center justify-between">
-
-                    <label class="flex items-center gap-2">
-
-                        <input
-                            type="checkbox"
-                            name="remember"
-                            class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-
-                        <span class="text-sm text-gray-600">
-
-                            Se souvenir de moi
-
-                        </span>
-
-                    </label>
-
-                    <a
-                        href="#"
-                        class="text-sm text-blue-600 hover:underline">
-
-                        Mot de passe oublié ?
-
+                <!-- Footer Inscription -->
+                <div class="mt-6 border-t pt-5 text-center text-base text-gray-600 flex items-center justify-center gap-2">
+                    <span>Vous n'avez pas de compte ?</span>
+                    <a href="{{ route('register.show') }}" class="font-semibold text-blue-600 hover:underline">
+                        Créer un compte
                     </a>
-
                 </div>
-
-                <!-- Bouton -->
-
-                <button
-                    type="submit"
-                    class="w-full rounded-xl bg-blue-600 py-3 text-lg font-semibold text-white transition hover:bg-blue-700">
-
-                    Se connecter
-
-                </button>
-
-            </form>
-
-            <div class="mt-8 border-t pt-6 text-center">
-
-                <p class="text-gray-600">
-
-                    Vous n'avez pas encore de compte ?
-
-                </p>
-
-                <a
-                    href="{{ route('register.show') }}"
-                    class="mt-3 inline-block rounded-xl border border-blue-600 px-6 py-3 font-semibold text-blue-600 transition hover:bg-blue-600 hover:text-white">
-
-                    Créer un compte
-
-                </a>
 
             </div>
-
         </div>
-
     </div>
-
 </div>
-
 @endsection

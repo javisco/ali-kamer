@@ -10,6 +10,8 @@ use App\Http\Controllers\Buyer\BuyerController;
 use App\Http\Controllers\Seller\ProductController;
 use App\Http\Controllers\Buyer\CatalogController;
 use App\Http\Controllers\Seller\ShopController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 
 // Route::get('/', function () {
 //         return view('welcome');
@@ -43,11 +45,11 @@ Route::middleware(['auth', 'role:seller'])->prefix('seller')->group(function () 
 
 // Admin — KYC
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+        Route::get('/kyc/file', [KycAdmincontroller::class, 'serveFile'])->name('admin.kyc.file');
         Route::get('/kyc', [KycAdmincontroller::class, 'index'])->name('admin.kyc.index');
         Route::get('/kyc/{kyc}', [KycAdmincontroller::class, 'show'])->name('admin.kyc.show');
         Route::post('/kyc/{kyc}/approuver', [KycAdmincontroller::class, 'approve'])->name('admin.kyc.approve');
         Route::post('/kyc/{kyc}/rejeter', [KycAdmincontroller::class, 'reject'])->name('admin.kyc.reject');
-        Route::get('/kyc/fichier', [KycAdmincontroller::class, 'serveFile'])->name('admin.kyc.file');
 });
 
 // ── Catalogue public ──────────────────────────────────────────────
@@ -68,6 +70,7 @@ Route::middleware(['auth', 'role:seller'])->prefix('vendeur')->group(function ()
 // Route::middleware(['auth', 'role:seller'])->prefix('vendeur')->group(function () {});
 
 Route::middleware(['auth', 'role:seller', 'shop.active'])->prefix('vendeur')->group(function () {
+        Route::get('/dasboard',[ProductController::class,'dashboard'])->name('seller.dashboard');
         Route::get('/produits', [ProductController::class, 'index'])
                 ->name('seller.products.index');
         Route::get('/produits/creer', [ProductController::class, 'create'])
@@ -89,6 +92,22 @@ Route::middleware(['auth', 'role:seller', 'shop.active'])->prefix('vendeur')->gr
 
 
 
+
+
+Route::middleware('guest')->group(function () {
+
+        Route::get('/forgot-password', [ForgotPasswordController::class, 'show'])
+                ->name('password.request');
+
+        Route::post('/forgot-password', [ForgotPasswordController::class, 'send'])
+                ->name('password.email');
+
+        Route::get('/reset-password/{token}', [ResetPasswordController::class, 'show'])
+                ->name('password.reset');
+
+        Route::post('/reset-password', [ResetPasswordController::class, 'update'])
+                ->name('password.update');
+});
 
 
 

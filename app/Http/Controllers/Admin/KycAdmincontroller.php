@@ -7,6 +7,7 @@ use App\Models\KycDocument;
 use App\Services\KycService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class KycAdminController extends Controller
 {
@@ -34,10 +35,10 @@ class KycAdminController extends Controller
     {
 
         $urls = [
-            'cni_front' => $this->kycService->getTemporaryUrl($kyc->cni_front_url),
-            'cni_back'  => $this->kycService->getTemporaryUrl($kyc->cni_back_url),
-            'selfie'    => $this->kycService->getTemporaryUrl($kyc->selfie_url),
-            'rccm'      => $kyc->rccm_url
+            'cni_front_url' => $this->kycService->getTemporaryUrl($kyc->cni_front_url),
+            'cni_back_url'  => $this->kycService->getTemporaryUrl($kyc->cni_back_url),
+            'selfie_url'    => $this->kycService->getTemporaryUrl($kyc->selfie_url),
+            'rccm_url'      => $kyc->rccm_url
                 ? $this->kycService->getTemporaryUrl($kyc->rccm_url)
                 : null,
         ];
@@ -68,8 +69,9 @@ class KycAdminController extends Controller
     // Servir un fichier privé à l'admin (local uniquement)
     public function serveFile(Request $request)
     {
+    
         $path = decrypt($request->path);
-        abort_unless(\Storage::disk('local')->exists($path), 404);
-        return \Storage::disk('local')->response($path);
+        abort_unless(Storage::disk('local')->exists($path), 404);
+        return Storage::disk('local')->response($path);
     }
 }
