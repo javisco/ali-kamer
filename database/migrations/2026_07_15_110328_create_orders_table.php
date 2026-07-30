@@ -9,50 +9,75 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-  public function up(): void
+    public function up(): void
     {
+
+
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+            $table->string('reference')->unique();
             $table->foreignId('buyer_id')->constrained('users');
             $table->foreignId('shop_id')->constrained('shops');
 
-            // Cycle de vie complexe de la commande
-            $table->string('status')->default('PENDING'); // PENDING, PAID, IN_TRANSIT, ARRIVED_DESTINATION, COMPLETED, etc.
+            $table->enum('status', [
+                'pending',
+                'awaiting_payment',
+                'paid',
+                'preparing',
+                'registered_origin',
+                'in_transit',
+                'arrived_destination',
+                'awaiting_buyer_confirmation',
+                'completed',
+                'auto_completed',
+                'disputed',
+                'cancelled',
+                'failed',
+            ])->default('pending');
 
-            // Financier
-            $table->unsignedInteger('total_amount'); // Montant payé total par l'acheteur
+            // Montants en FCFA
+            $table->unsignedInteger('subtotal');
             $table->unsignedInteger('shipping_fee')->default(0);
-            $table->unsignedInteger('transport_fee_buyer')->default(0); // À payer à l'arrivée si transport exclu
-            $table->unsignedInteger('gateway_fees');
-            $table->unsignedInteger('protection_fees');
+            $table->unsignedInteger('protection_fee');
+            $table->unsignedInteger('gateway_fee');
+            $table->unsignedInteger('total_amount');
             $table->unsignedInteger('platform_commission');
             $table->unsignedInteger('agency_commission');
-            $table->unsignedInteger('net_amount'); // Montant net qui sera versé au vendeur
-            $table->jsonb('financial_snapshot'); // Instantané immuable lors du checkout
+            $table->unsignedInteger('gateway_payout_fee');
+            $table->unsignedInteger('net_amount');
 
-            // Paiement MoMo
-            $table->string('payment_method'); // MTN_MOMO, ORANGE_MONEY, MANUAL
-            $table->string('payment_ref')->nullable()->unique()->index();
+            // Instantané financier immuable
+            $table->json('financial_snapshot');
 
-            // Codes secrets de sécurisation (Preuves physiques)
-            $table->string('otp_code', 6)->nullable(); // Reçu par l'acheteur pour retirer le colis
+            // Code unique donné par le vendeur au secrétaire
+            $table->string('deposit_code', 10)->unique()->nullable();
+
+            // OTP remise colis
+            $table->string('otp_code', 6)->nullable();
+            $table->timestamp('otp_expires_at')->nullable();
             $table->timestamp('otp_used_at')->nullable();
-            $table->string('deposit_code', 8)->nullable()->unique(); // Code de dépôt fourni par le vendeur à l'agence
 
-            // Timers & Logistique
-            $table->timestamp('timer_deadline')->nullable(); // Délai de 72h pour validation automatique
+            // Timer 72h
+            $table->timestamp('timer_deadline')->nullable();
+
+            // Horodatages transitions
+            $table->timestamp('paid_at')->nullable();
+            $table->timestamp('preparing_at')->nullable();
             $table->timestamp('shipped_at')->nullable();
-            $table->string('shipped_via')->nullable(); // Agence ou Nom/Numéro du livreur local
+            $table->timestamp('arrived_at')->nullable();
+            $table->timestamp('completed_at')->nullable();
+            $table->timestamp('cancelled_at')->nullable();
 
-            // Agences physiques
-            $table->foreignId('agency_origin_id')->nullable()->constrained('agencies');
-            $table->foreignId('agency_dest_id')->nullable()->constrained('agencies');
+            $table->text('buyer_note')->nullable();
+            $table->text('cancellation_reason')->nullable();
 
             $table->timestamps();
 
             $table->index('status');
+            $table->index('buyer_id');
+            $table->index('shop_id');
+            $table->index('timer_deadline');
         });
-
     }
 
     public function down(): void
@@ -60,4 +85,3 @@ return new class extends Migration
         Schema::dropIfExists('orders');
     }
 };
-

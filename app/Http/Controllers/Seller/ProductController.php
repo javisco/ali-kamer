@@ -11,6 +11,8 @@ use App\Services\ProductService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use function Symfony\Component\String\b;
+
 class ProductController extends Controller
 {
     public function __construct(private ProductService $productService) {}
@@ -46,7 +48,12 @@ class ProductController extends Controller
         return redirect()->route('seller.products.index')
             ->with('success', 'Produit créé. Il sera visible après validation.');
     }
-
+    //Foncion permettant un vendeur de voir son produit
+    public function view(Product $product)
+    {
+        $product->load(['images', 'category']);
+        return view('seller.products.view', compact('product'));
+    }
     // Formulaire modification
     public function edit(Product $product)
     {
@@ -109,7 +116,7 @@ class ProductController extends Controller
     }
     public function dashboard()
     {
-        $shop=Auth::user()->shop;
+        $shop = Auth::user()->shop;
         $productsCount = $shop->products()->count();
         $visibleCount  = $shop->products()->where('status', 'visible')->count();
 

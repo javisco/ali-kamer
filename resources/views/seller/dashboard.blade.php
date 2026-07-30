@@ -30,7 +30,7 @@
 
             <!-- En-tête / Header de la boutique -->
             <div
-                class="relative overflow-hidden bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 rounded-2xl p-6 sm:p-8 text-blue-700 shadow-xl">
+                class="relative overflow-hidden bg-gradient-to-r from-blue-100 via-blue-600 to-indigo-700 rounded-2xl p-6 sm:p-8 text-black shadow-xl">
                 {{-- Forme décorative d'arrière-plan --}}
                 <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none">
                 </div>
@@ -39,20 +39,20 @@
                     <div>
                         <div
                             class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1 rounded-full text-xs font-medium text-blue-700 mb-2 border border-white/10">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                            <span class="w-2 h-2 rounded-full bg-green-500 animate-ping"></span>
                             Boutique Active
                         </div>
                         <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
                             {{ $shop->name }}
                         </h1>
-                        <p class="text-blue-500 text-xs sm:text-sm mt-1">
+                        <p class="text-blue-800 text-xs sm:text-sm mt-1">
                             Gérez vos produits, visualisez vos performances et ajustez vos paramètres.
                         </p>
                     </div>
 
                     {{-- Action rapide d'ajout --}}
                     <a href="{{ route('seller.products.create') ?? '#' }}"
-                        class="inline-flex items-center justify-center gap-2 bg-gray-400 text-blue-700 hover:bg-blue-50 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-md transition-all duration-200 hover:shadow-lg active:scale-[0.98]">
+                        class="inline-flex items-center justify-center gap-2 bg-gray-100 text-blue-700 hover:bg-blue-50 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-md transition-all duration-200 hover:shadow-lg active:scale-[0.98]">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>
@@ -147,6 +147,18 @@
                         </svg>
                         <span>Modifier ma boutique</span>
                     </a>
+
+
+                    <a href="{{ route('seller.orders.index') }}"
+                        class="flex-1 flex items-center justify-center gap-2 bg-orange-400 hover:bg-orange-700 text-white px-6 py-3.5 rounded-xl text-sm font-semibold transition-all duration-200 active:scale-[0.98]">
+                        <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                        <span>mes commades</span>
+                    </a>
+
+
                 </div>
             </div>
 

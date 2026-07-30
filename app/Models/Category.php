@@ -8,7 +8,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Category extends Model
-{   use HasFactory;
+{
+
+    use HasFactory;
+
     protected $fillable = [
         'parent_id',
         'name',

@@ -40,8 +40,8 @@ class ShopSeeder extends Seeder
                 'phone' => '+237670000002',
                 'address' => 'Bastos, Avenue des Palmiers',
                 'description' => 'Boutique de vêtements modernes et accessoires de mode.',
-                'status' => 'pending',
-                'verified_at' => null,
+                'status' => 'active',
+                'verified_at' => now(),
             ]);
         }
     }

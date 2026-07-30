@@ -7,6 +7,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -62,5 +63,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function shop()
     {
         return $this->hasOne(Shop::class);
+    }
+    public function assignedCounters():BelongsToMany
+    {
+        return $this->belongsToMany(AgencyCounter::class, 'secretary_counters')
+            ->withTimestamps();
     }
 }

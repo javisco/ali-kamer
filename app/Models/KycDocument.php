@@ -8,8 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class KycDocument extends Model
 {
 
-  use HasFactory;
-    protected $fillable = ['user_id', 'cni_front_url', 'cni_back_url', 'selfie_url', 'rccm_url','status','rejection_reason','reviewed_at','reviewer_id'];
+    use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'cni_front_url',
+        'cni_back_url',
+        'selfie_url',
+        'rccm_url',
+        'status',
+        'rejection_reason',
+        'reviewed_at',
+        'reviewer_id',
+    ];
 
 
 

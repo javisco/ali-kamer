@@ -2,10 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\KycDocument;
 use App\Models\Shop;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+
 
 class UserSeeder extends Seeder
 {
@@ -35,6 +37,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
+
         User::factory()->create([
             'name' => 'Vendeur Marie',
             'email' => 'vendeur2@test.com',
@@ -44,6 +47,22 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
+        KycDocument::factory()->create([
+            'cni_front_url' => 'okay',
+            'cni_back_url' => "rien",
+            'selfie_url' => 'rien du tout',
+            'rccm_url' => 'noting',
+            'user_id' => 2,
+            'status' => 'approved',
+        ]);
+        KycDocument::factory()->create([
+            'cni_front_url' => 'okay',
+            'cni_back_url' => "rien",
+            'selfie_url' => 'rien du tout',
+            'rccm_url' => 'noting',
+            'user_id' => 3,
+            'status' => 'approved',
+        ]);
         // 3. ACHETEURS (2 comptes)
         User::factory()->create([
             'name' => 'Acheteur Eric',
