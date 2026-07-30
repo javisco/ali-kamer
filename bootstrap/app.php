@@ -19,6 +19,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => EnsureUserHasRole::class,
             'shop.active' => EnsureShopActive::class,
         ]);
+        $middleware->validateCsrfTokens(except: [
+            'webhooks/campay',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

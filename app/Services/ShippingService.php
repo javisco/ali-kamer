@@ -17,8 +17,8 @@ class ShippingService
     {
         // Chercher la commande correspondant au code
         $order = Order::where('deposit_code', $depositCode)
-                      ->where('status', Order::STATUS_PREPARING)
-                      ->first();
+            ->where('status', Order::STATUS_PREPARING)
+            ->first();
 
         if (! $order) {
             throw new \Exception(
@@ -28,8 +28,8 @@ class ShippingService
 
         // Récupérer le guichet principal du secrétaire
         $counter = $secretary->agencyCounters()
-                             ->wherePivot('is_primary', true)
-                             ->first();
+            ->wherePivot('is_primary', true)
+            ->first();
 
         if (! $counter) {
             throw new \Exception('Aucun guichet principal assigné à ce compte.');
@@ -80,8 +80,8 @@ class ShippingService
 
         // Récupérer le guichet du secrétaire d'arrivée
         $counter = $secretary->agencyCounters()
-                             ->wherePivot('is_primary', true)
-                             ->first();
+            ->wherePivot('is_primary', true)
+            ->first();
 
         if (! $counter) {
             throw new \Exception('Aucun guichet principal assigné à ce compte.');
@@ -168,8 +168,8 @@ class ShippingService
         if ($order->shipment->transport_fee > 0 && ! $order->shipment->transport_fee_paid) {
             throw new \Exception(
                 'Les frais de transport ('
-                . number_format($order->shipment->transport_fee, 0, ',', ' ')
-                . ' FCFA) doivent être payés avant la remise du colis.'
+                    . number_format($order->shipment->transport_fee, 0, ',', ' ')
+                    . ' FCFA) doivent être payés avant la remise du colis.'
             );
         }
 

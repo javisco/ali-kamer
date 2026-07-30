@@ -36,10 +36,10 @@ class OrderController extends Controller
     public function store(OrderRequest $request)
     {
 
-
         $order = $this->orderService->create(auth()->user(), $request->validated());
 
-        return redirect()->route('buyer.orders.show', $order)
+        // return redirect()->route('buyer.orders.show', $order)
+        return redirect()->route('buyer.payment.show', $order)
             ->with('success', 'Commande créée ! Effectuez votre paiement Mobile Money.');
     }
 

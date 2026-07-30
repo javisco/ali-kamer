@@ -5,7 +5,6 @@ use App\Http\Controllers\Auth\VerifiedEmailController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Seller\KycSellerController;
 use App\Http\Controllers\Admin\KycAdmincontroller;
-use App\Http\Controllers\Buyer\BuyerController;
 use App\Http\Controllers\Seller\ProductController;
 use App\Http\Controllers\Buyer\CatalogController;
 use App\Http\Controllers\Seller\ShopController;
@@ -14,6 +13,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Buyer\OrderController as BuyerOrderController;
 use App\Http\Controllers\Seller\OrderController as SellerOrderController;
 use App\Http\Controllers\Buyer\DashboardController as BuyerDashboardController;
+
 
 // Route::get('/', function () {
 //         return view('welcome');
@@ -26,7 +26,6 @@ Route::get('/login', [AuthController::class, 'showFormLogin'])->name('login.show
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-
 //verification de l'email
 Route::middleware(['auth',])->group(function () {
         Route::get('/email/email-verify', [VerifiedEmailController::class, 'verifiedEmail'])->name('verification.notice');
@@ -35,6 +34,22 @@ Route::middleware(['auth',])->group(function () {
                 ->name('verification.verify');
         Route::post('/email/verification-notification', [VerifiedEmailController::class, 'resend'])
                 ->name('verification.send');
+});
+
+//mot de passe oublier
+Route::middleware('guest')->group(function () {
+
+        Route::get('/forgot-password', [ForgotPasswordController::class, 'show'])
+                ->name('password.request');
+
+        Route::post('/forgot-password', [ForgotPasswordController::class, 'send'])
+                ->name('password.email');
+
+        Route::get('/reset-password/{token}', [ResetPasswordController::class, 'show'])
+                ->name('password.reset');
+
+        Route::post('/reset-password', [ResetPasswordController::class, 'update'])
+                ->name('password.update');
 });
 
 // Vendeur — KYC
@@ -54,12 +69,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         Route::post('/kyc/{kyc}/rejeter', [KycAdmincontroller::class, 'reject'])->name('admin.kyc.reject');
 });
 
-// ── Catalogue public ──────────────────────────────────────────────
-Route::get('/', [CatalogController::class, 'index'])->name('buyer.home');
-Route::get('/produit/{product}', [CatalogController::class, 'show'])->name('product.show');
-Route::get('/boutique/{shop}', [CatalogController::class, 'shop'])->name('shop.show');
-
-
 //boutique -  vendeur
 Route::middleware(['auth', 'role:seller'])->prefix('vendeur')->group(function () {
         Route::get('/boutique/creer', [ShopController::class, 'create'])->name('seller.shop.create');
@@ -67,6 +76,11 @@ Route::middleware(['auth', 'role:seller'])->prefix('vendeur')->group(function ()
         Route::get('/boutique/modifier', [ShopController::class, 'edit'])->name('seller.shop.edit');
         Route::put('/boutique', [ShopController::class, 'update'])->name('seller.shop.update');
 });
+
+// ── Catalogue public ──────────────────────────────────────────────
+Route::get('/', [CatalogController::class, 'index'])->name('buyer.home');
+Route::get('/produit/{product}', [CatalogController::class, 'show'])->name('product.show');
+Route::get('/boutique/{shop}', [CatalogController::class, 'shop'])->name('shop.show');
 
 // ── Produits vendeur ──────────────────────────────────────────────
 // Route::middleware(['auth', 'role:seller'])->prefix('vendeur')->group(function () {});
@@ -93,28 +107,6 @@ Route::middleware(['auth', 'role:seller', 'shop.active'])->prefix('vendeur')->gr
                 ->name('seller.products.image.delete');
 });
 
-
-Route::middleware('guest')->group(function () {
-
-        Route::get('/forgot-password', [ForgotPasswordController::class, 'show'])
-                ->name('password.request');
-
-        Route::post('/forgot-password', [ForgotPasswordController::class, 'send'])
-                ->name('password.email');
-
-        Route::get('/reset-password/{token}', [ResetPasswordController::class, 'show'])
-                ->name('password.reset');
-
-        Route::post('/reset-password', [ResetPasswordController::class, 'update'])
-                ->name('password.update');
-});
-
-
-Route::middleware(['auth', 'role:buyer'])->prefix('acheteur')->group(function () {
-        Route::get('/dashboard', [BuyerDashboardController::class, 'index'])->name('buyer.dashboard');
-});
-
-
 // ── Commandes acheteur ────────────────────────────────────────────
 Route::middleware(['auth', 'role:buyer'])->prefix('commandes')->group(function () {
         Route::get('/', [BuyerOrderController::class, 'index'])->name('buyer.orders.index');
@@ -130,6 +122,43 @@ Route::middleware(['auth', 'role:seller'])->prefix('vendeur')->group(function ()
         Route::get('/commandes/{order}', [SellerOrderController::class, 'show'])->name('seller.orders.show');
         Route::post('/commandes/{order}/preparer', [SellerOrderController::class, 'markPreparing'])->name('seller.orders.preparing');
 });
+
+
+use App\Http\Controllers\Buyer\PaymentController;
+use App\Http\Controllers\Payment\WebhookController;
+use App\Models\Order;
+
+// Webhook Campay — pas de middleware auth (appelé par Campay)
+// Protection assurée par la vérification de signature HMAC
+Route::post('/webhooks/campay', [WebhookController::class, 'campay'])
+        ->name('payment.webhook.campay');
+
+// Pages paiement acheteur
+Route::middleware(['auth', 'role:buyer'])->group(function () {
+        Route::get('/paiement/{order}', [PaymentController::class, 'show'])
+                ->name('buyer.payment.show');
+        Route::post('/paiement/{order}/initier', [PaymentController::class, 'initiate'])
+                ->name('buyer.payment.initiate');
+        Route::get('/paiement/{order}/attente', [PaymentController::class, 'waiting'])
+                ->name('buyer.payment.waiting');
+});
+
+
+// Route appelée par le JS de la page d'attente
+// Retourne le statut de la commande en JSON
+
+Route::get('/commandes/{order}/statut', function (Order $order) {
+        abort_unless($order->buyer_id === auth()->id(), 403);
+        return response()->json(['status' => $order->status]);
+})->middleware(['auth', 'role:buyer'])->name('buyer.orders.status');
+
+
+Route::middleware(['auth', 'role:buyer'])->prefix('acheteur')->group(function () {
+        Route::get('/dashboard', [BuyerDashboardController::class, 'index'])->name('buyer.dashboard');
+});
+
+
+
 
 
 

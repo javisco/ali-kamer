@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'campay' => [
+        'username'       => env('CAMPAY_APP_USERNAME'),
+        'password'       => env('CAMPAY_APP_PASSWORD'),
+        'base_url'       => env('CAMPAY_BASE_URL'),
+        'webhook_secret' => env('CAMPAY_WEBHOOK_SECRET'),
+    ],
+
 ];
+//, 'https://demo.campay.net/api'

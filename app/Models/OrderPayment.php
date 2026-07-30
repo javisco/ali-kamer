@@ -9,11 +9,18 @@ use Illuminate\Support\Str;
 class OrderPayment extends Model
 {
     protected $fillable = [
-        'order_id', 'method', 'status',
-        'provider_reference', 'idempotency_key',
-        'payer_phone', 'payer_operator',
-        'manual_transaction_id', 'manual_validated_by',
-        'manual_validated_at', 'provider_response', 'paid_at',
+        'order_id',
+        'method',
+        'status',
+        'provider_reference',
+        'idempotency_key',
+        'payer_phone',
+        'payer_operator',
+        'manual_transaction_id',
+        'manual_validated_by',
+        'manual_validated_at',
+        'provider_response',
+        'paid_at',
     ];
 
     protected function casts(): array

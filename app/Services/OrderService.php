@@ -8,8 +8,13 @@ use App\Models\OrderPayment;
 use App\Models\OrderShipment;
 use App\Models\Product;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+
 
 class OrderService
 {
@@ -74,6 +79,8 @@ class OrderService
                 'buyer_note' => $data['note'] ?? null,
             ]);
 
+
+
             // 4. Créer la ligne de commande
             OrderItem::create([
                 'order_id'      => $order->id,
@@ -83,6 +90,8 @@ class OrderService
                 'unit_price'    => $product->price,
                 'subtotal'      => $subtotal,
             ]);
+
+            // dd($response);
 
             // 5. Créer l'expédition
             OrderShipment::create([
@@ -103,6 +112,9 @@ class OrderService
                 'payer_phone'      => $data['payer_phone'],
                 'payer_operator'   => $data['payer_operator'],
             ]);
+
+
+
 
             // 7. Réserver le stock
             $product->increment('stock_reserved', $quantity);
