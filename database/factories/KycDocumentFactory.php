@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\KycDocument;
 use App\Models\Model;
 use Faker\Guesser\Name;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -11,6 +12,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class KycDocumentFactory extends Factory
 {
+
+    protected $model = KycDocument::class;
     /**
      * Define the model's default state.
      *
@@ -23,7 +26,7 @@ class KycDocumentFactory extends Factory
             'cni_back_url' => $this->faker->name(),
             'selfie_url' => $this->faker->name(),
             'rccm_url' => $this->faker->name(),
-            'user_id' => $this->faker->numberBetween(2,3),
+            'user_id' => $this->faker->numberBetween(2, 3),
             'status' => 'approved',
         ];
     }

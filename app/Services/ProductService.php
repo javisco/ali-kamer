@@ -77,7 +77,7 @@ class ProductService
                     ProductImage::create([
                         'product_id' => $product->id,
                         'url'        => $url,
-                        'position'   => $lastPosition + $index + 1,
+                        'position'   => $lastPosition + $index + 1 ,
                         'is_primary' => false,
                     ]);
                 }

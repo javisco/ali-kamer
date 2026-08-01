@@ -38,17 +38,24 @@ class OrderController extends Controller
 
         $order = $this->orderService->create(auth()->user(), $request->validated());
 
-        // return redirect()->route('buyer.orders.show', $order)
-        return redirect()->route('buyer.payment.show', $order)
-            ->with('success', 'Commande créée ! Effectuez votre paiement Mobile Money.');
+        // Vérifier que c'est bien la commande de cet acheteur
+        abort_unless($order->buyer_id === auth()->id(), 403);
+
+        // Vérifier que le paiement est bien en attente
+        abort_unless(
+            in_array($order->status, ['pending', 'awaiting_payment', 'failed']),
+            404
+        );
+
+        return redirect()->route('buyer.payment.initiate', $order);
     }
 
-    public function show(Order $order)
-    {
-        abort_unless($order->buyer_id === auth()->id(), 403);
-        $order->load(['items.product', 'payment', 'shipment', 'shop']);
-        return view('buyer.orders.show', compact('order'));
-    }
+    // public function show(Order $order)
+    // {
+    //     abort_unless($order->buyer_id === auth()->id(), 403);
+    //     $order->load(['items.product', 'payment', 'shipment', 'shop']);
+    //     return view('buyer.orders.show', compact('order'));
+    // }
 
     public function cancel(Order $order, Request $request)
     {

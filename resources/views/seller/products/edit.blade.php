@@ -8,13 +8,13 @@
         {{-- Carte Principale --}}
         <div class="bg-white rounded-3xl shadow-lg border border-slate-200 overflow-hidden p-8">
 
-            {{-- En-tête ALI-KAMER (Remis correctement en place) --}}
+            {{-- En-tête ALI-KAMER --}}
             <div class="bg-blue-600 text-white text-center py-6 px-4 rounded-xl">
                 <h1 class="text-2xl font-extrabold tracking-wide uppercase">ALI-KAMER</h1>
                 <p class="text-blue-100 text-xs sm:text-sm mt-1">Modification du produit : {{ $product->title }}</p>
             </div>
 
-            {{-- Messages d'erreurs --}}
+            {{-- Messages d'erreurs globaux --}}
             @if ($errors->any())
                 <div class="m-6 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-sm">
                     <div class="flex items-center gap-2 font-semibold mb-2 text-red-700">
@@ -37,7 +37,7 @@
                 @csrf
                 @method('PUT')
 
-                {{-- 1. Photos actuelles (Correction du container et survol corbeille) --}}
+                {{-- 1. Photos actuelles --}}
                 @if ($product->images->count())
                     <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
                         <div class="flex items-center justify-between mb-3">
@@ -85,7 +85,10 @@
                         </label>
                         <input type="text" name="title" value="{{ old('title', $product->title) }}" required
                             maxlength="80" placeholder="Ex : Écharpe en soie"
-                            class="w-full bg-slate-50/80 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all outline-none">
+                            class="w-full bg-slate-50/80 border @error('title') border-red-500 @else border-slate-200 @enderror rounded-xl px-4 py-3 text-sm text-slate-800 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all outline-none">
+                        @error('title')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
@@ -93,7 +96,7 @@
                             Catégorie <span class="text-red-500">*</span>
                         </label>
                         <select name="category_id" required
-                            class="w-full bg-slate-50/80 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all outline-none">
+                            class="w-full bg-slate-50/80 border @error('category_id') border-red-500 @else border-slate-200 @enderror rounded-xl px-4 py-3 text-sm text-slate-800 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all outline-none">
                             <option value="">-- Choisir une catégorie --</option>
                             @foreach ($categories as $cat)
                                 <option value="{{ $cat->id }}"
@@ -108,6 +111,9 @@
                                 @endforeach
                             @endforeach
                         </select>
+                        @error('category_id')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 
@@ -119,7 +125,10 @@
                         </label>
                         <input type="number" name="price" value="{{ old('price', $product->price) }}" required
                             min="100" max="10000000"
-                            class="w-full bg-slate-50/80 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all outline-none">
+                            class="w-full bg-slate-50/80 border @error('price') border-red-500 @else border-slate-200 @enderror rounded-xl px-4 py-3 text-sm text-slate-800 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all outline-none">
+                        @error('price')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
@@ -128,7 +137,10 @@
                         </label>
                         <input type="number" name="old_price" value="{{ old('old_price', $product->old_price) }}"
                             min="100" placeholder="Prix barré"
-                            class="w-full bg-slate-50/80 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all outline-none">
+                            class="w-full bg-slate-50/80 border @error('old_price') border-red-500 @else border-slate-200 @enderror rounded-xl px-4 py-3 text-sm text-slate-800 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all outline-none">
+                        @error('old_price')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
@@ -137,7 +149,10 @@
                         </label>
                         <input type="number" name="stock" value="{{ old('stock', $product->stock) }}" required
                             min="0"
-                            class="w-full bg-slate-50/80 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all outline-none">
+                            class="w-full bg-slate-50/80 border @error('stock') border-red-500 @else border-slate-200 @enderror rounded-xl px-4 py-3 text-sm text-slate-800 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all outline-none">
+                        @error('stock')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
@@ -146,7 +161,10 @@
                         </label>
                         <input type="number" name="min_quantity" value="{{ old('min_quantity', $product->min_quantity) }}"
                             required min="1"
-                            class="w-full bg-slate-50/80 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all outline-none">
+                            class="w-full bg-slate-50/80 border @error('min_quantity') border-red-500 @else border-slate-200 @enderror rounded-xl px-4 py-3 text-sm text-slate-800 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all outline-none">
+                        @error('min_quantity')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 
@@ -178,6 +196,9 @@
                             </div>
                         </label>
                     </div>
+                    @error('shipping_included')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
 
                     <div class="pt-1">
                         <label class="block text-xs font-semibold text-slate-500 mb-1">
@@ -186,7 +207,10 @@
                         <input type="number" name="shipping_threshold_qty"
                             value="{{ old('shipping_threshold_qty', $product->shipping_threshold_qty) }}" min="1"
                             placeholder="Ex : 5"
-                            class="w-36 bg-slate-50/80 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all outline-none">
+                            class="w-36 bg-slate-50/80 border @error('shipping_threshold_qty') border-red-500 @else border-slate-200 @enderror rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all outline-none">
+                        @error('shipping_threshold_qty')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 
@@ -196,7 +220,10 @@
                         Description <span class="text-red-500">*</span>
                     </label>
                     <textarea name="description" required rows="4" placeholder="Description du produit..."
-                        class="w-full bg-slate-50/80 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all outline-none">{{ old('description', $product->description) }}</textarea>
+                        class="w-full bg-slate-50/80 border @error('description') border-red-500 @else border-slate-200 @enderror rounded-xl px-4 py-3 text-sm text-slate-800 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all outline-none">{{ old('description', $product->description) }}</textarea>
+                    @error('description')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 {{-- 6. Ajouter de nouvelles photos --}}
@@ -205,7 +232,13 @@
                         Ajouter des photos supplémentaires
                     </label>
                     <input type="file" name="images[]" accept="image/*" multiple
-                        class="w-full bg-slate-50/80 border border-slate-200 rounded-xl p-3 text-sm text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
+                        class="w-full bg-slate-50/80 border @error('images') border-red-500 @else border-slate-200 @enderror rounded-xl p-3 text-sm text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
+                    @error('images')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                    @error('images.*')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 {{-- Boutons d'action --}}

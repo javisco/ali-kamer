@@ -19,17 +19,15 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
 
-    $this->call([
-        CategorySeeder::class,
-        UserSeeder::class,
-        ShopSeeder::class,
-        ProductSeeder::class,
-        
-        // CategorySeeder::class,
-        // ProductSeeder::class,
-    ]);
-}
-    
+        $this->call([
+            CategorySeeder::class,
+            UserSeeder::class,
+            ShopSeeder::class,
+            ProductSeeder::class,
+            ProductImageSeeder::class,
 
-
+            // CategorySeeder::class,
+            // ProductSeeder::class,
+        ]);
+    }
 }

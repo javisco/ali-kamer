@@ -137,7 +137,7 @@ Route::post('/webhooks/campay', [WebhookController::class, 'campay'])
 Route::middleware(['auth', 'role:buyer'])->group(function () {
         Route::get('/paiement/{order}', [PaymentController::class, 'show'])
                 ->name('buyer.payment.show');
-        Route::post('/paiement/{order}/initier', [PaymentController::class, 'initiate'])
+        Route::get('/paiement/{order}/initier', [PaymentController::class, 'initiate'])
                 ->name('buyer.payment.initiate');
         Route::get('/paiement/{order}/attente', [PaymentController::class, 'waiting'])
                 ->name('buyer.payment.waiting');

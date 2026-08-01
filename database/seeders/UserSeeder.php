@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
         $defaultPassword = Hash::make('password123');
 
         // 1. ADMIN (1 compte)
-        User::factory()->create([
+        User::create([
             'name' => 'Admin System',
             'email' => 'admin@test.com',
             'phone' => '+237600000001',
@@ -28,7 +28,7 @@ class UserSeeder extends Seeder
         ]);
 
         // 2. VENDEURS (2 comptes)
-        User::factory()->create([
+        User::create([
             'name' => 'Vendeur Paul',
             'email' => 'vendeur1@test.com',
             'phone' => '+237600000002',
@@ -38,7 +38,7 @@ class UserSeeder extends Seeder
         ]);
 
 
-        User::factory()->create([
+        User::create([
             'name' => 'Vendeur Marie',
             'email' => 'vendeur2@test.com',
             'phone' => '+237600000003',
@@ -47,7 +47,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        KycDocument::factory()->create([
+        KycDocument::create([
             'cni_front_url' => 'okay',
             'cni_back_url' => "rien",
             'selfie_url' => 'rien du tout',
@@ -55,7 +55,7 @@ class UserSeeder extends Seeder
             'user_id' => 2,
             'status' => 'approved',
         ]);
-        KycDocument::factory()->create([
+        KycDocument::create([
             'cni_front_url' => 'okay',
             'cni_back_url' => "rien",
             'selfie_url' => 'rien du tout',
@@ -64,7 +64,7 @@ class UserSeeder extends Seeder
             'status' => 'approved',
         ]);
         // 3. ACHETEURS (2 comptes)
-        User::factory()->create([
+        User::create([
             'name' => 'Acheteur Eric',
             'email' => 'acheteur1@test.com',
             'phone' => '+237600000004',
@@ -73,7 +73,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        User::factory()->create([
+        User::create([
             'name' => 'Acheteur Alice',
             'email' => 'acheteur2@test.com',
             'phone' => '+237600000005',

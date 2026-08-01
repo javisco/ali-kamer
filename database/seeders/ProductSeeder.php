@@ -14,10 +14,6 @@ class ProductSeeder extends Seeder
 
 
 
-
-
-
-
 // 1. Récupération des deux boutiques créées précédemment
         $shop1 = Shop::where('slug', 'kamer-tech-store')->first() ?? Shop::first();
         $shop2 = Shop::where('slug', 'fashion-kamer')->first() ?? Shop::skip(1)->first();

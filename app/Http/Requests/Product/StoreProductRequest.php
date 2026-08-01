@@ -12,7 +12,7 @@ class StoreProductRequest extends FormRequest
             'category_id'            => ['required', 'exists:categories,id'],
             'title'                  => ['required', 'string', 'min:10', 'max:80'],
             'description'            => ['required', 'string', 'min:50'],
-            'price'                  => ['required', 'integer', 'min:100', 'max:10000000'],
+            'price'                  => ['required', 'integer', 'min:20', 'max:10000000'],
             'old_price'              => ['nullable', 'integer', 'gt:price'],
             'stock'                  => ['required', 'integer', 'min:0'],
             'min_quantity'           => ['required', 'integer', 'min:1'],

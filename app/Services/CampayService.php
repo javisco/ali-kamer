@@ -31,6 +31,13 @@ class CampayService
             'password' => config('services.campay.password'),
         ]);
 
+
+        // Ajouter ce log temporaire
+        \Log::info('Campay token response', [
+            'status' => $response->status(),
+            'body'   => $response->json(),
+        ]);
+
         if (! $response->successful()) {
             Log::error('Campay auth failed', ['response' => $response->json()]);
             throw new \Exception('Impossible de se connecter à Campay. Réessayez.');
@@ -39,7 +46,6 @@ class CampayService
         $this->token = $response->json('token');
         return $this->token;
     }
-
     // ── COLLECTE (encaissement depuis l'acheteur) ─────────────────────
 
     // Déclenche un push USSD sur le téléphone de l'acheteur
@@ -63,7 +69,8 @@ class CampayService
                 'external_reference' => $reference,
 
                 // URL que Campay appellera après confirmation du paiement
-                'webhook_url' => route('payment.webhook.campay'),
+                // 'webhook_url' => route('payment.webhook.campay'),
+                'notify_url' => route('payment.webhook.campay'),
             ]);
 
         if (! $response->successful()) {
@@ -73,7 +80,7 @@ class CampayService
                 'reference' => $reference,
                 'response'  => $response->json(),
             ]);
-            throw new \Exception('Échec de l\'initiation du paiement. Vérifiez votre numéro.');
+            dd($response->status(), $response->json(), $response->body());
         }
 
         // Retourne la référence Campay et le statut initial (PENDING)

@@ -36,10 +36,11 @@ return [
     ],
 
     'campay' => [
-        'username'       => env('CAMPAY_APP_USERNAME'),
-        'password'       => env('CAMPAY_APP_PASSWORD'),
-        'base_url'       => env('CAMPAY_BASE_URL'),
-        'webhook_secret' => env('CAMPAY_WEBHOOK_SECRET'),
+        'app_id' => env('CAMPAY_APP_ID'),
+        'username' => env('CAMPAY_APP_USERNAME'),
+        'password' => env('CAMPAY_APP_PASSWORD'),
+        'token' => env('CAMPAY_APP_TOKEN'),
+        'base_url' => env('CAMPAY_BASE_URL'),
     ],
 
 ];
