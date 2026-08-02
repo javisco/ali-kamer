@@ -24,7 +24,7 @@ return new class extends Migration
                 ->constrained('users');
 
             // Type de contenu
-            $table->enum('type', ['text', 'image', 'pdf']);
+            $table->enum('type', ['text', 'image', 'pdf','carte_produit']);
 
             // Contenu texte (pour type = text)
             $table->text('body')->nullable();

@@ -36,12 +36,10 @@ return [
     ],
 
     'campay' => [
-        'app_id' => env('CAMPAY_APP_ID'),
-        'username' => env('CAMPAY_APP_USERNAME'),
-        'password' => env('CAMPAY_APP_PASSWORD'),
-        'token' => env('CAMPAY_APP_TOKEN'),
-        'base_url' => env('CAMPAY_BASE_URL'),
+        'permanent_token' => env('CAMPAY_PERMANENT_TOKEN'),
+        'username'        => env('CAMPAY_APP_USERNAME'),
+        'password'        => env('CAMPAY_APP_PASSWORD'),
+        'base_url'        => env('CAMPAY_BASE_URL', 'https://demo.campay.net/api'),
     ],
 
 ];
-//, 'https://demo.campay.net/api'

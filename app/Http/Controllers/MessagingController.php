@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Conversation;
+use App\Models\Product;
 use App\Models\Shop;
 use App\Services\MessagingService;
 use Illuminate\Http\Request;
@@ -41,7 +42,7 @@ class MessagingController extends Controller
     }
 
     // Démarrer une conversation depuis une fiche produit ou boutique
-    public function start(Request $request, Shop $shop)
+    public function start(Product $product, Shop $shop)
     {
         $user = auth()->user();
 
@@ -51,7 +52,7 @@ class MessagingController extends Controller
         $conversation = $this->messagingService->findOrCreateConversation(
             $user,
             $shop,
-            $request->product_id
+            $product->id
         );
 
         return redirect()->route('messaging.show', $conversation);

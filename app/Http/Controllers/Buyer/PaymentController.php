@@ -47,4 +47,21 @@ class PaymentController extends Controller
 
         return view('buyer.payment.waiting', compact('order'));
     }
+
+    // ── AJAX : Vérifie le statut du paiement ─────────────────────────────
+
+    public function status(Order $order)
+    {
+        abort_unless(
+            $order->buyer_id === auth()->id(),
+            403
+        );
+
+        $status = $this->paymentService
+            ->synchronize($order);
+
+        return response()->json([
+            'status' => $status,
+        ]);
+    }
 }

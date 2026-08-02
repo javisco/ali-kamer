@@ -15,38 +15,30 @@ class WebhookController extends Controller
         private CampayService $campayService
     ) {}
 
-    // Point d'entrée du webhook Campay
-    // Campay appelle cette URL après chaque paiement (réussi ou échoué)
     public function campay(Request $request)
     {
-        // 1. Vérifier la signature HMAC pour s'assurer que c'est bien Campay
-        $signature = $request->header('Signature');
-        $payload   = $request->getContent();
+        Log::info('Campay webhook reçu', $request->all());
 
-        if (! $this->campayService->verifyWebhookSignature($payload, $signature ?? '')) {
-            Log::warning('Webhook Campay : signature invalide', [
-                'ip'        => $request->ip(),
-                'signature' => $signature,
-            ]);
+        // Campay envoie "signature" dans le body JSON (pas dans le header)
+        $signature = $request->input('signature', '');
 
-            // Retourner 401 — Campay réessaiera automatiquement
+        // Vérification de la signature JWT
+        if (! $this->campayService->verifyWebhookSignature($signature)) {
+            Log::warning('Campay webhook : signature invalide');
             return response()->json(['error' => 'Signature invalide'], 401);
         }
 
-        // 2. Traiter le webhook
         try {
             $this->paymentService->handleWebhook($request->all());
         } catch (\Exception $e) {
-            Log::error('Webhook Campay erreur traitement', [
+            Log::error('Campay webhook erreur', [
                 'error' => $e->getMessage(),
                 'data'  => $request->all(),
             ]);
-
-            // Retourner 500 — Campay réessaiera
             return response()->json(['error' => 'Erreur traitement'], 500);
         }
 
-        // 3. Confirmer la réception à Campay
+        // Campay attend un 200 pour confirmer la réception
         return response()->json(['status' => 'ok']);
     }
 }

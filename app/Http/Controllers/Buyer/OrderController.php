@@ -50,12 +50,12 @@ class OrderController extends Controller
         return redirect()->route('buyer.payment.initiate', $order);
     }
 
-    // public function show(Order $order)
-    // {
-    //     abort_unless($order->buyer_id === auth()->id(), 403);
-    //     $order->load(['items.product', 'payment', 'shipment', 'shop']);
-    //     return view('buyer.orders.show', compact('order'));
-    // }
+    public function show(Order $order)
+    {
+        abort_unless($order->buyer_id === auth()->id(), 403);
+        $order->load(['items.product', 'payment', 'shipment', 'shop']);
+        return view('buyer.orders.show', compact('order'));
+    }
 
     public function cancel(Order $order, Request $request)
     {

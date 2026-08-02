@@ -13,6 +13,9 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Buyer\OrderController as BuyerOrderController;
 use App\Http\Controllers\Seller\OrderController as SellerOrderController;
 use App\Http\Controllers\Buyer\DashboardController as BuyerDashboardController;
+use App\Http\Controllers\MessagingController;
+use App\Http\Controllers\Buyer\PaymentController;
+use App\Http\Controllers\Payment\WebhookController;
 
 
 // Route::get('/', function () {
@@ -77,6 +80,10 @@ Route::middleware(['auth', 'role:seller'])->prefix('vendeur')->group(function ()
         Route::put('/boutique', [ShopController::class, 'update'])->name('seller.shop.update');
 });
 
+Route::middleware(['auth', 'role:buyer'])->prefix('acheteur')->group(function () {
+        Route::get('/dashboard', [BuyerDashboardController::class, 'index'])->name('buyer.dashboard');
+});
+
 // ── Catalogue public ──────────────────────────────────────────────
 Route::get('/', [CatalogController::class, 'index'])->name('buyer.home');
 Route::get('/produit/{product}', [CatalogController::class, 'show'])->name('product.show');
@@ -123,10 +130,34 @@ Route::middleware(['auth', 'role:seller'])->prefix('vendeur')->group(function ()
         Route::post('/commandes/{order}/preparer', [SellerOrderController::class, 'markPreparing'])->name('seller.orders.preparing');
 });
 
+//messagerie
+Route::middleware(['auth'])->group(function () {
 
-use App\Http\Controllers\Buyer\PaymentController;
-use App\Http\Controllers\Payment\WebhookController;
-use App\Models\Order;
+        // Liste des conversations
+        Route::get('/messages', [MessagingController::class, 'index'])
+                ->name('messaging.index');
+
+        // Détail d'une conversation
+        Route::get('/messages/{conversation}', [MessagingController::class, 'show'])
+                ->name('messaging.show');
+
+        // Démarrer une conversation depuis une boutique
+        Route::get('/messages/{product}/boutique/{shop}', [MessagingController::class, 'start'])
+                ->name('messaging.start');
+
+        // Envoyer un message texte
+        Route::post('/messages/{conversation}/texte', [MessagingController::class, 'sendText'])
+                ->name('messaging.send.text');
+
+        // Envoyer une pièce jointe
+        Route::post('/messages/{conversation}/fichier', [MessagingController::class, 'sendAttachment'])
+                ->name('messaging.send.attachment');
+
+        // Polling nouveaux messages (appelé par JS)
+        Route::get('/messages/{conversation}/poll', [MessagingController::class, 'poll'])
+                ->name('messaging.poll');
+});
+
 
 // Webhook Campay — pas de middleware auth (appelé par Campay)
 // Protection assurée par la vérification de signature HMAC
@@ -135,8 +166,8 @@ Route::post('/webhooks/campay', [WebhookController::class, 'campay'])
 
 // Pages paiement acheteur
 Route::middleware(['auth', 'role:buyer'])->group(function () {
-        Route::get('/paiement/{order}', [PaymentController::class, 'show'])
-                ->name('buyer.payment.show');
+        // Route::get('/paiement/{order}', [PaymentController::class, 'show'])
+        //         ->name('buyer.payment.show');
         Route::get('/paiement/{order}/initier', [PaymentController::class, 'initiate'])
                 ->name('buyer.payment.initiate');
         Route::get('/paiement/{order}/attente', [PaymentController::class, 'waiting'])
@@ -147,15 +178,21 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
 // Route appelée par le JS de la page d'attente
 // Retourne le statut de la commande en JSON
 
-Route::get('/commandes/{order}/statut', function (Order $order) {
-        abort_unless($order->buyer_id === auth()->id(), 403);
-        return response()->json(['status' => $order->status]);
-})->middleware(['auth', 'role:buyer'])->name('buyer.orders.status');
+// Route::get('/commandes/{order}/statut', function (Order $order) {
+//         abort_unless($order->buyer_id === auth()->id(), 403);
+//         return response()->json(['status' => $order->status]);
+// })->middleware(['auth', 'role:buyer'])->name('buyer.orders.status');
 
+//cette route remplace celle du haut
+Route::middleware(['auth', 'role:buyer'])->group(function () {
 
-Route::middleware(['auth', 'role:buyer'])->prefix('acheteur')->group(function () {
-        Route::get('/dashboard', [BuyerDashboardController::class, 'index'])->name('buyer.dashboard');
+        Route::get(
+                '/commandes/{order}/statut',
+                [PaymentController::class, 'status']
+        )->name('buyer.orders.status');
 });
+
+
 
 
 
@@ -221,37 +258,3 @@ Route::get('/agence/recherche-commande', function (Request $request) {
                 'destination_city' => $order->shipment->destination_city,
         ]);
 })->middleware(['auth', 'role:secretary'])->name('secretary.search');
-
-
-
-
-
-
-use App\Http\Controllers\MessagingController;
-
-Route::middleware(['auth'])->group(function () {
-
-        // Liste des conversations
-        Route::get('/messages', [MessagingController::class, 'index'])
-                ->name('messaging.index');
-
-        // Détail d'une conversation
-        Route::get('/messages/{conversation}', [MessagingController::class, 'show'])
-                ->name('messaging.show');
-
-        // Démarrer une conversation depuis une boutique
-        Route::post('/messages/boutique/{shop}', [MessagingController::class, 'start'])
-                ->name('messaging.start');
-
-        // Envoyer un message texte
-        Route::post('/messages/{conversation}/texte', [MessagingController::class, 'sendText'])
-                ->name('messaging.send.text');
-
-        // Envoyer une pièce jointe
-        Route::post('/messages/{conversation}/fichier', [MessagingController::class, 'sendAttachment'])
-                ->name('messaging.send.attachment');
-
-        // Polling nouveaux messages (appelé par JS)
-        Route::get('/messages/{conversation}/poll', [MessagingController::class, 'poll'])
-                ->name('messaging.poll');
-});

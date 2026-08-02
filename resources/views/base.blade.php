@@ -115,6 +115,12 @@
                         Dashboard
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('messaging.index') }}"
+                        class="text-gray-600 hover:text-blue-600 px-2 py-1 transition-colors">
+                        messages
+                    </a>
+                </li>
             </ul>
 
             <!-- Zone Connexion / Inscription / Déconnexion -->

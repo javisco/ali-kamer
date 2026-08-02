@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\Conversation;
 use App\Models\Message;
+use App\Models\Product;
+use App\Models\ProductImage;
 use App\Models\Shop;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
@@ -24,8 +26,9 @@ class MessagingService
         User $buyer,
         Shop $shop,
         ?int $productId = null
-    ): Conversation {
-        return Conversation::firstOrCreate(
+    ) {
+
+        $conversation = Conversation::firstOrCreate(
             [
                 'buyer_id' => $buyer->id,
                 'shop_id'  => $shop->id,
@@ -35,6 +38,23 @@ class MessagingService
                 'product_id' => $productId,
             ]
         );
+        $product = Product::findORFail($productId);
+        $image = ProductImage::where('product_id', $productId)->first();
+
+        if ($conversation->wasRecentlyCreated || $conversation->product_id !== $product->id) {
+            Message::create([
+                'conversation_id' => $conversation->id,
+                'sender_id'       => $buyer->id,
+                'type' => 'carte_produit',
+                'body' => 'bonjour, je suis interesse(é) par : ' . $product->title,
+                'attachment_url'  => $image->url,
+                'attachment_size' => null,
+            ]);
+        }
+
+
+
+        return $conversation;
     }
 
     // ── ENVOYER UN MESSAGE TEXTE ──────────────────────────────────────

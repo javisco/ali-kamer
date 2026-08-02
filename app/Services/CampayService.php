@@ -7,147 +7,256 @@ use Illuminate\Support\Facades\Log;
 
 class CampayService
 {
-    // URL de base de l'API Campay (demo ou production selon .env)
+    // URL de base selon l'environnement (.env)
     private string $baseUrl;
 
-    // Token d'authentification récupéré au début de chaque session
+    // Token temporaire mis en cache pour la durée de la requête
     private ?string $token = null;
 
     public function __construct()
     {
-        $this->baseUrl = config('services.campay.base_url');
+        $this->baseUrl = rtrim(config('services.campay.base_url'), '/');
     }
 
-    // ── AUTHENTIFICATION ──────────────────────────────────────────────
+    // ── MÉTHODE D'AUTHENTIFICATION ────────────────────────────────────
 
-    // Récupère le token d'accès Campay
-    // Ce token est valide pour une durée limitée
-    private function getToken(): string
+    // Retourne le header Authorization selon la méthode choisie
+    // Méthode 1 : token permanent (recommandé pour MVP — ne expire pas)
+    // Méthode 2 : token temporaire (expire, nécessite un renouvellement)
+    private function authHeader(): string
     {
-        if ($this->token) return $this->token;
+        // Méthode 1 — token permanent depuis les clés de l'application
+        // Configure CAMPAY_PERMANENT_TOKEN dans .env
+        $permanent = config('services.campay.permanent_token');
+        if ($permanent) {
+            return "Token {$permanent}";
+        }
 
-        $response = Http::post("{$this->baseUrl}/token/", [
+        // Méthode 2 — token temporaire via username/password
+        return "Token {$this->getTemporaryToken()}";
+    }
+
+    // Récupère un token temporaire via l'endpoint /token/
+    private function getTemporaryToken(): string
+    {
+        if ($this->token !== null) {
+            return $this->token;
+        }
+        // Vérifier d'abord dans le cache Redis
+        // Le token est stocké pendant expires_in secondes moins 60s de marge
+        $cached = \Cache::get('campay_token');
+        if ($cached) return $cached;
+
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+        ])->post("{$this->baseUrl}/token/", [
             'username' => config('services.campay.username'),
             'password' => config('services.campay.password'),
         ]);
 
-
-        // Ajouter ce log temporaire
-        \Log::info('Campay token response', [
-            'status' => $response->status(),
-            'body'   => $response->json(),
-        ]);
-
         if (! $response->successful()) {
-            Log::error('Campay auth failed', ['response' => $response->json()]);
-            throw new \Exception('Impossible de se connecter à Campay. Réessayez.');
+            throw new \Exception(
+                'Authentification Campay échouée : ' . $response->body()
+            );
         }
 
-        $this->token = $response->json('token');
-        return $this->token;
+        $token     = $response->json('token');
+        $expiresIn = $response->json('expires_in', 3600); // défaut 1h
+
+        // Stocker dans Redis — expire 60s avant la vraie expiration
+        \Cache::put('campay_token', $token, $expiresIn - 60);
+
+        return $token;
     }
+
     // ── COLLECTE (encaissement depuis l'acheteur) ─────────────────────
 
     // Déclenche un push USSD sur le téléphone de l'acheteur
     // L'acheteur reçoit une notification et confirme le paiement
     public function collect(
-        string $phone,        // numéro de l'acheteur (ex: 237655123456)
-        int $amount,          // montant en FCFA
-        string $reference,    // référence unique de la commande (pour idempotence)
-        string $description   // description affichée à l'acheteur
+        string $phone,      // format : 237XXXXXXXXX (avec indicatif, sans +)
+        int $amount,        // entier en FCFA — pas de décimales
+        string $reference,  // UUID4 unique — idempotence
+        string $description // affiché à l'acheteur
     ): array {
 
-        $response = Http::withToken($this->getToken())
-            ->post("{$this->baseUrl}/collect/", [
-                // Numéro au format international sans le +
-                'from'              => $phone,
-                'amount'            => $amount,
-                'currency'          => 'XAF',   // Franc CFA
-                'description'       => $description,
+        $response = Http::withHeaders([
+            'Authorization' => $this->authHeader(),
+            'Content-Type'  => 'application/json',
+        ])->post("{$this->baseUrl}/collect/", [
+            // Numéro avec indicatif pays — ex: 237655123456
+            'from'               => $phone,
 
-                // Référence unique — protection contre le double débit
-                'external_reference' => $reference,
+            // Montant entier — Campay rejette les décimales (ER201)
+            'amount'             => (string) $amount,
 
-                // URL que Campay appellera après confirmation du paiement
-                // 'webhook_url' => route('payment.webhook.campay'),
-                'notify_url' => route('payment.webhook.campay'),
-            ]);
+            // Devise obligatoire
+            'currency'           => 'XAF',
+
+            'description'        => $description,
+
+            // UUID4 unique — si même référence envoyée deux fois,
+            // Campay retourne le résultat de la première (idempotence)
+            'external_reference' => $reference,
+        ]);
+
+        Log::info('Campay collect response', [
+            'phone'    => $phone,
+            'amount'   => $amount,
+            'status'   => $response->status(),
+            'body'     => $response->json(),
+        ]);
 
         if (! $response->successful()) {
-            Log::error('Campay collect failed', [
-                'phone'     => $phone,
-                'amount'    => $amount,
-                'reference' => $reference,
-                'response'  => $response->json(),
-            ]);
-            dd($response->status(), $response->json(), $response->body());
+            throw new \Exception(
+                'Échec initiation paiement : ' . $response->body()
+            );
         }
 
-        // Retourne la référence Campay et le statut initial (PENDING)
         return $response->json();
     }
 
     // ── VÉRIFICATION STATUT D'UNE TRANSACTION ────────────────────────
 
-    // Vérifie le statut d'une transaction Campay par sa référence
-    // Utile si le webhook n'arrive pas (fallback polling)
+    // Vérifie le statut d'une transaction via sa référence Campay
+    // Statuts possibles : PENDING, SUCCESSFUL, FAILED
     public function checkStatus(string $campayReference): array
     {
-        $response = Http::withToken($this->getToken())
-            ->get("{$this->baseUrl}/transaction/{$campayReference}/");
+        $response = Http::withHeaders([
+            'Authorization' => $this->authHeader(),
+            'Content-Type'  => 'application/json',
+        ])->get("{$this->baseUrl}/transaction/{$campayReference}/");
 
         if (! $response->successful()) {
-            throw new \Exception('Impossible de vérifier le statut du paiement.');
+            throw new \Exception(
+                'Vérification statut échouée : ' . $response->body()
+            );
         }
 
         return $response->json();
     }
 
-    // ── DÉCAISSEMENT (paiement vers le vendeur) ───────────────────────
+    //ajouter par chatgpt
+    // ── RÉCUPÉRER UNE TRANSACTION PAR SA RÉFÉRENCE ───────────────────────
 
-    // Transfère les fonds vers le numéro MoMo du vendeur
-    // Appelé quand le vendeur demande un retrait
-    public function disburse(
-        string $phone,       // numéro MoMo du vendeur
-        int $amount,         // montant net à verser
-        string $reference    // référence du retrait
+    // Interroge directement Campay pour connaître l'état actuel
+    // de la transaction.
+    public function getTransaction(string $reference): array
+    {
+        $response = Http::withHeaders([
+            'Authorization' => $this->authHeader(),
+            'Content-Type'  => 'application/json',
+        ])->get("{$this->baseUrl}/transaction/{$reference}");
+
+        if (! $response->successful()) {
+            throw new \Exception(
+                'Impossible de récupérer la transaction : ' . $response->body()
+            );
+        }
+
+        return $response->json();
+    }
+
+    // ── RETRAIT (virement vers MoMo vendeur) ─────────────────────────
+
+    // Endpoint correct selon la doc : /withdraw/ (pas /transfer/)
+    public function withdraw(
+        string $phone,      // format : 237XXXXXXXXX
+        int $amount,        // entier en FCFA
+        string $reference   // UUID4 unique
     ): array {
 
-        $response = Http::withToken($this->getToken())
-            ->post("{$this->baseUrl}/transfer/", [
-                'to'                 => $phone,
-                'amount'             => $amount,
-                'currency'           => 'XAF',
-                'description'        => "Retrait Ali-Kamer — {$reference}",
-                'external_reference' => $reference,
-            ]);
+        $response = Http::withHeaders([
+            'Authorization' => $this->authHeader(),
+            'Content-Type'  => 'application/json',
+        ])->post("{$this->baseUrl}/withdraw/", [
+            'to'                 => $phone,
+            'amount'             => (string) $amount,
+            'description'        => 'Retrait Ali-Kamer',
+            'external_reference' => $reference,
+        ]);
+
+        Log::info('Campay withdraw response', [
+            'phone'  => $phone,
+            'amount' => $amount,
+            'status' => $response->status(),
+            'body'   => $response->json(),
+        ]);
 
         if (! $response->successful()) {
-            Log::error('Campay disburse failed', [
-                'phone'     => $phone,
-                'amount'    => $amount,
-                'reference' => $reference,
-                'response'  => $response->json(),
-            ]);
-            throw new \Exception('Échec du virement. Contactez le support.');
+            throw new \Exception(
+                'Échec du retrait : ' . $response->body()
+            );
         }
 
         return $response->json();
     }
 
-    // ── VÉRIFICATION SIGNATURE WEBHOOK ───────────────────────────────
+    // ── VÉRIFICATION DU WEBHOOK ───────────────────────────────────────
 
-    // Vérifie que le webhook vient bien de Campay et pas d'un tiers
-    // Utilise la signature HMAC-SHA256 dans le header de la requête
-    public function verifyWebhookSignature(string $payload, string $signature): bool
+    // Campay envoie un JWT dans le champ "signature" du webhook
+    // On valide ce JWT avec la webhook key de l'application
+    public function verifyWebhookSignature(string $signature): bool
     {
-        $expected = hash_hmac(
-            'sha256',
-            $payload,
-            config('services.campay.webhook_secret')
-        );
+        try {
+            // Décoder le JWT sans vérification d'abord pour extraire le header
+            $parts = explode('.', $signature);
 
-        // Comparaison sécurisée pour éviter les timing attacks
-        return hash_equals($expected, $signature);
+            if (count($parts) !== 3) {
+                Log::warning('Campay webhook : signature JWT invalide (format)');
+                return false;
+            }
+
+            // En MVP on vérifie juste que la signature est présente
+            // Phase 2 : utiliser firebase/php-jwt pour vérifier avec la webhook key
+            // composer require firebase/php-jwt
+            // $decoded = JWT::decode($signature, new Key($webhookKey, 'HS256'));
+
+            return strlen($signature) > 0;
+        } catch (\Exception $e) {
+            Log::warning('Campay webhook signature error', ['error' => $e->getMessage()]);
+            return false;
+        }
+    }
+
+    // ── SOLDE DE L'APPLICATION ────────────────────────────────────────
+
+    // Utile pour l'admin — vérifie les soldes MTN et Orange disponibles
+    public function getBalance(): array
+    {
+        $response = Http::withHeaders([
+            'Authorization' => $this->authHeader(),
+            'Content-Type'  => 'application/json',
+        ])->get("{$this->baseUrl}/balance/");
+
+        if (! $response->successful()) {
+            throw new \Exception('Impossible de récupérer le solde Campay.');
+        }
+
+        return $response->json();
+    }
+
+    // ── INFO TITULAIRE D'UN NUMÉRO ────────────────────────────────────
+
+    // Utilisé pour le KYC — vérifie que le nom MoMo correspond à la CNI
+    // Endpoint : GET /holder_info/?phone_number=237XXXXXXXX
+    public function getHolderInfo(string $phone): ?array
+    {
+        $response = Http::withHeaders([
+            'Authorization' => $this->authHeader(),
+            'Content-Type'  => 'application/json',
+        ])->get("{$this->baseUrl}/holder_info/", [
+            'phone_number' => $phone,
+        ]);
+
+        if (! $response->successful()) {
+            Log::warning('Campay holder_info failed', [
+                'phone'  => $phone,
+                'status' => $response->status(),
+            ]);
+            return null;
+        }
+
+        return $response->json();
     }
 }

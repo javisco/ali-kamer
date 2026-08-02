@@ -85,6 +85,55 @@
                                         Document PDF — {{ $message->fileSizeFormatted() }}
                                     </span>
                                 </a>
+                            @else
+                                {{-- Bulle de message pour un produit / image avec texte --}}
+                                <div class="flex {{ $isMine ? 'justify-end' : 'justify-start' }} mb-1">
+                                    <div
+                                        class="max-w-sm rounded-2xl overflow-hidden shadow-sm border border-slate-200 {{ $isMine ? 'bg-indigo-600 text-white' : 'bg-white text-slate-800' }}">
+
+                                        {{-- Section 1: Image du produit --}}
+                                        @if ($message->attachment_url)
+                                            <div class="relative group overflow-hidden bg-slate-100">
+                                                <img src="{{ asset('storage/' . $message->attachment_url) }}"
+                                                    alt="Photo du produit"
+                                                    class="w-full h-52 object-cover transition-transform duration-300 group-hover:scale-105 cursor-pointer"
+                                                    onclick="window.open(this.src, '_blank')">
+
+                                                {{-- Badges d'état (Pending, Processing, Success, Failed) --}}
+                                                @if (isset($message->status))
+                                                    <span
+                                                        class="absolute top-2 right-2 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full backdrop-blur-md bg-black/40 text-white">
+                                                        {{ $message->status }}
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        @endif
+
+                                        {{-- Section 2: Contenu textuel et Métadonnées --}}
+                                        <div class="p-1 space-y-1">
+
+                                            {{-- Texte d'accroche ou description --}}
+                                            @if ($message->body)
+                                                <p class="text-sm font-medium leading-relaxed">
+                                                    {{ $message->body }}
+                                                </p>
+                                            @endif
+
+                                            {{-- Footer du message : Heure + Statut d'envoi --}}
+                                            <div
+                                                class="flex items-center justify-end gap-1.5 pt-1 text-[11px] {{ $isMine ? 'text-indigo-200' : 'text-slate-400' }}">
+                                                @if ($isMine)
+                                                    {{-- Icône de confirmation d'envoi --}}
+                                                    <svg class="w-3.5 h-3.5 fill-current opacity-80" viewBox="0 0 20 20">
+                                                        <path
+                                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" />
+                                                    </svg>
+                                                @endif
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
                             @endif
                         </div>
 

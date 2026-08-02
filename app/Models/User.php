@@ -64,9 +64,13 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(Shop::class);
     }
-    public function assignedCounters():BelongsToMany
+    public function assignedCounters(): BelongsToMany
     {
         return $this->belongsToMany(AgencyCounter::class, 'secretary_counters')
             ->withTimestamps();
+    }
+    public  function isBuyer()
+    {
+        return $this->role == 'buyer';
     }
 }

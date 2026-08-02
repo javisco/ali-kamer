@@ -10,8 +10,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Conversation extends Model
 {
     protected $fillable = [
-        'buyer_id', 'shop_id', 'product_id',
-        'last_message_at', 'is_archived',
+        'buyer_id',
+        'shop_id',
+        'product_id',
+        'last_message_at',
+        'is_archived',
     ];
 
     protected function casts(): array
@@ -68,8 +71,8 @@ class Conversation extends Model
     public function unreadCount(int $userId): int
     {
         return $this->messages()
-                    ->where('sender_id', '!=', $userId)
-                    ->where('is_read', false)
-                    ->count();
+            ->where('sender_id', '!=', $userId)
+            ->where('is_read', false)
+            ->count();
     }
 }

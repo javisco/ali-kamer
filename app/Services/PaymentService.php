@@ -22,41 +22,31 @@ class PaymentService
     {
         $payment = $order->payment;
 
-        // Vérifier que le paiement n'est pas déjà en cours
-        // Protection contre le double clic
         if ($payment->status === 'processing') {
-            throw new \Exception('Un paiement est déjà en cours pour cette commande.');
+            throw new \Exception('Un paiement est déjà en cours.');
         }
 
-        // Passer en processing — verrou de 10 minutes
         $payment->update(['status' => 'processing']);
 
         try {
-            // Formater le numéro au format Campay (237XXXXXXXXX)
+            // Format Campay : 237XXXXXXXXX — sans +, sans 00
+            // ltrim retire le 0 initial si présent (ex: 0655... → 655...)
             $phone = '237' . ltrim($payment->payer_phone, '0');
 
-            // Appeler l'API Campay
             $result = $this->campay->collect(
                 phone: $phone,
-                amount: $order->total_amount,
-
-                // La clé d'idempotence est notre protection contre le double débit
-                // Si Campay reçoit deux fois la même référence, il rejette la 2ème
-                reference: $payment->idempotency_key,
-
+                amount: $order->total_amount,  // entier FCFA
+                reference: $payment->idempotency_key,  // UUID4
                 description: "Commande Ali-Kamer {$order->reference}"
             );
 
-            // Stocker la référence Campay pour pouvoir vérifier le statut
             $payment->update([
                 'provider_reference' => $result['reference'] ?? null,
                 'provider_response'  => $result,
             ]);
 
-            // Mettre à jour le statut de la commande
             $order->update(['status' => Order::STATUS_AWAITING_PAYMENT]);
         } catch (\Exception $e) {
-            // En cas d'erreur Campay, repasser en pending pour permettre un retry
             $payment->update(['status' => 'pending']);
             throw $e;
         }
@@ -95,6 +85,66 @@ class PaymentService
             default => Log::info('Webhook Campay statut inconnu', $data),
         };
     }
+
+    //ajouter par chatgpt
+    // ── SYNCHRONISER LE PAIEMENT AVEC CAMPAY ─────────────────────────────
+
+    // Cette méthode est appelée par la page d'attente.
+    // Elle permet de récupérer le véritable statut de la transaction
+    // directement chez Campay.
+    //
+    // Le webhook reste prioritaire.
+    // Cette méthode sert uniquement de sécurité si le webhook tarde.
+    public function synchronize(Order $order): string
+    {
+        $payment = $order->payment;
+
+        // Aucun paiement lancé
+        if (!$payment->provider_reference) {
+            return $order->status;
+        }
+
+        try {
+
+            $transaction = $this->campay->getTransaction(
+                $payment->provider_reference
+            );
+
+            $status = strtoupper(
+                $transaction['status'] ?? ''
+            );
+
+            match ($status) {
+
+                'SUCCESSFUL' => $this->confirmPayment(
+                    $order,
+                    $payment,
+                    $transaction
+                ),
+
+                'FAILED' => $this->failPayment(
+                    $order,
+                    $payment
+                ),
+
+                default => null,
+            };
+        } catch (\Throwable $e) {
+
+            Log::warning(
+                'Synchronisation Campay impossible',
+                [
+                    'order' => $order->reference,
+                    'error' => $e->getMessage(),
+                ]
+            );
+        }
+
+        $order->refresh();
+
+        return $order->status;
+    }
+
 
     // ── CONFIRMER UN PAIEMENT RÉUSSI ─────────────────────────────────
 
@@ -180,22 +230,19 @@ class PaymentService
     // Transfère les fonds disponibles vers le MoMo du vendeur
     public function processWithdrawal(User $seller, int $amount): void
     {
-        $phone = '237' . ltrim($seller->phone_momo, '0');
-
-        // 1% de frais Campay déduits automatiquement
-        $fees      = (int) round($amount * 0.01);
+        $phone    = '237' . ltrim($seller->phone_momo, '0');
+        $fees     = (int) round($amount * 0.01);
         $netAmount = $amount - $fees;
 
         DB::transaction(function () use ($seller, $amount, $netAmount, $phone) {
 
-            // Déclencher le virement via Campay
-            $this->campay->disburse(
+            // Utilise /withdraw/ selon la doc Campay (pas /transfer/)
+            $this->campay->withdraw(
                 phone: $phone,
                 amount: $netAmount,
-                reference: 'WITHDRAWAL-' . $seller->id . '-' . time()
+                reference: \Str::uuid()->toString()
             );
 
-            // Enregistrer dans le wallet
             $this->wallet->requestWithdrawal($seller, $amount);
         });
     }
