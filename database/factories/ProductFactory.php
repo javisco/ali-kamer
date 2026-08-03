@@ -15,7 +15,7 @@ class ProductFactory extends Factory
     {
         $villes = ['Douala', 'Yaoundé', 'Bafoussam', 'Bamenda', 'Garoua', 'Maroua', 'Ngaoundéré', 'Kribi'];
 
-        $price = $this->faker->numberBetween(1000, 150000);
+        $price = $this->faker->numberBetween(10, 15000);
         $hasDiscount = $this->faker->boolean(30); // 30% des produits en promo
 
         return [

@@ -49,7 +49,7 @@ class ProductSeeder extends Seeder
         ];
 
         foreach ($techItems as $index => $title) {
-            $price = rand(15, 450) * 1000; // Prix entre 15 000 FCFA et 450 000 FCFA
+            $price = rand(5, 100); // Prix entre 15 000 FCFA et 450 000 FCFA
             $hasDiscount = rand(0, 1);
 
             Product::create([
@@ -59,7 +59,7 @@ class ProductSeeder extends Seeder
                 'description' => "Produit High-Tech garanti d'excellente qualité. " . $title . " est idéal pour une utilisation quotidienne professionnelle ou personnelle. Livré rapidement dans tout le pays avec emballage sécurisé.",
                 'city' => $shop1->city ?? 'Douala',
                 'price' => $price,
-                'old_price' => $hasDiscount ? $price + rand(5, 50) * 1000 : null,
+                'old_price' => $hasDiscount ? $price + rand(5, 25) : null,
                 'stock' => rand(5, 50),
                 'stock_reserved' => 0,
                 'min_quantity' => 1,
@@ -86,7 +86,7 @@ class ProductSeeder extends Seeder
         ];
 
         foreach ($fashionItems as $index => $title) {
-            $price = rand(5, 80) * 1000; // Prix entre 5 000 FCFA et 80 000 FCFA
+            $price = rand(10, 100); // Prix entre 5 000 FCFA et 80 000 FCFA
             $hasDiscount = rand(0, 1);
 
             Product::create([
@@ -96,7 +96,7 @@ class ProductSeeder extends Seeder
                 'description' => "Découvrez notre superbe " . $title . ". Cet article a été conçu avec soin pour offrir un confort maximal et un style impeccable en toute occasion. Disponible en plusieurs tailles.",
                 'city' => $shop2->city ?? 'Yaoundé',
                 'price' => $price,
-                'old_price' => $hasDiscount ? $price + rand(2, 15) * 1000 : null,
+                'old_price' => $hasDiscount ? $price + rand(5, 25) : null,
                 'stock' => rand(10, 100),
                 'stock_reserved' => 0,
                 'min_quantity' => 1,

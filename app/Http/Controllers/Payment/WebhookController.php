@@ -22,7 +22,7 @@ class WebhookController extends Controller
         // Campay envoie "signature" dans le body JSON (pas dans le header)
         $signature = $request->input('signature', '');
 
-        // Vérification de la signature JWT
+        //Vérification de la signature JWT
         if (! $this->campayService->verifyWebhookSignature($signature)) {
             Log::warning('Campay webhook : signature invalide');
             return response()->json(['error' => 'Signature invalide'], 401);

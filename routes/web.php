@@ -172,6 +172,8 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
                 ->name('buyer.payment.initiate');
         Route::get('/paiement/{order}/attente', [PaymentController::class, 'waiting'])
                 ->name('buyer.payment.waiting');
+        Route::get('/commandes/{order}/statut', [PaymentController::class, 'status'])
+                ->name('buyer.orders.status');
 });
 
 
@@ -184,13 +186,7 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
 // })->middleware(['auth', 'role:buyer'])->name('buyer.orders.status');
 
 //cette route remplace celle du haut
-Route::middleware(['auth', 'role:buyer'])->group(function () {
 
-        Route::get(
-                '/commandes/{order}/statut',
-                [PaymentController::class, 'status']
-        )->name('buyer.orders.status');
-});
 
 
 

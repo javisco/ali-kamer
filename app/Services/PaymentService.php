@@ -7,6 +7,7 @@ use App\Models\OrderPayment;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Payment\WebhookController;
 
 class PaymentService
 {
@@ -59,8 +60,12 @@ class PaymentService
     public function handleWebhook(array $data): void
     {
         // Retrouver le paiement via la référence externe (notre idempotency_key)
-        $payment = OrderPayment::where('idempotency_key', $data['external_reference'])
-            ->first();
+
+        $payment = OrderPayment::where(
+            'idempotency_key',
+            $data['external_reference']
+        )->first();
+
 
         if (! $payment) {
             Log::warning('Webhook Campay : paiement introuvable', $data);
@@ -95,57 +100,56 @@ class PaymentService
     //
     // Le webhook reste prioritaire.
     // Cette méthode sert uniquement de sécurité si le webhook tarde.
+    // Synchronise le statut de la commande avec Campay
+    // Appelée par le polling JS toutes les 5 secondes
+    // Le webhook reste prioritaire — ceci est un fallback
     public function synchronize(Order $order): string
     {
         $payment = $order->payment;
 
-        // Aucun paiement lancé
-        if (!$payment->provider_reference) {
+        // Si pas encore de référence Campay, rien à synchroniser
+        if (! $payment->provider_reference) {
+            return $order->status;
+        }
+
+        // Si déjà dans un état final, pas besoin d'interroger Campay
+        if (in_array($order->status, [
+            Order::STATUS_PAID,
+            Order::STATUS_COMPLETED,
+            Order::STATUS_AUTO_COMPLETED,
+            Order::STATUS_CANCELLED,
+            Order::STATUS_FAILED,
+        ])) {
             return $order->status;
         }
 
         try {
-
+            // Interroger Campay directement
             $transaction = $this->campay->getTransaction(
                 $payment->provider_reference
             );
 
-            $status = strtoupper(
-                $transaction['status'] ?? ''
-            );
+            $campayStatus = strtoupper($transaction['status'] ?? '');
 
-            match ($status) {
-
-                'SUCCESSFUL' => $this->confirmPayment(
-                    $order,
-                    $payment,
-                    $transaction
-                ),
-
-                'FAILED' => $this->failPayment(
-                    $order,
-                    $payment
-                ),
-
-                default => null,
+            // Traiter selon le statut Campay
+            match ($campayStatus) {
+                'SUCCESSFUL' => $this->confirmPayment($order, $payment, $transaction),
+                'FAILED'     => $this->failPayment($order, $payment),
+                default      => null, // PENDING — on attend
             };
         } catch (\Throwable $e) {
-
-            Log::warning(
-                'Synchronisation Campay impossible',
-                [
-                    'order' => $order->reference,
-                    'error' => $e->getMessage(),
-                ]
-            );
+            // Ne pas planter la page si Campay est injoignable
+            Log::warning('Synchronisation Campay échouée', [
+                'order' => $order->reference,
+                'error' => $e->getMessage(),
+            ]);
         }
 
+        // Recharger la commande pour avoir le statut à jour
         $order->refresh();
 
         return $order->status;
     }
-
-
     // ── CONFIRMER UN PAIEMENT RÉUSSI ─────────────────────────────────
 
     private function confirmPayment(Order $order, OrderPayment $payment, array $data): void

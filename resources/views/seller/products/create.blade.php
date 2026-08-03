@@ -76,7 +76,7 @@
                         <label class="block text-sm font-bold text-slate-700 mb-1.5">
                             Prix actuel (FCFA) <span class="text-red-500">*</span>
                         </label>
-                        <input type="number" name="price" value="{{ old('price') }}" required min="20"
+                        <input type="number" name="price" value="{{ old('price') }}" required min="1"
                             max="10000000" placeholder="Ex : 5000"
                             class="w-full bg-slate-50/80 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all outline-none">
                     </div>
@@ -85,7 +85,7 @@
                         <label class="block text-sm font-bold text-slate-700 mb-1.5">
                             Ancien prix <span class="text-slate-400 font-normal">(Optionnel)</span>
                         </label>
-                        <input type="number" name="old_price" value="{{ old('old_price') }}" min="20"
+                        <input type="number" name="old_price" value="{{ old('old_price') }}" min="1"
                             placeholder="Ex : 7000 (Prix barré)"
                             class="w-full bg-slate-50/80 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all outline-none">
                     </div>
