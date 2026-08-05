@@ -17,6 +17,12 @@ use App\Http\Controllers\MessagingController;
 use App\Http\Controllers\Buyer\PaymentController;
 use App\Http\Controllers\Payment\WebhookController;
 
+use App\Http\Controllers\Buyer\DisputeController as BuyerDisputeController;
+use App\Http\Controllers\Seller\DisputeController as SellerDisputeController;
+use App\Http\Controllers\Admin\DisputeController as AdminDisputeController;
+use App\Http\Controllers\Buyer\ReviewController as BuyerReviewController;
+use App\Http\Controllers\Seller\ReviewController as SellerReviewController;
+use Illuminate\Auth\Events\Verified;
 
 // Route::get('/', function () {
 //         return view('welcome');
@@ -63,7 +69,7 @@ Route::middleware(['auth', 'role:seller'])->prefix('seller')->group(function () 
         Route::get('/kyc/rejected', [KycSellerController::class, 'rejected'])->name('seller.kyc.rejected');
 });
 
-// Admin — KYC
+// Admin — KYC          
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         Route::get('/kyc/file', [KycAdmincontroller::class, 'serveFile'])->name('admin.kyc.file');
         Route::get('/kyc', [KycAdmincontroller::class, 'index'])->name('admin.kyc.index');
@@ -190,12 +196,6 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
 
 
 
-
-
-
-
-
-
 use App\Http\Controllers\Seller\WalletController;
 
 // Portefeuille vendeur
@@ -254,3 +254,50 @@ Route::get('/agence/recherche-commande', function (Request $request) {
                 'destination_city' => $order->shipment->destination_city,
         ]);
 })->middleware(['auth', 'role:secretary'])->name('secretary.search');
+
+
+
+
+// Litiges acheteur
+Route::middleware(['auth', 'role:buyer'])->group(function () {
+        Route::get('/commandes/{order}/litige', [BuyerDisputeController::class, 'create'])
+                ->name('buyer.disputes.create');
+        Route::post('/commandes/{order}/litige', [BuyerDisputeController::class, 'store'])
+                ->name('buyer.disputes.store');
+        Route::get('/litiges/{dispute}', [BuyerDisputeController::class, 'show'])
+                ->name('buyer.disputes.show');
+});
+
+// Litiges vendeur
+Route::middleware(['auth', 'role:seller'])->prefix('vendeur')->group(function () {
+        Route::get('/litiges', [SellerDisputeController::class, 'index'])
+                ->name('seller.disputes.index');
+        Route::post('/litiges/{dispute}/repondre', [SellerDisputeController::class, 'reply'])
+                ->name('seller.disputes.reply');
+});
+
+// Litiges admin
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+        Route::get('/litiges', [AdminDisputeController::class, 'index'])
+                ->name('admin.disputes.index');
+        Route::get('/litiges/{dispute}', [AdminDisputeController::class, 'show'])
+                ->name('admin.disputes.show');
+        Route::post('/litiges/{dispute}/resoudre', [AdminDisputeController::class, 'resolve'])
+                ->name('admin.disputes.resolve');
+});
+
+
+
+// Avis acheteur
+Route::middleware(['auth', 'role:buyer'])->group(function () {
+        Route::get('/commandes/{order}/noter', [BuyerReviewController::class, 'create'])
+                ->name('buyer.reviews.create');
+        Route::post('/commandes/{order}/noter', [BuyerReviewController::class, 'store'])
+                ->name('buyer.reviews.store');
+});
+
+// Avis vendeur sur acheteur
+Route::middleware(['auth', 'role:seller'])->prefix('vendeur')->group(function () {
+        Route::post('/commandes/{order}/noter-acheteur', [SellerReviewController::class, 'store'])
+                ->name('seller.reviews.store');
+});

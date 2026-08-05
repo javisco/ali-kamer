@@ -52,18 +52,18 @@ class AgencyCounter extends Model
     /**
      * Colis enregistrés au départ de ce guichet
      */
-    // public function originShipments(): HasMany
-    // {
-    //     return $this->hasMany(OrderShipment::class, 'origin_counter_id');
-    // }
+    public function originShipments(): HasMany
+    {
+        return $this->hasMany(OrderShipment::class, 'origin_counter_id');
+    }
 
-    // /**
-    //  * Colis réceptionnés à l'arrivée dans ce guichet
-    //  */
-    // public function destinationShipments(): HasMany
-    // {
-    //     return $this->hasMany(OrderShipment::class, 'destination_counter_id');
-    // }
+    /**
+     * Colis réceptionnés à l'arrivée dans ce guichet
+     */
+    public function destinationShipments(): HasMany
+    {
+        return $this->hasMany(OrderShipment::class, 'destination_counter_id');
+    }
 
 
     // Colis reçus à ce guichet

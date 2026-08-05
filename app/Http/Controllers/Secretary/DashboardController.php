@@ -18,10 +18,10 @@ class DashboardController extends Controller
         $secretary = auth()->user();
 
         // Récupérer le guichet principal du secrétaire
-        $counter = $secretary->agencyCounters()
-                             ->wherePivot('is_primary', true)
-                             ->with('agency')
-                             ->first();
+        $counter = $secretary->assignedCounters()
+            ->wherePivot('is_primary', true)
+            ->with('agency')
+            ->first();
 
         // Colis en attente de dépôt (commandes en statut preparing)
         // Filtrées par ville du guichet
@@ -33,9 +33,11 @@ class DashboardController extends Controller
         if ($counter) {
             // Colis à enregistrer au départ
             $pendingDeposit = Order::where('status', Order::STATUS_PREPARING)
-                ->whereHas('shipment', fn($q) =>
+                ->whereHas(
+                    'shipment',
+                    fn($q) =>
                     $q->where('destination_city', $counter->city)
-                      ->orWhere('destination_city', '!=', $counter->city)
+                        ->orWhere('destination_city', '!=', $counter->city)
                 )
                 ->with(['shop', 'shipment', 'buyer'])
                 ->latest()
@@ -43,10 +45,12 @@ class DashboardController extends Controller
 
             // Colis arrivés à ce guichet à valider
             $pendingArrival = Order::whereIn('status', [
-                    Order::STATUS_REGISTERED_ORIGIN,
-                    Order::STATUS_IN_TRANSIT,
-                ])
-                ->whereHas('shipment', fn($q) =>
+                Order::STATUS_REGISTERED_ORIGIN,
+                Order::STATUS_IN_TRANSIT,
+            ])
+                ->whereHas(
+                    'shipment',
+                    fn($q) =>
                     $q->where('destination_city', $counter->city)
                 )
                 ->with(['shop', 'shipment', 'buyer'])
@@ -55,7 +59,10 @@ class DashboardController extends Controller
         }
 
         return view('secretary.dashboard', compact(
-            'secretary', 'counter', 'pendingDeposit', 'pendingArrival'
+            'secretary',
+            'counter',
+            'pendingDeposit',
+            'pendingArrival'
         ));
     }
 
@@ -73,7 +80,8 @@ class DashboardController extends Controller
         );
 
         return redirect()->route('secretary.dashboard')
-            ->with('success',
+            ->with(
+                'success',
                 "Colis enregistré — Commande {$order->reference} pour {$order->shipment->destination_city}."
             );
     }
@@ -94,7 +102,8 @@ class DashboardController extends Controller
         );
 
         return redirect()->route('secretary.dashboard')
-            ->with('success',
+            ->with(
+                'success',
                 "Arrivée validée — OTP envoyé à l'acheteur. Timer 72h démarré."
             );
     }

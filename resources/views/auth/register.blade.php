@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-white py-12">
+    <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-white py-5">
 
         <div class="max-w-5xl mx-auto px-4">
 

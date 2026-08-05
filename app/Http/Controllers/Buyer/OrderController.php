@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -15,7 +16,7 @@ class OrderController extends Controller
 
     public function index()
     {
-        $orders = Order::where('buyer_id', auth()->id())
+        $orders = Order::where('buyer_id', Auth::user()->id)
             ->with(['shop', 'items', 'payment'])
             ->latest()
             ->paginate(20);
@@ -36,10 +37,10 @@ class OrderController extends Controller
     public function store(OrderRequest $request)
     {
 
-        $order = $this->orderService->create(auth()->user(), $request->validated());
+        $order = $this->orderService->create(Auth::user()->id, $request->validated());
 
         // Vérifier que c'est bien la commande de cet acheteur
-        abort_unless($order->buyer_id === auth()->id(), 403);
+        abort_unless($order->buyer_id === Auth::user()->id, 403);
 
         // Vérifier que le paiement est bien en attente
         abort_unless(
@@ -52,14 +53,14 @@ class OrderController extends Controller
 
     public function show(Order $order)
     {
-        abort_unless($order->buyer_id === auth()->id(), 403);
+        abort_unless($order->buyer_id === Auth::user()->id, 403);
         $order->load(['items.product', 'payment', 'shipment', 'shop']);
         return view('buyer.orders.show', compact('order'));
     }
 
     public function cancel(Order $order, Request $request)
     {
-        abort_unless($order->buyer_id === auth()->id(), 403);
+        abort_unless($order->buyer_id === Auth::user()->id, 403);
         abort_unless(in_array($order->status, ['pending', 'awaiting_payment']), 403);
 
         $this->orderService->cancel($order, 'Annulé par l\'acheteur.');

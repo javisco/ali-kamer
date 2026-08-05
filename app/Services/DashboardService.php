@@ -14,25 +14,25 @@ class DashboardService
             return redirect()->route('buyer.dashboard');
         } else
         if ($user->role === 'seller') {
-            
+
             $kyc = $user->kycDocument;
             if (!$user->shop) {
                 return redirect()->route('seller.shop.create');
             } else
-            // if ($user->shop && $user->shop->isActive()) {
-            //     return "javisco viens gérer le cas ci.";
-            // }
-            if ($kyc?->isApproved()) {
-                return redirect()->route('seller.dashboard');
-            } else
+                // if ($user->shop && $user->shop->isActive()) {
+                //     return "javisco viens gérer le cas ci.";
+                // }
+                if ($kyc?->isApproved()) {
+                    return redirect()->route('seller.dashboard');
+                } else
             if ($kyc?->isPending()) {
-                return redirect()->route('seller.kyc.pending');
-            } else
+                    return redirect()->route('seller.kyc.pending');
+                } else
             if ($kyc?->isRejected()) {
-                return redirect()->route('seller.kyc.rejected');
-            } else {
-                return redirect()->route('seller.kyc.create');
-            }
+                    return redirect()->route('seller.kyc.rejected');
+                } else {
+                    return redirect()->route('seller.kyc.create');
+                }
         } else
         if ($user->role == 'secretary') {
             return redirect()->route('secretary.dashboard');

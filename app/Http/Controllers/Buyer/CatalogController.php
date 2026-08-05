@@ -23,7 +23,10 @@ class CatalogController extends Controller
         }
 
         if ($request->filled('category')) {
-            $query->byCategory($request->category);
+            $category = Category::where('name', $request->category)->first();
+            if ($category) {
+                $query->byCategory($category->id);
+            }
         }
 
         if ($request->filled('city')) {
@@ -43,7 +46,7 @@ class CatalogController extends Controller
         }
 
         // Tri
-        match($request->get('sort', 'recent')) {
+        match ($request->get('sort', 'recent')) {
             'price_asc'  => $query->orderBy('price', 'asc'),
             'price_desc' => $query->orderBy('price', 'desc'),
             'popular'    => $query->orderBy('orders_count', 'desc'),

@@ -27,4 +27,5 @@ class SecretaryCounter extends Model
     {
         return $this->belongsTo(AgencyCounter::class, 'agency_counter_id');
     }
+
 }

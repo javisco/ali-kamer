@@ -105,7 +105,13 @@
                     </div>
                 </div>
             @endif
-
+            @if ($order->isCompleted())
+                <a href="{{ route('buyer.reviews.create', $order) }}"
+                    class="block w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold
+              py-3 rounded-2xl text-center text-sm transition">
+                    ★ Noter cette commande
+                </a>
+            @endif
             {{-- Bloc d'instruction si le paiement est requis --}}
             @if ($order->status === 'awaiting_payment')
                 <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5 mb-6">
@@ -146,7 +152,6 @@
                     </div>
                 </div>
             @endif
-
             {{-- Code OTP si colis arrivé --}}
             @if ($order->status === 'awaiting_buyer_confirmation' && $order->otp_code)
                 <div class="bg-indigo-600 rounded-2xl p-6 mb-6 text-center text-white shadow-lg shadow-indigo-100">
@@ -309,8 +314,7 @@
                 {{-- Actions --}}
                 <div class="flex flex-col gap-3 pt-2">
                     @if (in_array($order->status, ['pending', 'awaiting_payment']))
-                        <form method="POST" action="{{ route('buyer.orders.cancel', $order) }}"
-                            onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette commande ?')">
+                        <form method="POST" action="{{ route('buyer.orders.cancel', $order) }}">
                             @csrf
                             <button
                                 class="w-full border-2 border-red-200 text-red-600 font-semibold
@@ -319,13 +323,28 @@
                             </button>
                         </form>
                     @endif
-
                     @if ($order->canBeDisputed())
-                        <a href="#"
-                            class="block w-full border-2 border-orange-200 text-orange-600 font-semibold
-                              py-3 rounded-2xl hover:bg-orange-50 transition text-sm text-center">
-                            Signaler un problème / Ouvrir un litige
-                        </a>
+
+                        @if ($order->dispute)
+                            <a href="{{ route('buyer.disputes.show', $order->dispute) }}"
+                                class="block w-full bg-red-50 border-2 border-red-200 text-red-700
+                                    font-semibold py-3 rounded-2xl hover:bg-red-100
+                                 transition text-sm text-center">
+
+                                Voir le litige
+
+                            </a>
+                        @else
+                            <a href="{{ route('buyer.disputes.create', $order) }}"
+                                class="block w-full bg-orange-50 border-2 border-orange-200 text-orange-700
+                                        font-semibold py-3 rounded-2xl hover:bg-orange-100
+                                        transition text-sm text-center">
+
+                                ⚠️ Signaler un problème / Ouvrir un litige
+
+                            </a>
+                        @endif
+
                     @endif
 
                     <a href="{{ route('buyer.orders.index') }}"

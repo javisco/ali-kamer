@@ -122,8 +122,12 @@ class Order extends Model
 
     public function canBeDisputed(): bool
     {
-        return $this->status === self::STATUS_AWAITING_BUYER_CONFIRMATION
-            || $this->status === self::STATUS_ARRIVED_DESTINATION;
+        return in_array($this->status, [
+            self::STATUS_ARRIVED_DESTINATION,
+            self::STATUS_AWAITING_BUYER_CONFIRMATION,
+            'completed',
+            'auto_completed',
+        ]);
     }
 
     public function isTimerExpired(): bool
