@@ -6,14 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
+use App\Models\User as ModelsUser;
+use App\Services\AuthService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Services\DashboardService;
+use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
 
-    public function __construct(protected DashboardService $dashboard_service) {}
+    public function __construct(protected DashboardService $dashboard_service, protected AuthService $authservice) {}
 
     public function showFormRegister()
     {
@@ -31,7 +34,7 @@ class AuthController extends Controller
         }
 
         $validate = $request->validated();
-        $validate['password'] = Hash::make($request->password);
+      //  $this->authservice->checkBlacklist($validate['phone']);
         User::create($validate);
         return redirect()->route('login.show')->with('register', "compte creer avec success.connetez-vous pour continuer");
     }
@@ -48,14 +51,14 @@ class AuthController extends Controller
     }
     public function login(LoginRequest $request)
     {
-        $validate = $request->validated();
 
-        if (Auth::attempt($validate)) {
+        $validate = $request->validated();
+        if (Auth::attempt($validate, $request->remember)) {
             $request->session()->regenerate();
             $user = Auth::user();
             if (!$user->hasVerifiedEmail()) {
                 $user->sendEmailVerificationNotification();
-           
+
                 return redirect()->route('verification.notice');
             }
             return   $this->dashboard_service->dashboard($user);
@@ -63,9 +66,13 @@ class AuthController extends Controller
 
         return back()->with('fail', 'mot de passe ou email incorrecte');
     }
-    public function logout()
+    public function logout(Request $request)
     {
+
         Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
         return redirect()->route('buyer.home');
     }
 }

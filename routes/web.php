@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\VerifiedEmailController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Seller\KycSellerController;
 use App\Http\Controllers\Admin\KycAdmincontroller;
+use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Seller\ProductController;
 use App\Http\Controllers\Buyer\CatalogController;
 use App\Http\Controllers\Seller\ShopController;
@@ -16,34 +17,46 @@ use App\Http\Controllers\Buyer\DashboardController as BuyerDashboardController;
 use App\Http\Controllers\MessagingController;
 use App\Http\Controllers\Buyer\PaymentController;
 use App\Http\Controllers\Payment\WebhookController;
-
+use App\Http\Controllers\Secretary\DashboardController;
 use App\Http\Controllers\Buyer\DisputeController as BuyerDisputeController;
 use App\Http\Controllers\Seller\DisputeController as SellerDisputeController;
 use App\Http\Controllers\Admin\DisputeController as AdminDisputeController;
 use App\Http\Controllers\Buyer\ReviewController as BuyerReviewController;
 use App\Http\Controllers\Seller\ReviewController as SellerReviewController;
 use Illuminate\Auth\Events\Verified;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Seller\WalletController;
+
+use App\Http\Controllers\Admin\AgencyController;
+use App\Models\Agency;
+use App\Models\AgencyCounter;
 
 // Route::get('/', function () {
 //         return view('welcome');
 // });
+
+
 
 //authentification
 Route::get('/register', [AuthController::class, 'showFormRegister'])->name('register.show');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::get('/login', [AuthController::class, 'showFormLogin'])->name('login.show');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 //verification de l'email
-Route::middleware(['auth',])->group(function () {
+
+Route::middleware(['auth'])->group(function () {
         Route::get('/email/email-verify', [VerifiedEmailController::class, 'verifiedEmail'])->name('verification.notice');
+
         Route::get('/email/verify/{id}/{hash}', [VerifiedEmailController::class, 'verify'])
                 ->middleware('signed')
                 ->name('verification.verify');
         Route::post('/email/verification-notification', [VerifiedEmailController::class, 'resend'])
-                ->name('verification.send');
+                ->middleware('throttle:6,1')->name('verification.send');
 });
+
+
 
 //mot de passe oublier
 Route::middleware('guest')->group(function () {
@@ -62,15 +75,15 @@ Route::middleware('guest')->group(function () {
 });
 
 // Vendeur — KYC
-Route::middleware(['auth', 'role:seller'])->prefix('seller')->group(function () {
+Route::middleware(['auth', 'verified', 'role:seller'])->prefix('seller')->group(function () {
         Route::get('/kyc', [KycSellerController::class, 'create'])->name('seller.kyc.create');
         Route::post('/kyc', [KycSellercontroller::class, 'store'])->name('seller.kyc.store');
         Route::get('/kyc/attente', [KycSellerController::class, 'pending'])->name('seller.kyc.pending');
         Route::get('/kyc/rejected', [KycSellerController::class, 'rejected'])->name('seller.kyc.rejected');
 });
 
-// Admin — KYC          
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+// Admin — KYC
+Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->group(function () {
         Route::get('/kyc/file', [KycAdmincontroller::class, 'serveFile'])->name('admin.kyc.file');
         Route::get('/kyc', [KycAdmincontroller::class, 'index'])->name('admin.kyc.index');
         Route::get('/kyc/{kyc}', [KycAdmincontroller::class, 'show'])->name('admin.kyc.show');
@@ -79,14 +92,14 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 });
 
 //boutique -  vendeur
-Route::middleware(['auth', 'role:seller'])->prefix('vendeur')->group(function () {
+Route::middleware(['auth', 'verified', 'role:seller'])->prefix('vendeur')->group(function () {
         Route::get('/boutique/creer', [ShopController::class, 'create'])->name('seller.shop.create');
         Route::post('/boutique', [ShopController::class, 'store'])->name('seller.shop.store');
         Route::get('/boutique/modifier', [ShopController::class, 'edit'])->name('seller.shop.edit');
         Route::put('/boutique', [ShopController::class, 'update'])->name('seller.shop.update');
 });
 
-Route::middleware(['auth', 'role:buyer'])->prefix('acheteur')->group(function () {
+Route::middleware(['auth', 'verified', 'role:buyer'])->prefix('acheteur')->group(function () {
         Route::get('/dashboard', [BuyerDashboardController::class, 'index'])->name('buyer.dashboard');
 });
 
@@ -98,7 +111,7 @@ Route::get('/boutique/{shop}', [CatalogController::class, 'shop'])->name('shop.s
 // ── Produits vendeur ──────────────────────────────────────────────
 // Route::middleware(['auth', 'role:seller'])->prefix('vendeur')->group(function () {});
 
-Route::middleware(['auth', 'role:seller', 'shop.active'])->prefix('vendeur')->group(function () {
+Route::middleware(['auth', 'verified', 'role:seller', 'shop.active'])->prefix('vendeur')->group(function () {
         Route::get('/dasboard', [ProductController::class, 'dashboard'])->name('seller.dashboard');
         Route::get('/produits', [ProductController::class, 'index'])
                 ->name('seller.products.index');
@@ -121,7 +134,7 @@ Route::middleware(['auth', 'role:seller', 'shop.active'])->prefix('vendeur')->gr
 });
 
 // ── Commandes acheteur ────────────────────────────────────────────
-Route::middleware(['auth', 'role:buyer'])->prefix('commandes')->group(function () {
+Route::middleware(['auth', 'verified', 'role:buyer'])->prefix('commandes')->group(function () {
         Route::get('/', [BuyerOrderController::class, 'index'])->name('buyer.orders.index');
         Route::get('/passer/{product}', [BuyerOrderController::class, 'create'])->name('buyer.orders.create');
         Route::post('/', [BuyerOrderController::class, 'store'])->name('buyer.orders.store');
@@ -130,14 +143,14 @@ Route::middleware(['auth', 'role:buyer'])->prefix('commandes')->group(function (
 });
 
 // ── Commandes vendeur ─────────────────────────────────────────────
-Route::middleware(['auth', 'role:seller'])->prefix('vendeur')->group(function () {
+Route::middleware(['auth', 'verified', 'role:seller'])->prefix('vendeur')->group(function () {
         Route::get('/commandes', [SellerOrderController::class, 'index'])->name('seller.orders.index');
         Route::get('/commandes/{order}', [SellerOrderController::class, 'show'])->name('seller.orders.show');
         Route::post('/commandes/{order}/preparer', [SellerOrderController::class, 'markPreparing'])->name('seller.orders.preparing');
 });
 
 //messagerie
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
 
         // Liste des conversations
         Route::get('/messages', [MessagingController::class, 'index'])
@@ -171,7 +184,7 @@ Route::post('/webhooks/campay', [WebhookController::class, 'campay'])
         ->name('payment.webhook.campay');
 
 // Pages paiement acheteur
-Route::middleware(['auth', 'role:buyer'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
         // Route::get('/paiement/{order}', [PaymentController::class, 'show'])
         //         ->name('buyer.payment.show');
         Route::get('/paiement/{order}/initier', [PaymentController::class, 'initiate'])
@@ -182,24 +195,8 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
                 ->name('buyer.orders.status');
 });
 
-
-// Route appelée par le JS de la page d'attente
-// Retourne le statut de la commande en JSON
-
-// Route::get('/commandes/{order}/statut', function (Order $order) {
-//         abort_unless($order->buyer_id === auth()->id(), 403);
-//         return response()->json(['status' => $order->status]);
-// })->middleware(['auth', 'role:buyer'])->name('buyer.orders.status');
-
-//cette route remplace celle du haut
-
-
-
-
-use App\Http\Controllers\Seller\WalletController;
-
 // Portefeuille vendeur
-Route::middleware(['auth', 'role:seller'])->prefix('vendeur')->group(function () {
+Route::middleware(['auth', 'verified', 'role:seller'])->prefix('vendeur')->group(function () {
         Route::get('/portefeuille', [WalletController::class, 'index'])
                 ->name('seller.wallet.index');
         Route::get('/portefeuille/retrait', [WalletController::class, 'withdrawForm'])
@@ -208,11 +205,8 @@ Route::middleware(['auth', 'role:seller'])->prefix('vendeur')->group(function ()
                 ->name('seller.wallet.withdraw.post');
 });
 
-
-use App\Http\Controllers\Secretary\DashboardController;
-
 // Interface secrétaire agence
-Route::middleware(['auth', 'role:secretary'])
+Route::middleware(['auth', 'verified', 'role:secretary'])
         ->prefix('agence')
         ->group(function () {
 
@@ -233,7 +227,7 @@ Route::middleware(['auth', 'role:secretary'])
                         ->name('secretary.otp');
         });
 
-use Illuminate\Http\Request;
+
 
 // Recherche commande par référence pour la remise OTP
 Route::get('/agence/recherche-commande', function (Request $request) {
@@ -253,13 +247,13 @@ Route::get('/agence/recherche-commande', function (Request $request) {
                 'buyer'            => $order->buyer->name,
                 'destination_city' => $order->shipment->destination_city,
         ]);
-})->middleware(['auth', 'role:secretary'])->name('secretary.search');
+})->middleware(['auth', 'verified', 'role:secretary'])->name('secretary.search');
 
 
 
 
 // Litiges acheteur
-Route::middleware(['auth', 'role:buyer'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
         Route::get('/commandes/{order}/litige', [BuyerDisputeController::class, 'create'])
                 ->name('buyer.disputes.create');
         Route::post('/commandes/{order}/litige', [BuyerDisputeController::class, 'store'])
@@ -269,7 +263,7 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
 });
 
 // Litiges vendeur
-Route::middleware(['auth', 'role:seller'])->prefix('vendeur')->group(function () {
+Route::middleware(['auth', 'verified', 'role:seller'])->prefix('vendeur')->group(function () {
         Route::get('/litiges', [SellerDisputeController::class, 'index'])
                 ->name('seller.disputes.index');
         Route::post('/litiges/{dispute}/repondre', [SellerDisputeController::class, 'reply'])
@@ -277,7 +271,7 @@ Route::middleware(['auth', 'role:seller'])->prefix('vendeur')->group(function ()
 });
 
 // Litiges admin
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->group(function () {
         Route::get('/litiges', [AdminDisputeController::class, 'index'])
                 ->name('admin.disputes.index');
         Route::get('/litiges/{dispute}', [AdminDisputeController::class, 'show'])
@@ -289,7 +283,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 
 
 // Avis acheteur
-Route::middleware(['auth', 'role:buyer'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
         Route::get('/commandes/{order}/noter', [BuyerReviewController::class, 'create'])
                 ->name('buyer.reviews.create');
         Route::post('/commandes/{order}/noter', [BuyerReviewController::class, 'store'])
@@ -297,7 +291,76 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
 });
 
 // Avis vendeur sur acheteur
-Route::middleware(['auth', 'role:seller'])->prefix('vendeur')->group(function () {
+Route::middleware(['auth', 'verified', 'role:seller'])->prefix('vendeur')->group(function () {
         Route::post('/commandes/{order}/noter-acheteur', [SellerReviewController::class, 'store'])
                 ->name('seller.reviews.store');
 });
+
+Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->group(function () {
+
+        // Dashboard
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])
+                ->name('admin.dashboard');
+
+        // Utilisateurs
+        Route::get('/utilisateurs', [AdminDashboardController::class, 'users'])
+                ->name('admin.users.index');
+        Route::post('/utilisateurs/{user}/bannir', [AdminDashboardController::class, 'banUser'])
+                ->name('admin.users.ban');
+        Route::post('/utilisateurs/{user}/reactiver', [AdminDashboardController::class, 'unbanUser'])
+                ->name('admin.users.unban');
+        // Blacklister un vendeur
+        Route::post('/utilisateurs/{user}/blacklister', [AdminDashboardController::class, 'blacklistUser'])
+                ->name('admin.users.blacklist');
+});
+
+
+
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+
+        // Agences
+        Route::get('/agences', [AgencyController::class, 'index'])
+                ->name('admin.agencies.index');
+        Route::get('/agences/creer', [AgencyController::class, 'create'])
+                ->name('admin.agencies.create');
+        Route::post('/agences', [AgencyController::class, 'store'])
+                ->name('admin.agencies.store');
+        Route::get('/agences/{agency}', [AgencyController::class, 'show'])
+                ->name('admin.agencies.show');
+        Route::put('/agences/{agency}', [AgencyController::class, 'update'])
+                ->name('admin.agencies.update');
+        Route::post('/agences/{agency}/toggle', [AgencyController::class, 'toggle'])
+                ->name('admin.agencies.toggle');
+
+        // Villes desservies
+        Route::post('/agences/{agency}/villes', [AgencyController::class, 'addCity'])
+                ->name('admin.agencies.cities.add');
+        Route::post('/agences/villes/{city}/toggle', [AgencyController::class, 'toggleCity'])
+                ->name('admin.agencies.cities.toggle');
+
+        // Comptoirs
+        Route::post('/agences/{agency}/comptoirs', [AgencyController::class, 'storeCounter'])
+                ->name('admin.agencies.counters.store');
+        Route::post('/agences/comptoirs/{counter}/toggle', [AgencyController::class, 'toggleCounter'])
+                ->name('admin.agencies.counters.toggle');
+
+        // Secrétaires
+        Route::post('/agences/comptoirs/{counter}/secretaire', [AgencyController::class, 'storeSecretary'])
+                ->name('admin.agencies.secretary.store');
+});
+
+
+// Dans routes/web.php — pas besoin d'auth car données publiques
+Route::get('/api/agences/{agency}/comptoirs', function (Agency $agency, Request $request) {
+        $city     = $request->get('city');
+        $counters = AgencyCounter::where('agency_id', $agency->id)
+                ->where('city', $city)
+                ->where('is_active', true)
+                ->get(['id', 'city', 'district', 'landmark']);
+
+        return response()->json($counters);
+});
+
+Route::post('/commandes/{order}/preparer', [SellerOrderController::class, 'prepare'])
+        ->name('seller.orders.prepare');
+

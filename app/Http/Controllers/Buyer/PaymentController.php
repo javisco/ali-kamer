@@ -11,21 +11,6 @@ class PaymentController extends Controller
 {
     public function __construct(private PaymentService $paymentService) {}
 
-    // // Page de paiement après création de la commande
-    // public function show(Order $order)
-    // {
-    //     // Vérifier que c'est bien la commande de cet acheteur
-    //     abort_unless($order->buyer_id === auth()->id(), 403);
-
-    //     // Vérifier que le paiement est bien en attente
-    //     abort_unless(
-    //         in_array($order->status, ['pending', 'awaiting_payment', 'failed']),
-    //         404
-    //     );
-
-    //     return view('buyer.payment.show', compact('order'));
-    // }
-
     // Initier le paiement Campay (push USSD)
     public function initiate(Order $order)
     {

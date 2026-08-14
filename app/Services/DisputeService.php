@@ -35,7 +35,11 @@ class DisputeService
         }
 
         return DB::transaction(function () use (
-            $order, $initiator, $type, $description, $files
+            $order,
+            $initiator,
+            $type,
+            $description,
+            $files
         ) {
             // Créer le litige
             $dispute = Dispute::create([
@@ -58,7 +62,7 @@ class DisputeService
             $order->update(['status' => Order::STATUS_DISPUTED]);
 
             // Notifier l'admin et l'autre partie
-            // app(NotificationService::class)->notifyDisputeOpened($dispute);
+       //     app(NotificationService::class)->notifyDisputeOpened($dispute);
 
             return $dispute;
         });
@@ -93,7 +97,7 @@ class DisputeService
             $dispute->update(['status' => 'seller_replied']);
 
             // Notifier l'admin que le dossier est complet
-            // app(NotificationService::class)->notifyDisputeSellerReplied($dispute);
+          //  app(NotificationService::class)->notifyDisputeSellerReplied($dispute);
         });
     }
 
@@ -108,7 +112,11 @@ class DisputeService
     ): void {
 
         DB::transaction(function () use (
-            $dispute, $admin, $resolution, $note, $resolutionAmount
+            $dispute,
+            $admin,
+            $resolution,
+            $note,
+            $resolutionAmount
         ) {
             // Enregistrer la décision
             $dispute->update([
@@ -119,6 +127,9 @@ class DisputeService
                 'resolver_id'       => $admin->id,
                 'resolved_at'       => now(),
             ]);
+
+            // Après resolve() :
+          //  app(NotificationService::class)->notifyDisputeResolved($dispute);
 
             // Appliquer la décision financière
             $this->applyResolution($dispute);

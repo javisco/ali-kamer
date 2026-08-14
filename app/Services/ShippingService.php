@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\AgencyCounter;
 use App\Models\Order;
+use App\Models\SecretaryCounter;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
@@ -13,48 +14,49 @@ class ShippingService
 
     // Le vendeur donne son code de dépôt au secrétaire
     // Le secrétaire saisit ce code — le colis apparaît et il valide
+
     public function registerByDepositCode(User $secretary, string $depositCode): Order
     {
-        // Chercher la commande correspondant au code
         $order = Order::where('deposit_code', $depositCode)
             ->where('status', Order::STATUS_PREPARING)
             ->first();
 
         if (! $order) {
-            throw new \Exception(
-                'Code invalide ou commande déjà enregistrée. Vérifiez le code et réessayez.'
-            );
+            throw new \Exception('Code invalide ou commande déjà enregistrée.');
         }
 
-        // Récupérer le guichet principal du secrétaire
-        $counter = $secretary->agencyCounters()
-            ->wherePivot('is_primary', true)
+        // Récupérer le comptoir du secrétaire
+        $secretaryCounter = SecretaryCounter::where('user_id', $secretary->id)
+            ->where('is_primary', true)
+            ->with('counter.agency')
             ->first();
 
-        if (! $counter) {
-            throw new \Exception('Aucun guichet principal assigné à ce compte.');
+        if (! $secretaryCounter) {
+            throw new \Exception('Aucun comptoir assigné à votre compte.');
+        }
+
+        $counter = $secretaryCounter->counter;
+
+        // Vérifier que l'agence du colis correspond à l'agence du secrétaire
+        // Un secrétaire Finexs ne peut pas traiter un colis General
+        if ($order->shipment->agency_id !== $counter->agency_id) {
+            throw new \Exception(
+                'Ce colis appartient à une autre agence. Vous ne pouvez pas le traiter.'
+            );
         }
 
         DB::transaction(function () use ($order, $secretary, $counter) {
 
-            // Enregistrer le guichet de départ et le secrétaire
             $order->shipment->update([
                 'origin_counter_id' => $counter->id,
                 'registered_by'     => $secretary->id,
                 'registered_at'     => now(),
             ]);
 
-            // Faire avancer le statut de la commande
             $order->update([
                 'status'     => Order::STATUS_REGISTERED_ORIGIN,
                 'shipped_at' => now(),
             ]);
-
-            // Notifier l'acheteur que son colis a été déposé
-            // app(NotificationService::class)->notifyBuyerPackageRegistered($order);
-
-            // Notifier le vendeur confirmation du dépôt
-            // app(NotificationService::class)->notifySellerPackageRegistered($order);
         });
 
         return $order->fresh();

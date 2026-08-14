@@ -118,24 +118,6 @@ class CampayService
 
     // ── VÉRIFICATION STATUT D'UNE TRANSACTION ────────────────────────
 
-    // Vérifie le statut d'une transaction via sa référence Campay
-    // Statuts possibles : PENDING, SUCCESSFUL, FAILED
-    public function checkStatus(string $campayReference): array
-    {
-        $response = Http::withHeaders([
-            'Authorization' => $this->authHeader(),
-            'Content-Type'  => 'application/json',
-        ])->get("{$this->baseUrl}/transaction/{$campayReference}/");
-
-        if (! $response->successful()) {
-            throw new \Exception(
-                'Vérification statut échouée : ' . $response->body()
-            );
-        }
-
-        return $response->json();
-    }
-
     //ajouter par chatgpt
     // ── RÉCUPÉRER UNE TRANSACTION PAR SA RÉFÉRENCE ───────────────────────
 

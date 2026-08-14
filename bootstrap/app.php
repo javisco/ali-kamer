@@ -13,15 +13,21 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-
-
         $middleware->alias([
             'role' => EnsureUserHasRole::class,
             'shop.active' => EnsureShopActive::class,
+            'check.status'   => \App\Http\Middleware\CheckAccountStatus::class,
+        ]);
+        // Appliquer check.status sur toutes les routes web authentifiées
+        $middleware->appendToGroup('web', [
+            \App\Http\Middleware\CheckAccountStatus::class,
         ]);
         $middleware->validateCsrfTokens(except: [
             'webhooks/campay',
         ]);
+    })->withMiddleware(function (Middleware $middleware) {
+        // Indique à Laravel de faire confiance à Ngrok
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

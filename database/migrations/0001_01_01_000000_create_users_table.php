@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Agency;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,29 +12,48 @@ return new class extends Migration
      */
     public function up(): void
     {
+
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+
+            // ── Identité ──────────────────────────────────────────────
             $table->string('name');
-            $table->string('email')->unique();
-            $table->string('phone')->unique();
-            $table->enum('role', ['buyer','seller', 'secretary', 'admin'])->default('buyer');
-            $table->enum('status', ['active', 'candidate', 'suspended', 'banned'])->default('active');
-            $table->string('phone_momo')->nullable();
-            // $table->string('momo_operator')->nullable(); // MTN, Orange
-            $table->boolean('is_banned')->default(false);
-            $table->integer('kyc_level')->default(0);
-            $table->integer('trust_score')->default(100);
-            $table->unsignedInteger('wallet_pending')->default(0); // Stocké en centimes/FCFA entier
-            $table->unsignedInteger('wallet_available')->default(0);
-            $table->foreignId('agency_id')->nullable()->index(); // Lié plus tard après la création de la table agences
-            // $table->string('referral_code')->nullable()->unique();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->string('email')->unique()->nullable();
+            $table->string('phone', 20)->unique();              // identifiant principal
             $table->string('password');
+            $table->timestamp('email_verified_at')->nullable();
+            $table->timestamp('phone_verified_at')->nullable();
+            $table->foreignId('agency_id')->nullable();
+            // ── Rôle & Statut ─────────────────────────────────────────
+            $table->enum('role', ['buyer', 'seller', 'secretary', 'admin'])->default('buyer');
+            $table->enum('status', ['candidate', 'active', 'suspended', 'banned'])->default('active');
+            // Note : un vendeur commence en status=candidate jusqu'à validation KYC
+            // Tous les autres rôles commencent en status=active
+
+            // ── Mobile Money ──────────────────────────────────────────
+            $table->string('phone_momo', 20)->nullable();
+            $table->enum('momo_operator', ['mtn', 'orange'])->nullable();
+
+            // ── Wallet ────────────────────────────────────────────────
+            // Ne jamais écrire directement ici — toujours via WalletService
+            $table->unsignedBigInteger('wallet_pending')->default(0);
+            $table->unsignedBigInteger('wallet_available')->default(0);
+
+            // ── Score acheteur ────────────────────────────────────────
+            $table->unsignedTinyInteger('trust_score')->default(100);
+            $table->unsignedSmallInteger('dispute_count')->default(0);
+            $table->unsignedSmallInteger('abuse_count')->default(0);
+            $table->boolean('prepayment_required')->default(false);
+            $table->boolean('purchase_restricted')->default(false);
+
+            // ── Divers ────────────────────────────────────────────────
+            $table->string('referral_code', 10)->unique()->nullable();
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
 
-            // Index pour optimiser les recherches et filtres rapides
-            $table->index(['role', 'status']);
+            $table->index('role');
+            $table->index('status');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

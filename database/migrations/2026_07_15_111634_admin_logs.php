@@ -13,13 +13,27 @@ return new class extends Migration
     {
         Schema::create('admin_logs', function (Blueprint $table) {
             $table->id();
+
+            // Admin qui a effectué l'action
             $table->foreignId('admin_id')->constrained('users');
-            $table->string('action'); // validate_kyc, resolve_dispute, ban_user...
-            $table->string('target_type'); // User, Shop, Order...
-            $table->unsignedBigInteger('target_id');
+
+            // Action effectuée — ex: 'kyc.approved', 'dispute.resolved'
+            $table->string('action');
+
+            // Entité concernée
+            $table->string('target_type')->nullable(); // ex: 'user', 'order'
+            $table->unsignedBigInteger('target_id')->nullable();
+
+            // Note descriptive
             $table->text('note')->nullable();
-            $table->string('ip');
+
+            // IP de l'admin au moment de l'action
+            $table->string('ip_address')->nullable();
+
             $table->timestamps();
+
+            $table->index(['target_type', 'target_id']);
+            $table->index('admin_id');
         });
     }
 

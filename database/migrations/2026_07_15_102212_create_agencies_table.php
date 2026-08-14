@@ -15,28 +15,13 @@ return new class extends Migration
         Schema::create('agencies', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('city'); // Douala, Yaoundé, Bafoussam...
-            $table->string('adress');
+            $table->string('slug')->unique();
             $table->string('contact_phone')->nullable();
+            $table->string('contact_email')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
 
-            $table->index('city');
-
-            // Schema::create('agencies', function (Blueprint $table) {
-            //     $table->id();
-
-            //     // Nom de l'agence partenaire (ex: "Finexs Express")
-            //     $table->string('name');
-            //     $table->string('slug')->unique();
-            //     $table->string('contact_phone')->nullable();
-            //     $table->string('contact_email')->nullable();
-
-            //     // Permet de désactiver une agence sans la supprimer
-            //     $table->boolean('is_active')->default(true);
-
-            //     $table->timestamps();
-            // });
+            //  $table->index('city');
         });
 
         Schema::table('users', function (Blueprint $table) {

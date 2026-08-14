@@ -80,12 +80,14 @@
                                 <select id="destination_city" name="destination_city" required
                                     class="w-full border-2 border-gray-300 focus:border-indigo-600 rounded-xl px-4 py-3 text-sm font-semibold text-gray-900 focus:ring-0 transition">
                                     <option value="">-- Choisir une ville --</option>
-                                    @foreach (['Douala', 'Yaoundé', 'Bafoussam', 'Bamenda', 'Buea', 'Limbé', 'Garoua', 'Maroua', 'Ngaoundéré', 'Bertoua', 'Ebolowa', 'Kribi'] as $city)
+                                    @forelse ($cities as $city)
                                         <option value="{{ $city }}"
                                             {{ old('destination_city') === $city ? 'selected' : '' }}>
                                             {{ $city }}
                                         </option>
-                                    @endforeach
+                                    @empty
+                                        <option value="" disabled>Aucune ville desservie pour le moment</option>
+                                    @endforelse
                                 </select>
                             </div>
                         </div>

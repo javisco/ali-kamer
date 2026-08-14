@@ -6,13 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\OrderRequest;
 use App\Models\Order;
 use App\Models\Product;
+use App\Services\AgencyService;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
-    public function __construct(private OrderService $orderService) {}
+    public function __construct(private OrderService $orderService, private AgencyService $agencyService) {}
 
     public function index()
     {
@@ -24,20 +25,24 @@ class OrderController extends Controller
         return view('buyer.orders.index', compact('orders'));
     }
 
+
     // Formulaire de commande
     public function create(Product $product)
     {
         abort_unless($product->isVisible(), 404);
         abort_unless($product->availableStock() > 0, 404);
 
-        return view('buyer.orders.create', compact('product'));
+        // Récupérer les villes actives desservies par au moins une agence active
+        $cities = $this->agencyService->getActiveCities();
+
+        return view('buyer.orders.create', compact('product', 'cities'));
     }
 
     // Passer la commande
     public function store(OrderRequest $request)
     {
 
-        $order = $this->orderService->create(Auth::user()->id, $request->validated());
+        $order = $this->orderService->create(Auth::user(), $request->validated());
 
         // Vérifier que c'est bien la commande de cet acheteur
         abort_unless($order->buyer_id === Auth::user()->id, 403);

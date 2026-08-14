@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class SecretaryCounter extends Model
 {
     protected $fillable = [
-        'user_id', 'agency_counter_id', 'is_primary',
+        'user_id',
+        'agency_counter_id',
+        'is_primary',
     ];
 
     protected function casts(): array
@@ -22,10 +24,9 @@ class SecretaryCounter extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    // Le guichet
+    // Le comptoir
     public function counter(): BelongsTo
     {
         return $this->belongsTo(AgencyCounter::class, 'agency_counter_id');
     }
-
 }

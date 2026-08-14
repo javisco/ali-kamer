@@ -73,6 +73,7 @@ class CatalogController extends Controller
             'images',
         ]);
 
+
         // Autres produits de la même catégorie
         $related = Product::visible()
             ->byCategory($product->category_id)

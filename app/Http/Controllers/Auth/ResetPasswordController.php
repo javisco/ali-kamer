@@ -8,6 +8,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\Auth\Str;
 
 class ResetPasswordController extends Controller
 {
@@ -114,6 +115,8 @@ class ResetPasswordController extends Controller
             )
 
         ]);
+        $user->setRememberToken(Str::random(60));
+        $user->save();
 
         /*
         |--------------------------------------------------------------------------

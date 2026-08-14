@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('agency_counters', function (Blueprint $table) {
             $table->id();
-
             // L'agence à laquelle appartient ce guichet
             $table->foreignId('agency_id')
                 ->constrained()

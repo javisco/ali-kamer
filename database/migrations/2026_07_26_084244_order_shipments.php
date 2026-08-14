@@ -16,7 +16,13 @@ return new class extends Migration
             $table->foreignId('order_id')->unique()->constrained()->cascadeOnDelete();
 
             $table->enum('type', ['interurban', 'local']);
-
+            // Ajouter cette colonne dans order_shipments
+            $table->foreignId('agency_id')
+                ->nullable()
+                ->constrained('agencies')
+                ->nullOnDelete();
+            // Le vendeur choisit l'agence — tous les comptoirs
+            // de départ et d'arrivée appartiennent à cette même agence
             $table->boolean('shipping_included');
             $table->unsignedInteger('transport_fee')->default(0);
             $table->boolean('transport_fee_paid')->default(false);

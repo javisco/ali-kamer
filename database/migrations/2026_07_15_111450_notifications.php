@@ -13,15 +13,41 @@ return new class extends Migration
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('channel'); // whatsapp, sms, push, email
-            $table->string('type'); // order_placed, otp_sent, kyc_approved...
-            $table->string('title');
+
+            // Destinataire de la notification
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+
+            // Canal d'envoi
+            $table->enum('channel', ['whatsapp', 'sms', 'push', 'email']);
+
+            // Type d'événement — ex: 'order.paid', 'dispute.opened'
+            $table->string('type');
+
+            $table->string('title')->nullable();
             $table->text('body');
-            $table->jsonb('data')->nullable(); // Variables contextuelles
+
+            // Données contextuelles (order_id, dispute_id, etc.)
+            $table->json('data')->nullable();
+
+            // Statut d'envoi
+            $table->enum('status', [
+                'pending',   // en file d'attente
+                'sent',      // envoyé
+                'delivered', // confirmé délivré
+                'failed',    // échec
+            ])->default('pending');
+
+            // Nombre de tentatives
+            $table->unsignedTinyInteger('retry_count')->default(0);
+
+            // Message d'erreur si échec
+            $table->text('error_message')->nullable();
+
             $table->timestamp('sent_at')->nullable();
-            $table->string('delivery_status')->default('queued'); // queued, sent, failed
             $table->timestamps();
+
+            $table->index(['user_id', 'status']);
+            $table->index('type');
         });
     }
 

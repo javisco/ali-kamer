@@ -26,6 +26,7 @@ class VerifiedEmailController extends Controller
 
     public function verify(EmailVerificationRequest $request)
     {
+
         // Cette méthode magique de Laravel s'occupe de tout :
         // Elle remplit la colonne `email_verified_at` et déclenche l'événement "Verified".
         $request->fulfill();

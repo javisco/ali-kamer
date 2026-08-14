@@ -49,7 +49,7 @@ class ProductSeeder extends Seeder
         ];
 
         foreach ($techItems as $index => $title) {
-            $price = rand(5, 100); // Prix entre 15 000 FCFA et 450 000 FCFA
+            $price = rand(10, 30); // Prix entre 15 000 FCFA et 450 000 FCFA
             $hasDiscount = rand(0, 1);
 
             Product::create([

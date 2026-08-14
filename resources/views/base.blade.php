@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@yield('title', 'Ali-Kamer — Achetez et vendez sans stress')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
 <body class="bg-[#FAF9F6] text-slate-800 antialiased font-sans">
@@ -100,8 +101,9 @@
                             class="px-4 py-2 rounded-full transition {{ request()->routeIs('seller.products.*') ? 'bg-blue-600 text-white font-semibold' : 'hover:text-black' }}">Produits</a>
                         <a href="{{ route('seller.orders.index') }}"
                             class="px-4 py-2 rounded-full transition {{ request()->routeIs('seller.orders.*') ? 'bg-blue-600 text-white font-semibold' : 'hover:text-black' }}">Commandes</a>
+
                         <a href="{{ route('seller.disputes.index') }}"
-                            class="relative flex items-center gap-2 px-4 py-2 rounded-full transition {{ request()->routeIs('messaging.*') ? 'bg-blue-600 font-semibold text-white shadow-sm' : 'hover:text-black' }}">Litiges</a>
+                            class="px-4 py-2 rounded-full transition {{ request()->routeIs('seller.disputes.*') ? 'bg-blue-600 text-white font-semibold' : 'hover:text-black' }}">litige</a>
                     @endif
                     @if (auth()->user()->role == 'seller' || auth()->user()->role == 'buyer')
                         <a href="{{ route('messaging.index') }}"
@@ -124,7 +126,7 @@
                         $dashboardRoute = match (auth()->user()->role) {
                             'seller' => route('seller.dashboard'),
                             'secretary' => route('secretary.dashboard'),
-                            'admin' => route('admin.kyc.index'),
+                            'admin' => route('admin.dashboard'),
                             default => route('buyer.dashboard'),
                         };
                         $isDashboardActive = request()->routeIs('*.dashboard');

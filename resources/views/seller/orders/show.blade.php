@@ -67,6 +67,86 @@
                 </div>
             @endif
 
+
+            @if ($order->status === 'paid')
+                <div class="bg-blue-50 border border-blue-200 rounded-2xl p-5 mb-6">
+                    <h2 class="font-bold text-blue-800 mb-4">
+                        Choisir l'agence pour expédier vers {{ $order->shipment->destination_city }}
+                    </h2>
+
+                    <form method="POST" action="{{ route('seller.orders.prepare', $order) }}" class="space-y-4">
+                        @csrf
+
+                        {{-- Choix de l'agence --}}
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                Agence <span class="text-red-500">*</span>
+                            </label>
+                            <select name="agency_id" id="agencySelect" required
+                                class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm
+                               focus:ring-2 focus:ring-indigo-500"
+                                onchange="loadCounters(this.value)">
+                                <option value="">-- Choisir une agence --</option>
+                                @foreach ($agencies as $agency)
+                                    <option value="{{ $agency->id }}">{{ $agency->name }}</option>
+                                @endforeach
+                            </select>
+                            <p class="text-xs text-gray-400 mt-1">
+                                Seules les agences qui desservent {{ $order->shipment->destination_city }}
+                                sont affichées.
+                            </p>
+                        </div>
+
+                        {{-- Choix du comptoir de départ --}}
+                        <div id="counterDiv" class="hidden">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                Comptoir de départ (dans votre ville) <span class="text-red-500">*</span>
+                            </label>
+                            <select name="counter_id" id="counterSelect" required
+                                class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm
+                               focus:ring-2 focus:ring-indigo-500">
+                                <option value="">-- Choisir un comptoir --</option>
+                            </select>
+                        </div>
+
+                        <button
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold
+                           py-3 rounded-xl transition text-sm">
+                            Confirmer l'expédition
+                        </button>
+                    </form>
+                </div>
+
+                @push('scripts')
+                    <script>
+                        // Charger les comptoirs de l'agence choisie dans la ville du vendeur
+                        function loadCounters(agencyId) {
+                            if (!agencyId) {
+                                document.getElementById('counterDiv').classList.add('hidden');
+                                return;
+                            }
+
+                            const sellerCity = "{{ $order->shop->city }}";
+
+                            fetch(`/api/agences/${agencyId}/comptoirs?city=${sellerCity}`)
+                                .then(r => r.json())
+                                .then(counters => {
+                                    const select = document.getElementById('counterSelect');
+                                    select.innerHTML = '<option value="">-- Choisir --</option>';
+
+                                    counters.forEach(c => {
+                                        select.innerHTML +=
+                                            `<option value="${c.id}">${c.district} — ${c.landmark ?? ''}</option>`;
+                                    });
+
+                                    document.getElementById('counterDiv').classList.remove('hidden');
+                                });
+                        }
+                    </script>
+                @endpush
+            @endif
+
+
             @if ($order->status === 'preparing')
                 <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-5 mb-6">
                     <h2 class="font-bold text-indigo-800 mb-2">📦 En préparation</h2>

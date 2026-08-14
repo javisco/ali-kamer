@@ -41,5 +41,9 @@ return [
         'password'        => env('CAMPAY_APP_PASSWORD'),
         'base_url'        => env('CAMPAY_BASE_URL', 'https://demo.campay.net/api'),
     ],
+    'whatsapp' => [
+        'phone_number_id' => env('WHATSAPP_PHONE_NUMBER_ID'),
+        'token'           => env('WHATSAPP_TOKEN'),
+    ],
 
 ];

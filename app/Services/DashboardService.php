@@ -38,7 +38,7 @@ class DashboardService
             return redirect()->route('secretary.dashboard');
         } else
         if ($user->role === 'admin') {
-            return redirect()->route('admin.kyc.index');
+            return redirect()->route('admin.dashboard');
         } else abort(403, 'vous n\'exister pas');
     }
 }

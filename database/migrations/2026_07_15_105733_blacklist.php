@@ -13,13 +13,26 @@ return new class extends Migration
     {
         Schema::create('blacklist', function (Blueprint $table) {
             $table->id();
-            $table->string('email');
-            $table->string('cni_hash', 64)->unique()->index(); // SHA-256 hash
+
+            // CNI hashée en SHA-256 — jamais stockée en clair
+            // Permet de bloquer une réinscription sans connaître le numéro CNI
+            $table->string('cni_hash')->nullable()->index();
+
+            // Numéro MoMo du fraudeur — bloque les retraits
             $table->string('phone_momo')->nullable()->index();
+
+            // Téléphone du fraudeur — bloque l'inscription
             $table->string('phone_number')->nullable()->index();
+
+            // IP au moment de la fraude
             $table->string('ip_address')->nullable();
+
+            // Motif du blacklistage
             $table->text('reason');
-            $table->foreignId('created_by')->constrained('users'); // Admin ayant banni
+
+            // Admin qui a blacklisté
+            $table->foreignId('created_by')->constrained('users');
+
             $table->timestamps();
         });
     }

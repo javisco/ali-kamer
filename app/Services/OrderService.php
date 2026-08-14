@@ -106,7 +106,7 @@ class OrderService
             // 6. Créer le paiement
             OrderPayment::create([
                 'order_id'         => $order->id,
-                'method'           => 'manual',
+                'method'           => 'campay',
                 'status'           => 'pending',
                 'idempotency_key'  => OrderPayment::generateIdempotencyKey(),
                 'payer_phone'      => $data['payer_phone'],
@@ -145,8 +145,10 @@ class OrderService
                 'paid_at' => now(),
             ]);
 
-            // Créditer le wallet vendeur en séquestre
-            // app(WalletService::class)->creditEscrow($order->shop->user, $order->net_amount, $order);
+
+
+            //Créditer le wallet vendeur en séquestre
+            //app(WalletService::class)->creditEscrow($order->shop->user, $order->net_amount, $order);
         });
     }
 
@@ -203,10 +205,10 @@ class OrderService
             ]);
 
             // Créditer immédiatement le solde vendeur (en attente)
-            // app(WalletService::class)->creditEscrow($order->shop->user, $order->net_amount, $order);
+            //  app(WalletService::class)->creditEscrow($order->shop->user, $order->net_amount, $order);
 
-            // Notifier l'acheteur avec l'OTP
-            // app(NotificationService::class)->sendOtp($order->buyer, $otp);
+            //  Notifier l'acheteur avec l'OTP
+            //  app(NotificationService::class)->sendOtp($order->buyer, $otp);
         });
     }
 
@@ -230,7 +232,7 @@ class OrderService
             ]);
 
             // Libérer les fonds du vendeur
-            // app(WalletService::class)->releaseEscrow($order->shop->user, $order->net_amount, $order);
+            //  app(WalletService::class)->releaseEscrow($order->shop->user, $order->net_amount, $order);
         });
     }
 
@@ -246,7 +248,7 @@ class OrderService
                         'status'       => Order::STATUS_AUTO_COMPLETED,
                         'completed_at' => now(),
                     ]);
-                    // app(WalletService::class)->releaseEscrow($order->shop->user, $order->net_amount, $order);
+                    //   app(WalletService::class)->releaseEscrow($order->shop->user, $order->net_amount, $order);
                 });
             });
     }
@@ -268,9 +270,9 @@ class OrderService
             ]);
 
             // Rembourser si déjà payé
-            // if ($order->payment->isSucceeded()) {
-            //     app(WalletService::class)->refund($order->buyer, $order->total_amount, $order);
-            // }
+            if ($order->payment->isSucceeded()) {
+                //   app(WalletService::class)->refund($order->buyer, $order->total_amount, $order);
+            }
         });
     }
 }

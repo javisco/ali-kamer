@@ -21,7 +21,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Admin System',
             'email' => 'admin@test.com',
-            'phone' => '+237600000001',
+            'phone' => '+237673538767',
             'role' => 'admin',
             'password' => $defaultPassword,
             'email_verified_at' => now(),
@@ -31,7 +31,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Vendeur Paul',
             'email' => 'vendeur1@test.com',
-            'phone' => '+237600000002',
+            'phone' => '+237676538747',
             'role' => 'seller',
             'password' => $defaultPassword,
             'email_verified_at' => now(),
@@ -41,7 +41,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Vendeur Marie',
             'email' => 'vendeur2@test.com',
-            'phone' => '+237600000003',
+            'phone' => '+237673538746',
             'role' => 'seller',
             'password' => $defaultPassword,
             'email_verified_at' => now(),
@@ -67,7 +67,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Acheteur Eric',
             'email' => 'acheteur1@test.com',
-            'phone' => '+237600000004',
+            'phone' => '+237678538747',
             'role' => 'buyer',
             'password' => $defaultPassword,
             'email_verified_at' => now(),
@@ -76,7 +76,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Acheteur Alice',
             'email' => 'acheteur2@test.com',
-            'phone' => '+237600000005',
+            'phone' => '+237674538747',
             'role' => 'buyer',
             'password' => $defaultPassword,
             'email_verified_at' => now(),

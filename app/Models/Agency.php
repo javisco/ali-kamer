@@ -17,25 +17,51 @@ class Agency extends Model
 
     protected function casts(): array
     {
-        return [
-            'is_active' => 'boolean',
-        ];
+        return ['is_active' => 'boolean'];
     }
 
-    // ── Relations ────────────────────────────────────────────────────
-
-    /**
-     * Une agence possède plusieurs guichets (ex: Finexs -> Douala, Yaoundé, Bafoussam)
-     */
+    // Tous les comptoirs de cette agence
     public function counters(): HasMany
     {
         return $this->hasMany(AgencyCounter::class);
     }
-    // Uniquement les guichets actifs
+
+    // Comptoirs actifs uniquement
     public function activeCounters(): HasMany
     {
         return $this->hasMany(AgencyCounter::class)
             ->where('is_active', true);
+    }
+
+    // Villes desservies par cette agence
+    public function cities(): HasMany
+    {
+        return $this->hasMany(AgencyCity::class);
+    }
+
+    // Villes actives uniquement
+    public function activeCities(): HasMany
+    {
+        return $this->hasMany(AgencyCity::class)
+            ->where('is_active', true);
+    }
+
+    // Comptoirs dans une ville précise
+    public function countersInCity(string $city)
+    {
+        return $this->counters()
+            ->where('city', $city)
+            ->where('is_active', true)
+            ->get();
+    }
+
+    // Vérifie si l'agence dessert une ville donnée
+    public function servesCity(string $city): bool
+    {
+        return $this->cities()
+            ->where('city', $city)
+            ->where('is_active', true)
+            ->exists();
     }
 
     public function scopeActive($q)

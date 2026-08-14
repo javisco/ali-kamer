@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AgencyCounter extends Model
@@ -20,53 +19,29 @@ class AgencyCounter extends Model
 
     protected function casts(): array
     {
-        return [
-            'is_active' => 'boolean',
-        ];
+        return ['is_active' => 'boolean'];
     }
 
-    // ── Relations ────────────────────────────────────────────────────
-
-    /**
-     * L'agence parente du guichet
-     */
+    // L'agence parente
     public function agency(): BelongsTo
     {
         return $this->belongsTo(Agency::class);
     }
 
-    /**
-     * Les secrétaires affectés à ce guichet (relation N-N via secretary_counters)
-     */
-    public function secretaries(): BelongsToMany
+    // Le secrétaire affecté à ce comptoir (un seul)
+    public function secretary()
     {
-        return $this->belongsToMany(User::class, 'secretary_counters')
-            ->withTimestamps();
+        return $this->hasOne(SecretaryCounter::class)
+            ->with('secretary');
     }
-    // Colis déposés depuis ce guichet
 
+    // Colis déposés depuis ce comptoir
     public function shipmentsAsOrigin(): HasMany
     {
         return $this->hasMany(OrderShipment::class, 'origin_counter_id');
     }
-    /**
-     * Colis enregistrés au départ de ce guichet
-     */
-    public function originShipments(): HasMany
-    {
-        return $this->hasMany(OrderShipment::class, 'origin_counter_id');
-    }
 
-    /**
-     * Colis réceptionnés à l'arrivée dans ce guichet
-     */
-    public function destinationShipments(): HasMany
-    {
-        return $this->hasMany(OrderShipment::class, 'destination_counter_id');
-    }
-
-
-    // Colis reçus à ce guichet
+    // Colis reçus à ce comptoir
     public function shipmentsAsDestination(): HasMany
     {
         return $this->hasMany(OrderShipment::class, 'destination_counter_id');
@@ -82,10 +57,12 @@ class AgencyCounter extends Model
         return $q->where('city', $city);
     }
 
-    // Nom complet lisible : "Finexs Express — Douala Akwa"
+    // Nom complet lisible
+    // Ex: "General Express — Yaoundé Carrière"
     public function getFullNameAttribute(): string
     {
-        return $this->agency->name . ' — ' . $this->city
+        return $this->agency->name . ' — '
+            . $this->city
             . ($this->district ? ' ' . $this->district : '');
     }
 }
