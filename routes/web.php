@@ -146,7 +146,9 @@ Route::middleware(['auth', 'verified', 'role:buyer'])->prefix('commandes')->grou
 Route::middleware(['auth', 'verified', 'role:seller'])->prefix('vendeur')->group(function () {
         Route::get('/commandes', [SellerOrderController::class, 'index'])->name('seller.orders.index');
         Route::get('/commandes/{order}', [SellerOrderController::class, 'show'])->name('seller.orders.show');
-        Route::post('/commandes/{order}/preparer', [SellerOrderController::class, 'markPreparing'])->name('seller.orders.preparing');
+        // Route::post('/commandes/{order}/preparer', [SellerOrderController::class, 'markPreparing'])->name('seller.orders.preparing');
+        Route::post('/commandes/{order}/preparer', [SellerOrderController::class, 'prepare'])
+                ->name('seller.orders.prepare');
 });
 
 //messagerie
@@ -360,7 +362,3 @@ Route::get('/api/agences/{agency}/comptoirs', function (Agency $agency, Request 
 
         return response()->json($counters);
 });
-
-Route::post('/commandes/{order}/preparer', [SellerOrderController::class, 'prepare'])
-        ->name('seller.orders.prepare');
-

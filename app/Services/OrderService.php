@@ -64,7 +64,6 @@ class OrderService
                 'gateway_payout_fee' => $gatewayPayoutFee,
                 'net_amount'         => $netAmount,
                 'shipping_fee'       => 0,
-                'deposit_code'       => strtoupper(Str::random(8)),
 
                 // Instantané financier immuable
                 'financial_snapshot' => [
@@ -164,9 +163,44 @@ class OrderService
 
     // ── Secrétaire départ enregistre le colis ────────────────────────
 
-    public function registerAtOrigin(Order $order, User $secretary, int $counterId): void
-    {
-        DB::transaction(function () use ($order, $secretary, $counterId) {
+    public function registerAtOrigin(
+        Order $order,
+        User $secretary,
+        int $counterId,
+        string $depositCode
+    ): void {
+
+        if ($order->status !== Order::STATUS_PREPARING) {
+            throw new \Exception(
+                'Cette commande ne peut pas être enregistrée au départ.'
+            );
+        }
+
+        if (!$order->deposit_code) {
+            throw new \Exception(
+                'Aucun code de dépôt n\'a été généré pour cette commande.'
+            );
+        }
+
+        if (!hash_equals($order->deposit_code, strtoupper(trim($depositCode)))) {
+            throw new \Exception(
+                'Code de dépôt incorrect.'
+            );
+        }
+
+        DB::transaction(function () use (
+            $order,
+            $secretary,
+            $counterId
+        ) {
+
+            // Générer l'OTP destiné à l'acheteur
+            $otp = str_pad(
+                (string) random_int(0, 999999),
+                6,
+                '0',
+                STR_PAD_LEFT
+            );
 
             $order->shipment->update([
                 'origin_counter_id' => $counterId,
@@ -175,10 +209,54 @@ class OrderService
             ]);
 
             $order->update([
-                'status'     => Order::STATUS_REGISTERED_ORIGIN,
-                'shipped_at' => now(),
+                'status'         => Order::STATUS_REGISTERED_ORIGIN,
+                'shipped_at'     => now(),
+
+                // OTP de retrait de l'acheteur
+                'otp_code'       => $otp,
+                'otp_expires_at' => now()->addHours(120),
             ]);
         });
+    }
+    //verifier que le code opt est correcte
+
+    public function verifyBuyerOtp(
+        Order $order,
+        string $otp
+    ): void {
+
+        if (!in_array($order->status, [
+            Order::STATUS_REGISTERED_ORIGIN,
+            Order::STATUS_IN_TRANSIT,
+        ])) {
+            throw new \Exception(
+                'Cette commande ne peut pas être réceptionnée.'
+            );
+        }
+
+        if (!$order->otp_code) {
+            throw new \Exception(
+                'Aucun code OTP n\'est disponible pour cette commande.'
+            );
+        }
+
+        if (!hash_equals(
+            $order->otp_code,
+            trim($otp)
+        )) {
+            throw new \Exception(
+                'Code OTP incorrect.'
+            );
+        }
+
+        if (
+            $order->otp_expires_at &&
+            now()->isAfter($order->otp_expires_at)
+        ) {
+            throw new \Exception(
+                'Le code OTP a expiré.'
+            );
+        }
     }
 
     // ── Secrétaire arrivée valide la réception ───────────────────────
@@ -193,14 +271,9 @@ class OrderService
                 'arrived_at'             => now(),
             ]);
 
-            // Générer l'OTP
-            $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-
             $order->update([
                 'status'         => Order::STATUS_AWAITING_BUYER_CONFIRMATION,
                 'arrived_at'     => now(),
-                'otp_code'       => $otp,
-                'otp_expires_at' => now()->addHours(120), // 5 jours
                 'timer_deadline' => now()->addHours(72),  // 72h pour AUTO_COMPLETE
             ]);
 
@@ -229,12 +302,15 @@ class OrderService
                 'status'       => Order::STATUS_COMPLETED,
                 'otp_used_at'  => now(),
                 'completed_at' => now(),
+                'otp_code'     => null,
             ]);
 
             // Libérer les fonds du vendeur
             //  app(WalletService::class)->releaseEscrow($order->shop->user, $order->net_amount, $order);
         });
     }
+
+
 
     // ── Cron job : AUTO_COMPLETE les commandes expirées (72h) ────────
 

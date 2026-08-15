@@ -10,6 +10,7 @@ class OrderShipment extends Model
     protected $fillable = [
         'order_id',
         'type',
+        'agency_id',
         'shipping_included',
         'transport_fee',
         'transport_fee_paid',
@@ -43,6 +44,10 @@ class OrderShipment extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
+    }
+    public function agency(): BelongsTo
+    {
+        return $this->belongsTo(Agency::class);
     }
 
     public function originCounter(): BelongsTo

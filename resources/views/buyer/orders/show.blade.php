@@ -153,26 +153,57 @@
                 </div>
             @endif
             {{-- Code OTP si colis arrivé --}}
-            @if ($order->status === 'awaiting_buyer_confirmation' && $order->otp_code)
-                <div class="bg-indigo-600 rounded-2xl p-6 mb-6 text-center text-white shadow-lg shadow-indigo-100">
-                    <p class="text-sm font-medium text-indigo-100 mb-1">
-                        🎉 Votre colis est arrivé en agence !
-                    </p>
-                    <p class="text-xs text-indigo-200 mb-3">Présentez ce code de retrait au secrétaire</p>
 
-                    <div class="bg-white/10 backdrop-blur-md rounded-xl py-3 px-6 inline-block border border-white/20 my-1">
-                        <span class="text-4xl font-black tracking-[0.3em] font-mono text-white">
-                            {{ $order->otp_code }}
-                        </span>
+
+            @if (
+                $order->otp_code &&
+                    in_array($order->status, [
+                        \App\Models\Order::STATUS_REGISTERED_ORIGIN,
+                        \App\Models\Order::STATUS_IN_TRANSIT,
+                        \App\Models\Order::STATUS_ARRIVED_DESTINATION,
+                        \App\Models\Order::STATUS_AWAITING_BUYER_CONFIRMATION,
+                    ]))
+                <div class="mt-6 rounded-2xl border border-blue-200 bg-blue-50 p-5">
+
+                    <div class="flex items-start gap-4">
+
+                        <div class="w-11 h-11 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 15v2m-4-6V9a4 4 0 118 0v2m-7 0h6a2 2 0 012 2v5a2 2 0 01-2 2H7a2 2 0 01-2-2v-5a2 2 0 012-2z" />
+                            </svg>
+                        </div>
+
+                        <div class="flex-1">
+
+                            <h3 class="font-bold text-blue-900">
+                                Votre code de retrait
+                            </h3>
+
+                            <p class="text-sm text-blue-700 mt-1">
+                                Présentez ce code au secrétaire lors du retrait
+                                de votre colis.
+                            </p>
+
+                            <div class="mt-4 inline-flex items-center px-6 py-3 bg-white border border-blue-300 rounded-xl">
+                                <span class="text-3xl font-black tracking-[0.35em] text-blue-700">
+                                    {{ $order->otp_code }}
+                                </span>
+                            </div>
+
+                            @if ($order->otp_expires_at)
+                                <p class="text-xs text-blue-600 mt-3">
+                                    Valable jusqu'au
+                                    {{ $order->otp_expires_at->format('d/m/Y à H:i') }}
+                                </p>
+                            @endif
+
+                        </div>
+
                     </div>
-
-                    @if ($order->timer_deadline)
-                        <p class="text-xs text-indigo-200 mt-3">
-                            Valable jusqu'au {{ $order->timer_deadline->format('d/m/Y à H:i') }}
-                        </p>
-                    @endif
                 </div>
             @endif
+
 
             <div class="space-y-5">
 

@@ -10,6 +10,7 @@ use App\Services\AgencyService;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
@@ -37,55 +38,58 @@ class OrderController extends Controller
             $agencies = app(AgencyService::class)
                 ->getAgenciesServingCity($order->shipment->destination_city);
         }
-
+        //dd($agencies->toArray());
         return view('seller.orders.show', compact('order', 'agencies'));
     }
 
-    // public function markPreparing(Order $order)
-    // {
-    //     abort_unless($order->shop_id === auth()->user()->shop->id, 403);
-    //     abort_unless($order->status === Order::STATUS_PAID, 403);
-
-    //     $this->orderService->markPreparing($order);
-
-    //     return back()->with('success', 'Commande marquée en préparation.');
-    // }
-
     public function prepare(Request $request, Order $order)
     {
-        abort_unless($order->shop_id === auth()->user()->shop->id, 403);
-        abort_unless($order->status === Order::STATUS_PAID, 403);
+        abort_unless(
+            $order->shop_id === auth()->user()->shop->id,
+            403
+        );
+
+        abort_unless(
+            $order->status === Order::STATUS_PAID,
+            403
+        );
 
         $request->validate([
             'agency_id'  => ['required', 'exists:agencies,id'],
             'counter_id' => ['required', 'exists:agency_counters,id'],
         ]);
 
-        // Vérifier que le comptoir appartient bien à l'agence choisie
+        // Vérifier le comptoir
         $counter = AgencyCounter::where('id', $request->counter_id)
             ->where('agency_id', $request->agency_id)
             ->where('is_active', true)
             ->firstOrFail();
 
-        // Vérifier que l'agence dessert la ville de destination
+        // Vérifier l'agence
         $agency = Agency::findOrFail($request->agency_id);
+
         abort_unless(
             $agency->servesCity($order->shipment->destination_city),
             422,
             "Cette agence ne dessert pas {$order->shipment->destination_city}."
         );
 
-        DB::transaction(function () use ($order, $agency, $counter, $request) {
+        DB::transaction(function () use ($order, $agency, $counter) {
 
-            // Enregistrer l'agence et le comptoir de départ choisis
+            // Générer le code de dépôt
+            $depositCode = strtoupper(Str::random(8));
+
+            // Enregistrer l'agence et le comptoir
             $order->shipment->update([
                 'agency_id'         => $agency->id,
                 'origin_counter_id' => $counter->id,
             ]);
 
+            // Passer la commande en préparation
             $order->update([
                 'status'       => Order::STATUS_PREPARING,
                 'preparing_at' => now(),
+                'deposit_code' => $depositCode,
             ]);
         });
 

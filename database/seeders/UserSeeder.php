@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
     {
 
         // Un mot de passe unique et facile à retenir pour TOUS tes comptes de test
-        $defaultPassword = Hash::make('password123');
+        $defaultPassword = Hash::make('11111111');
 
         // 1. ADMIN (1 compte)
         User::create([

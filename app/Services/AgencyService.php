@@ -129,6 +129,7 @@ class AgencyService
 
     // Utilisé dans le formulaire vendeur pour filtrer les agences
     // disponibles selon la ville de destination de l'acheteur
+
     public function getAgenciesServingCity(string $city)
     {
         return Agency::active()
@@ -136,8 +137,9 @@ class AgencyService
                 $q->where('city', $city)
                     ->where('is_active', true);
             })
-            ->with(['counters' => function ($q) {
-                $q->where('is_active', true);
+            ->with(['counters' => function ($q) use ($city) {
+                $q->where('city', $city)
+                    ->where('is_active', true);
             }])
             ->get();
     }
@@ -153,7 +155,7 @@ class AgencyService
             ->where('is_active', true)
             ->get();
     }
-   
+
 
     /**
      * Récupère la liste des noms de villes actives uniques desservies par les agences.

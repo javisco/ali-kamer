@@ -68,4 +68,8 @@ class Agency extends Model
     {
         return $q->where('is_active', true);
     }
+    public function orderShipments()
+    {
+        return $this->hasMany(OrderShipment::class);
+    }
 }
