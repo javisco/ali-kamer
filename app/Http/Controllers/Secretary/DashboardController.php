@@ -17,45 +17,22 @@ class DashboardController extends Controller
     {
         $secretary = auth()->user();
 
-        // Récupérer le guichet principal du secrétaire
+        // Récupérer le comptoir principal du secrétaire
         $counter = $secretary->assignedCounters()
             ->wherePivot('is_primary', true)
             ->with('agency')
             ->first();
 
-        // Colis en attente de dépôt (commandes en statut preparing)
-        // Filtrées par ville du guichet
         $pendingDeposit = collect();
-
-        // Colis arrivés à valider (commandes en transit vers ce guichet)
         $pendingArrival = collect();
 
         if ($counter) {
-            // Colis à enregistrer au départ
-            $pendingDeposit = Order::where('status', Order::STATUS_PREPARING)
-                ->whereHas(
-                    'shipment',
-                    fn($q) =>
-                    $q->where('destination_city', $counter->city)
-                        ->orWhere('destination_city', '!=', $counter->city)
-                )
-                ->with(['shop', 'shipment', 'buyer'])
-                ->latest()
-                ->get();
 
-            // Colis arrivés à ce guichet à valider
-            $pendingArrival = Order::whereIn('status', [
-                Order::STATUS_REGISTERED_ORIGIN,
-                Order::STATUS_IN_TRANSIT,
-            ])
-                ->whereHas(
-                    'shipment',
-                    fn($q) =>
-                    $q->where('destination_city', $counter->city)
-                )
-                ->with(['shop', 'shipment', 'buyer'])
-                ->latest()
-                ->get();
+            // Colis à enregistrer au départ
+            $pendingDeposit = $this->getPendingDeposit($counter);
+
+            // Colis destinés précisément à ce comptoir
+            $pendingArrival = $this->getPendingArrival($counter);
         }
 
         return view('secretary.dashboard', compact(
@@ -66,6 +43,77 @@ class DashboardController extends Controller
         ));
     }
 
+
+    // Rechercher une commande par référence pour la remise OTP
+    public function searchOrder(Request $request)
+    {
+        $request->validate([
+            'ref' => ['required', 'string', 'max:50'],
+        ]);
+
+        $secretary = auth()->user();
+
+        // Récupérer le comptoir principal de la secrétaire
+        $counter = $secretary->assignedCounters()
+            ->wherePivot('is_primary', true)
+            ->with('agency')
+            ->first();
+
+        if (! $counter) {
+            return redirect()
+                ->route('secretary.dashboard')
+                ->with('error', 'Aucun comptoir principal n’est assigné à votre compte.');
+        }
+
+        // Rechercher uniquement une commande
+        // actuellement disponible pour la remise
+        $order = Order::where('reference', strtoupper(trim($request->ref)))
+            ->where('status', Order::STATUS_AWAITING_BUYER_CONFIRMATION)
+            ->with(['buyer', 'shipment'])
+            ->first();
+
+        if (! $order) {
+            return redirect()
+                ->route('secretary.dashboard')
+                ->with('error', 'Commande introuvable ou non disponible pour la remise.');
+        }
+
+        /*
+     * IMPORTANT :
+     *
+     * Le colis doit appartenir à l'agence sélectionnée
+     * par le vendeur ET être destiné précisément
+     * au comptoir de cette secrétaire.
+     */
+
+        if ($order->shipment->agency_id !== $counter->agency_id) {
+            return redirect()
+                ->route('secretary.dashboard')
+                ->with(
+                    'error',
+                    'Ce colis appartient à une autre agence.'
+                );
+        }
+
+        if ($order->shipment->destination_counter_id !== $counter->id) {
+            return redirect()
+                ->route('secretary.dashboard')
+                ->with(
+                    'error',
+                    'Ce colis est destiné à un autre comptoir de cette agence.'
+                );
+        }
+
+        // Tout est correct.
+        // On renvoie le dashboard avec le colis trouvé.
+        return view('secretary.dashboard', [
+            'secretary'     => $secretary,
+            'counter'       => $counter,
+            'pendingDeposit' => $this->getPendingDeposit($counter),
+            'pendingArrival' => $this->getPendingArrival($counter),
+            'searchedOrder'  => $order,
+        ]);
+    }
     // Enregistrer un colis au départ via le code de dépôt
     public function registerDeposit(Request $request)
     {
@@ -124,5 +172,32 @@ class DashboardController extends Controller
 
         return redirect()->route('secretary.dashboard')
             ->with('success', "Colis remis — Commande {$order->reference} terminée.");
+    }
+    private function getPendingDeposit($counter)
+    {
+        return Order::where('status', Order::STATUS_PREPARING)
+            ->whereHas(
+                'shipment',
+                fn($q) =>
+                $q->where('agency_id', $counter->agency_id)
+            )
+            ->with(['shop', 'shipment', 'buyer'])
+            ->latest()
+            ->get();
+    }
+    private function getPendingArrival($counter)
+    {
+        return Order::whereIn('status', [
+            Order::STATUS_REGISTERED_ORIGIN,
+            Order::STATUS_IN_TRANSIT,
+        ])
+            ->whereHas(
+                'shipment',
+                fn($q) =>
+                $q->where('destination_counter_id', $counter->id)
+            )
+            ->with(['shop', 'shipment', 'buyer'])
+            ->latest()
+            ->get();
     }
 }

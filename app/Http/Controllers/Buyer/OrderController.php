@@ -25,8 +25,8 @@ class OrderController extends Controller
         return view('buyer.orders.index', compact('orders'));
     }
 
-
-    // Formulaire de commande
+    
+   // Formulaire de commande
     public function create(Product $product)
     {
         abort_unless($product->isVisible(), 404);

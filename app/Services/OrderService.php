@@ -151,15 +151,7 @@ class OrderService
         });
     }
 
-    // ── Vendeur marque "En préparation" ──────────────────────────────
 
-    public function markPreparing(Order $order): void
-    {
-        $order->update([
-            'status'       => Order::STATUS_PREPARING,
-            'preparing_at' => now(),
-        ]);
-    }
 
     // ── Secrétaire départ enregistre le colis ────────────────────────
 
@@ -218,46 +210,7 @@ class OrderService
             ]);
         });
     }
-    //verifier que le code opt est correcte
 
-    public function verifyBuyerOtp(
-        Order $order,
-        string $otp
-    ): void {
-
-        if (!in_array($order->status, [
-            Order::STATUS_REGISTERED_ORIGIN,
-            Order::STATUS_IN_TRANSIT,
-        ])) {
-            throw new \Exception(
-                'Cette commande ne peut pas être réceptionnée.'
-            );
-        }
-
-        if (!$order->otp_code) {
-            throw new \Exception(
-                'Aucun code OTP n\'est disponible pour cette commande.'
-            );
-        }
-
-        if (!hash_equals(
-            $order->otp_code,
-            trim($otp)
-        )) {
-            throw new \Exception(
-                'Code OTP incorrect.'
-            );
-        }
-
-        if (
-            $order->otp_expires_at &&
-            now()->isAfter($order->otp_expires_at)
-        ) {
-            throw new \Exception(
-                'Le code OTP a expiré.'
-            );
-        }
-    }
 
     // ── Secrétaire arrivée valide la réception ───────────────────────
 
@@ -311,7 +264,6 @@ class OrderService
     }
 
 
-
     // ── Cron job : AUTO_COMPLETE les commandes expirées (72h) ────────
 
     public function autoCompleteExpired(): void
@@ -329,7 +281,7 @@ class OrderService
             });
     }
 
-    // ── Annuler une commande ──────────────────────────────────────────
+    // ── Annuler une commande par l'acheteur ──────────────────────────────────────────
 
     public function cancel(Order $order, string $reason): void
     {

@@ -216,42 +216,23 @@ Route::middleware(['auth', 'verified', 'role:secretary'])
                 Route::get('/dashboard', [DashboardController::class, 'index'])
                         ->name('secretary.dashboard');
 
-                // Enregistrer un colis au départ (saisie code de dépôt)
+                // Enregistrer un colis au départ
                 Route::post('/depot', [DashboardController::class, 'registerDeposit'])
                         ->name('secretary.deposit');
 
-                // Valider l'arrivée d'un colis
+                // Valider l'arrivée
                 Route::post('/arrivee/{order}', [DashboardController::class, 'validateArrival'])
                         ->name('secretary.arrival');
 
                 // Valider l'OTP de remise
                 Route::post('/otp/{order}', [DashboardController::class, 'validateOtp'])
                         ->name('secretary.otp');
+
+                Route::get('/agence/recherche-commande', [
+                        DashboardController::class,
+                        'searchOrder'
+                ])->name('secretary.search');
         });
-
-
-
-// Recherche commande par référence pour la remise OTP
-Route::get('/agence/recherche-commande', function (Request $request) {
-        $order = \App\Models\Order::where('reference', $request->ref)
-                ->where('status', \App\Models\Order::STATUS_AWAITING_BUYER_CONFIRMATION)
-                ->with(['buyer', 'shipment'])
-                ->first();
-
-        if (! $order) {
-                return response()->json(['found' => false]);
-        }
-
-        return response()->json([
-                'found'            => true,
-                'id'               => $order->id,
-                'reference'        => $order->reference,
-                'buyer'            => $order->buyer->name,
-                'destination_city' => $order->shipment->destination_city,
-        ]);
-})->middleware(['auth', 'verified', 'role:secretary'])->name('secretary.search');
-
-
 
 
 // Litiges acheteur
