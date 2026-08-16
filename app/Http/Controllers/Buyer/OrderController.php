@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Services\AgencyService;
 use App\Services\OrderService;
+use App\Services\PaymentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -25,8 +26,8 @@ class OrderController extends Controller
         return view('buyer.orders.index', compact('orders'));
     }
 
-    
-   // Formulaire de commande
+
+    // Formulaire de commande
     public function create(Product $product)
     {
         abort_unless($product->isVisible(), 404);
@@ -72,5 +73,37 @@ class OrderController extends Controller
 
         return redirect()->route('buyer.orders.index')
             ->with('success', 'Commande annulée.');
+    }
+    // Page paiement frais transport
+    public function transportPayment(Order $order)
+    {
+        abort_unless($order->buyer_id === Auth::id(), 403);
+
+        // Vérifier que des frais transport sont bien dus
+        abort_unless(
+            ! $order->shipment->shipping_included &&
+                $order->shipment->transport_fee > 0 &&
+                ! $order->shipment->transport_fee_paid,
+            404
+        );
+
+        return view('buyer.orders.transport-payment', compact('order'));
+    }
+
+    // Initier le paiement Campay pour les frais transport
+    public function payTransport(Order $order, PaymentService $paymentService)
+    {
+        abort_unless($order->buyer_id === Auth::id(), 403);
+        abort_unless(
+            ! $order->shipment->transport_fee_paid &&
+                $order->shipment->transport_fee > 0,
+            403
+        );
+
+        // Déclencher le paiement Campay pour les frais transport
+        $paymentService->initiateTransportPayment($order);
+
+        return redirect()->route('buyer.payment.waiting', $order)
+            ->with('success', 'Vérifiez votre téléphone pour confirmer le paiement du transport.');
     }
 }

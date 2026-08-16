@@ -180,9 +180,14 @@ class User extends Authenticatable implements MustVerifyEmail
         };
     }
 
-    public function assignedCounters(): BelongsToMany
+    // Comptoirs assignés au secrétaire
+    public function assignedCounters()
     {
-        return $this->belongsToMany(AgencyCounter::class, 'secretary_counters')
-            ->withTimestamps();
+        return $this->belongsToMany(
+            AgencyCounter::class,
+            'secretary_counters',
+            'user_id',
+            'agency_counter_id'
+        )->withPivot('is_primary')->withTimestamps();
     }
 }

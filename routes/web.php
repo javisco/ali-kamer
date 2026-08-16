@@ -142,6 +142,7 @@ Route::middleware(['auth', 'verified', 'role:buyer'])->prefix('commandes')->grou
         Route::post('/{order}/annuler', [BuyerOrderController::class, 'cancel'])->name('buyer.orders.cancel');
 });
 
+
 // ── Commandes vendeur ─────────────────────────────────────────────
 Route::middleware(['auth', 'verified', 'role:seller'])->prefix('vendeur')->group(function () {
         Route::get('/commandes', [SellerOrderController::class, 'index'])->name('seller.orders.index');
@@ -207,8 +208,8 @@ Route::middleware(['auth', 'verified', 'role:seller'])->prefix('vendeur')->group
                 ->name('seller.wallet.withdraw.post');
 });
 
-// Interface secrétaire agence
-Route::middleware(['auth', 'verified', 'role:secretary'])
+
+Route::middleware(['auth', 'role:secretary'])
         ->prefix('agence')
         ->group(function () {
 
@@ -216,23 +217,56 @@ Route::middleware(['auth', 'verified', 'role:secretary'])
                 Route::get('/dashboard', [DashboardController::class, 'index'])
                         ->name('secretary.dashboard');
 
-                // Enregistrer un colis au départ
-                Route::post('/depot', [DashboardController::class, 'registerDeposit'])
-                        ->name('secretary.deposit');
+                // ── PAGE 1 : Dépôts (secrétaire départ) ──────────────────────
 
-                // Valider l'arrivée
-                Route::post('/arrivee/{order}', [DashboardController::class, 'validateArrival'])
-                        ->name('secretary.arrival');
+                // Page dépôts — saisie du deposit_code vendeur
+                Route::get('/depot', [DashboardController::class, 'depositPage'])
+                        ->name('secretary.deposit.page');
 
-                // Valider l'OTP de remise
-                Route::post('/otp/{order}', [DashboardController::class, 'validateOtp'])
-                        ->name('secretary.otp');
+                // Recherche commande par deposit_code
+                Route::post('/depot/recherche', [DashboardController::class, 'searchDeposit'])
+                        ->name('secretary.deposit.search');
 
-                Route::get('/agence/recherche-commande', [
-                        DashboardController::class,
-                        'searchOrder'
-                ])->name('secretary.search');
+                // Enregistrer le colis au départ (+ frais transport si exclu)
+                Route::post('/depot/{order}/valider', [DashboardController::class, 'registerDeposit'])
+                        ->name('secretary.deposit.validate');
+                // ── PAGE 2 : Arrivées (secrétaire arrivée) ───────────────────
+
+                // Page arrivées — liste des colis attendus + recherche par référence
+                Route::get('/arrivees', [DashboardController::class, 'arrivalsPage'])
+                        ->name('secretary.arrivals.page');
+
+                // Recherche commande par référence (pour la liste longue)
+                Route::get('/arrivees/recherche', [DashboardController::class, 'searchArrival'])
+                        ->name('secretary.arrivals.search');
+
+                // Valider l'arrivée d'un colis
+                Route::post('/arrivees/{order}/valider', [DashboardController::class, 'validateArrival'])
+                        ->name('secretary.arrival.validate');
+
+                // ── PAGE 3 : Remise OTP ───────────────────────────────────────
+
+                // Page remise — liste des colis arrivés à remettre + saisie OTP
+                Route::get('/remises', [DashboardController::class, 'handoverPage'])
+                        ->name('secretary.handover.page');
+
+                // Valider l'OTP et remettre le colis
+                Route::post('/remises/{order}/otp', [DashboardController::class, 'validateOtp'])
+                        ->name('secretary.handover.otp');
         });
+
+// Paiement frais transport acheteur
+Route::middleware(['auth', 'role:buyer'])->group(function () {
+
+        // Page de paiement des frais transport
+        Route::get('/commandes/{order}/transport', [BuyerOrderController::class, 'transportPayment'])
+                ->name('buyer.orders.transport');
+
+        // Initier le paiement Campay pour les frais transport
+        Route::post('/commandes/{order}/transport/payer', [BuyerOrderController::class, 'payTransport'])
+                ->name('buyer.orders.transport.pay');
+});
+
 
 
 // Litiges acheteur

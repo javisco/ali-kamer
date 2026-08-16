@@ -83,7 +83,7 @@ class OrderController extends Controller
             // Enregistrer l'agence et le comptoir
             $order->shipment->update([
                 'agency_id'         => $agency->id,
-                'origin_counter_id' => $counter->id,
+                'destination_counter_id' => $counter->id,
             ]);
 
             // Passer la commande en préparation

@@ -7,276 +7,231 @@ use App\Models\Order;
 use App\Models\SecretaryCounter;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class ShippingService
 {
-    // ── DÉPÔT DU COLIS EN AGENCE (secrétaire départ) ─────────────────
+    // ── PAGE DÉPÔT — Rechercher commande par deposit_code ─────────────
 
-    // Le vendeur donne son code de dépôt au secrétaire
-    // Le secrétaire saisit ce code — le colis apparaît et il valide
-
-    public function registerByDepositCode(User $secretary, string $depositCode): Order
+    // Le vendeur donne son deposit_code au secrétaire départ
+    // Le secrétaire le saisit — on retrouve la commande et on l'affiche
+    public function findByDepositCode(User $secretary, string $code): Order
     {
-        $order = Order::where('deposit_code', $depositCode)
+        $order = Order::where('deposit_code', strtoupper($code))
             ->where('status', Order::STATUS_PREPARING)
+            ->with(['shop', 'shipment', 'buyer', 'items.product'])
             ->first();
 
         if (! $order) {
-            throw new \Exception('Code invalide ou commande déjà enregistrée.');
-        }
-
-        // Récupérer le comptoir du secrétaire
-        $secretaryCounter = SecretaryCounter::where('user_id', $secretary->id)
-            ->where('is_primary', true)
-            ->with('counter.agency')
-            ->first();
-
-        if (! $secretaryCounter) {
-            throw new \Exception('Aucun comptoir assigné à votre compte.');
-        }
-
-        $counter = $secretaryCounter->counter;
-
-        // Vérifier que l'agence du colis correspond à l'agence du secrétaire
-        // Un secrétaire Finexs ne peut pas traiter un colis General
-        if ($order->shipment->agency_id !== $counter->agency_id) {
             throw new \Exception(
-                'Ce colis appartient à une autre agence. Vous ne pouvez pas le traiter.'
+                'Code invalide ou commande non trouvée. ' .
+                    'Vérifiez que le vendeur a bien confirmé la préparation.'
             );
         }
 
-        DB::transaction(function () use ($order, $secretary, $counter) {
+        // Vérifier que la commande appartient à l'agence du secrétaire
+        $counter = $this->getSecretaryCounter($secretary);
+        $this->checkAgencyMatch($order, $counter);
+
+        return $order;
+    }
+
+    // ── PAGE DÉPÔT — Enregistrer le colis au départ ───────────────────
+
+    // Après avoir vu la commande, le secrétaire valide le dépôt
+    // Si transport exclu : il saisit les frais
+    public function registerAtOrigin(
+        User $secretary,
+        Order $order,
+        int $transportFee = 0
+    ): void {
+
+        $counter = $this->getSecretaryCounter($secretary);
+        $this->checkAgencyMatch($order, $counter);
+
+        // Vérifier que la commande est bien en PREPARING
+        if ($order->status !== Order::STATUS_PREPARING) {
+            throw new \Exception('Cette commande ne peut plus être enregistrée au départ.');
+        }
+
+        DB::transaction(function () use ($order, $secretary, $counter, $transportFee) {
 
             $order->shipment->update([
                 'origin_counter_id' => $counter->id,
                 'registered_by'     => $secretary->id,
                 'registered_at'     => now(),
+
+                // Frais transport saisis par le secrétaire
+                // (payés en main propre par le vendeur à l'agence)
+                'transport_fee'     => $transportFee,
             ]);
 
             $order->update([
                 'status'     => Order::STATUS_REGISTERED_ORIGIN,
                 'shipped_at' => now(),
             ]);
-        });
 
-        return $order->fresh();
+            // app(NotificationService::class)->notifyPackageRegistered($order);
+        });
     }
 
-    // ── VALIDATION ARRIVÉE DU COLIS (secrétaire arrivée) ─────────────
+    // ── PAGE ARRIVÉES — Liste des colis attendus au comptoir ──────────
 
-    // Le secrétaire de la ville destination valide l'arrivée
-    // Déclenche l'OTP et le timer 72h
-    public function validateArrival(
-        User $secretary,
-        Order $order,
-        int $transportFee = 0
-    ): void {
+    // Retourne les commandes qui doivent arriver à ce comptoir
+    // (registered_origin ou in_transit, destination = ville du comptoir)
+    public function getPendingArrivals(User $secretary)
+    {
+        $counter = $this->getSecretaryCounter($secretary);
 
-        // Vérifier que la commande peut être validée à l'arrivée
+        return Order::whereIn('status', [
+            Order::STATUS_REGISTERED_ORIGIN,
+            Order::STATUS_IN_TRANSIT,
+        ])
+            ->whereHas('shipment', function ($q) use ($counter) {
+                $q->where('agency_id', $counter->agency_id)
+                    ->where('destination_city', $counter->city);
+            })
+            ->with(['shop', 'shipment', 'buyer', 'items'])
+            ->latest()
+            ->get();
+    }
+
+    // ── PAGE ARRIVÉES — Rechercher par référence ──────────────────────
+
+    public function findByReference(User $secretary, string $reference): Order
+    {
+        $counter = $this->getSecretaryCounter($secretary);
+
+        $order = Order::where('reference', strtoupper($reference))
+            ->whereIn('status', [
+                Order::STATUS_REGISTERED_ORIGIN,
+                Order::STATUS_IN_TRANSIT,
+            ])
+            ->whereHas('shipment', function ($q) use ($counter) {
+                $q->where('agency_id', $counter->agency_id)
+                    ->where('destination_city', $counter->city);
+            })
+            ->with(['shop', 'shipment', 'buyer', 'items'])
+            ->first();
+
+        if (! $order) {
+            throw new \Exception(
+                'Commande introuvable. Vérifiez la référence ou que le colis est bien destiné à votre comptoir.'
+            );
+        }
+
+        return $order;
+    }
+
+    // ── PAGE ARRIVÉES — Valider l'arrivée d'un colis ─────────────────
+
+    public function validateArrival(User $secretary, Order $order): void
+    {
+        $counter = $this->getSecretaryCounter($secretary);
+
+        // Vérifier agence
+        $this->checkAgencyMatch($order, $counter);
+
+        // Vérifier ville de destination
+        if ($order->shipment->destination_city !== $counter->city) {
+            throw new \Exception(
+                "Ce colis est destiné à {$order->shipment->destination_city}, " .
+                    "pas à {$counter->city}."
+            );
+        }
+
         if (! in_array($order->status, [
             Order::STATUS_REGISTERED_ORIGIN,
             Order::STATUS_IN_TRANSIT,
         ])) {
-            throw new \Exception(
-                'Cette commande ne peut pas être validée à l\'arrivée.'
-            );
+            throw new \Exception('Ce colis ne peut pas être validé à l\'arrivée.');
         }
 
-        // Récupérer le comptoir principal du secrétaire
-        $secretaryCounter = SecretaryCounter::where('user_id', $secretary->id)
-            ->where('is_primary', true)
-            ->with('counter.agency')
-            ->first();
+        DB::transaction(function () use ($order, $secretary, $counter) {
 
-        if (! $secretaryCounter) {
-            throw new \Exception(
-                'Aucun comptoir principal assigné à ce compte.'
-            );
-        }
-
-        $counter = $secretaryCounter->counter;
-
-        if (! $counter) {
-            throw new \Exception(
-                'Aucun comptoir principal assigné à ce compte.'
-            );
-        }
-
-        // ---------------------------------------------------------
-        // 1. Vérifier l'agence
-        // ---------------------------------------------------------
-
-        if ($order->shipment->agency_id !== $counter->agency_id) {
-            throw new \Exception(
-                'Ce colis appartient à une autre agence.'
-            );
-        }
-
-        // ---------------------------------------------------------
-        // 2. Vérifier LE COMPTOIR DE DESTINATION
-        // ---------------------------------------------------------
-
-        if ($order->shipment->destination_counter_id !== $counter->id) {
-            throw new \Exception(
-                'Ce colis est destiné à un autre comptoir de cette agence.'
-            );
-        }
-
-        // ---------------------------------------------------------
-        // 3. Tout est correct : validation de l'arrivée
-        // ---------------------------------------------------------
-
-        DB::transaction(function () use (
-            $order,
-            $secretary,
-            $counter,
-            $transportFee
-        ) {
-
-            // Générer l'OTP de l'acheteur
-            $otp = str_pad(
-                random_int(0, 999999),
-                6,
-                '0',
-                STR_PAD_LEFT
-            );
-
-            // NE PAS MODIFIER destination_counter_id
-            // car il a été choisi auparavant pour cette commande.
+            // Générer l'OTP — envoyé à l'acheteur UNIQUEMENT
+            $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
             $order->shipment->update([
-                'validated_by' => $secretary->id,
-                'arrived_at'   => now(),
-
-                // Frais de transport déterminés à l'arrivée
-                'transport_fee' => $transportFee,
+                'destination_counter_id' => $counter->id,
+                'validated_by'           => $secretary->id,
+                'arrived_at'             => now(),
             ]);
 
             $order->update([
-                'status' => Order::STATUS_AWAITING_BUYER_CONFIRMATION,
-
-                'arrived_at' => now(),
-
-                // OTP de retrait de l'acheteur
-                'otp_code' => $otp,
-
-                'otp_expires_at' => now()->addHours(120),
-
-                // Délai avant auto-complétion
+                'status'         => Order::STATUS_AWAITING_BUYER_CONFIRMATION,
+                'arrived_at'     => now(),
                 'timer_deadline' => now()->addHours(72),
             ]);
 
-            // Notification future
-            // app(NotificationService::class)
-            //     ->notifyBuyerArrival($order, $otp, $counter);
+            // OTP envoyé à l'acheteur seulement si transport inclus OU déjà payé
+            // Sinon l'acheteur doit d'abord payer les frais transport
+            $transportDue = ! $order->shipment->shipping_included
+                && $order->shipment->transport_fee > 0
+                && ! $order->shipment->transport_fee_paid;
+
+            if (! $transportDue) {
+                // Transport inclus ou déjà payé → envoyer OTP directement
+                $order->update([
+                    'otp_code'       => $otp,
+                    'otp_expires_at' => now()->addHours(120),
+                ]);
+                // app(NotificationService::class)->notifyBuyerArrivalWithOtp($order, $otp);
+            } else {
+                // Transport non payé → informer l'acheteur de payer d'abord
+                // L'OTP sera généré après le paiement du transport
+                // app(NotificationService::class)->notifyBuyerTransportFee($order);
+            }
         });
     }
-    // ── PAIEMENT DES FRAIS TRANSPORT PAR L'ACHETEUR ──────────────────
 
-    // L'acheteur peut payer les frais transport via la plateforme
-    // dès réception du message — même avant l'arrivée physique du colis
-    // L'écran du secrétaire affiche "Transport payé" → il remet le colis
-    public function markTransportFeePaid(Order $order): void
+    // ── PAGE REMISE — Liste des colis à remettre ──────────────────────
+
+    // Colis arrivés au comptoir, en attente de remise OTP
+    public function getPendingHandovers(User $secretary)
     {
-        if ($order->shipment->transport_fee_paid) {
-            throw new \Exception('Les frais transport ont déjà été payés.');
-        }
+        $counter = $this->getSecretaryCounter($secretary);
 
-        $order->shipment->update([
-            'transport_fee_paid'    => true,
-            'transport_fee_paid_at' => now(),
-        ]);
-
-        // Rembourser les frais transport au vendeur
-        // (il les avait payés en main propre à l'agence)
-        // app(WalletService::class)->creditTransportFee($order->shop->user, $order->shipment->transport_fee, $order);
+        return Order::where('status', Order::STATUS_AWAITING_BUYER_CONFIRMATION)
+            ->whereHas('shipment', function ($q) use ($counter) {
+                $q->where('destination_counter_id', $counter->id);
+            })
+            ->with(['shipment', 'buyer', 'items'])
+            ->latest('arrived_at')
+            ->get();
     }
 
-    // ── VALIDATION OTP REMISE COLIS ───────────────────────────────────
+    // ── PAGE REMISE — Valider l'OTP et remettre le colis ─────────────
 
-    // L'acheteur donne verbalement son OTP au secrétaire
-    // Le secrétaire le saisit — c'est la preuve irréfutable de présence
-    public function validateOtp(
-        User $secretary,
-        Order $order,
-        string $otp
-    ): void {
+    public function validateOtp(User $secretary, Order $order, string $otp): void
+    {
+        $counter = $this->getSecretaryCounter($secretary);
 
-        // La commande doit être prête pour la remise
-        if ($order->status !== Order::STATUS_AWAITING_BUYER_CONFIRMATION) {
-            throw new \Exception(
-                'Ce colis n\'est pas disponible pour la remise.'
-            );
-        }
-
-        // Récupérer le comptoir principal de la secrétaire
-        $secretaryCounter = SecretaryCounter::where('user_id', $secretary->id)
-            ->where('is_primary', true)
-            ->with('counter.agency')
-            ->first();
-
-        if (! $secretaryCounter) {
-            throw new \Exception(
-                'Aucun comptoir assigné à votre compte.'
-            );
-        }
-
-        $counter = $secretaryCounter->counter;
-
-        if (! $counter) {
-            throw new \Exception(
-                'Aucun guichet principal assigné à ce compte.'
-            );
-        }
-
-        // Vérifier l'agence
-        if ($order->shipment->agency_id !== $counter->agency_id) {
-            throw new \Exception(
-                'Ce colis appartient à une autre agence.'
-            );
-        }
-
-        // Vérifier le comptoir où le colis a été enregistré à l'arrivée
+        // Vérifier que le colis appartient bien à ce comptoir
         if ($order->shipment->destination_counter_id !== $counter->id) {
-            throw new \Exception(
-                'Ce colis n\'est pas enregistré dans votre comptoir.'
-            );
+            throw new \Exception('Ce colis n\'appartient pas à votre comptoir.');
         }
 
-        // Vérifier l'OTP
-        if ($order->otp_code !== $otp) {
-            throw new \Exception(
-                'Code OTP incorrect. Demandez à l\'acheteur de vérifier son téléphone.'
-            );
-        }
-
-        // Vérifier expiration OTP
-        if (
-            $order->otp_expires_at &&
-            now()->isAfter($order->otp_expires_at)
-        ) {
-            throw new \Exception(
-                'Code OTP expiré. Contactez le support.'
-            );
-        }
-
-        // Si le transport n'est pas inclus,
-        // il doit être payé AVANT la remise
+        // Vérifier que les frais transport sont payés si requis
         if (
             ! $order->shipment->shipping_included &&
             $order->shipment->transport_fee > 0 &&
             ! $order->shipment->transport_fee_paid
         ) {
             throw new \Exception(
-                'Les frais de transport ('
-                    . number_format(
-                        $order->shipment->transport_fee,
-                        0,
-                        ',',
-                        ' '
-                    )
-                    . ' FCFA) doivent être payés sur la plateforme avant la remise du colis.'
+                'L\'acheteur doit d\'abord payer les frais de transport ' .
+                    '(' . number_format($order->shipment->transport_fee, 0, ',', ' ') . ' FCFA) ' .
+                    'avant de récupérer son colis.'
             );
+        }
+
+        // Vérifier l'OTP
+        if ($order->otp_code !== $otp) {
+            throw new \Exception('Code OTP incorrect. Demandez à l\'acheteur de vérifier son téléphone.');
+        }
+
+        if ($order->otp_expires_at && now()->isAfter($order->otp_expires_at)) {
+            throw new \Exception('Code OTP expiré. Contactez le support.');
         }
 
         DB::transaction(function () use ($order) {
@@ -288,11 +243,42 @@ class ShippingService
             ]);
 
             // Libérer les fonds du vendeur
-            // app(WalletService::class)->releaseEscrow(
-            //     $order->shop->user,
-            //     $order->net_amount,
-            //     $order
-            // );
+            // app(WalletService::class)->releaseEscrow($order->shop->user, $order->net_amount, $order);
         });
+    }
+
+    // ── HELPERS PRIVÉS ────────────────────────────────────────────────
+
+    // Récupère le comptoir principal du secrétaire
+    // Lance une exception si pas de comptoir assigné
+    private function getSecretaryCounter(User $secretary): AgencyCounter
+    {
+        $secretaryCounter = SecretaryCounter::where('user_id', $secretary->id)
+            ->where('is_primary', true)
+            ->with('counter.agency')
+            ->first();
+
+        if (! $secretaryCounter) {
+            throw new \Exception(
+                'Aucun comptoir assigné à votre compte. Contactez l\'administrateur.'
+            );
+        }
+
+        return $secretaryCounter->counter;
+    }
+
+    // Vérifie que l'agence du colis correspond à l'agence du secrétaire
+    private function checkAgencyMatch(Order $order, AgencyCounter $counter): void
+    {
+        if ($order->shipment->agency_id !== $counter->agency_id) {
+            throw new \Exception(
+                'Ce colis appartient à une autre agence. Vous ne pouvez pas le traiter.'
+            );
+        }
+    }
+    // Version publique pour le controller
+    public function getSecretaryCounterPublic(User $secretary): AgencyCounter
+    {
+        return $this->getSecretaryCounter($secretary);
     }
 }

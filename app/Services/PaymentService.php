@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Payment\WebhookController;
+use App\Models\OrderShipment;
 
 class PaymentService
 {
@@ -57,40 +58,72 @@ class PaymentService
 
     // Campay appelle cette méthode quand l'acheteur a confirmé le paiement
     // ou quand il a refusé / le délai a expiré
+    // public function handleWebhook(array $data): void
+    // {
+    //     // Retrouver le paiement via la référence externe (notre idempotency_key)
+
+    //     $payment = OrderPayment::where(
+    //         'idempotency_key',
+    //         $data['external_reference']
+    //     )->first();
+
+
+    //     if (! $payment) {
+    //         Log::warning('Webhook Campay : paiement introuvable', $data);
+    //         return;
+    //     }
+
+    //     $order = $payment->order;
+
+    //     // Stocker la réponse brute pour audit
+    //     $payment->update(['provider_response' => $data]);
+
+    //     // Traiter selon le statut retourné par Campay
+    //     match ($data['status']) {
+
+    //         // Paiement confirmé par l'acheteur
+    //         'SUCCESSFUL' => $this->confirmPayment($order, $payment, $data),
+
+    //         // Paiement refusé ou délai expiré
+    //         'FAILED' => $this->failPayment($order, $payment),
+
+    //         // Statut inconnu — on loggue et on attend
+    //         default => Log::info('Webhook Campay statut inconnu', $data),
+    //     };
+    // }
     public function handleWebhook(array $data): void
     {
-        // Retrouver le paiement via la référence externe (notre idempotency_key)
+        $externalRef = $data['external_reference'] ?? '';
 
-        $payment = OrderPayment::where(
-            'idempotency_key',
-            $data['external_reference']
-        )->first();
+        // Paiement produit normal
+        $payment = OrderPayment::where('idempotency_key', $externalRef)->first();
 
-
-        if (! $payment) {
-            Log::warning('Webhook Campay : paiement introuvable', $data);
+        if ($payment) {
+            $order = $payment->order;
+            match ($data['status']) {
+                'SUCCESSFUL' => $this->confirmPayment($order, $payment, $data),
+                'FAILED'     => $this->failPayment($order, $payment),
+                default      => null,
+            };
             return;
         }
 
-        $order = $payment->order;
+        // Paiement frais transport
+        if (str_starts_with($externalRef, 'TRANSPORT-')) {
+            $shipment = OrderShipment::where('transport_payment_reference', $data['reference'])
+                ->first();
 
-        // Stocker la réponse brute pour audit
-        $payment->update(['provider_response' => $data]);
+            if ($shipment && $data['status'] === 'SUCCESSFUL') {
+                $shipment->update([
+                    'transport_fee_paid'    => true,
+                    'transport_fee_paid_at' => now(),
+                ]);
+            }
+            return;
+        }
 
-        // Traiter selon le statut retourné par Campay
-        match ($data['status']) {
-
-            // Paiement confirmé par l'acheteur
-            'SUCCESSFUL' => $this->confirmPayment($order, $payment, $data),
-
-            // Paiement refusé ou délai expiré
-            'FAILED' => $this->failPayment($order, $payment),
-
-            // Statut inconnu — on loggue et on attend
-            default => Log::info('Webhook Campay statut inconnu', $data),
-        };
+        Log::warning('Webhook Campay : référence introuvable', $data);
     }
-
     //ajouter par chatgpt
     // ── SYNCHRONISER LE PAIEMENT AVEC CAMPAY ─────────────────────────────
 
@@ -249,5 +282,32 @@ class PaymentService
 
             $this->wallet->requestWithdrawal($seller, $amount);
         });
+    }
+
+    // Paiement des frais transport via Campay
+    // Séparé du paiement produit — idempotency_key différent
+    public function initiateTransportPayment(Order $order): void
+    {
+        $transportFee = $order->shipment->transport_fee;
+
+        $phone = '237' . ltrim($order->payment->payer_phone, '0');
+
+        // Référence unique pour ce paiement transport
+        // Différente de l'idempotency_key du paiement produit
+        $reference = 'TRANSPORT-' . $order->id . '-' . Str::uuid();
+
+        $result = $this->campay->collect(
+            phone: $phone,
+            amount: $transportFee,
+            reference: $reference,
+            description: "Frais transport commande {$order->reference}"
+        );
+
+        // Marquer les frais transport comme payés dès confirmation Campay
+        // Le webhook Campay appellera handleWebhook()
+        // On stocke la référence pour le retrouver
+        $order->shipment->update([
+            'transport_payment_reference' => $result['reference'] ?? null,
+        ]);
     }
 }

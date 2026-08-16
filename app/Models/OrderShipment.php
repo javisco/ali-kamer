@@ -38,6 +38,9 @@ class OrderShipment extends Model
             'registered_at'          => 'datetime',
             'departed_at'            => 'datetime',
             'arrived_at'             => 'datetime',
+            'shipping_at' => 'datetime',
+            'transport_fee' => 'decimal',
+            'shipped_at'=>'datetime',
         ];
     }
 

@@ -29,7 +29,7 @@ class RegisterRequest extends FormRequest
             'email'    => "required|email|unique:users,email",
             'phone'    => "required|string|max:15|unique:users,phone",
             'password' => 'required|confirmed|min:8',
-            'role' => 'required|in:seller,buyer,secretary',
+            'role' => 'required|in:seller,buyer',
 
         ];
     }

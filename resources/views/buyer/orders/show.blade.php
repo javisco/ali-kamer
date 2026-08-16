@@ -259,7 +259,27 @@
                         </div>
                     </div>
                 @endif
-
+                {{-- Paiement frais transport si requis --}}
+                @if (
+                    $order->shipment &&
+                        !$order->shipment->shipping_included &&
+                        $order->shipment->transport_fee > 0 &&
+                        !$order->shipment->transport_fee_paid &&
+                        $order->status === 'awaiting_buyer_confirmation')
+                    <div class="bg-orange-50 border border-orange-200 rounded-2xl p-4 mb-4">
+                        <p class="text-sm font-bold text-orange-700 mb-1">
+                            ⚠ Frais de transport à payer avant retrait
+                        </p>
+                        <p class="text-sm text-orange-600 mb-3">
+                            Montant : {{ number_format($order->shipment->transport_fee, 0, ',', ' ') }} FCFA
+                        </p>
+                        <a href="{{ route('buyer.orders.transport', $order) }}"
+                            class="block w-full bg-orange-500 hover:bg-orange-600 text-white font-bold
+                  py-3 rounded-xl text-center text-sm transition">
+                            Payer les frais de transport
+                        </a>
+                    </div>
+                @endif
                 {{-- Livraison (OrderShipment) --}}
                 @if ($order->shipment)
                     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
@@ -285,7 +305,7 @@
                                     {{ $order->shipment->shipping_included ? '✓ Inclus dans le prix' : '⚠ Exclus — Payables à l\'arrivée' }}
                                 </span>
                             </div>
-                            @if ($order->shipment->transport_fee > 0)
+                            @if ($order->shipment?->transport_fee > 0 )
                                 <div class="flex justify-between items-center border-t border-gray-50 pt-2 mt-2">
                                     <span class="text-gray-500">Montant transport</span>
                                     <span class="font-bold text-orange-600">

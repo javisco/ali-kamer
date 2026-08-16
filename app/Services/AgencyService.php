@@ -160,14 +160,25 @@ class AgencyService
     /**
      * Récupère la liste des noms de villes actives uniques desservies par les agences.
      */
-    public function getActiveCities(): \Illuminate\Support\Collection
+    // public function getActiveCities(): \Illuminate\Support\Collection
+    // {
+    //     return AgencyCity::where('is_active', true)
+    //         ->whereHas('agency', function ($query) {
+    //             $query->where('is_active', true);
+    //         })
+    //         ->distinct()
+    //         ->orderBy('city')
+    //         ->pluck('city');
+    // }
+    // Récupère toutes les villes desservies par au moins une agence active
+    public function getActiveCities(): array
     {
-        return AgencyCity::where('is_active', true)
-            ->whereHas('agency', function ($query) {
-                $query->where('is_active', true);
-            })
-            ->distinct()
-            ->orderBy('city')
-            ->pluck('city');
+        return AgencyCity::whereHas('agency', fn($q) => $q->where('is_active', true))
+            ->where('is_active', true)
+            ->pluck('city')
+            ->unique()
+            ->sort()
+            ->values()
+            ->toArray();
     }
 }
