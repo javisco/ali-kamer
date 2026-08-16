@@ -108,7 +108,7 @@
             @if ($order->isCompleted())
                 <a href="{{ route('buyer.reviews.create', $order) }}"
                     class="block w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold
-              py-3 rounded-2xl text-center text-sm transition">
+              py-3 rounded-2xl text-center text-sm transition mb-3 mt-1">
                     ★ Noter cette commande
                 </a>
             @endif

@@ -17,7 +17,8 @@ class DisputeController extends Controller
     public function create(Order $order)
     {
         // Seul l'acheteur de la commande peut ouvrir un litige
-        abort_unless($order->buyer_id === Auth::user(), 403);
+        abort_unless($order->buyer_id == Auth::id(), 403);
+
         abort_unless($order->canBeDisputed(), 403);
 
         return view('buyer.disputes.create', [
@@ -29,7 +30,7 @@ class DisputeController extends Controller
     // Soumettre le litige
     public function store(Request $request, Order $order)
     {
-        abort_unless($order->buyer_id === Auth::user(), 403);
+        abort_unless($order->buyer_id === Auth::id(), 403);
 
         $request->validate([
             'type'        => ['required', 'in:' . implode(',', array_keys(Dispute::TYPES))],
@@ -54,15 +55,17 @@ class DisputeController extends Controller
     {
         // Acheteur ou vendeur concerné
         abort_unless(
-            $dispute->order->buyer_id === Auth::user()
-            || $dispute->order->shop->user_id === Auth::user(),
+            $dispute->order->buyer_id === Auth::user()->id
+                || $dispute->order->shop->user_id === Auth::user()->id,
             403
         );
 
         $dispute->load([
-            'order.shop', 'order.buyer',
+            'order.shop',
+            'order.buyer',
             'evidences.submitter',
-            'initiator', 'resolver',
+            'initiator',
+            'resolver',
         ]);
 
         return view('buyer.disputes.show', compact('dispute'));

@@ -59,71 +59,75 @@ class PaymentService
 
     // Campay appelle cette méthode quand l'acheteur a confirmé le paiement
     // ou quand il a refusé / le délai a expiré
-    // public function handleWebhook(array $data): void
-    // {
-    //     // Retrouver le paiement via la référence externe (notre idempotency_key)
-
-    //     $payment = OrderPayment::where(
-    //         'idempotency_key',
-    //         $data['external_reference']
-    //     )->first();
-
-
-    //     if (! $payment) {
-    //         Log::warning('Webhook Campay : paiement introuvable', $data);
-    //         return;
-    //     }
-
-    //     $order = $payment->order;
-
-    //     // Stocker la réponse brute pour audit
-    //     $payment->update(['provider_response' => $data]);
-
-    //     // Traiter selon le statut retourné par Campay
-    //     match ($data['status']) {
-
-    //         // Paiement confirmé par l'acheteur
-    //         'SUCCESSFUL' => $this->confirmPayment($order, $payment, $data),
-
-    //         // Paiement refusé ou délai expiré
-    //         'FAILED' => $this->failPayment($order, $payment),
-
-    //         // Statut inconnu — on loggue et on attend
-    //         default => Log::info('Webhook Campay statut inconnu', $data),
-    //     };
-    // }
     public function handleWebhook(array $data): void
     {
-        $externalRef = $data['external_reference'] ?? '';
+        Log::info('Webhook Campay reçu', $data);
 
-        // Paiement produit normal
+        $campayRef   = $data['reference'] ?? '';
+        $externalRef = $data['external_reference'] ?? '';
+        $status      = strtoupper($data['status'] ?? '');
+
+        // ── 1. Paiement produit principal ───────────────────────────────
         $payment = OrderPayment::where('idempotency_key', $externalRef)->first();
 
         if ($payment) {
-            $order = $payment->order;
-            match ($data['status']) {
-                'SUCCESSFUL' => $this->confirmPayment($order, $payment, $data),
-                'FAILED'     => $this->failPayment($order, $payment),
-                default      => null,
+            match ($status) {
+                'SUCCESSFUL' => $this->confirmPayment($payment->order, $payment, $data),
+                'FAILED'     => $this->failPayment($payment->order, $payment),
+                default      => Log::info('Webhook statut produit inconnu', $data),
             };
             return;
         }
 
-        // Paiement frais transport
-        if (str_starts_with($externalRef, 'TRANSPORT-')) {
-            $shipment = OrderShipment::where('transport_payment_reference', $data['reference'])
-                ->first();
+        // ── 2. Paiement frais transport ─────────────────────────────────
+        // Recherche robuste par la référence Campay OU l'external reference
+        $shipment = OrderShipment::where('transport_payment_reference', $externalRef)
+            ->orWhere('transport_payment_reference', $campayRef)
+            ->first();
 
-            if ($shipment && $data['status'] === 'SUCCESSFUL') {
+        // Fallback si la référence contient le préfixe TRANSPORT-
+        if (! $shipment && str_starts_with($externalRef, 'TRANSPORT-')) {
+            $parts   = explode('-', $externalRef);
+            $orderId = $parts[1] ?? null;
+
+            if ($orderId) {
+                $shipment = OrderShipment::where('order_id', $orderId)->first();
+            }
+        }
+
+        if ($shipment && $status === 'SUCCESSFUL') {
+
+            if ($shipment->transport_fee_paid) {
+                Log::info('Webhook transport doublon ignoré', ['shipment_id' => $shipment->id]);
+                return;
+            }
+
+            DB::transaction(function () use ($shipment) {
+
                 $shipment->update([
                     'transport_fee_paid'    => true,
                     'transport_fee_paid_at' => now(),
                 ]);
-            }
+
+                $order = $shipment->order;
+
+                $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+                $order->update([
+                    'otp_code'       => $otp,
+                    'otp_expires_at' => now()->addHours(120),
+                ]);
+
+                Log::info('Transport fee paid via webhook, OTP generated', [
+                    'order' => $order->reference,
+                    'otp'   => $otp,
+                ]);
+            });
+
             return;
         }
 
-        Log::warning('Webhook Campay : référence introuvable', $data);
+        Log::warning('Webhook Campay : aucun paiement trouvé', $data);
     }
     //ajouter par chatgpt
     // ── SYNCHRONISER LE PAIEMENT AVEC CAMPAY ─────────────────────────────
@@ -287,28 +291,103 @@ class PaymentService
 
     // Paiement des frais transport via Campay
     // Séparé du paiement produit — idempotency_key différent
-    public function initiateTransportPayment(Order $order): void
-    {
+    // Paiement des frais transport via Campay
+    // L'acheteur peut choisir un numéro différent de celui de la commande
+    public function initiateTransportPayment(
+        Order $order,
+        string $phone,
+        string $operator
+    ): void {
         $transportFee = $order->shipment->transport_fee;
 
-        $phone = '237' . ltrim($order->payment->payer_phone, '0');
+        if ($transportFee <= 0) {
+            throw new \Exception('Aucun frais de transport à payer.');
+        }
 
-        // Référence unique pour ce paiement transport
-        // Différente de l'idempotency_key du paiement produit
-        $reference = 'TRANSPORT-' . $order->id . '-' . Str::uuid();
+        if ($order->shipment->transport_fee_paid) {
+            throw new \Exception('Les frais transport ont déjà été payés.');
+        }
 
-        $result = $this->campay->collect(
-            phone: $phone,
-            amount: $transportFee,
-            reference: $reference,
-            description: "Frais transport commande {$order->reference}"
-        );
+        $formattedPhone = '237' . ltrim($phone, '0');
+        $reference      = 'TRANSPORT-' . $order->id . '-' . Str::uuid();
 
-        // Marquer les frais transport comme payés dès confirmation Campay
-        // Le webhook Campay appellera handleWebhook()
-        // On stocke la référence pour le retrouver
-        $order->shipment->update([
-            'transport_payment_reference' => $result['reference'] ?? null,
-        ]);
+        try {
+            $result = $this->campay->collect(
+                phone: $formattedPhone,
+                amount: $transportFee,
+                reference: $reference,
+                description: "Frais transport commande {$order->reference}"
+            );
+
+            // On conserve IMPÉRATIVEMENT la référence Campay ET l'external reference
+            $order->shipment->update([
+                'transport_payment_reference' => $result['reference'] ?? $reference,
+            ]);
+
+            Log::info('Transport payment initiated', [
+                'order'     => $order->reference,
+                'phone'     => $formattedPhone,
+                'amount'    => $transportFee,
+                'reference' => $reference,
+                'campay_ref' => $result['reference'] ?? null,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Transport payment failed', [
+                'order' => $order->reference,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
+    }
+    // Synchronise le paiement des frais de transport directement auprès de Campay
+    // ── SYNCHRONISATION TRANSPORT (Correction polling) ─────────────────
+
+    public function synchronizeTransportPayment(Order $order): bool
+    {
+        $shipment = $order->shipment;
+
+        if (! $shipment || $shipment->transport_fee_paid) {
+            return true;
+        }
+
+        if (! $shipment->transport_payment_reference) {
+            return false;
+        }
+
+        try {
+            // Tenter d'interroger la transaction
+            $transaction = $this->campay->getTransaction($shipment->transport_payment_reference);
+            $status      = strtoupper($transaction['status'] ?? '');
+
+            if ($status === 'SUCCESSFUL') {
+                DB::transaction(function () use ($shipment, $order) {
+                    $shipment->update([
+                        'transport_fee_paid'    => true,
+                        'transport_fee_paid_at' => now(),
+                    ]);
+
+                    $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+                    $order->update([
+                        'otp_code'       => $otp,
+                        'otp_expires_at' => now()->addHours(120),
+                    ]);
+
+                    Log::info('Transport fee paid via sync, OTP generated', [
+                        'order' => $order->reference,
+                        'otp'   => $otp,
+                    ]);
+                });
+
+                return true;
+            }
+        } catch (\Throwable $e) {
+            Log::warning('Synchronisation transport Campay échouée', [
+                'order' => $order->reference,
+                'error' => $e->getMessage(),
+            ]);
+        }
+
+        return false;
     }
 }

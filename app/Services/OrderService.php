@@ -153,3 +153,29 @@ class OrderService
             });
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+// // Dans OrderService::create() — remplacer les constantes par PlatformSetting
+// $protectionRate      = PlatformSetting::getRate('protection_rate');
+// $gatewayRate         = PlatformSetting::getRate('gateway_collect_rate');
+// $commissionRate      = PlatformSetting::getRate('platform_commission_rate');
+// $agencyRate          = PlatformSetting::getRate('agency_commission_rate');
+// $payoutRate          = PlatformSetting::getRate('gateway_payout_rate');
+
+// $subtotal            = $product->price * $quantity;
+// $protectionFee       = (int) round($subtotal * $protectionRate);
+// $gatewayFee          = (int) round($subtotal * $gatewayRate);
+// $totalAmount         = $subtotal + $protectionFee + $gatewayFee;
+// $platformCommission  = (int) round($subtotal * $commissionRate);
+// $agencyCommission    = (int) round($subtotal * $agencyRate);
+// $gatewayPayoutFee    = (int) round($subtotal * $payoutRate);
+// $netAmount           = $subtotal - $platformCommission - $agencyCommission - $gatewayPayoutFee;

@@ -90,8 +90,9 @@ class OrderController extends Controller
         return view('buyer.orders.transport-payment', compact('order'));
     }
 
+
     // Initier le paiement Campay pour les frais transport
-    public function payTransport(Order $order, PaymentService $paymentService)
+    public function payTransport(Request $request, Order $order, PaymentService $paymentService)
     {
         abort_unless($order->buyer_id === Auth::id(), 403);
         abort_unless(
@@ -100,10 +101,47 @@ class OrderController extends Controller
             403
         );
 
-        // Déclencher le paiement Campay pour les frais transport
-        $paymentService->initiateTransportPayment($order);
+        $request->validate([
+            'transport_phone'    => ['required', 'string', 'regex:/^6[0-9]{8}$/'],
+            'transport_operator' => ['required', 'in:mtn,orange'],
+        ]);
 
-        return redirect()->route('buyer.payment.waiting', $order)
+        $paymentService->initiateTransportPayment(
+            $order,
+            $request->transport_phone,
+            $request->transport_operator
+        );
+
+        return redirect()->route('buyer.orders.transport.waiting', $order)
             ->with('success', 'Vérifiez votre téléphone pour confirmer le paiement du transport.');
+    }
+
+    // Page d'attente dédiée au paiement transport
+    public function transportWaiting(Order $order)
+    {
+        abort_unless($order->buyer_id === Auth::id(), 403);
+        return view('buyer.orders.transport-waiting', compact('order'));
+    }
+
+    // Vérification statut paiement transport (polling JS)
+    public function transportStatus(Order $order, PaymentService $paymentService)
+    {
+        abort_unless($order->buyer_id === Auth::id(), 403);
+
+        $shipment = $order->shipment;
+
+        // Si le transport n'est pas encore marqué comme payé, on tente une synchronisation active
+        if ($shipment && ! $shipment->transport_fee_paid) {
+            $paymentService->synchronizeTransportPayment($order);
+            $shipment->refresh();
+        }
+
+        return response()->json([
+            // true si transport payé
+            'paid' => (bool) $shipment->transport_fee_paid,
+
+            // OTP disponible si transport payé et OTP généré
+            'otp_ready' => $shipment->transport_fee_paid && $order->otp_code !== null,
+        ]);
     }
 }

@@ -8,8 +8,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Review extends Model
 {
     protected $fillable = [
-        'order_id', 'reviewer_id', 'reviewee_type', 'reviewee_id',
-        'rating', 'body', 'is_verified', 'is_flagged', 'is_contested',
+        'order_id',
+        'reviewer_id',
+        'reviewee_type',
+        'reviewee_id',
+        'rating',
+        'body',
+        'is_verified',
+        'is_flagged',
+        'is_contested',
     ];
 
     protected function casts(): array
@@ -40,21 +47,21 @@ class Review extends Model
     public function scopeForProduct($q, int $productId)
     {
         return $q->where('reviewee_type', 'product')
-                 ->where('reviewee_id', $productId);
+            ->where('reviewee_id', $productId);
     }
 
     // Avis sur une boutique
     public function scopeForShop($q, int $shopId)
     {
         return $q->where('reviewee_type', 'shop')
-                 ->where('reviewee_id', $shopId);
+            ->where('reviewee_id', $shopId);
     }
 
     // Avis sur un acheteur
     public function scopeForBuyer($q, int $userId)
     {
         return $q->where('reviewee_type', 'buyer')
-                 ->where('reviewee_id', $userId);
+            ->where('reviewee_id', $userId);
     }
 
     // ── Helpers ───────────────────────────────────────────────────────

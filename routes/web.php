@@ -28,6 +28,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Seller\WalletController;
 
 use App\Http\Controllers\Admin\AgencyController;
+use App\Http\Controllers\Admin\FinancialEngineController;
+use App\Http\Controllers\Admin\TutorialController as AdminTutorialController;
+use App\Http\Controllers\TutorialController;
 use App\Models\Agency;
 use App\Models\AgencyCounter;
 
@@ -188,8 +191,7 @@ Route::post('/webhooks/campay', [WebhookController::class, 'campay'])
 
 // Pages paiement acheteur
 Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
-        // Route::get('/paiement/{order}', [PaymentController::class, 'show'])
-        //         ->name('buyer.payment.show');
+
         Route::get('/paiement/{order}/initier', [PaymentController::class, 'initiate'])
                 ->name('buyer.payment.initiate');
         Route::get('/paiement/{order}/attente', [PaymentController::class, 'waiting'])
@@ -262,13 +264,19 @@ Route::middleware(['auth', 'role:secretary'])
 // Paiement frais transport acheteur
 Route::middleware(['auth', 'role:buyer'])->group(function () {
 
-        // Page de paiement des frais transport
         Route::get('/commandes/{order}/transport', [BuyerOrderController::class, 'transportPayment'])
                 ->name('buyer.orders.transport');
 
-        // Initier le paiement Campay pour les frais transport
         Route::post('/commandes/{order}/transport/payer', [BuyerOrderController::class, 'payTransport'])
                 ->name('buyer.orders.transport.pay');
+
+        // Page d'attente dédiée au paiement transport
+        Route::get('/commandes/{order}/transport/attente', [BuyerOrderController::class, 'transportWaiting'])
+                ->name('buyer.orders.transport.waiting');
+
+        // Vérification statut paiement transport (polling JS)
+        Route::get('/commandes/{order}/transport/statut', [BuyerOrderController::class, 'transportStatus'])
+                ->name('buyer.orders.transport.status');
 });
 
 
@@ -279,7 +287,7 @@ Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
                 ->name('buyer.disputes.create');
         Route::post('/commandes/{order}/litige', [BuyerDisputeController::class, 'store'])
                 ->name('buyer.disputes.store');
-        Route::get('/litiges/{dispute}', [BuyerDisputeController::class, 'show'])
+        Route::get('/litiges/{dispute}/show', [BuyerDisputeController::class, 'show'])
                 ->name('buyer.disputes.show');
 });
 
@@ -371,13 +379,36 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 });
 
 
-// Dans routes/web.php — pas besoin d'auth car données publiques
-Route::get('/api/agences/{agency}/comptoirs', function (Agency $agency, Request $request) {
-        $city     = $request->get('city');
-        $counters = AgencyCounter::where('agency_id', $agency->id)
-                ->where('city', $city)
-                ->where('is_active', true)
-                ->get(['id', 'city', 'district', 'landmark']);
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+        Route::get('/moteur-financier', [FinancialEngineController::class, 'index'])
+                ->name('admin.financial-engine.index');
+        Route::post('/moteur-financier', [FinancialEngineController::class, 'update'])
+                ->name('admin.financial-engine.update');
+});
 
-        return response()->json($counters);
+
+// Tutoriels publics (acheteurs et vendeurs connectés)
+Route::middleware('auth')->group(function () {
+        Route::get('/tutoriels', [TutorialController::class, 'index'])
+                ->name('tutorials.index');
+        Route::get('/tutoriels/{tutorial}', [TutorialController::class, 'show'])
+                ->name('tutorials.show');
+});
+
+// Admin — gestion tutoriels
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+        Route::get('/tutoriels', [TutorialController::class, 'index'])
+                ->name('admin.tutorials.index');
+        Route::get('/tutoriels/creer', [TutorialController::class, 'create'])
+                ->name('admin.tutorials.create');
+        Route::post('/tutoriels', [TutorialController::class, 'store'])
+                ->name('admin.tutorials.store');
+        Route::get('/tutoriels/{tutorial}/modifier', [AdminTutorialController::class, 'edit'])
+                ->name('admin.tutorials.edit');
+        Route::put('/tutoriels/{tutorial}', [TutorialController::class, 'update'])
+                ->name('admin.tutorials.update');
+        Route::post('/tutoriels/{tutorial}/toggle', [TutorialController::class, 'toggle'])
+                ->name('admin.tutorials.toggle');
+        Route::delete('/tutoriels/{tutorial}', [TutorialController::class, 'destroy'])
+                ->name('admin.tutorials.destroy');
 });

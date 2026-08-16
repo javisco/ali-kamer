@@ -44,6 +44,11 @@ return new class extends Migration
             $table->string('local_carrier_name')->nullable();
             $table->string('local_carrier_phone')->nullable();
 
+            // reference des frais de transport
+            $table->string('transport_external_reference')->nullable()->unique();
+            $table->string('transport_payment_reference')->nullable();
+
+
             // Destinataire
             $table->string('recipient_name');
             $table->string('recipient_phone');

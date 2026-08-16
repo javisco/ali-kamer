@@ -75,19 +75,21 @@
             <nav
                 class="hidden md:flex items-center bg-[#F1EFE9] px-3 py-1.5 rounded-full text-slate-700 font-medium text-sm space-x-1 shadow-inner">
 
+                {{-- ACCUEIL / CATALOGUE (Commun à tous) --}}
+                <a href="{{ route('buyer.home') }}"
+                    class="flex items-center gap-1.5 px-4 py-2 rounded-full transition {{ request()->routeIs('buyer.home') ? 'bg-blue-600 font-semibold text-white shadow-sm' : 'hover:text-black' }}">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 00-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    Accueil
+                </a>
 
                 @auth
-                    <a href="{{ route('buyer.home') }}"
-                        class="flex items-center gap-2 px-4 py-2 rounded-full transition {{ request()->routeIs('buyer.home') ? 'bg-blue-600 font-semibold text-white shadow-sm' : 'hover:text-black' }}">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 00-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                        </svg>
-                        Accueil
-                    </a>
+                    {{-- ── ACHETEUR ── --}}
                     @if (auth()->user()->role === 'buyer')
                         <a href="{{ route('buyer.orders.index') }}"
-                            class="flex items-center gap-2 px-4 py-2 rounded-full transition {{ request()->routeIs('buyer.orders.*') ? 'bg-blue-600 font-semibold text-white shadow-sm' : 'hover:text-black' }}">
+                            class="flex items-center gap-1.5 px-4 py-2 rounded-full transition {{ request()->routeIs('buyer.orders.*') ? 'bg-blue-600 font-semibold text-white shadow-sm' : 'hover:text-black' }}">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -96,18 +98,22 @@
                         </a>
                     @endif
 
+                    {{-- ── VENDEUR ── --}}
                     @if (auth()->user()->role === 'seller')
                         <a href="{{ route('seller.products.index') }}"
-                            class="px-4 py-2 rounded-full transition {{ request()->routeIs('seller.products.*') ? 'bg-blue-600 text-white font-semibold' : 'hover:text-black' }}">Produits</a>
+                            class="px-4 py-2 rounded-full transition {{ request()->routeIs('seller.products.*') ? 'bg-blue-600 text-white font-semibold shadow-sm' : 'hover:text-black' }}">
+                            Produits
+                        </a>
                         <a href="{{ route('seller.orders.index') }}"
-                            class="px-4 py-2 rounded-full transition {{ request()->routeIs('seller.orders.*') ? 'bg-blue-600 text-white font-semibold' : 'hover:text-black' }}">Commandes</a>
-
-                        <a href="{{ route('seller.disputes.index') }}"
-                            class="px-4 py-2 rounded-full transition {{ request()->routeIs('seller.disputes.*') ? 'bg-blue-600 text-white font-semibold' : 'hover:text-black' }}">litige</a>
+                            class="px-4 py-2 rounded-full transition {{ request()->routeIs('seller.orders.*') ? 'bg-blue-600 text-white font-semibold shadow-sm' : 'hover:text-black' }}">
+                            Commandes
+                        </a>
                     @endif
-                    @if (auth()->user()->role == 'seller' || auth()->user()->role == 'buyer')
+
+                    {{-- ── MESSAGERIE (Acheteurs & Vendeurs) ── --}}
+                    @if (in_array(auth()->user()->role, ['buyer', 'seller']))
                         <a href="{{ route('messaging.index') }}"
-                            class="relative flex items-center gap-2 px-4 py-2 rounded-full transition {{ request()->routeIs('messaging.*') ? 'bg-blue-600 font-semibold text-white shadow-sm' : 'hover:text-black' }}">
+                            class="relative flex items-center gap-1.5 px-4 py-2 rounded-full transition {{ request()->routeIs('messaging.*') ? 'bg-blue-600 font-semibold text-white shadow-sm' : 'hover:text-black' }}">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -115,13 +121,22 @@
                             Messages
                         </a>
                     @endif
-                    @if (auth()->user()->role == 'admin')
+
+                    {{-- ── ADMIN ── --}}
+                    @if (auth()->user()->role === 'admin')
                         <a href="{{ route('admin.disputes.index') }}"
-                            class="relative flex items-center gap-2 px-4 py-2 rounded-full transition {{ request()->routeIs('messaging.*') ? 'bg-blue-600 font-semibold text-white shadow-sm' : 'hover:text-black' }}">Litiges</a>
+                            class="flex items-center gap-1.5 px-4 py-2 rounded-full transition {{ request()->routeIs('admin.disputes.*') ? 'bg-blue-600 font-semibold text-white shadow-sm' : 'hover:text-black' }}">
+                            Litiges
+                        </a>
                     @endif
 
+                    {{-- TUTORIELS (Visible pour tous les utilisateurs connectés) --}}
+                    {{-- <a href="{{ route('tutorials.index') }}"
+                        class="px-4 py-2 rounded-full transition {{ request()->routeIs('tutorials.*') ? 'bg-blue-600 font-semibold text-white shadow-sm' : 'hover:text-black' }}">
+                        Tutoriels
+                    </a> --}}
 
-                    {{-- BOUTON DASHBOARD (au lieu de Profil) --}}
+                    {{-- BOUTON DASHBOARD DYNAMIQUE --}}
                     @php
                         $dashboardRoute = match (auth()->user()->role) {
                             'seller' => route('seller.dashboard'),
@@ -141,19 +156,20 @@
                         Dashboard
                     </a>
                 @endauth
+
             </nav>
 
-            {{-- 3. RECHERCHE CONTEXTUELLE AU SCROLL & UTILISATEUR --}}
+            {{-- 3. RECHERCHE CONTEXTUELLE & UTILISATEUR --}}
             <div class="flex items-center gap-3">
 
-                <!-- BARRE DE RECHERCHE DYNAMIQUE ET ADAPTATIVE -->
+                <!-- BARRE DE RECHERCHE DYNAMIQUE -->
                 @php
                     $searchAction = route('buyer.home');
                     $searchPlaceholder = 'Rechercher un article...';
 
                     if (request()->routeIs('messaging.*')) {
                         $searchAction = route('messaging.index');
-                        $searchPlaceholder = 'Rechercher un message ou contact...';
+                        $searchPlaceholder = 'Rechercher un message...';
                     } elseif (request()->routeIs('seller.products.*')) {
                         $searchAction = route('seller.products.index');
                         $searchPlaceholder = 'Filtrer vos produits...';
@@ -182,7 +198,7 @@
                             {{ strtoupper(substr(auth()->user()->name ?? auth()->user()->email, 0, 2)) }}
                         </div>
 
-                        <!-- Bouton Déconnexion Textuel -->
+                        <!-- Bouton Déconnexion -->
                         <form action="{{ route('logout') }}" method="POST" class="inline">
                             @csrf
                             <button type="submit"
@@ -221,7 +237,6 @@
             const searchBar = document.getElementById('navbar-search');
 
             if (searchBar) {
-                // Sur les pages secondaires (ex: messagerie), afficher la barre immédiatement
                 const isHomePage = {{ request()->routeIs('buyer.home') ? 'true' : 'false' }};
 
                 if (!isHomePage) {

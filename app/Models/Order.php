@@ -116,8 +116,9 @@ class Order extends Model
     public function isCompleted(): bool
     {
         return in_array($this->status, [
+
             self::STATUS_COMPLETED,
-            self::STATUS_AUTO_COMPLETED,
+            self::STATUS_AUTO_COMPLETED
         ]);
     }
 
@@ -125,9 +126,8 @@ class Order extends Model
     {
         return in_array($this->status, [
             self::STATUS_ARRIVED_DESTINATION,
-            self::STATUS_AWAITING_BUYER_CONFIRMATION,
-            'completed',
-            'auto_completed',
+            self::STATUS_COMPLETED,
+            self::STATUS_AUTO_COMPLETED,
         ]);
     }
 
@@ -142,5 +142,9 @@ class Order extends Model
         $year  = now()->year;
         $count = self::whereYear('created_at', $year)->count() + 1;
         return 'ALK-' . $year . '-' . str_pad($count, 5, '0', STR_PAD_LEFT);
+    }
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
     }
 }

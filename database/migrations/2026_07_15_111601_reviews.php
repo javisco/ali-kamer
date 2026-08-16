@@ -23,7 +23,7 @@ return new class extends Migration
 
             // Qui est noté et quel type d'entité
             // reviewee_type : 'product' | 'shop' | 'buyer'
-            $table->enum('reviewee_type', ['shop', 'buyer']); // L'acheteur note la boutique ou le vendeur note la fiabilité de l'acheteur
+            $table->enum('reviewee_type', ['shop', 'buyer','product']); // L'acheteur note la boutique ou le vendeur note la fiabilité de l'acheteur
             $table->unsignedBigInteger('reviewee_id');
 
             // Note de 1 à 5

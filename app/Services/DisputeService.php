@@ -21,7 +21,7 @@ class DisputeService
         string $description,
         array $files = []
     ): Dispute {
-
+        
         // Vérifier que la commande peut faire l'objet d'un litige
         if (! $order->canBeDisputed()) {
             throw new \Exception(
@@ -62,7 +62,7 @@ class DisputeService
             $order->update(['status' => Order::STATUS_DISPUTED]);
 
             // Notifier l'admin et l'autre partie
-       //     app(NotificationService::class)->notifyDisputeOpened($dispute);
+            //     app(NotificationService::class)->notifyDisputeOpened($dispute);
 
             return $dispute;
         });
@@ -97,7 +97,7 @@ class DisputeService
             $dispute->update(['status' => 'seller_replied']);
 
             // Notifier l'admin que le dossier est complet
-          //  app(NotificationService::class)->notifyDisputeSellerReplied($dispute);
+            //  app(NotificationService::class)->notifyDisputeSellerReplied($dispute);
         });
     }
 
@@ -129,7 +129,7 @@ class DisputeService
             ]);
 
             // Après resolve() :
-          //  app(NotificationService::class)->notifyDisputeResolved($dispute);
+            //  app(NotificationService::class)->notifyDisputeResolved($dispute);
 
             // Appliquer la décision financière
             $this->applyResolution($dispute);

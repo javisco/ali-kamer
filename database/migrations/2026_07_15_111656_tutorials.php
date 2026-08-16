@@ -13,15 +13,41 @@ return new class extends Migration
     {
         Schema::create('tutorials', function (Blueprint $table) {
             $table->id();
+
+            // Titre du tutoriel
             $table->string('title');
+
+            // Type de contenu
             $table->enum('type', ['video', 'text']);
-            $table->enum('role_target', ['buyer', 'seller']); // Strictement séparés par rôle
-            $table->string('content_url'); // URL du tutoriel ou de la vidéo
-            $table->integer('order_index')->default(0); // Pour trier l'ordre d'affichage
-            $table->boolean('is_published')->default(true);
+
+            // À qui est destiné ce tutoriel
+            $table->enum('role_target', ['buyer', 'seller', 'all']);
+
+            // Catégorie pour organiser les tutoriels
+            $table->string('category');
+            // Ex: 'comment-acheter', 'comment-vendre', 'paiement', 'livraison', 'litige'
+
+            // URL de la vidéo YouTube ou hébergée
+            $table->string('video_url')->nullable();
+
+            // Miniature de la vidéo
+            $table->string('thumbnail_url')->nullable();
+
+            // Contenu texte (si type=text)
+            $table->longText('content')->nullable();
+
+            // Durée en minutes (pour les vidéos)
+            $table->unsignedSmallInteger('duration_minutes')->nullable();
+
+            // Ordre d'affichage dans la catégorie
+            $table->unsignedSmallInteger('sort_order')->default(0);
+
+            // Publié ou brouillon
+            $table->boolean('is_published')->default(false);
+
             $table->timestamps();
 
-            $table->index(['role_target', 'is_published']);
+            $table->index(['role_target', 'is_published', 'category']);
         });
     }
 
