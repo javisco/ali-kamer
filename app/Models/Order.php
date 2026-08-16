@@ -63,6 +63,7 @@ class Order extends Model
             'paid_at'            => 'datetime',
             'completed_at'       => 'datetime',
             'cancelled_at'       => 'datetime',
+            'shipped_at' => 'datetime',
         ];
     }
 

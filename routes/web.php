@@ -227,9 +227,13 @@ Route::middleware(['auth', 'role:secretary'])
                 Route::post('/depot/recherche', [DashboardController::class, 'searchDeposit'])
                         ->name('secretary.deposit.search');
 
+                Route::get('/depot/{order}/found', [DashboardController::class, 'found'])
+                        ->name('found');
+
                 // Enregistrer le colis au départ (+ frais transport si exclu)
                 Route::post('/depot/{order}/valider', [DashboardController::class, 'registerDeposit'])
                         ->name('secretary.deposit.validate');
+
                 // ── PAGE 2 : Arrivées (secrétaire arrivée) ───────────────────
 
                 // Page arrivées — liste des colis attendus + recherche par référence

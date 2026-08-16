@@ -57,10 +57,13 @@ class DashboardController extends Controller
             return back()->withErrors(['deposit_code' => $e->getMessage()]);
         }
 
-
+        return redirect()->route('found', ['order' => $order]);
+        //return view('secretary.deposit.found', compact('order'));
+    }
+    public function found(Order $order)
+    {
         return view('secretary.deposit.found', compact('order'));
     }
-
 
     // Valider le dépôt
     public function registerDeposit(Request $request, Order $order)
@@ -80,6 +83,7 @@ class DashboardController extends Controller
                 $request->transport_fee ?? 0
             );
         } catch (\Exception $e) {
+            dd($e);
             return back()->withErrors(['error' => $e->getMessage()]);
         }
 

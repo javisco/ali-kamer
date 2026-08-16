@@ -51,6 +51,7 @@ return new class extends Migration
 
             // Horodatages
             $table->timestamp('registered_at')->nullable();
+            $table->timestamp('shipped_at')->nullable();
             $table->timestamp('departed_at')->nullable();
             $table->timestamp('arrived_at')->nullable();
 

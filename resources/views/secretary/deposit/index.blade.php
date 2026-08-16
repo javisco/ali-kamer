@@ -22,9 +22,9 @@
                     Demandez au vendeur son code à 8 caractères et saisissez-le ci-dessous.
                 </p>
 
-                <form method="POST" action="{{ route('secretary.deposit.search') }}">
+                <form action="{{ route('secretary.deposit.search') }}" method="POST">
                     @csrf
-                    
+
                     <div class="flex gap-3">
                         <input type="text" name="deposit_code" maxlength="8" required placeholder="Ex: AB3D7F2K"
                             class="flex-1 border border-gray-300 rounded-xl px-4 py-3

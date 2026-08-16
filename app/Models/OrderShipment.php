@@ -24,9 +24,11 @@ class OrderShipment extends Model
         'recipient_name',
         'recipient_phone',
         'destination_city',
+
         'registered_at',
         'departed_at',
         'arrived_at',
+
     ];
 
     protected function casts(): array
@@ -39,8 +41,6 @@ class OrderShipment extends Model
             'departed_at'            => 'datetime',
             'arrived_at'             => 'datetime',
             'shipping_at' => 'datetime',
-            'transport_fee' => 'decimal',
-            'shipped_at'=>'datetime',
         ];
     }
 

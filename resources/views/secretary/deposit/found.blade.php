@@ -74,7 +74,7 @@
 
                 <form method="POST" action="{{ route('secretary.deposit.validate', $order) }}">
                     @csrf
-                   
+
                     @if (!$order->shipment->shipping_included)
                         <div class="mb-5">
                             <label class="block text-sm font-medium text-gray-700 mb-1">
