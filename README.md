@@ -2,7 +2,7 @@
 
 **Ali-Kamer** est une marketplace e-commerce camerounaise conçue pour rendre les transactions entre acheteurs et vendeurs plus simples, sécurisées et fiables.
 
-La plateforme combine **commerce en ligne, paiement sécurisé par Escrow, Mobile Money, logistique interurbaine par agences, suivi des commandes, messagerie et gestion des litiges** au sein d'un même système.
+La plateforme combine **commerce en ligne, paiement sécurisé par Escrow, Mobile Money, logistique interurbaine, par agences, suivi des commandes, messagerie et gestion des litiges** au sein d'un même système.
 
 ## 🎯 Objectif
 
