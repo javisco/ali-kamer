@@ -161,7 +161,7 @@
                                     </button>
                                 @endif
 
-                                <a href="{{ route('messaging.start',['product'=>$product->id,'shop'=>$product->shop->id]) }}"
+                                <a href="{{ route('messaging.start', ['product' => $product->id, 'shop' => $product->shop->id]) }}"
                                     class="flex items-center justify-center gap-2 border border-slate-300 hover:border-slate-400 text-slate-700 font-semibold py-3.5 px-5 rounded-xl text-xs transition-all bg-white hover:bg-slate-50">
                                     <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
@@ -212,7 +212,110 @@
                 @endif
 
             </div>
+            {{-- ── Avis clients ────────────────────────────────────────────── --}}
+            <div class="mt-8">
 
+                {{-- Note résumée --}}
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="text-center">
+                        <p class="text-5xl font-extrabold text-gray-900">
+                            {{ $productRating ? number_format($productRating, 1) : '—' }}
+                        </p>
+                        <div class="text-yellow-400 text-xl mt-1">
+                            @for ($i = 1; $i <= 5; $i++)
+                                {{ $i <= round($productRating) ? '★' : '☆' }}
+                            @endfor
+                        </div>
+                        <p class="text-xs text-gray-400 mt-1">
+                            {{ $reviews->count() }} avis
+                        </p>
+                    </div>
+
+                    {{-- Barre de progression par étoile --}}
+                    <div class="flex-1 space-y-1.5">
+                        @for ($star = 5; $star >= 1; $star--)
+                            @php
+                                $count = $reviews->where('rating', $star)->count();
+                                $pct = $reviews->count() > 0 ? ($count / $reviews->count()) * 100 : 0;
+                            @endphp
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-gray-500 w-3">{{ $star }}</span>
+                                <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                                    <div class="h-full bg-yellow-400 rounded-full" style="width: {{ $pct }}%">
+                                    </div>
+                                </div>
+                                <span class="text-xs text-gray-400 w-4">{{ $count }}</span>
+                            </div>
+                        @endfor
+                    </div>
+                </div>
+
+                {{-- Liste des avis --}}
+                @if ($reviews->count())
+                    <div class="space-y-4">
+                        @foreach ($reviews as $review)
+                            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div>
+                                        <p class="font-semibold text-gray-900 text-sm">
+                                            {{ $review->reviewer->name }}
+                                        </p>
+                                        <p class="text-xs text-gray-400">
+                                            {{ $review->created_at->format('d/m/Y') }}
+                                        </p>
+                                    </div>
+                                    <div class="text-yellow-400">
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            {{ $i <= $review->rating ? '★' : '☆' }}
+                                        @endfor
+                                    </div>
+                                </div>
+                                @if ($review->body)
+                                    <p class="text-sm text-gray-700 leading-relaxed">
+                                        {{ $review->body }}
+                                    </p>
+                                @endif
+                                {{-- Badge avis vérifié --}}
+                                <p class="text-xs text-emerald-500 mt-2">✓ Achat vérifié</p>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 text-center">
+                        <p class="text-gray-400 text-sm">
+                            Aucun avis pour l'instant. Soyez le premier à commander !
+                        </p>
+                    </div>
+                @endif
+            </div>
+
+            {{-- ── Note de la boutique ─────────────────────────────────────── --}}
+            @if ($shopRating)
+                <div class="mt-8 bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                    <h2 class="font-bold text-gray-800 mb-3">Note de la boutique</h2>
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 font-bold
+                        flex items-center justify-center uppercase text-sm flex-shrink-0">
+                            {{ substr($product->shop->name, 0, 2) }}
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-900 text-sm">{{ $product->shop->name }}</p>
+                            <div class="flex items-center gap-2 mt-0.5">
+                                <div class="text-yellow-400 text-sm">
+                                    @for ($i = 1; $i <= 5; $i++)
+                                        {{ $i <= round($shopRating) ? '★' : '☆' }}
+                                    @endfor
+                                </div>
+                                <span class="text-xs text-gray-400">
+                                    {{ number_format($shopRating, 1) }}/5
+                                    — {{ $shopReviews->count() }} avis boutique
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
             {{-- ── 4. AUTRES PRODUITS DE LA BOUTIQUE ──────── --}}
             @if ($shopProducts->count())
                 <div class="mb-12">

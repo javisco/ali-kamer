@@ -62,7 +62,7 @@ class KycService
             ]);
         });
         // Après approve() :
-        app(NotificationService::class)->notifyKycApproved($kyc->user);
+       // app(NotificationService::class)->notifyKycApproved($kyc->user);
     }
 
     // Admin rejette

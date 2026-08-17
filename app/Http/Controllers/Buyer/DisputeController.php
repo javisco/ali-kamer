@@ -13,13 +13,30 @@ class DisputeController extends Controller
 {
     public function __construct(private DisputeService $disputeService) {}
 
+    // Liste des litiges de l'acheteur
+    public function index()
+    {
+        $disputes = Dispute::whereHas('order', function ($q) {
+            $q->where('buyer_id', Auth::id());
+        })
+            ->with(['order.shop', 'order.items.product', 'evidences'])
+            ->latest()
+            ->paginate(20);
+
+        return view('buyer.disputes.index', compact('disputes'));
+    }
+
     // Formulaire d'ouverture du litige
     public function create(Order $order)
     {
-        // Seul l'acheteur de la commande peut ouvrir un litige
-        abort_unless($order->buyer_id == Auth::id(), 403);
-
+        abort_unless($order->buyer_id === Auth::id(), 403);
         abort_unless($order->canBeDisputed(), 403);
+
+        // Vérifier qu'un litige n'est pas déjà ouvert
+        if ($order->dispute && ! $order->dispute->isResolved()) {
+            return redirect()->route('buyer.disputes.show', $order->dispute)
+                ->with('info', 'Un litige est déjà ouvert pour cette commande.');
+        }
 
         return view('buyer.disputes.create', [
             'order' => $order,
@@ -38,7 +55,7 @@ class DisputeController extends Controller
             'files.*'     => ['nullable', 'file', 'max:5120', 'mimes:jpg,jpeg,png,pdf'],
         ]);
 
-        $this->disputeService->open(
+        $dispute = $this->disputeService->open(
             $order,
             Auth::user(),
             $request->type,
@@ -46,23 +63,24 @@ class DisputeController extends Controller
             $request->file('files', [])
         );
 
-        return redirect()->route('buyer.disputes.show', $order->dispute)
+        return redirect()->route('buyer.disputes.show', $dispute)
             ->with('success', 'Litige ouvert. Le vendeur a 48h pour répondre.');
     }
 
     // Détail du litige
     public function show(Dispute $dispute)
     {
-        // Acheteur ou vendeur concerné
+        // Acheteur ou vendeur concerné uniquement
         abort_unless(
-            $dispute->order->buyer_id === Auth::user()->id
-                || $dispute->order->shop->user_id === Auth::user()->id,
+            $dispute->order->buyer_id === Auth::id()
+                || $dispute->order->shop->user_id === Auth::id(),
             403
         );
 
         $dispute->load([
             'order.shop',
             'order.buyer',
+            'order.items.product',
             'evidences.submitter',
             'initiator',
             'resolver',

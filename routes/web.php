@@ -281,26 +281,34 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
 
 
 
-// Litiges acheteur
-Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
+
+// ── Litiges acheteur ──────────────────────────────────────────────
+Route::middleware(['auth', 'role:buyer'])->group(function () {
+        // Liste des litiges de l'acheteur
+        Route::get('/litiges', [BuyerDisputeController::class, 'index'])
+                ->name('buyer.disputes.index');
+        // Ouvrir un litige
         Route::get('/commandes/{order}/litige', [BuyerDisputeController::class, 'create'])
                 ->name('buyer.disputes.create');
         Route::post('/commandes/{order}/litige', [BuyerDisputeController::class, 'store'])
                 ->name('buyer.disputes.store');
-        Route::get('/litiges/{dispute}/show', [BuyerDisputeController::class, 'show'])
+        // Détail d'un litige
+        Route::get('/litiges/{dispute}', [BuyerDisputeController::class, 'show'])
                 ->name('buyer.disputes.show');
 });
 
-// Litiges vendeur
-Route::middleware(['auth', 'verified', 'role:seller'])->prefix('vendeur')->group(function () {
+// ── Litiges vendeur ───────────────────────────────────────────────
+Route::middleware(['auth', 'role:seller'])->prefix('vendeur')->group(function () {
         Route::get('/litiges', [SellerDisputeController::class, 'index'])
                 ->name('seller.disputes.index');
+        Route::get('/litiges/{dispute}', [SellerDisputeController::class, 'show'])
+                ->name('seller.disputes.show');
         Route::post('/litiges/{dispute}/repondre', [SellerDisputeController::class, 'reply'])
                 ->name('seller.disputes.reply');
 });
 
-// Litiges admin
-Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->group(function () {
+// ── Litiges admin ─────────────────────────────────────────────────
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         Route::get('/litiges', [AdminDisputeController::class, 'index'])
                 ->name('admin.disputes.index');
         Route::get('/litiges/{dispute}', [AdminDisputeController::class, 'show'])
@@ -412,3 +420,14 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         Route::delete('/tutoriels/{tutorial}', [TutorialController::class, 'destroy'])
                 ->name('admin.tutorials.destroy');
 });
+
+
+
+
+// Routes à ajouter si elles n'existent pas déjà.
+// Adapte uniquement les noms de contrôleurs si ton projet utilise une autre organisation.
+
+
+
+Route::view('/aide', 'pages.help')->name('help');
+Route::view('/a-propos', 'pages.about')->name('about');

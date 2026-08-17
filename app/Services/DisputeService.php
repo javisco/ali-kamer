@@ -21,7 +21,7 @@ class DisputeService
         string $description,
         array $files = []
     ): Dispute {
-        
+ 
         // Vérifier que la commande peut faire l'objet d'un litige
         if (! $order->canBeDisputed()) {
             throw new \Exception(
@@ -219,4 +219,4 @@ class DisputeService
             'description'  => $file->getClientOriginalName(),
         ]);
     }
-}
+} 

@@ -14,7 +14,6 @@ class DashboardService
             return redirect()->route('buyer.dashboard');
         } else
         if ($user->role === 'seller') {
-
             $kyc = $user->kycDocument;
             if (!$user->shop) {
                 return redirect()->route('seller.shop.create');

@@ -29,10 +29,17 @@ class Dispute extends Model
     ];
 
     protected $fillable = [
-        'order_id', 'initiator_id', 'type', 'description',
-        'status', 'resolution', 'resolution_amount',
-        'resolution_note', 'resolver_id',
-        'seller_reply_deadline', 'resolved_at',
+        'order_id',
+        'initiator_id',
+        'type',
+        'description',
+        'status',
+        'resolution',
+        'resolution_amount',
+        'resolution_note',
+        'resolver_id',
+        'seller_reply_deadline',
+        'resolved_at',
     ];
 
     protected function casts(): array
@@ -73,20 +80,26 @@ class Dispute extends Model
     public function buyerEvidences(): HasMany
     {
         return $this->hasMany(DisputeEvidence::class)
-                    ->where('submitted_by', $this->order->buyer_id);
+            ->where('submitted_by', $this->order->buyer_id);
     }
 
     // Preuves du vendeur uniquement
     public function sellerEvidences(): HasMany
     {
         return $this->hasMany(DisputeEvidence::class)
-                    ->where('submitted_by', $this->order->shop->user_id);
+            ->where('submitted_by', $this->order->shop->user_id);
     }
 
     // ── Helpers ───────────────────────────────────────────────────────
 
-    public function isOpen(): bool     { return $this->status === 'open'; }
-    public function isResolved(): bool { return $this->status === 'resolved'; }
+    public function isOpen(): bool
+    {
+        return $this->status === 'open';
+    }
+    public function isResolved(): bool
+    {
+        return $this->status === 'resolved';
+    }
 
     public function typeLabel(): string
     {

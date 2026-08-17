@@ -1,285 +1,352 @@
 @extends('base')
 
-@section('title', 'Ali-Kamer — Achetez et vendez en toute confiance au Cameroun')
+@section('title', 'Ali-Kamer — Produits et marketplace au Cameroun')
 
 @section('content')
-<div class="bg-slate-50 min-h-screen pb-16">
 
-    {{-- 1. HERO BANNER & RECHERCHE (Séquestre & Réassurance) --}}
-    <section class="relative bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white pt-10 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden rounded-b-3xl shadow-lg">
-        {{-- Décoration de fond --}}
-        <div class="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:16px_16px]"></div>
+<div class="min-h-screen bg-slate-50/70 pb-12">
 
-        <div class="max-w-4xl mx-auto text-center relative z-10">
-            <span class="inline-flex items-center gap-2 bg-blue-500/20 text-blue-300 text-xs font-semibold px-3 py-1 rounded-full border border-blue-400/30 mb-4 backdrop-blur-md">
-                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                Marketplace Sécurisée au Cameroun
-            </span>
+    {{-- =========================================================
+        1. BANNIÈRE D'ACCUEIL & EN-TÊTE DE RECHERCHE
+    ========================================================== --}}
+    <section class="bg-white border-b border-slate-200/80 shadow-xs">
+        <div class="max-w-[1500px] mx-auto px-4 sm:px-6 py-4">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
 
-            <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white mb-3 leading-tight">
-                Bienvenue sur <span class="text-orange-500">Ali-</span><span class="text-emerald-400">Kamer</span>
-            </h1>
-            <p class="text-sm sm:text-base text-slate-300 max-w-xl mx-auto mb-8 font-medium">
-                La plateforme qui protège vos transactions grâce au système de paiement séquestre.
-            </p>
-
-            {{-- Barre de recherche principale --}}
-            <form method="GET" action="{{ route('buyer.home') }}" class="max-w-2xl mx-auto mb-8">
-                <div class="relative flex items-center group shadow-2xl">
-                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-600 transition-colors">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
+                {{-- Titre & Accroche --}}
+                <div class="min-w-0">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-orange-50 border border-orange-200/60 text-[9px] font-black uppercase tracking-wider text-orange-600">
+                            🇨🇲 Marketplace Camerounaise Sécurisée
+                        </span>
                     </div>
+                    <h1 class="text-lg sm:text-2xl font-black tracking-tight text-slate-900">
+                        Découvrez les meilleures affaires au <span class="text-orange-600">Cameroun</span>
+                    </h1>
+                    <p class="text-xs text-slate-500 mt-0.5">
+                        Achetez en toute confiance auprès de vendeurs certifiés avec protection de paiement Escrow.
+                    </p>
+                </div>
 
-                    <input type="text" name="q" value="{{ request('q') }}"
-                        placeholder="Rechercher un produit, une catégorie, une ville (ex: Yaoundé, Douala)..."
-                        class="w-full pl-11 pr-32 py-4 bg-white text-slate-900 border-0 rounded-2xl text-sm font-medium placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-500/30 shadow-inner">
+                {{-- Barre de recherche de la page d'accueil --}}
+                <form method="GET" action="{{ route('buyer.home') }}" class="w-full lg:w-[480px] shrink-0">
 
-                    <button type="submit"
-                        class="absolute right-2 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-semibold px-6 py-2.5 rounded-xl text-xs sm:text-sm transition-all duration-200 shadow-md">
-                        Rechercher
-                    </button>
-                </div>
-            </form>
+                    @if (request('category'))
+                        <input type="hidden" name="category" value="{{ request('category') }}">
+                    @endif
+                    @if (request('city'))
+                        <input type="hidden" name="city" value="{{ request('city') }}">
+                    @endif
+                    @if (request('min_price'))
+                        <input type="hidden" name="min_price" value="{{ request('min_price') }}">
+                    @endif
+                    @if (request('max_price'))
+                        <input type="hidden" name="max_price" value="{{ request('max_price') }}">
+                    @endif
+                    @if (request('shipping'))
+                        <input type="hidden" name="shipping" value="{{ request('shipping') }}">
+                    @endif
 
-            {{-- Badges de Réassurance Hero --}}
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl mx-auto text-xs text-slate-300 pt-2 border-t border-slate-700/50">
-                <div class="flex items-center justify-center gap-2">
-                    <span class="text-emerald-400 font-bold">🛡</span>
-                    <span>Paiement 100% Séquestre</span>
-                </div>
-                <div class="flex items-center justify-center gap-2">
-                    <span class="text-orange-400 font-bold">🚚</span>
-                    <span>Livraison partout au Cameroun</span>
-                </div>
-                <div class="flex items-center justify-center gap-2">
-                    <span class="text-yellow-400 font-bold">⭐</span>
-                    <span>Vendeurs vérifiés & certifiés</span>
-                </div>
+                    <div class="relative flex items-center">
+                        <svg class="absolute left-3.5 w-4 h-4 text-slate-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35m2.35-5.65a7 7 0 1 1-14 0 7 7 0 0 1 14 0z" />
+                        </svg>
+
+                        <input type="search" name="q" value="{{ request('q') }}"
+                            placeholder="Rechercher un produit, une ville (Douala, Yaoundé...)..." autocomplete="off"
+                            class="w-full h-11 pl-10 pr-28 rounded-2xl bg-slate-100/80 border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 outline-none focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10 transition shadow-xs">
+
+                        <button type="submit"
+                            class="absolute right-1 top-1 bottom-1 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-xs font-bold transition shadow-xs flex items-center justify-center">
+                            Rechercher
+                        </button>
+                    </div>
+                </form>
+
             </div>
         </div>
     </section>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-12">
+    {{-- =========================================================
+        2. CONTENU PRINCIPAL DE LA PAGE
+    ========================================================== --}}
+    <div class="max-w-[1500px] mx-auto px-4 sm:px-6 pt-5">
 
-        {{-- 2. RACCOURCIS CATÉGORIES --}}
-        <section>
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-base font-bold text-slate-900">Explorer par catégorie</h2>
+        {{-- BARRE DE RAYONS & CATÉGORIES --}}
+        <section class="mb-6">
+            <div class="flex items-center justify-between mb-2.5">
+                <div class="flex items-center gap-2">
+                    <h2 class="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-wider">
+                        Explorer les rayons
+                    </h2>
+                    <span class="hidden sm:inline-block text-[10px] text-slate-400 font-medium">
+                        — Sélectionnez une catégorie
+                    </span>
+                </div>
+
+                @if (request('category'))
+                    <a href="{{ route('buyer.home') }}" class="text-[11px] font-bold text-blue-600 hover:text-blue-700 hover:underline">
+                        Tout afficher &rarr;
+                    </a>
+                @endif
             </div>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                @php
-                    $categories = [
-                        ['name' => 'Électronique', 'icon' => '💻', 'slug' => 'electronique'],
-                        ['name' => 'Mode & Beauté', 'icon' => '👕', 'slug' => 'mode'],
-                        ['name' => 'Maison & Bureau', 'icon' => '🏠', 'slug' => 'maison'],
-                        ['name' => 'Agriculture & Alimentation', 'icon' => '🌾', 'slug' => 'agriculture'],
-                    ];
-                @endphp
 
-                @foreach($categories as $cat)
-                    <a href="{{ route('buyer.home', ['category' => $cat['slug']]) }}"
-                       class="flex items-center gap-3 p-3.5 bg-white border border-slate-200 rounded-2xl hover:border-blue-500 hover:shadow-md transition-all group">
-                        <span class="text-2xl p-2 bg-slate-100 rounded-xl group-hover:bg-blue-50 transition-colors">{{ $cat['icon'] }}</span>
-                        <span class="text-xs sm:text-sm font-bold text-slate-700 group-hover:text-blue-600 transition-colors">{{ $cat['name'] }}</span>
+            @php
+                $categories = [
+                    ['name' => 'Électronique', 'slug' => 'electronique', 'icon' => '💻'],
+                    ['name' => 'Mode & Beauté', 'slug' => 'mode', 'icon' => '👕'],
+                    ['name' => 'Maison & Bureau', 'slug' => 'maison', 'icon' => '🏠'],
+                    ['name' => 'Agriculture', 'slug' => 'agriculture', 'icon' => '🌾'],
+                ];
+            @endphp
+
+            <div class="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                @foreach ($categories as $category)
+                    <a href="{{ route('buyer.home', ['category' => $category['slug']]) }}"
+                        class="shrink-0 inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs font-extrabold transition-all duration-200
+                        {{ request('category') === $category['slug']
+                            ? 'bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-200'
+                            : 'bg-white border-slate-200 text-slate-700 hover:border-blue-400 hover:text-blue-600 shadow-2xs' }}">
+                        
+                        <span class="flex items-center justify-center w-5 h-5 rounded-md text-sm {{ request('category') === $category['slug'] ? 'bg-white/20' : 'bg-slate-100' }}">
+                            {{ $category['icon'] }}
+                        </span>
+                        {{ $category['name'] }}
                     </a>
                 @endforeach
             </div>
         </section>
 
-        {{-- 3. SECTION PRODUITS POPULAIRES / RÉSULTATS --}}
-        <section>
-            <div class="flex items-center justify-between mb-6 pb-3 border-b border-slate-200">
-                <h2 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
-                    @if (request('q'))
-                        Résultats de recherche pour <span class="text-blue-600 font-black">"{{ request('q') }}"</span>
-                    @else
-                        Produits Populaires & Récents
-                    @endif
-                </h2>
-                <span class="text-xs font-bold text-slate-600 bg-slate-200/70 border border-slate-300/50 px-3 py-1 rounded-full">
-                    {{ $products->total() }} {{ Str::plural('produit', $products->total()) }}
-                </span>
+        {{-- EN-TÊTE DU LISTING PRODUITS --}}
+        <section class="mb-8">
+            <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-200/80">
+                <div>
+                    <h2 class="text-base sm:text-lg font-black text-slate-900">
+                        @if (request('q'))
+                            Résultats pour <span class="text-blue-600">"{{ request('q') }}"</span>
+                        @elseif(request('category'))
+                            Produits de la catégorie <span class="text-blue-600 uppercase">{{ request('category') }}</span>
+                        @else
+                            Offres & Produits Populaires
+                        @endif
+                    </h2>
+                    <p class="text-[11px] text-slate-400 mt-0.5 font-medium">
+                        {{ $products->total() }} {{ Str::plural('article disponible', $products->total()) }}
+                    </p>
+                </div>
+
+                @if (request('q') || request('category'))
+                    <a href="{{ route('buyer.home') }}"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-bold text-slate-600 hover:text-rose-600 hover:border-rose-200 transition shadow-2xs">
+                        <span>Réinitialiser les filtres</span>
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </a>
+                @endif
             </div>
 
-            {{-- Grille Produits --}}
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+            {{-- GRILLE DE CARTES PRODUITS --}}
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+
                 @forelse($products as $product)
+                    @php
+                        $availableStock = $product->stock - $product->stock_reserved;
+                        $hasDiscount = (method_exists($product, 'hasDiscount') && $product->hasDiscount()) 
+                            || ($product->old_price && $product->old_price > $product->price);
+
+                        $discountPercent = 0;
+                        if ($hasDiscount && $product->old_price > 0) {
+                            $discountPercent = round((($product->old_price - $product->price) / $product->old_price) * 100);
+                        }
+                    @endphp
+
                     <a href="{{ route('product.show', $product) }}"
-                        class="group relative bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl hover:border-blue-400/60 hover:-translate-y-1.5 transition-all duration-300 ease-out flex flex-col justify-between">
+                        class="group bg-white border border-slate-200/90 rounded-2xl overflow-hidden hover:border-blue-500/80 hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
 
                         <div>
-                            {{-- Zone Image --}}
-                            <div class="w-full h-48 bg-slate-100 overflow-hidden border-b border-slate-100 relative">
-                                @if ($product->images->first())
-                                    <img src="{{ Storage::url($product->images->first()->url) }}" alt="{{ $product->title }}"
+                            {{-- Visuel Produit + Badges Flottants --}}
+                            <div class="relative aspect-square bg-slate-100 overflow-hidden border-b border-slate-100">
+
+                                @if ($product->images && $product->images->first())
+                                    <img src="{{ Storage::url($product->images->first()->url) }}"
+                                        alt="{{ $product->title }}" loading="lazy"
                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out">
                                 @else
-                                    <div class="w-full h-full flex flex-col items-center justify-center text-slate-300 gap-1 bg-slate-50">
-                                        <svg class="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    <div class="w-full h-full flex flex-col items-center justify-center text-slate-300 bg-slate-50">
+                                        <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M14 6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                         </svg>
-                                        <span class="text-[11px] font-medium text-slate-400">Pas d'image</span>
+                                        <span class="text-[9px] font-bold mt-1 text-slate-400">Aucune photo</span>
                                     </div>
                                 @endif
 
-                                {{-- Tag Transport --}}
+                                {{-- Badges Transport (Haut Gauche) --}}
                                 @if ($product->shipping_included)
-                                    <span class="absolute top-2.5 left-2.5 z-10 bg-emerald-600/95 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm uppercase tracking-wider">
+                                    <span class="absolute top-2 left-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-emerald-600/95 text-white text-[9px] font-black uppercase tracking-wider shadow-sm backdrop-blur-xs">
+                                        <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14m-6-6 6 6-6 6" />
+                                        </svg>
                                         Transport inclus
                                     </span>
                                 @else
-                                    <span class="absolute top-2.5 left-2.5 z-10 bg-slate-700/80 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm uppercase tracking-wider">
+                                    <span class="absolute top-2 left-2 px-1.5 py-0.5 rounded-md bg-slate-900/80 text-white text-[9px] font-bold shadow-sm backdrop-blur-xs">
                                         Transport non inclus
                                     </span>
                                 @endif
+
+                                {{-- Badge Promotion (Haut Droite) --}}
+                                @if ($hasDiscount && $discountPercent > 0)
+                                    <span class="absolute top-2 right-2 px-1.5 py-0.5 rounded-md bg-red-600 text-white text-[9px] font-black shadow-sm">
+                                        -{{ $discountPercent }}%
+                                    </span>
+                                @endif
+
+                                {{-- Badges Stock (Bas Droite) --}}
+                                @if ($availableStock <= 0 || $product->status === 'sold_out')
+                                    <span class="absolute bottom-2 right-2 px-2 py-0.5 rounded-md bg-slate-900/90 text-white text-[9px] font-bold shadow-sm">
+                                        Épuisé
+                                    </span>
+                                @elseif($availableStock <= 5)
+                                    <span class="absolute bottom-2 right-2 px-2 py-0.5 rounded-md bg-amber-500 text-white text-[9px] font-extrabold shadow-sm">
+                                        Reste {{ $availableStock }}
+                                    </span>
+                                @endif
+
                             </div>
 
-                            {{-- Contenu Carte --}}
-                            <div class="px-4 py-3">
-                                <h3 class="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors duration-200 line-clamp-1 leading-snug">
+                            {{-- Détails du Produit --}}
+                            <div class="p-3 flex flex-col flex-1">
+
+                                {{-- Nom de la boutique si chargée --}}
+                                @if ($product->relationLoaded('shop') && $product->shop)
+                                    <div class="flex items-center gap-1 mb-1">
+                                        <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider truncate">
+                                            {{ $product->shop->name }}
+                                        </span>
+                                        @if ($product->shop->verified_at)
+                                            <svg class="w-3 h-3 text-blue-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414 1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                            </svg>
+                                        @endif
+                                    </div>
+                                @endif
+
+                                {{-- Titre Produit --}}
+                                <h3 class="text-xs sm:text-sm font-semibold text-slate-800 leading-snug line-clamp-2 min-h-[36px] group-hover:text-blue-600 transition-colors">
                                     {{ $product->title }}
                                 </h3>
 
-                                <p class="text-[11px] font-medium text-slate-400 mt-1 flex items-center gap-1">
-                                    <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                {{-- Localisation --}}
+                                <div class="flex items-center gap-1 mt-1.5 text-[10px] font-medium text-slate-400">
+                                    <svg class="w-3 h-3 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                     </svg>
-                                    <span class="truncate">{{ $product->city ?? 'Ville non précisée' }}</span>
-                                </p>
-
-                                {{-- Tarification & Réduction --}}
-                                <div class="mt-3 flex items-center gap-2 flex-wrap">
-                                    <span class="text-base font-extrabold text-emerald-600">
-                                        {{ number_format($product->price, 0, ',', ' ') }} <span class="text-[11px] font-bold">FCFA</span>
-                                    </span>
-
-                                    @php
-                                        $hasDiscount = (method_exists($product, 'hasDiscount') && $product->hasDiscount()) 
-                                            || ($product->old_price && $product->old_price > $product->price);
-                                    @endphp
-
-                                    @if ($hasDiscount)
-                                        <span class="text-[11px] font-medium text-slate-400 line-through">
-                                            {{ number_format($product->old_price, 0, ',', ' ') }}
-                                        </span>
-
-                                        @php
-                                            $discountPercent = round((($product->old_price - $product->price) / $product->old_price) * 100);
-                                        @endphp
-                                        <span class="text-[10px] font-black text-red-600 bg-red-50 border border-red-200 px-1.5 py-0.5 rounded">
-                                            -{{ $discountPercent }}%
-                                        </span>
-                                    @endif
+                                    <span class="truncate">{{ $product->city ?? 'Cameroun' }}</span>
                                 </div>
+
+                                {{-- Tarifs --}}
+                                <div class="mt-3 pt-2 border-t border-slate-100">
+                                    <div class="flex items-baseline gap-1.5 flex-wrap">
+                                        <span class="text-sm sm:text-base font-black text-slate-900 tracking-tight">
+                                            {{ number_format($product->price, 0, ',', ' ') }}
+                                        </span>
+                                        <span class="text-[10px] font-bold text-slate-900">FCFA</span>
+
+                                        @if ($hasDiscount)
+                                            <span class="text-[10px] text-slate-400 line-through">
+                                                {{ number_format($product->old_price, 0, ',', ' ') }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
 
-                        {{-- Bouton d'action --}}
-                        <div class="p-4 pt-0 mt-2">
-                            <span class="w-full flex items-center justify-center gap-1.5 bg-blue-600 group-hover:bg-blue-700 text-white font-semibold py-2 rounded-xl text-xs transition-all duration-200 shadow-sm">
-                                <span>Voir le produit</span>
-                                <svg class="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                </svg>
-                            </span>
-                        </div>
                     </a>
+
                 @empty
-                    <div class="col-span-full py-16 text-center bg-white rounded-2xl border border-dashed border-slate-300">
-                        <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 mx-auto mb-3">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
+
+                    {{-- État Vide si aucun produit --}}
+                    <div class="col-span-full">
+                        <div class="bg-white border border-dashed border-slate-300 rounded-3xl py-12 px-6 text-center">
+                            <div class="w-12 h-12 mx-auto rounded-2xl bg-slate-100 flex items-center justify-center mb-3">
+                                <svg class="w-6 h-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m21 21-4.35-4.35m2.35-5.65a7 7 0 1 1-14 0 7 7 0 0 1 14 0z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-sm font-bold text-slate-800">Aucun produit ne correspond à votre recherche</h3>
+                            <p class="mt-1 text-xs text-slate-400">Essayez de modifier votre terme de recherche ou explorez une autre catégorie.</p>
+
+                            @if (request('q') || request('category'))
+                                <a href="{{ route('buyer.home') }}"
+                                    class="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition shadow-md shadow-blue-200">
+                                    Voir tous les produits
+                                </a>
+                            @endif
                         </div>
-                        <p class="text-sm text-slate-600 font-semibold">Aucun produit trouvé pour le moment.</p>
-                        @if (request('q'))
-                            <a href="{{ route('buyer.home') }}" class="inline-block mt-2 text-xs text-blue-600 font-bold hover:underline">
-                                Voir tous les produits
-                            </a>
-                        @endif
                     </div>
+
                 @endforelse
+
             </div>
 
-            {{-- Pagination --}}
+            {{-- PAGINATION --}}
             @if ($products->hasPages())
                 <div class="mt-8 flex justify-center">
                     {{ $products->links() }}
                 </div>
             @endif
+
         </section>
 
-        {{-- 4. BOUTIQUES RECOMMANDÉES --}}
-        @if(isset($recommendedShops) && count($recommendedShops) > 0)
-            <section class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                        <span>🏪</span> Boutiques Recommandées
-                    </h2>
-                </div>
+        {{-- =========================================================
+            3. SECTION RÉASSURANCE ET GARANTIE ESCROW
+        ========================================================== --}}
+        <section class="mt-12 mb-6">
+            <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl overflow-hidden text-white p-6 sm:p-8 shadow-xl border border-slate-800 relative">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 relative z-10">
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    @foreach($recommendedShops as $shop)
-                        <div class="flex items-center justify-between p-4 bg-slate-50 border border-slate-200/60 rounded-2xl">
-                            <div class="flex items-center gap-3">
-                                <div class="w-12 h-12 rounded-xl bg-blue-600 text-white font-black flex items-center justify-center text-base shadow-sm">
-                                    {{ strtoupper(substr($shop->name, 0, 2)) }}
-                                </div>
-                                <div>
-                                    <h3 class="text-sm font-bold text-slate-800">{{ $shop->name }}</h3>
-                                    <div class="flex items-center gap-3 text-xs text-slate-500 mt-0.5">
-                                        <span class="text-yellow-500 font-bold flex items-center gap-1">★ 4.9</span>
-                                        <span>•</span>
-                                        <span>{{ $shop->products_count ?? 0 }} produits</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="#" class="text-xs font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-xl transition">
-                                Voir boutique
-                            </a>
+                    <div>
+                        <span class="text-[10px] font-extrabold uppercase tracking-widest text-orange-400 bg-orange-500/10 border border-orange-500/20 px-2.5 py-1 rounded-full">
+                            Garantie de Sécurité Ali-Kamer
+                        </span>
+                        <h2 class="text-lg sm:text-2xl font-black mt-2">
+                            Achetez simplement. Payez en toute confiance.
+                        </h2>
+                        <p class="text-xs text-slate-300 mt-1 max-w-xl leading-relaxed">
+                            Vos fonds restent sécurisés sur un compte séquestre bloqué et ne sont transférés au vendeur que lorsque vous confirmez la bonne réception de votre commande.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 lg:min-w-[480px]">
+                        <div class="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-xs">
+                            <div class="text-xl">🔐</div>
+                            <p class="text-xs font-bold text-white mt-1">Paiement Protégé</p>
+                            <p class="text-[10px] text-slate-400 mt-0.5">Mobile & Orange Money</p>
                         </div>
-                    @endforeach
-                </div>
-            </section>
-        @endif
 
-        {{-- 5. POURQUOI ALI-KAMER ? (Réassurance & Piliers) --}}
-        <section class="bg-gradient-to-br from-slate-900 to-slate-800 text-white p-8 rounded-3xl shadow-md">
-            <div class="text-center max-w-xl mx-auto mb-8">
-                <h2 class="text-xl font-extrabold mb-2">Pourquoi choisir Ali-Kamer ?</h2>
-                <p class="text-xs text-slate-300">Votre confiance est notre priorité absolue lors de chaque transaction.</p>
-            </div>
+                        <div class="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-xs">
+                            <div class="text-xl">📦</div>
+                            <p class="text-xs font-bold text-white mt-1">Expédition Suivie</p>
+                            <p class="text-[10px] text-slate-400 mt-0.5">Dans tout le Cameroun</p>
+                        </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="bg-white/5 border border-white/10 p-5 rounded-2xl backdrop-blur-sm">
-                    <div class="text-3xl mb-3">🔒</div>
-                    <h3 class="text-sm font-bold text-white mb-1">Système Séquestre</h3>
-                    <p class="text-xs text-slate-300 leading-relaxed">L'argent est conservé en sécurité et versé au vendeur uniquement après réception et validation du colis.</p>
-                </div>
+                        <div class="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-xs">
+                            <div class="text-xl">🛡️</div>
+                            <p class="text-xs font-bold text-white mt-1">Gestion Litiges</p>
+                            <p class="text-[10px] text-slate-400 mt-0.5">Remboursement garanti</p>
+                        </div>
+                    </div>
 
-                <div class="bg-white/5 border border-white/10 p-5 rounded-2xl backdrop-blur-sm">
-                    <div class="text-3xl mb-3">🚚</div>
-                    <h3 class="text-sm font-bold text-white mb-1">Livraison Nationale</h3>
-                    <p class="text-xs text-slate-300 leading-relaxed">Réseau de transport partenaires assurant la livraison dans les 10 régions du Cameroun.</p>
-                </div>
-
-                <div class="bg-white/5 border border-white/10 p-5 rounded-2xl backdrop-blur-sm">
-                    <div class="text-3xl mb-3">💰</div>
-                    <h3 class="text-sm font-bold text-white mb-1">Garantie Remboursement</h3>
-                    <p class="text-xs text-slate-300 leading-relaxed">En cas de non-conformité ou litige, notre service client intervient pour effectuer un remboursement rapide.</p>
-                </div>
-
-                <div class="bg-white/5 border border-white/10 p-5 rounded-2xl backdrop-blur-sm">
-                    <div class="text-3xl mb-3">⭐</div>
-                    <h3 class="text-sm font-bold text-white mb-1">Vendeurs Vérifiés</h3>
-                    <p class="text-xs text-slate-300 leading-relaxed">Processus d'authentification KYC strict garantissant des vendeurs professionnels sérieux.</p>
                 </div>
             </div>
         </section>
 
     </div>
+
 </div>
+
 @endsection

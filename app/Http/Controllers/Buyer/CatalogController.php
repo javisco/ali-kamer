@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Buyer;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Review;
 use App\Models\Shop;
 use Illuminate\Http\Request;
 
@@ -53,7 +54,7 @@ class CatalogController extends Controller
             default      => $query->latest(),
         };
 
-        $products   = $query->paginate(20)->withQueryString();
+        $products   = $query->paginate(30)->withQueryString();
         $categories = Category::active()->parents()->get();
 
         return view('buyer.catalog.index', compact('products', 'categories'));
@@ -64,7 +65,6 @@ class CatalogController extends Controller
     {
         abort_unless($product->isVisible(), 404);
 
-        // Incrémenter les vues
         $product->increment('views_count');
 
         $product->load([
@@ -73,8 +73,31 @@ class CatalogController extends Controller
             'images',
         ]);
 
+        // Avis vérifiés sur ce produit
+        $reviews = Review::forProduct($product->id)
+            ->where('is_flagged', false)
+            ->with('reviewer:id,name')
+            ->latest()
+            ->limit(10)
+            ->get();
 
-        // Autres produits de la même catégorie
+        // Note moyenne du produit
+        $productRating = $reviews->avg('rating');
+
+        // Avis sur la boutique
+        $shopReviews = Review::forShop($product->shop_id)
+            ->where('is_flagged', false)
+            ->with('reviewer:id,name')
+            ->latest()
+            ->limit(5)
+            ->get();
+
+        // Note moyenne boutique
+        $shopRating = Review::forShop($product->shop_id)
+            ->where('is_flagged', false)
+            ->avg('rating');
+
+        // Produits similaires
         $related = Product::visible()
             ->byCategory($product->category_id)
             ->where('id', '!=', $product->id)
@@ -82,7 +105,6 @@ class CatalogController extends Controller
             ->limit(6)
             ->get();
 
-        // Autres produits du même vendeur
         $shopProducts = Product::visible()
             ->where('shop_id', $product->shop_id)
             ->where('id', '!=', $product->id)
@@ -90,7 +112,15 @@ class CatalogController extends Controller
             ->limit(6)
             ->get();
 
-        return view('buyer.catalog.show', compact('product', 'related', 'shopProducts'));
+        return view('buyer.catalog.show', compact(
+            'product',
+            'reviews',
+            'productRating',
+            'shopReviews',
+            'shopRating',
+            'related',
+            'shopProducts'
+        ));
     }
 
     // Page boutique vendeur

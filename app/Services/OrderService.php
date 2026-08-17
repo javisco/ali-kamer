@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderPayment;
 use App\Models\OrderShipment;
+use App\Models\PlatformSetting;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -14,11 +15,6 @@ use Illuminate\Support\Str;
 class OrderService
 {
     // Taux MVP — seront déplacés en BDD (PlatformSetting) en Phase 2
-    const PROTECTION_RATE   = 0.02;
-    const GATEWAY_RATE      = 0.02;
-    const COMMISSION_RATE   = 0.05;
-    const AGENCY_RATE       = 0.01;
-    const PAYOUT_RATE       = 0.01;
 
     // ── Créer une commande ────────────────────────────────────────────
 
@@ -35,14 +31,22 @@ class OrderService
             }
 
             // Calcul des montants
-            $subtotal           = $product->price * $quantity;
-            $protectionFee      = (int) round($subtotal * self::PROTECTION_RATE);
-            $gatewayFee         = (int) round($subtotal * self::GATEWAY_RATE);
-            $totalAmount        = $subtotal + $protectionFee + $gatewayFee;
-            $platformCommission = (int) round($subtotal * self::COMMISSION_RATE);
-            $agencyCommission   = (int) round($subtotal * self::AGENCY_RATE);
-            $gatewayPayoutFee   = (int) round($subtotal * self::PAYOUT_RATE);
-            $netAmount          = $subtotal - $platformCommission - $agencyCommission - $gatewayPayoutFee;
+
+
+            $protectionRate      = PlatformSetting::getRate('protection_rate');
+            $gatewayRate         = PlatformSetting::getRate('gateway_collect_rate');
+            $commissionRate      = PlatformSetting::getRate('platform_commission_rate');
+            $agencyRate          = PlatformSetting::getRate('agency_commission_rate');
+            $payoutRate          = PlatformSetting::getRate('gateway_payout_rate');
+
+            $subtotal            = $product->price * $quantity;
+            $protectionFee       = (int) round($subtotal * $protectionRate);
+            $gatewayFee          = (int) round($subtotal * $gatewayRate);
+            $totalAmount         = $subtotal + $protectionFee + $gatewayFee;
+            $platformCommission  = (int) round($subtotal * $commissionRate);
+            $agencyCommission    = (int) round($subtotal * $agencyRate);
+            $gatewayPayoutFee    = (int) round($subtotal * $payoutRate);
+            $netAmount           = $subtotal - $platformCommission - $agencyCommission - $gatewayPayoutFee;
 
             // Créer la commande
             $order = Order::create([
@@ -66,11 +70,11 @@ class OrderService
 
                 // Instantané financier immuable
                 'financial_snapshot' => [
-                    'protection_rate'  => self::PROTECTION_RATE,
-                    'gateway_rate'     => self::GATEWAY_RATE,
-                    'commission_rate'  => self::COMMISSION_RATE,
-                    'agency_rate'      => self::AGENCY_RATE,
-                    'payout_rate'      => self::PAYOUT_RATE,
+                    'protection_rate'  => $protectionRate,
+                    'gateway_rate'     => $gatewayRate,
+                    'commission_rate'  => $commissionRate,
+                    'agency_rate'      => $gatewayPayoutFee,
+                    'payout_rate'      => $payoutRate,
                     'calculated_at'    => now()->toISOString(),
                 ],
 

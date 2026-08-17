@@ -6,65 +6,143 @@
     <div class="bg-gray-50 min-h-screen py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            {{-- Banner & Header Boutique --}}
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-8">
-                {{-- Couverture / Bannière --}}
-                <div class="h-32 sm:h-48 bg-gradient-to-r from-blue-600 to-indigo-700 relative">
-                    @if (isset($shop->banner_path))
-                        <img src="{{ asset('storage/' . $shop->banner_path) }}" alt="Bannière {{ $shop->name }}"
+            {{-- Banner & Header Boutique Premium --}}
+            <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden mb-8">
+
+                {{-- Couverture / Bannière avec overlay dégradé --}}
+                <div class="h-44 sm:h-64 bg-gradient-to-r from-blue-900 via-blue-700 to-indigo-800 relative overflow-hidden">
+                    @if (isset($shop->banner_path) || isset($shop->banner))
+                        <img src="{{ Storage::url($shop->banner_path ?? $shop->banner) }}" alt="Bannière {{ $shop->name }}"
                             class="w-full h-full object-cover">
+                        {{-- Filtre sombre subtil pour faire ressortir le texte/badges --}}
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-slate-900/10 to-transparent">
+                        </div>
+                    @else
+                        {{-- Motifs d'arrière-plan par défaut --}}
+                        <div class="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-white/10 blur-2xl"></div>
+                        <div class="absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-cyan-400/10 blur-2xl"></div>
                     @endif
+
+                    {{-- Badge de statut sur la bannière --}}
+                    <div class="absolute top-4 right-4 z-10 flex items-center gap-2">
+                        @if ($shop->verified_at ?? true)
+                            <span
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white/90 backdrop-blur-md text-emerald-700 shadow-md border border-white/20">
+                                <svg class="w-4 h-4 text-emerald-500 fill-current" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                Boutique Vérifiée
+                            </span>
+                        @endif
+                    </div>
                 </div>
 
-                {{-- Info Boutique --}}
-                <div class="p-6 sm:p-8 relative pt-0 sm:pt-0">
-                    <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between -mt-12 sm:-mt-16 gap-4">
+                {{-- Corps de l'en-tête --}}
+                <div class="px-6 sm:px-8 pb-6 relative">
+                    <div class="flex flex-col lg:flex-row items-start lg:items-end justify-between -mt-14 sm:-mt-20 gap-6">
 
                         {{-- Logo & Titre --}}
-                        <div class="flex items-end gap-4">
-                            <div
-                                class="w-20 h-20 sm:w-28 sm:h-28 rounded-2xl bg-white p-1 shadow-md border border-gray-100 flex-shrink-0">
-                                @if (isset($shop->logo_path))
-                                    <img src="{{ asset('storage/' . $shop->logo_path) }}" alt="{{ $shop->name }}"
-                                        class="w-full h-full object-cover rounded-xl">
-                                @else
-                                    <div
-                                        class="w-full h-full bg-indigo-50 text-indigo-600 font-bold text-2xl flex items-center justify-center rounded-xl uppercase">
-                                        {{ substr($shop->name, 0, 2) }}
-                                    </div>
-                                @endif
-                            </div>
-                            <div class="mb-1">
-                                <div class="flex items-center gap-2">
-                                    <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900">{{ $shop->name }}</h1>
-                                    <span
-                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
-                                        <svg class="w-3 h-3 mr-1 fill-current" viewBox="0 0 20 20">
-                                            <path
-                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
-                                        </svg>
-                                        Vérifiée
-                                    </span>
+                        <div class="flex flex-col sm:flex-row items-start sm:items-end gap-5 w-full lg:w-auto">
+
+                            {{-- Logo avec contour relief --}}
+                            <div class="relative group">
+                                <div
+                                    class="w-24 h-24 sm:w-36 sm:h-36 rounded-2xl sm:rounded-3xl bg-white p-1.5 shadow-2xl border border-slate-100 flex-shrink-0">
+                                    @if (isset($shop->logo) || isset($shop->logo_path))
+                                        <img src="{{ Storage::url($shop->logo ?? $shop->logo_path) }}"
+                                            alt="{{ $shop->name }}"
+                                            class="w-full h-full object-cover rounded-xl sm:rounded-2xl">
+                                    @else
+                                        <div
+                                            class="w-full h-full bg-gradient-to-br from-blue-600 to-indigo-700 text-white font-black text-3xl sm:text-4xl flex items-center justify-center rounded-xl sm:rounded-2xl uppercase tracking-wider shadow-inner">
+                                            {{ substr($shop->name, 0, 2) }}
+                                        </div>
+                                    @endif
                                 </div>
+                            </div>
+
+                            {{-- Informations principales --}}
+                            <div class="mb-1 space-y-1.5 flex-1">
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                                        {{ $shop->name }}
+                                    </h1>
+                                </div>
+
+                                {{-- Localisation & Téléphone --}}
+                                <div class="flex items-center gap-4 text-xs font-semibold text-slate-500 flex-wrap pt-0.5">
+                                    @if ($shop->city)
+                                        <span
+                                            class="flex items-center gap-1 bg-slate-100 px-2.5 py-1 rounded-lg text-slate-700">
+                                            <svg class="w-3.5 h-3.5 text-blue-600 shrink-0" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            </svg>
+                                            {{ $shop->city }} {{ $shop->address ? '• ' . $shop->address : '' }}
+                                        </span>
+                                    @endif
+
+                                    @if ($shop->phone)
+                                        <span class="flex items-center gap-1 text-slate-600">
+                                            <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                            </svg>
+                                            {{ $shop->phone }}
+                                        </span>
+                                    @endif
+                                </div>
+
                                 @if ($shop->description)
-                                    <p class="text-sm text-gray-500 mt-1 max-w-2xl">{{ $shop->description }}</p>
+                                    <p class="text-xs sm:text-sm text-slate-600 mt-2 max-w-2xl leading-relaxed">
+                                        {{ $shop->description }}
+                                    </p>
                                 @endif
                             </div>
                         </div>
 
-                        {{-- Stats rapides --}}
+                        {{-- Module Stats & Badges de confiance --}}
                         <div
-                            class="flex items-center gap-6 border-t sm:border-t-0 pt-4 sm:pt-0 w-full sm:w-auto justify-around sm:justify-start">
-                            <div class="text-center sm:text-right">
-                                <span class="block text-xl font-bold text-gray-900">{{ $products->total() }}</span>
-                                <span class="text-xs text-gray-500 uppercase tracking-wider">Produits</span>
+                            class="flex items-center gap-3 w-full lg:w-auto justify-between sm:justify-start border-t lg:border-t-0 border-slate-100 pt-4 lg:pt-0 mt-2 lg:mt-0">
+
+                            {{-- Nombre de produits --}}
+                            <div
+                                class="bg-slate-50 border border-slate-100 px-4 py-2.5 rounded-2xl text-center min-w-[100px]">
+                                <span class="block text-lg font-black text-slate-900 leading-tight">
+                                    {{ method_exists($products, 'total') ? $products->total() : count($products) }}
+                                </span>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                    Articles
+                                </span>
                             </div>
+
+                            {{-- Badge supplémentaire : Paiement sécurisé / Escrow --}}
+                            <div
+                                class="bg-blue-50/60 border border-blue-100 px-4 py-2.5 rounded-2xl flex items-center gap-2">
+                                <div
+                                    class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <span class="block text-xs font-extrabold text-blue-950">Achat Sécurisé</span>
+                                    <span class="text-[10px] font-medium text-blue-700">Service Escrow Ali-Kamer</span>
+                                </div>
+                            </div>
+
                         </div>
 
                     </div>
                 </div>
             </div>
-
             {{-- Titre de la section --}}
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-xl font-bold text-gray-900">Catalogue de la boutique</h2>

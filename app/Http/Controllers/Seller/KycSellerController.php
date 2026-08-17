@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Seller;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\KycRequest;
+use App\Models\User;
 use App\Services\KycService;
 use App\Services\DashboardService;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +19,9 @@ class KycSellerController extends Controller
     public function create()
     {
         $user = Auth::user();
-
+        if ($user->role === 'buyer') {
+            User::where('id', $user->id)->update(['role' => 'seller']);
+        }
         // Si déjà approuvé, pas besoin de revenir ici
         $this->dashboard_service->dashboard($user);
 
