@@ -1,0 +1,189 @@
+{{-- Section variantes --}}
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5" x-data="variantManager()">
+
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="font-bold text-gray-800">Variantes</h2>
+        <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" x-model="hasVariants" class="rounded">
+            <span class="text-sm text-gray-600">Ce produit a plusieurs variantes</span>
+        </label>
+    </div>
+
+    {{-- Sans variantes — prix et stock simples --}}
+    <div x-show="!hasVariants" class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1">
+                Prix (FCFA) <span class="text-red-500">*</span>
+            </label>
+            <input type="number" name="price" min="100" required
+                   class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm
+                          focus:ring-2 focus:ring-indigo-500"
+                   placeholder="Ex: 50000">
+        </div>
+        <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1">
+                Stock <span class="text-red-500">*</span>
+            </label>
+            <input type="number" name="stock" min="0" required
+                   class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm
+                          focus:ring-2 focus:ring-indigo-500"
+                   placeholder="Ex: 10">
+        </div>
+    </div>
+
+    {{-- Avec variantes --}}
+    <div x-show="hasVariants" class="space-y-5">
+
+        {{-- Définir les attributs --}}
+        <div>
+            <div class="flex items-center justify-between mb-3">
+                <p class="text-sm font-medium text-gray-700">
+                    Attributs
+                    <span class="text-xs text-gray-400">(Ex: Processeur, RAM, Couleur)</span>
+                </p>
+                <button type="button" @click="addAttribute()"
+                        class="text-sm text-indigo-600 hover:underline">
+                    + Ajouter un attribut
+                </button>
+            </div>
+
+            <template x-for="(attr, attrIndex) in attributes" :key="attrIndex">
+                <div class="border border-gray-200 rounded-xl p-4 mb-3">
+                    <div class="flex items-center gap-3 mb-3">
+                        <input type="text"
+                               :name="`attributes[${attrIndex}][name]`"
+                               x-model="attr.name"
+                               placeholder="Ex: Processeur"
+                               class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm
+                                      focus:ring-2 focus:ring-indigo-500">
+                        <button type="button" @click="removeAttribute(attrIndex)"
+                                class="text-red-400 hover:text-red-600 text-xs">
+                            Supprimer
+                        </button>
+                    </div>
+
+                    {{-- Valeurs de l'attribut --}}
+                    <div class="flex flex-wrap gap-2 mb-2">
+                        <template x-for="(val, valIndex) in attr.values" :key="valIndex">
+                            <div class="flex items-center gap-1 bg-indigo-50 rounded-lg px-3 py-1.5">
+                                <input type="text"
+                                       :name="`attributes[${attrIndex}][values][${valIndex}]`"
+                                       x-model="attr.values[valIndex]"
+                                       class="bg-transparent text-sm text-indigo-700
+                                              font-medium border-none outline-none w-20">
+                                <button type="button" @click="removeValue(attrIndex, valIndex)"
+                                        class="text-indigo-400 hover:text-red-500 text-xs ml-1">
+                                    ×
+                                </button>
+                            </div>
+                        </template>
+                        <button type="button" @click="addValue(attrIndex)"
+                                class="text-xs text-indigo-500 hover:underline px-2 py-1.5
+                                       border border-dashed border-indigo-300 rounded-lg">
+                            + Valeur
+                        </button>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        {{-- Générer et définir les variantes --}}
+        <div>
+            <div class="flex items-center justify-between mb-3">
+                <p class="text-sm font-medium text-gray-700">Variantes et prix</p>
+                <button type="button" @click="generateVariants()"
+                        class="bg-indigo-600 text-white text-xs font-bold
+                               px-4 py-2 rounded-lg hover:bg-indigo-700">
+                    Générer les combinaisons
+                </button>
+            </div>
+
+            <template x-for="(variant, vIndex) in variants" :key="vIndex">
+                <div class="flex items-center gap-3 p-3 border border-gray-100 rounded-xl mb-2">
+                    <span class="text-sm font-medium text-gray-700 flex-1"
+                          x-text="variant.label"></span>
+                    <div class="flex items-center gap-2">
+                        <input type="number"
+                               :name="`variants[${vIndex}][price]`"
+                               x-model="variant.price"
+                               placeholder="Prix FCFA"
+                               min="100"
+                               class="w-28 border border-gray-300 rounded-lg px-3 py-1.5
+                                      text-sm focus:ring-2 focus:ring-indigo-500">
+                        <input type="number"
+                               :name="`variants[${vIndex}][stock]`"
+                               x-model="variant.stock"
+                               placeholder="Stock"
+                               min="0"
+                               class="w-20 border border-gray-300 rounded-lg px-3 py-1.5
+                                      text-sm focus:ring-2 focus:ring-indigo-500">
+                        <span class="text-xs text-gray-400">FCFA / qté</span>
+                    </div>
+                    <template x-for="(valId, vvIndex) in variant.value_ids" :key="vvIndex">
+                        <input type="hidden"
+                               :name="`variants[${vIndex}][value_ids][${vvIndex}]`"
+                               :value="valId">
+                    </template>
+                </div>
+            </template>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+function variantManager() {
+    return {
+        hasVariants: false,
+        attributes: [],
+        variants: [],
+
+        addAttribute() {
+            this.attributes.push({ name: '', values: [''] });
+        },
+
+        removeAttribute(index) {
+            this.attributes.splice(index, 1);
+        },
+
+        addValue(attrIndex) {
+            this.attributes[attrIndex].values.push('');
+        },
+
+        removeValue(attrIndex, valIndex) {
+            this.attributes[attrIndex].values.splice(valIndex, 1);
+        },
+
+        // Génère toutes les combinaisons possibles
+        generateVariants() {
+            const filled = this.attributes.filter(a =>
+                a.name && a.values.filter(v => v).length > 0
+            );
+            if (filled.length === 0) return;
+
+            const combinations = this.cartesian(
+                filled.map(a => a.values.filter(v => v).map((v, i) => ({
+                    attrName: a.name,
+                    value: v,
+                    tempId: `${a.name}_${i}`
+                })))
+            );
+
+            this.variants = combinations.map(combo => ({
+                label: combo.map(c => c.value).join(' / '),
+                price: '',
+                stock: '',
+                value_ids: combo.map(c => c.tempId),
+            }));
+        },
+
+        cartesian(arrays) {
+            return arrays.reduce(
+                (acc, curr) => acc.flatMap(a => curr.map(b => [...a, b])),
+                [[]]
+            );
+        }
+    }
+}
+</script>
+@endpush

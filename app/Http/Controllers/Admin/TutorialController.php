@@ -40,7 +40,6 @@ class TutorialController extends Controller
         ]);
 
         $data = $request->all();
-        // Si l'admin a cliqué "Publier maintenant"
         $data['is_published'] = $request->input('publish', 0) == 1;
 
         Tutorial::create($data);
@@ -49,8 +48,10 @@ class TutorialController extends Controller
             ->with('success', 'Tutoriel ' . ($data['is_published'] ? 'publié' : 'enregistré en brouillon') . '.');
     }
 
-
-
+    public function show(Tutorial $tutorial)
+    {
+        return view('admin.tutorials.show', compact('tutorial'));
+    }
 
     public function edit(Tutorial $tutorial)
     {
@@ -59,10 +60,6 @@ class TutorialController extends Controller
             'categories' => Tutorial::CATEGORIES,
         ]);
     }
-
-
-
-
 
     public function update(Request $request, Tutorial $tutorial)
     {
@@ -78,10 +75,15 @@ class TutorialController extends Controller
             'sort_order'       => ['nullable', 'integer', 'min:0'],
         ]);
 
-        $tutorial->update($request->all());
+        $data = $request->all();
+        if ($request->has('publish')) {
+            $data['is_published'] = $request->input('publish', 0) == 1;
+        }
+
+        $tutorial->update($data);
 
         return redirect()->route('admin.tutorials.index')
-            ->with('success', 'Tutoriel mis à jour.');
+            ->with('success', 'Tutoriel mis à jour avec succès.');
     }
 
     public function toggle(Tutorial $tutorial)

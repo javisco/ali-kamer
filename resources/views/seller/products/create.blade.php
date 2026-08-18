@@ -108,6 +108,10 @@
                     </div>
                 </div>
 
+
+                
+
+
                 {{-- 3. Mode de livraison --}}
                 <div class="space-y-3">
                     <label class="block text-sm font-bold text-slate-700">

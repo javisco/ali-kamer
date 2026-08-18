@@ -54,13 +54,73 @@ class CatalogController extends Controller
             default      => $query->latest(),
         };
 
-        $products   = $query->paginate(30)->withQueryString();
+        $products   = $query->paginate(100)->withQueryString();
         $categories = Category::active()->parents()->get();
 
         return view('buyer.catalog.index', compact('products', 'categories'));
     }
 
-    // Fiche produit
+
+
+    // public function show(Product $product)
+    // {
+    //     abort_unless($product->isVisible(), 404);
+    //     $product->increment('views_count');
+
+    //     $product->load([
+    //         'shop',
+    //         'category',
+    //         'images',
+    //         'attributes.values',
+    //         'activeVariants.attributeValues.attribute',
+    //     ]);
+
+    //     // Variantes pour le sélecteur JS
+    //     $variantsData = app(ProductVariantService::class)
+    //         ->getVariantsForDisplay($product);
+
+    //     // Favori ?
+    //     $isWishlisted = auth()->check()
+    //         ? app(WishlistService::class)->isWishlisted(auth()->user(), $product->id)
+    //         : false;
+
+    //     // Avis
+    //     $reviews      = Review::forProduct($product->id)->where('is_flagged', false)
+    //         ->with('reviewer:id,name')->latest()->limit(10)->get();
+    //     $productRating = $reviews->avg('rating');
+    //     $shopReviews   = Review::forShop($product->shop_id)->where('is_flagged', false)
+    //         ->with('reviewer:id,name')->latest()->limit(5)->get();
+    //     $shopRating    = Review::forShop($product->shop_id)->avg('rating');
+
+    //     // Produits liés
+    //     $related = Product::visible()->byCategory($product->category_id)
+    //         ->where('id', '!=', $product->id)
+    //         ->with(['images' => fn($q) => $q->where('is_primary', true)])
+    //         ->limit(6)->get();
+
+    //     $shopProducts = Product::visible()->where('shop_id', $product->shop_id)
+    //         ->where('id', '!=', $product->id)
+    //         ->with(['images' => fn($q) => $q->where('is_primary', true)])
+    //         ->limit(6)->get();
+
+    //     return view('buyer.catalog.show', compact(
+    //         'product',
+    //         'variantsData',
+    //         'isWishlisted',
+    //         'reviews',
+    //         'productRating',
+    //         'shopReviews',
+    //         'shopRating',
+    //         'related',
+    //         'shopProducts'
+    //     ));
+    // }
+
+
+
+
+
+  //  Fiche produit
     public function show(Product $product)
     {
         abort_unless($product->isVisible(), 404);

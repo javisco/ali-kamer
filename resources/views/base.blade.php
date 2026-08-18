@@ -437,7 +437,32 @@
                     class="block px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-slate-100">
                     Accueil
                 </a>
+                @auth
+                    {{-- Badge panier --}}
+                    <a href="{{ route('buyer.cart.index') }}"
+                        class="relative flex items-center gap-1 text-gray-600 hover:text-indigo-600">
+                        🛒
+                        @php
+                            $cartCount = auth()->user()->isBuyer()
+                                ? app(App\Services\CartService::class)->count(auth()->user())
+                                : 0;
+                        @endphp
+                        @if ($cartCount > 0)
+                            <span
+                                class="absolute -top-2 -right-2 w-5 h-5 bg-indigo-600 text-white
+                         text-xs font-bold rounded-full flex items-center justify-center">
+                                {{ $cartCount }}
+                            </span>
+                        @endif
+                    </a>
 
+                    {{-- Favoris --}}
+                    @if (auth()->user()->isBuyer())
+                        <a href="{{ route('buyer.wishlist.index') }}" class="text-gray-600 hover:text-red-500">
+                            ♡
+                        </a>
+                    @endif
+                @endauth
                 @auth
 
                     @if (auth()->user()->role === 'buyer')
@@ -572,28 +597,95 @@
     </main>
 
     {{-- FOOTER MODERNE --}}
-    <footer class="bg-white border-t border-slate-200/80 mt-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
-                <div>
-                    <span class="text-base font-black text-slate-900">Ali-<span
-                            class="text-orange-600">Kamer</span></span>
-                    <p class="text-xs text-slate-500 mt-1">La marketplace camerounaise avec service Escrow sécurisé.
+    <footer class="bg-slate-900 text-slate-400 border-t border-slate-800 mt-20 font-sans">
+        <!-- Section Principale : Liens et Infos -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+
+                <!-- Colonne 1: À propos & Confiance -->
+                <div class="space-y-4">
+                    <div class="text-xl font-black text-white">
+                        Ali-<span class="text-orange-500">Kamer</span>
+                    </div>
+                    <p class="text-sm leading-relaxed text-slate-400">
+                        La marketplace camerounaise de référence. Achetez et vendez en toute sérénité grâce à notre
+                        système d'Escrow sécurisé.
                     </p>
+                    <!-- Badges de réassurance -->
+                    <div class="pt-2 flex flex-wrap gap-2">
+                        <span
+                            class="inline-flex items-center gap-1.5 bg-slate-800 text-emerald-400 text-xs font-medium px-2.5 py-1 rounded-full border border-slate-700">
+                            🛡️ Escrow Sécurisé
+                        </span>
+                        <span
+                            class="inline-flex items-center gap-1.5 bg-slate-800 text-orange-400 text-xs font-medium px-2.5 py-1 rounded-full border border-slate-700">
+                            🇨🇲 100% Cameroun
+                        </span>
+                    </div>
                 </div>
 
-                <div class="flex flex-wrap justify-center gap-6 text-xs font-semibold text-slate-600">
-                    <a href="{{ route('tutorials.index') }}" class="hover:text-blue-600 transition">Tutoriels</a>
-                    <a href="{{ route('help') }}" class="hover:text-blue-600 transition">Aide & FAQ</a>
-                    <a href="{{ route('about') }}" class="hover:text-blue-600 transition">À propos</a>
+                <!-- Colonne 2: Acheter & Vendre -->
+                <div>
+                    <h3 class="text-white font-bold text-sm tracking-wider uppercase mb-4">Navigation</h3>
+                    <ul class="space-y-2.5 text-sm">
+                        <li><a href="{{ route('tutorials.index') }}"
+                                class="hover:text-orange-500 transition-colors flex items-center gap-2">📖 Tutoriels &
+                                Guides</a></li>
+                        <li><a href="#"
+                                class="hover:text-orange-500 transition-colors flex items-center gap-2">🛍️ Explorer
+                                les produits</a></li>
+                        <li><a href="#"
+                                class="hover:text-orange-500 transition-colors flex items-center gap-2">💼 Devenir
+                                Vendeur</a></li>
+                    </ul>
                 </div>
 
-                <div class="text-xs text-slate-400">
+                <!-- Colonne 3: Support & Sécurité -->
+                <div>
+                    <h3 class="text-white font-bold text-sm tracking-wider uppercase mb-4">Aide & Confiance</h3>
+                    <ul class="space-y-2.5 text-sm">
+                        <li><a href="{{ route('help') }}" class="hover:text-orange-500 transition-colors">Centre
+                                d'aide & FAQ</a></li>
+                        <li><a href="#" class="hover:text-orange-500 transition-colors">Comment fonctionne
+                                l'Escrow ?</a></li>
+                        <li><a href="#" class="hover:text-orange-500 transition-colors">Signaler un problème</a>
+                        </li>
+                        <li><a href="{{ route('about') }}" class="hover:text-orange-500 transition-colors">À propos
+                                d'Ali-Kamer</a></li>
+                    </ul>
+                </div>
+
+                <!-- Colonne 4: Modes de Paiement Locaux (Rassure l'acheteur) -->
+                <div>
+                    <h3 class="text-white font-bold text-sm tracking-wider uppercase mb-4">Paiements Sécurisés</h3>
+                    <p class="text-xs text-slate-500 mb-3">Nous acceptons vos moyens de paiement locaux préférés :</p>
+                    <div class="flex flex-wrap gap-2 text-xs font-bold text-slate-300">
+                        <span class="bg-amber-500 text-slate-950 px-2 py-1 rounded shadow-sm">MTN MoMo</span>
+                        <span class="bg-orange-600 text-white px-2 py-1 rounded shadow-sm">Orange Money</span>
+                        <span class="bg-blue-600 text-white px-2 py-1 rounded shadow-sm">Carte Visa / Express
+                            Union</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Section Basse : Mentions légales et Copyright -->
+        <div class="border-t border-slate-800 bg-slate-950/50">
+            <div
+                class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+                <div class="text-slate-500 text-center sm:text-left">
                     &copy; {{ date('Y') }} Ali-Kamer. Tous droits réservés.
+                </div>
+                <div class="flex flex-wrap justify-center gap-6 text-slate-500">
+                    <a href="#" class="hover:text-slate-300 transition-colors">Conditions Générales
+                        (CGU/CGV)</a>
+                    <a href="#" class="hover:text-slate-300 transition-colors">Politique de Confidentialité</a>
                 </div>
             </div>
         </div>
     </footer>
+
 
     @stack('scripts')
 

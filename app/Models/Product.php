@@ -93,6 +93,58 @@ class Product extends Model
                 ->orWhere('description', 'LIKE', "%{$term}%");
         });
     }
+    // Attributs du produit (Processeur, RAM, Couleur...)
+    public function attributes()
+    {
+        return $this->hasMany(ProductAttribute::class)
+            ->orderBy('sort_order');
+    }
+
+    // // Toutes les variantes du produit
+    // public function variants()
+    // {
+    //     return $this->hasMany(ProductVariant::class);
+    // }
+
+    // // Variantes actives uniquement
+    // public function activeVariants()
+    // {
+    //     return $this->hasMany(ProductVariant::class)
+    //         ->where('is_active', true);
+    // }
+
+    // // Le produit a-t-il des variantes ?
+    // // public function hasVariants(): bool
+    // // {
+    // //     return $this->variants()->exists();
+    // // }
+
+    // // Prix minimum parmi les variantes (pour l'affichage catalogue)
+    // public function minPrice(): int
+    // {
+    //     if ($this->hasVariants()) {
+    //         return $this->activeVariants()->min('price') ?? $this->price;
+    //     }
+    //     return $this->price;
+    // }
+
+    // // Prix maximum (pour afficher "À partir de X FCFA")
+    // public function maxPrice(): int
+    // {
+    //     if ($this->hasVariants()) {
+    //         return $this->activeVariants()->max('price') ?? $this->price;
+    //     }
+    //     return $this->price;
+    // }
+
+    // // Stock total disponible (somme des variantes)
+    // public function availableStock(): int
+    // {
+    //     if ($this->hasVariants()) {
+    //         return $this->activeVariants()->sum(\DB::raw('stock - stock_reserved'));
+    //     }
+    //     return max(0, $this->stock - $this->stock_reserved);
+    // }
 
     // ── Helpers ──────────────────────────────────────────────────────
 

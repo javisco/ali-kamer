@@ -14,7 +14,7 @@ class ProductSeeder extends Seeder
 
 
 
-// 1. Récupération des deux boutiques créées précédemment
+        // Récupération des deux boutiques créées précédemment
         $shop1 = Shop::where('slug', 'kamer-tech-store')->first() ?? Shop::first();
         $shop2 = Shop::where('slug', 'fashion-kamer')->first() ?? Shop::skip(1)->first();
 
@@ -28,38 +28,88 @@ class ProductSeeder extends Seeder
         $categories = Category::all();
         if ($categories->isEmpty()) {
             $catTech = Category::create(['name' => 'Électronique & High-Tech', 'slug' => 'electronique-high-tech']);
-            $catFashion = Category::create(['name' => 'Mode & Vétements', 'slug' => 'mode-vetements']);
+            $catFashion = Category::create(['name' => 'Mode & Vêtements', 'slug' => 'mode-vetements']);
             $categories = collect([$catTech, $catFashion]);
         }
 
         $techCategory = $categories->first();
         $fashionCategory = $categories->skip(1)->first() ?? $techCategory;
 
-        // --- CATALOGUE BOUTIQUE 1 : HIGH-TECH (25 Produits) ---
-        $techItems = [
-            'Smartphone Samsung Galaxy A54 128Go', 'iPhone 13 Pro Max 256Go Reconditionné', 'Écouteurs Sans Fil Bluetooth Pro',
-            'Casque Audio Bluetooth Réduction de Bruit', 'Montre Connectée Sport Waterproof', 'Ordinateur Portatif HP Core i5 16GB RAM',
-            'MacBook Air M1 256GB SSD', 'Tablette Tactile Android 10 pouces', 'Clé USB 128Go USB 3.0 Haute Vitesse',
-            'Disque Dur Externe 1To Toshiba', 'PowerBank 20000mAh Charge Rapide', 'Chargeur Rapide Type-C 65W',
-            'Souris Sans Fil Ergonomique', 'Clavier Mécanique Gamer RGB', 'Écran PC 24 pouces Full HD',
-            'Enceinte Bluetooth Portable Waterproof', 'Caméra de Surveillance WiFi 1080p', 'Routeur WiFi 4G Carte SIM',
-            'Support Téléphone Portable pour Voiture', 'Câble de Charge Magnétique 3-en-1', 'Trépied Ring Light avec Télécommande',
-            'Carte Mémoire Micro SD 64Go Class 10', 'Convertisseur HDMI vers VGA', 'Pochette de Protection MacBook 13"',
-            'Manette de Jeu PC/Android Bluetooth'
+        // --- CATALOGUE BOUTIQUE 1 : HIGH-TECH (250 Produits) ---
+        $techBases = [
+            // Smartphones & Tablettes
+            'Smartphone Samsung Galaxy',
+            'iPhone Apple',
+            'Xiaomi Redmi Note',
+            'Infinix Note Pro',
+            'Tecno Camon',
+            'Tablette Tactile Android',
+            'iPad Air Retina',
+            'Tablette Graphique USB',
+            'Liseuse Électronique HD',
+            // Informatique & Périphériques
+            'Ordinateur Portatif HP ProBook',
+            'MacBook Air M2',
+            'PC Portable Dell Latitude',
+            'PC Gamer Asus ROG',
+            'Écran PC 27 pouces',
+            'Écran PC 24 pouces Full HD',
+            'Souris Sans Fil Ergonomique',
+            'Clavier Mécanique RGB',
+            'Tapis de Souris XXL Gaming',
+            'Support PC Portable Ventilè',
+            'Hub USB-C Multiports 8-en-1',
+            'Webcam HD 1080p',
+            // Audio & Multimédia
+            'Écouteurs Sans Fil Bluetooth',
+            'Casque Audio Réduction de Bruit',
+            'Enceinte Bluetooth Portable',
+            'Barre de Son TV Bass',
+            'Microphone Condensateur USB',
+            'Lecteur MP3 Sport Bluetooth',
+            // Stockage & Énergie
+            'Clé USB 3.0 Haute Vitesse',
+            'Disque Dur Externe Toshiba',
+            'Disque SSD Externe Rapide',
+            'Carte Mémoire Micro SD',
+            'PowerBank Charge Rapide',
+            'Chargeur Rapide Type-C 65W',
+            'Station de Charge Sans Fil',
+            'Câble Magnétique 3-en-1',
+            // Smart Home, Réseau & Gadgets
+            'Montre Connectée Sport',
+            'Bracelet Connecté Fitness',
+            'Caméra de Surveillance WiFi',
+            'Routeur WiFi 4G SIM',
+            'Repeteur WiFi Puissant',
+            'Projecteur LED Mini HD',
+            'Trépied Ring Light Télécommande',
+            'Pochette Protection MacBook',
+            'Manette de Jeu Bluetooth',
+            'Stabilisateur Gimbal Smartphone',
+            'Convertisseur HDMI vers VGA'
         ];
 
-        foreach ($techItems as $index => $title) {
-            $price = rand(10, 30); // Prix entre 15 000 FCFA et 450 000 FCFA
-            $hasDiscount = rand(0, 1);
+        $techVariants = ['Pro', 'Ultra', 'Max', 'Plus', 'Edition Limitée', 'Gamer RGB', 'Waterproof', 'Compact', 'Haute Vitesse', 'Reconditionné', 'Série X', 'Titanium', 'Slim', 'Smart', 'Elite', 'V2', 'Prime'];
+        $techSpecs = ['64Go', '128Go', '256Go', '512Go', '1To', '8GB RAM', '16GB RAM', '32GB RAM', '10000mAh', '20000mAh', '30000mAh', '45W', '65W', '100W', '4K Ultra HD', 'Full HD 1080p', 'Class 10 V30'];
+
+        for ($i = 1; $i <= 250; $i++) {
+            $base = $techBases[array_rand($techBases)];
+            $variant = $techVariants[array_rand($techVariants)];
+            $spec = $techSpecs[array_rand($techSpecs)];
+
+            $title = "{$base} {$variant} {$spec}";
+            $price = rand(5, 25);
+            $hasDiscount = (bool) rand(0, 1);
 
             Product::create([
                 'shop_id' => $shop1->id,
                 'category_id' => $techCategory->id,
                 'title' => $title,
-                'description' => "Produit High-Tech garanti d'excellente qualité. " . $title . " est idéal pour une utilisation quotidienne professionnelle ou personnelle. Livré rapidement dans tout le pays avec emballage sécurisé.",
+                'description' => "Produit High-Tech garanti d'excellente qualité. {$title} est idéal pour une utilisation quotidienne professionnelle ou personnelle. Livré rapidement dans tout le pays avec emballage sécurisé.",
                 'city' => $shop1->city ?? 'Douala',
                 'price' => $price,
-                'old_price' => $hasDiscount ? $price + rand(5, 25) : null,
+                'old_price' => $hasDiscount ? $price + rand(5, 50) : null,
                 'stock' => rand(5, 50),
                 'stock_reserved' => 0,
                 'min_quantity' => 1,
@@ -72,35 +122,80 @@ class ProductSeeder extends Seeder
             ]);
         }
 
-        // --- CATALOGUE BOUTIQUE 2 : MODE & VÊTEMENTS (25 Produits) ---
-        $fashionItems = [
-            'T-shirt Homme Coton Qualité Supérieure', 'Chemise Homme Manches Longues Slim Fit', 'Jean Homme Original Coupe Droite',
-            'Robe de Soirée Élégante Africaine', 'Ensemble Bazin Riche Brodé 3 Pièces', 'Chaussures en Cuir Homme Véritable',
-            'Baskets Sneakers Style Urbain', 'Sac à Main Femme Cuir Synthétique', 'Pochette de Soirée Dorée',
-            'Polo Homme Sport Respirant', 'Veste Blazer Homme Chic', 'Jupe Longue Plissée Tendance',
-            'Pantalon Chino Homme Beige', 'Ceinture Homme Cuir Noir Boucle Automatique', 'Montre Homme Bracelet en Acier',
-            'Lunettes de Soleil Polarisées Homme/Femme', 'Chapeau Fedora Style Vintage', 'Sandales Cuir Homme Confort',
-            'Escarpins Femme Talons Hauts 8cm', 'Ensemble Sport Survêtement Homme', 'Pyjama Coton Doux 2 Pièces',
-            'Sac à Dos Voyage/Ordi 15 pouces', 'Portefeuille Cuir Compact Homme', 'Casquette Style Baseball Réglable',
-            'Écharpe / Foulard en Soie Imprimé'
+        // --- CATALOGUE BOUTIQUE 2 : MODE & VÊTEMENTS (250 Produits) ---
+        $fashionBases = [
+            // Hauts & Vêtements Homme
+            'T-Shirt Col V Coton',
+            'Polo Sport Respirant',
+            'Chemise Manches Longues',
+            'Chemise Cintrée Slim Fit',
+            'Veste Blazer Chic',
+            'Gilet Sans Manches',
+            'Sweat à Capuche Urban',
+            'Ensemble Survêtement Sport',
+            // Hauts & Vêtements Femme
+            'Robe de Soirée Élégante',
+            'Robe d\'Été Imprimée',
+            'Robe Maxi Plissée',
+            'Jupe Longue Tendance',
+            'Jupe Courte Évasée',
+            'Blouse en Soie',
+            'Top Dentelle Raffiné',
+            'Combinaison Pantalon Chic',
+            // Tenues Traditionnelles & Spéciales
+            'Ensemble Bazin Riche Brodé 3 Pièces',
+            'Boubou Africain Moderne',
+            'Tunique Traditionnelle Motif Wax',
+            'Ensemble Pyjama Coton Doux',
+            'Peignoir Satin Élégant',
+            // Chaussures Homme & Femme
+            'Chaussures en Cuir Véritable',
+            'Baskets Sneakers Streetwear',
+            'Mocassins Cuir Suédé',
+            'Sandales Cuir Confort',
+            'Escarpins Talons Hauts',
+            'Bottines en Cuir',
+            'Claquettes Style Tendance',
+            // Sacs & Accessoires
+            'Sac à Main Cuir Synthétique',
+            'Pochette de Soirée Dorée',
+            'Sac à Dos Voyage/Ordi',
+            'Sac Cabas Cuir Grande Capacité',
+            'Portefeuille Compact Cuir',
+            'Ceinture Cuir Boucle Automatique',
+            'Montre Bracelet en Acier',
+            'Montre Cuir Classique',
+            'Lunettes de Soleil Polarisées',
+            'Chapeau Fedora Vintage',
+            'Casquette Style Baseball',
+            'Écharpe / Foulard en Soie',
+            'Cravate & Boutons de Manchette'
         ];
 
-        foreach ($fashionItems as $index => $title) {
-            $price = rand(10, 100); // Prix entre 5 000 FCFA et 80 000 FCFA
-            $hasDiscount = rand(0, 1);
+        $fashionStyles = ['Chic', 'Slim Fit', 'Tendance', 'Confort Extra', 'Original', 'Vintage', 'Élégant', 'Urbain', 'Qualité Supérieure', 'Motif Imprimé', 'Moderne', 'Luxe Prestige', 'Casual', 'Coupe Droite', 'Broderie Hand-Made', 'Collection Été'];
+        $fashionColors = ['Noir Proche', 'Blanc Pur', 'Bleu Marine', 'Beige Sable', 'Marron Chocolat', 'Rouge Bordeau', 'Doré Éclatant', 'Gris Anthracite', 'Vert Olive', 'Rose Poudré', 'Jaune Moutarde', 'Multicolore Wax'];
+
+        for ($i = 1; $i <= 250; $i++) {
+            $base = $fashionBases[array_rand($fashionBases)];
+            $style = $fashionStyles[array_rand($fashionStyles)];
+            $color = $fashionColors[array_rand($fashionColors)];
+
+            $title = "{$base} {$style} - {$color}";
+            $price = rand(5, 25);
+            $hasDiscount = (bool) rand(0, 1);
 
             Product::create([
                 'shop_id' => $shop2->id,
                 'category_id' => $fashionCategory->id,
                 'title' => $title,
-                'description' => "Découvrez notre superbe " . $title . ". Cet article a été conçu avec soin pour offrir un confort maximal et un style impeccable en toute occasion. Disponible en plusieurs tailles.",
+                'description' => "Découvrez notre superbe {$title}. Cet article a été conçu avec soin pour offrir un confort maximal et un style impeccable en toute occasion. Disponible en plusieurs tailles.",
                 'city' => $shop2->city ?? 'Yaoundé',
                 'price' => $price,
-                'old_price' => $hasDiscount ? $price + rand(5, 25) : null,
+                'old_price' => $hasDiscount ? $price + rand(5, 30) : null,
                 'stock' => rand(10, 100),
                 'stock_reserved' => 0,
                 'min_quantity' => 1,
-                'shipping_included' => false,
+                'shipping_included' => rand(0,1),
                 'shipping_threshold_qty' => 3,
                 'specifications' => json_encode(['Taille' => 'S, M, L, XL', 'Matière' => 'Coton / Cuir', 'Origine' => 'Importation']),
                 'status' => 'visible',
@@ -108,7 +203,6 @@ class ProductSeeder extends Seeder
                 'orders_count' => rand(0, 20),
             ]);
         }
-
 
 
 

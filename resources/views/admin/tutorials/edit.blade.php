@@ -1,11 +1,11 @@
 @extends('base')
-@section('title', 'Nouveau tutoriel')
+@section('title', 'Modifier le tutoriel')
 @section('content')
 <div class="bg-gray-50 min-h-screen py-8">
 <div class="max-w-2xl mx-auto px-4">
 
     <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-extrabold text-gray-900">Nouveau tutoriel</h1>
+        <h1 class="text-2xl font-extrabold text-gray-900">Modifier le tutoriel</h1>
         <a href="{{ route('admin.tutorials.index') }}" class="text-sm text-gray-500 hover:underline">
             ← Retour à la liste
         </a>
@@ -17,9 +17,10 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('admin.tutorials.store') }}"
+    <form method="POST" action="{{ route('admin.tutorials.update', $tutorial) }}"
           class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-5">
         @csrf
+        @method('PUT')
 
         <div class="grid grid-cols-2 gap-4">
 
@@ -31,10 +32,10 @@
                 <select name="type" required
                         class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm
                                focus:ring-2 focus:ring-indigo-500">
-                    <option value="video" {{ old('type') === 'video' ? 'selected' : '' }}>
+                    <option value="video" {{ old('type', $tutorial->type) === 'video' ? 'selected' : '' }}>
                         🎬 Vidéo
                     </option>
-                    <option value="text" {{ old('type') === 'text' ? 'selected' : '' }}>
+                    <option value="text" {{ old('type', $tutorial->type) === 'text' ? 'selected' : '' }}>
                         📖 Texte
                     </option>
                 </select>
@@ -48,13 +49,13 @@
                 <select name="role_target" required
                         class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm
                                focus:ring-2 focus:ring-indigo-500">
-                    <option value="buyer"  {{ old('role_target') === 'buyer'  ? 'selected' : '' }}>
+                    <option value="buyer"  {{ old('role_target', $tutorial->role_target) === 'buyer'  ? 'selected' : '' }}>
                         Acheteurs
                     </option>
-                    <option value="seller" {{ old('role_target') === 'seller' ? 'selected' : '' }}>
+                    <option value="seller" {{ old('role_target', $tutorial->role_target) === 'seller' ? 'selected' : '' }}>
                         Vendeurs
                     </option>
-                    <option value="all"    {{ old('role_target') === 'all'    ? 'selected' : '' }}>
+                    <option value="all"    {{ old('role_target', $tutorial->role_target) === 'all'    ? 'selected' : '' }}>
                         Tous
                     </option>
                 </select>
@@ -71,7 +72,7 @@
                            focus:ring-2 focus:ring-indigo-500">
                 <option value="">-- Choisir --</option>
                 @foreach($categories as $value => $label)
-                    <option value="{{ $value }}" {{ old('category') === $value ? 'selected' : '' }}>
+                    <option value="{{ $value }}" {{ old('category', $tutorial->category) === $value ? 'selected' : '' }}>
                         {{ $label }}
                     </option>
                 @endforeach
@@ -83,7 +84,7 @@
             <label class="block text-sm font-medium text-gray-700 mb-1">
                 Titre <span class="text-red-500">*</span>
             </label>
-            <input type="text" name="title" value="{{ old('title') }}" required
+            <input type="text" name="title" value="{{ old('title', $tutorial->title) }}" required
                    placeholder="Ex: Comment passer sa première commande"
                    class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm
                           focus:ring-2 focus:ring-indigo-500">
@@ -95,13 +96,10 @@
                 URL de la vidéo
                 <span class="text-gray-400 font-normal">(YouTube ou autre)</span>
             </label>
-            <input type="url" name="video_url" value="{{ old('video_url') }}"
+            <input type="url" name="video_url" value="{{ old('video_url', $tutorial->video_url) }}"
                    placeholder="https://www.youtube.com/watch?v=..."
                    class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm
                           focus:ring-2 focus:ring-indigo-500">
-            <p class="text-xs text-gray-400 mt-1">
-                Collez simplement l'URL YouTube — l'embed est géré automatiquement.
-            </p>
         </div>
 
         {{-- Thumbnail --}}
@@ -110,7 +108,7 @@
                 URL miniature
                 <span class="text-gray-400 font-normal">(optionnel)</span>
             </label>
-            <input type="url" name="thumbnail_url" value="{{ old('thumbnail_url') }}"
+            <input type="url" name="thumbnail_url" value="{{ old('thumbnail_url', $tutorial->thumbnail_url) }}"
                    placeholder="https://..."
                    class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm
                           focus:ring-2 focus:ring-indigo-500">
@@ -122,7 +120,7 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">
                     Durée <span class="text-gray-400 font-normal">(minutes)</span>
                 </label>
-                <input type="number" name="duration_minutes" value="{{ old('duration_minutes') }}"
+                <input type="number" name="duration_minutes" value="{{ old('duration_minutes', $tutorial->duration_minutes) }}"
                        min="1" placeholder="Ex: 5"
                        class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm
                               focus:ring-2 focus:ring-indigo-500">
@@ -132,11 +130,10 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">
                     Ordre d'affichage
                 </label>
-                <input type="number" name="sort_order" value="{{ old('sort_order', 0) }}"
+                <input type="number" name="sort_order" value="{{ old('sort_order', $tutorial->sort_order) }}"
                        min="0"
                        class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm
                               focus:ring-2 focus:ring-indigo-500">
-                <p class="text-xs text-gray-400 mt-1">0 = premier affiché</p>
             </div>
         </div>
 
@@ -149,19 +146,19 @@
             <textarea name="content" rows="6"
                       class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm
                              focus:ring-2 focus:ring-indigo-500"
-                      placeholder="Description, étapes, conseils...">{{ old('content') }}</textarea>
+                      placeholder="Description, étapes, conseils...">{{ old('content', $tutorial->content) }}</textarea>
         </div>
 
         <div class="flex gap-4 pt-2">
             <button type="submit" name="publish" value="0"
                     class="flex-1 border-2 border-gray-300 text-gray-700 font-bold
                            py-3 rounded-xl transition hover:bg-gray-50">
-                Sauvegarder en brouillon
+                Enregistrer en brouillon
             </button>
             <button type="submit" name="publish" value="1"
                     class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold
                            py-3 rounded-xl transition">
-                Publier maintenant
+                Mettre à jour et publier
             </button>
         </div>
 

@@ -33,6 +33,8 @@ use App\Http\Controllers\Admin\TutorialController as AdminTutorialController;
 use App\Http\Controllers\TutorialController;
 use App\Models\Agency;
 use App\Models\AgencyCounter;
+use App\Http\Controllers\Buyer\CartController;
+use App\Http\Controllers\Buyer\WishlistController;
 
 // Route::get('/', function () {
 //         return view('welcome');
@@ -403,31 +405,57 @@ Route::middleware('auth')->group(function () {
                 ->name('tutorials.show');
 });
 
+
 // Admin — gestion tutoriels
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
-        Route::get('/tutoriels', [TutorialController::class, 'index'])
+        Route::get('/tutoriels', [AdminTutorialController::class, 'index'])
                 ->name('admin.tutorials.index');
-        Route::get('/tutoriels/creer', [TutorialController::class, 'create'])
+        Route::get('/tutoriels/creer', [AdminTutorialController::class, 'create'])
                 ->name('admin.tutorials.create');
-        Route::post('/tutoriels', [TutorialController::class, 'store'])
+        Route::post('/tutoriels', [AdminTutorialController::class, 'store'])
                 ->name('admin.tutorials.store');
+        Route::get('/tutoriels/{tutorial}', [AdminTutorialController::class, 'show'])
+                ->name('admin.tutorials.show');
         Route::get('/tutoriels/{tutorial}/modifier', [AdminTutorialController::class, 'edit'])
                 ->name('admin.tutorials.edit');
-        Route::put('/tutoriels/{tutorial}', [TutorialController::class, 'update'])
+        Route::put('/tutoriels/{tutorial}', [AdminTutorialController::class, 'update'])
                 ->name('admin.tutorials.update');
-        Route::post('/tutoriels/{tutorial}/toggle', [TutorialController::class, 'toggle'])
+        Route::post('/tutoriels/{tutorial}/toggle', [AdminTutorialController::class, 'toggle'])
                 ->name('admin.tutorials.toggle');
-        Route::delete('/tutoriels/{tutorial}', [TutorialController::class, 'destroy'])
+        Route::delete('/tutoriels/{tutorial}', [AdminTutorialController::class, 'destroy'])
                 ->name('admin.tutorials.destroy');
 });
-
-
 
 
 // Routes à ajouter si elles n'existent pas déjà.
 // Adapte uniquement les noms de contrôleurs si ton projet utilise une autre organisation.
 
-
-
 Route::view('/aide', 'pages.help')->name('help');
 Route::view('/a-propos', 'pages.about')->name('about');
+Route::view('/toto', 'layouts.admin')->name('admin');
+
+
+
+
+Route::middleware(['auth', 'role:buyer'])->group(function () {
+
+        // ── Panier ────────────────────────────────────────────────────────
+        Route::get('/panier', [CartController::class, 'index'])
+                ->name('buyer.cart.index');
+        Route::post('/panier/{product}/ajouter', [CartController::class, 'add'])
+                ->name('buyer.cart.add');
+        Route::patch('/panier/item/{item}', [CartController::class, 'update'])
+                ->name('buyer.cart.update');
+        Route::delete('/panier/item/{item}', [CartController::class, 'remove'])
+                ->name('buyer.cart.remove');
+        Route::get('/panier/checkout', [CartController::class, 'checkout'])
+                ->name('buyer.cart.checkout');
+        Route::post('/panier/commander', [CartController::class, 'confirmOrder'])
+                ->name('buyer.cart.order');
+
+        // ── Favoris ───────────────────────────────────────────────────────
+        Route::get('/favoris', [WishlistController::class, 'index'])
+                ->name('buyer.wishlist.index');
+        Route::post('/favoris/{product}', [WishlistController::class, 'toggle'])
+                ->name('buyer.wishlist.toggle');
+});

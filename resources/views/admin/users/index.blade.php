@@ -1,6 +1,10 @@
-@extends('base')
-@section('title', 'Utilisateurs')
-@section('content')
+@extends('admin.layout')
+
+@section('title', 'Litiges')
+
+@section('pageTitle', 'Gestion des litiges')
+
+@section('admin-content')
 <div class="bg-gray-50 min-h-screen py-8">
 <div class="max-w-6xl mx-auto px-4">
 
