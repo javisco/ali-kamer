@@ -12,21 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('product_attribute_values', function (Blueprint $table) {
-    $table->id();
+            $table->id();
 
-    // L'attribut auquel appartient cette valeur
-    $table->foreignId('product_attribute_id')
-          ->constrained()
-          ->cascadeOnDelete();
+            // L'attribut auquel appartient cette valeur
+            $table->foreignId('product_attribute_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-    // Valeur de l'attribut
-    // Ex: "Core i3", "Core i5", "8GB", "Rouge"
-    $table->string('value');
+            // Valeur de l'attribut
+            // Ex: "Core i3", "Core i5", "8GB", "Rouge"
+            $table->string('value');
 
-    $table->unsignedSmallInteger('sort_order')->default(0);
+            $table->unsignedSmallInteger('sort_order')->default(0);
 
-    $table->timestamps();
-});
+            $table->timestamps();
+        });
     }
 
     /**

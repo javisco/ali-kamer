@@ -106,7 +106,58 @@
                 </div>
 
             </div>
+            {{-- Vérification MoMo via Campay --}}
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6">
+                <h2 class="font-bold text-gray-800 mb-3">Vérification Mobile Money</h2>
 
+                @if ($holderInfo)
+                    @php
+                        $momoName = $holderInfo['first_name'] ?? '' . ' ' . ($holderInfo['last_name'] ?? '');
+                        $momoName = trim($momoName) ?: $holderInfo['name'] ?? 'Non disponible';
+
+                        // Comparer avec le nom sur la CNI
+                        $match = str_contains(
+                            strtolower($kyc->user->name),
+                            strtolower(explode(' ', $momoName)[0] ?? ''),
+                        );
+                    @endphp
+
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Numéro MoMo</span>
+                            <span class="font-medium">{{ $kyc->momo_number }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Nom enregistré MoMo</span>
+                            <span class="font-semibold {{ $match ? 'text-emerald-600' : 'text-red-500' }}">
+                                {{ $momoName }}
+                            </span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Nom sur le compte</span>
+                            <span class="font-medium">{{ $kyc->user->name }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Correspondance</span>
+                            <span class="font-bold {{ $match ? 'text-emerald-600' : 'text-red-600' }}">
+                                {{ $match ? '✓ Correspondance probable' : '⚠ Noms différents' }}
+                            </span>
+                        </div>
+                    </div>
+
+                    @if (!$match)
+                        <div class="bg-red-50 border border-red-200 rounded-xl p-3 mt-3 text-xs text-red-700">
+                            ⚠ Attention : le nom MoMo ne correspond pas au nom du compte.
+                            Vérifiez manuellement avant de valider.
+                        </div>
+                    @endif
+                @else
+                    <div class="bg-gray-50 rounded-xl p-3 text-sm text-gray-500">
+                        Impossible de récupérer les informations MoMo (service indisponible).
+                        Vérifiez manuellement.
+                    </div>
+                @endif
+            </div>
             <div class="lg:col-span-2">
 
                 <div class="bg-white rounded-2xl shadow-lg p-6">

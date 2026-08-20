@@ -96,9 +96,10 @@ class CartController extends Controller
         $shops = $cart->items->pluck('product.shop_id')->unique();
         if ($shops->count() > 1) {
             return redirect()->route('buyer.cart.index')
-                ->with('error',
+                ->with(
+                    'error',
                     'Votre panier contient des articles de plusieurs boutiques. ' .
-                    'Passez une commande séparée pour chaque boutique.'
+                        'Passez une commande séparée pour chaque boutique.'
                 );
         }
 
@@ -110,7 +111,7 @@ class CartController extends Controller
     // Confirmer la commande depuis le panier
     public function confirmOrder(Request $request)
     {
-        $request->validate([
+        $validated =  $request->validate([
             'destination_city' => ['required', 'string'],
             'payer_phone'      => ['required', 'string', 'regex:/^6[0-9]{8}$/'],
             'payer_operator'   => ['required', 'in:mtn,orange'],
@@ -127,7 +128,7 @@ class CartController extends Controller
         $order = $this->orderService->createFromCart(
             Auth::user(),
             $cart,
-            $request->validated()
+            $validated
         );
 
         // Vider le panier après commande

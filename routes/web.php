@@ -26,7 +26,7 @@ use App\Http\Controllers\Seller\ReviewController as SellerReviewController;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Seller\WalletController;
-
+use App\Http\Controllers\Buyer\WalletController as BuyerWalletcontroller;
 use App\Http\Controllers\Admin\AgencyController;
 use App\Http\Controllers\Admin\FinancialEngineController;
 use App\Http\Controllers\Admin\TutorialController as AdminTutorialController;
@@ -458,4 +458,17 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
                 ->name('buyer.wishlist.index');
         Route::post('/favoris/{product}', [WishlistController::class, 'toggle'])
                 ->name('buyer.wishlist.toggle');
+});
+
+// Admin — historique de n'importe quel user
+
+Route::middleware(['auth', 'role:buyer'])->group(function () {
+        Route::get('/mon-historique', [BuyerWalletcontroller::class, 'history'])
+                ->name('buyer.wallet.history');
+});
+
+// Admin — historique de n'importe quel user
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+        Route::get('/utilisateurs/{user}/historique', [AdminDashboardController::class, 'userHistory'])
+                ->name('admin.users.history');
 });

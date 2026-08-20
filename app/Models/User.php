@@ -128,6 +128,11 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $q->where('status', self::STATUS_ACTIVE);
     }
+    public function wishlist(): HasMany
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
 
     // ────────────────────────────────────────────────────────────────
     // HELPERS

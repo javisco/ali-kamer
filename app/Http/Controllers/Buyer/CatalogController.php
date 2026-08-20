@@ -7,6 +7,8 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\Shop;
+use App\Services\ProductVariantService;
+use App\Services\WishlistService;
 use Illuminate\Http\Request;
 
 class CatalogController extends Controller
@@ -54,7 +56,7 @@ class CatalogController extends Controller
             default      => $query->latest(),
         };
 
-        $products   = $query->paginate(100)->withQueryString();
+        $products   = $query->paginate(20)->withQueryString();
         $categories = Category::active()->parents()->get();
 
         return view('buyer.catalog.index', compact('products', 'categories'));
@@ -62,118 +64,51 @@ class CatalogController extends Controller
 
 
 
-    // public function show(Product $product)
-    // {
-    //     abort_unless($product->isVisible(), 404);
-    //     $product->increment('views_count');
-
-    //     $product->load([
-    //         'shop',
-    //         'category',
-    //         'images',
-    //         'attributes.values',
-    //         'activeVariants.attributeValues.attribute',
-    //     ]);
-
-    //     // Variantes pour le sélecteur JS
-    //     $variantsData = app(ProductVariantService::class)
-    //         ->getVariantsForDisplay($product);
-
-    //     // Favori ?
-    //     $isWishlisted = auth()->check()
-    //         ? app(WishlistService::class)->isWishlisted(auth()->user(), $product->id)
-    //         : false;
-
-    //     // Avis
-    //     $reviews      = Review::forProduct($product->id)->where('is_flagged', false)
-    //         ->with('reviewer:id,name')->latest()->limit(10)->get();
-    //     $productRating = $reviews->avg('rating');
-    //     $shopReviews   = Review::forShop($product->shop_id)->where('is_flagged', false)
-    //         ->with('reviewer:id,name')->latest()->limit(5)->get();
-    //     $shopRating    = Review::forShop($product->shop_id)->avg('rating');
-
-    //     // Produits liés
-    //     $related = Product::visible()->byCategory($product->category_id)
-    //         ->where('id', '!=', $product->id)
-    //         ->with(['images' => fn($q) => $q->where('is_primary', true)])
-    //         ->limit(6)->get();
-
-    //     $shopProducts = Product::visible()->where('shop_id', $product->shop_id)
-    //         ->where('id', '!=', $product->id)
-    //         ->with(['images' => fn($q) => $q->where('is_primary', true)])
-    //         ->limit(6)->get();
-
-    //     return view('buyer.catalog.show', compact(
-    //         'product',
-    //         'variantsData',
-    //         'isWishlisted',
-    //         'reviews',
-    //         'productRating',
-    //         'shopReviews',
-    //         'shopRating',
-    //         'related',
-    //         'shopProducts'
-    //     ));
-    // }
-
-
-
-
-
-  //  Fiche produit
     public function show(Product $product)
     {
         abort_unless($product->isVisible(), 404);
-
         $product->increment('views_count');
 
         $product->load([
             'shop',
             'category',
             'images',
+            'attributes.values',
+            'activeVariants.attributeValues.attribute',
         ]);
 
-        // Avis vérifiés sur ce produit
-        $reviews = Review::forProduct($product->id)
-            ->where('is_flagged', false)
-            ->with('reviewer:id,name')
-            ->latest()
-            ->limit(10)
-            ->get();
+        // Variantes pour le sélecteur JS
+        $variantsData = app(ProductVariantService::class)
+            ->getVariantsForDisplay($product);
 
-        // Note moyenne du produit
+        // Favori ?
+        $isWishlisted = auth()->check()
+            ? app(WishlistService::class)->isWishlisted(auth()->user(), $product->id)
+            : false;
+
+        // Avis
+        $reviews      = Review::forProduct($product->id)->where('is_flagged', false)
+            ->with('reviewer:id,name')->latest()->limit(10)->get();
         $productRating = $reviews->avg('rating');
+        $shopReviews   = Review::forShop($product->shop_id)->where('is_flagged', false)
+            ->with('reviewer:id,name')->latest()->limit(5)->get();
+        $shopRating    = Review::forShop($product->shop_id)->avg('rating');
 
-        // Avis sur la boutique
-        $shopReviews = Review::forShop($product->shop_id)
-            ->where('is_flagged', false)
-            ->with('reviewer:id,name')
-            ->latest()
-            ->limit(5)
-            ->get();
-
-        // Note moyenne boutique
-        $shopRating = Review::forShop($product->shop_id)
-            ->where('is_flagged', false)
-            ->avg('rating');
-
-        // Produits similaires
-        $related = Product::visible()
-            ->byCategory($product->category_id)
+        // Produits liés
+        $related = Product::visible()->byCategory($product->category_id)
             ->where('id', '!=', $product->id)
             ->with(['images' => fn($q) => $q->where('is_primary', true)])
-            ->limit(6)
-            ->get();
+            ->limit(6)->get();
 
-        $shopProducts = Product::visible()
-            ->where('shop_id', $product->shop_id)
+        $shopProducts = Product::visible()->where('shop_id', $product->shop_id)
             ->where('id', '!=', $product->id)
             ->with(['images' => fn($q) => $q->where('is_primary', true)])
-            ->limit(6)
-            ->get();
+            ->limit(6)->get();
 
         return view('buyer.catalog.show', compact(
             'product',
+            'variantsData',
+            'isWishlisted',
             'reviews',
             'productRating',
             'shopReviews',
@@ -182,6 +117,73 @@ class CatalogController extends Controller
             'shopProducts'
         ));
     }
+
+
+
+
+
+    //  Fiche produit
+    // public function show(Product $product)
+    // {
+    //     abort_unless($product->isVisible(), 404);
+
+    //     $product->increment('views_count');
+
+    //     $product->load([
+    //         'shop',
+    //         'category',
+    //         'images',
+    //     ]);
+
+    //     // Avis vérifiés sur ce produit
+    //     $reviews = Review::forProduct($product->id)
+    //         ->where('is_flagged', false)
+    //         ->with('reviewer:id,name')
+    //         ->latest()
+    //         ->limit(10)
+    //         ->get();
+
+    //     // Note moyenne du produit
+    //     $productRating = $reviews->avg('rating');
+
+    //     // Avis sur la boutique
+    //     $shopReviews = Review::forShop($product->shop_id)
+    //         ->where('is_flagged', false)
+    //         ->with('reviewer:id,name')
+    //         ->latest()
+    //         ->limit(5)
+    //         ->get();
+
+    //     // Note moyenne boutique
+    //     $shopRating = Review::forShop($product->shop_id)
+    //         ->where('is_flagged', false)
+    //         ->avg('rating');
+
+    //     // Produits similaires
+    //     $related = Product::visible()
+    //         ->byCategory($product->category_id)
+    //         ->where('id', '!=', $product->id)
+    //         ->with(['images' => fn($q) => $q->where('is_primary', true)])
+    //         ->limit(6)
+    //         ->get();
+
+    //     $shopProducts = Product::visible()
+    //         ->where('shop_id', $product->shop_id)
+    //         ->where('id', '!=', $product->id)
+    //         ->with(['images' => fn($q) => $q->where('is_primary', true)])
+    //         ->limit(6)
+    //         ->get();
+
+    //     return view('buyer.catalog.show', compact(
+    //         'product',
+    //         'reviews',
+    //         'productRating',
+    //         'shopReviews',
+    //         'shopRating',
+    //         'related',
+    //         'shopProducts'
+    //     ));
+    // }
 
     // Page boutique vendeur
     public function shop(Shop $shop)

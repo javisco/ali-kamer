@@ -16,20 +16,26 @@ return new class extends Migration
         Schema::create('product_variant_attribute_values', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('product_variant_id')
-                ->constrained()
+            // Nommer explicitement les foreign keys pour éviter le dépassement 64 chars MySQL
+            $table->unsignedBigInteger('product_variant_id');
+            $table->unsignedBigInteger('product_attribute_value_id');
+
+            $table->foreign('product_variant_id', 'pvav_variant_fk')
+                ->references('id')
+                ->on('product_variants')
                 ->cascadeOnDelete();
 
-            $table->foreignId('product_attribute_value_id')
-                ->constrained()
+            $table->foreign('product_attribute_value_id', 'pvav_attr_value_fk')
+                ->references('id')
+                ->on('product_attribute_values')
                 ->cascadeOnDelete();
-
-            $table->timestamps();
 
             $table->unique(
                 ['product_variant_id', 'product_attribute_value_id'],
-                'variant_attribute_value_unique'
+                'pvav_unique'
             );
+
+            $table->timestamps();
         });
     }
 

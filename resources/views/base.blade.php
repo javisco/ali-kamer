@@ -264,7 +264,81 @@
                  PARTIE DROITE
             ========================================================== --}}
                 <div class="flex items-center gap-2 shrink-0">
+{{-- PANIER & FAVORIS --}}
+@auth
+    @if (auth()->user()->isBuyer())
 
+        {{-- PANIER --}}
+        @php
+            $cartCount = app(App\Services\CartService::class)
+                ->count(auth()->user());
+        @endphp
+
+        <a href="{{ route('buyer.cart.index') }}"
+            title="Mon panier"
+            class="relative w-9 h-9 shrink-0 flex items-center justify-center
+                   rounded-full bg-white border border-slate-200
+                   text-slate-600 hover:text-blue-600 hover:border-blue-200
+                   hover:bg-blue-50 transition-all duration-200">
+
+            <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.8"
+                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1 5h13M9 21h.01M18 21h.01" />
+            </svg>
+
+            @if ($cartCount > 0)
+                <span class="absolute -top-1 -right-1
+                             min-w-[17px] h-[17px] px-1
+                             bg-blue-600 text-white
+                             text-[9px] font-black
+                             rounded-full
+                             flex items-center justify-center
+                             border-2 border-[#FAF9F6]">
+                    {{ $cartCount > 99 ? '99+' : $cartCount }}
+                </span>
+            @endif
+        </a>
+
+        {{-- FAVORIS --}}
+        @php
+            $wishlistCount = auth()->user()->wishlist()->count();
+        @endphp
+
+        <a href="{{ route('buyer.wishlist.index') }}"
+            title="Mes favoris"
+            class="relative w-9 h-9 shrink-0 flex items-center justify-center
+                   rounded-full bg-white border border-slate-200
+                   text-slate-600 hover:text-red-500 hover:border-red-200
+                   hover:bg-red-50 transition-all duration-200">
+
+            <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.8"
+                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06
+                       a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84
+                       a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+
+            @if ($wishlistCount > 0)
+                <span class="absolute -top-1 -right-1
+                             min-w-[17px] h-[17px] px-1
+                             bg-red-500 text-white
+                             text-[9px] font-black
+                             rounded-full
+                             flex items-center justify-center
+                             border-2 border-[#FAF9F6]">
+                    {{ $wishlistCount > 99 ? '99+' : $wishlistCount }}
+                </span>
+            @endif
+        </a>
+
+    @endif
+@endauth
                     {{-- RECHERCHE --}}
                     @php
                         $searchAction = route('buyer.home');
@@ -437,6 +511,7 @@
                     class="block px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-slate-100">
                     Accueil
                 </a>
+
                 @auth
                     {{-- Badge panier --}}
                     <a href="{{ route('buyer.cart.index') }}"
@@ -462,9 +537,6 @@
                             ♡
                         </a>
                     @endif
-                @endauth
-                @auth
-
                     @if (auth()->user()->role === 'buyer')
                         <a href="{{ route('buyer.orders.index') }}"
                             class="block px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-slate-100">

@@ -44,7 +44,27 @@
 
         {{-- Zone messages --}}
         <div class="flex-1 max-w-3xl mx-auto px-4 py-4 w-full space-y-3 overflow-y-auto" id="messagesContainer">
-
+            {{-- En-tête conversation — ajouter score acheteur pour le vendeur --}}
+            @if (auth()->user()->isSeller())
+                @php
+                    $buyer = $conversation->buyer;
+                @endphp
+                <div class="flex items-center gap-2 mt-1">
+                    <span
+                        class="text-xs {{ $buyer->trust_score >= 70
+                            ? 'text-emerald-500'
+                            : ($buyer->trust_score >= 40
+                                ? 'text-orange-400'
+                                : 'text-red-500') }}">
+                        Score : {{ $buyer->trust_score }}/100
+                    </span>
+                    @if ($buyer->prepayment_required)
+                        <span class="text-xs bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full">
+                            ⚠ Prépaiement requis
+                        </span>
+                    @endif
+                </div>
+            @endif
             @foreach ($conversation->messages as $message)
                 @php
                     $isMine = $message->sender_id === $user->id;

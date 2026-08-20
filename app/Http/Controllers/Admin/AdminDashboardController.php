@@ -9,8 +9,11 @@ use App\Models\KycDocument;
 use App\Models\Order;
 use App\Models\User;
 use App\Models\WalletTransaction;
+use App\Services\CampayService;
 use App\Services\KycService;
+use App\Services\WalletService;
 use Illuminate\Http\Request;
+
 
 class AdminDashboardController extends Controller
 {
@@ -64,17 +67,27 @@ class AdminDashboardController extends Controller
             ->limit(10)
             ->get();
 
+        // Solde Campay en temps réel
+        $campayBalance = null;
+        try {
+            $campayBalance = app(CampayService::class)->getBalance();
+        } catch (\Exception $e) {
+            \Log::warning('Campay balance unavailable', ['error' => $e->getMessage()]);
+        }
+
         return view('admin.dashboard', compact(
             'kpis',
             'pendingKyc',
             'openDisputes',
-            'recentOrders'
+            'recentOrders',
+            'campayBalance'
         ));
     }
 
     // Gestion des utilisateurs
     public function users()
     {
+
         $query = User::with('shop')->latest();
 
         // Filtre par rôle si demandé
@@ -127,5 +140,13 @@ class AdminDashboardController extends Controller
         app(KycService::class)->blacklist($user, auth()->user(), $request->reason);
 
         return back()->with('success', "{$user->name} a été blacklisté définitivement.");
+    }
+
+
+    public function userHistory(User $user)
+    {
+        $transactions = app(WalletService::class)->history($user, 50);
+
+        return view('admin.users.history', compact('user', 'transactions'));
     }
 }

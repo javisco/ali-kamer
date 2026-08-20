@@ -203,7 +203,39 @@
                     </div>
                 </div>
             @endif
+            {{-- Note reçue de la part du vendeur --}}
+            @if ($order->isCompleted())
+                @php
+                    $buyerReview = \App\Models\Review::where('order_id', $order->id)
+                        ->where('reviewee_type', 'buyer')
+                        ->where('reviewee_id', auth()->id())
+                        ->first();
+                @endphp
 
+                @if ($buyerReview)
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                        <h2 class="font-bold text-gray-800 mb-2">Votre note reçue du vendeur</h2>
+                        <div class="flex items-center gap-2">
+                            <span class="text-yellow-400 text-xl">
+                                @for ($i = 1; $i <= 5; $i++)
+                                    {{ $i <= $buyerReview->rating ? '★' : '☆' }}
+                                @endfor
+                            </span>
+                            <span class="text-lg font-bold text-gray-800">
+                                {{ $buyerReview->rating }}/5
+                            </span>
+                        </div>
+                        @if ($buyerReview->body)
+                            <p class="text-sm text-gray-600 mt-2 italic">
+                                "{{ $buyerReview->body }}"
+                            </p>
+                        @endif
+                        <p class="text-xs text-gray-400 mt-2">
+                            Score de fiabilité actuel : {{ auth()->user()->trust_score }}/100
+                        </p>
+                    </div>
+                @endif
+            @endif
 
             <div class="space-y-5">
 
@@ -305,7 +337,7 @@
                                     {{ $order->shipment->shipping_included ? '✓ Inclus dans le prix' : '⚠ Exclus — Payables à l\'arrivée' }}
                                 </span>
                             </div>
-                            @if ($order->shipment?->transport_fee > 0 )
+                            @if ($order->shipment?->transport_fee > 0)
                                 <div class="flex justify-between items-center border-t border-gray-50 pt-2 mt-2">
                                     <span class="text-gray-500">Montant transport</span>
                                     <span class="font-bold text-orange-600">

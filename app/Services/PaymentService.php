@@ -339,6 +339,9 @@ class PaymentService
             throw $e;
         }
     }
+
+
+
     // Synchronise le paiement des frais de transport directement auprès de Campay
     // ── SYNCHRONISATION TRANSPORT (Correction polling) ─────────────────
 

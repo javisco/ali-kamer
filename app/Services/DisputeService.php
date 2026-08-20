@@ -8,10 +8,17 @@ use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class DisputeService
 {
+    public function __construct(
+        private CampayService $campay,
+        private WalletService $wallet
+    ) {}
+
     // ── OUVRIR UN LITIGE ──────────────────────────────────────────────
 
     public function open(
@@ -21,48 +28,31 @@ class DisputeService
         string $description,
         array $files = []
     ): Dispute {
- 
-        // Vérifier que la commande peut faire l'objet d'un litige
+
         if (! $order->canBeDisputed()) {
-            throw new \Exception(
-                'Cette commande ne peut pas faire l\'objet d\'un litige.'
-            );
+            throw new \Exception('Cette commande ne peut pas faire l\'objet d\'un litige.');
         }
 
-        // Vérifier qu'un litige n'est pas déjà ouvert
         if ($order->dispute && $order->dispute->isOpen()) {
             throw new \Exception('Un litige est déjà ouvert pour cette commande.');
         }
 
-        return DB::transaction(function () use (
-            $order,
-            $initiator,
-            $type,
-            $description,
-            $files
-        ) {
-            // Créer le litige
-            $dispute = Dispute::create([
-                'order_id'             => $order->id,
-                'initiator_id'         => $initiator->id,
-                'type'                 => $type,
-                'description'          => $description,
-                'status'               => 'open',
+        return DB::transaction(function () use ($order, $initiator, $type, $description, $files) {
 
-                // Le vendeur a 48h pour répondre
+            $dispute = Dispute::create([
+                'order_id'              => $order->id,
+                'initiator_id'          => $initiator->id,
+                'type'                  => $type,
+                'description'           => $description,
+                'status'                => 'open',
                 'seller_reply_deadline' => now()->addHours(48),
             ]);
 
-            // Uploader les preuves initiales
             foreach ($files as $file) {
                 $this->addEvidence($dispute, $initiator, $file);
             }
 
-            // Passer la commande en statut litige
             $order->update(['status' => Order::STATUS_DISPUTED]);
-
-            // Notifier l'admin et l'autre partie
-            //     app(NotificationService::class)->notifyDisputeOpened($dispute);
 
             return $dispute;
         });
@@ -79,7 +69,6 @@ class DisputeService
 
         DB::transaction(function () use ($dispute, $seller, $response, $files) {
 
-            // Ajouter la réponse textuelle comme preuve
             DisputeEvidence::create([
                 'dispute_id'   => $dispute->id,
                 'submitted_by' => $seller->id,
@@ -88,21 +77,18 @@ class DisputeService
                 'description'  => 'Réponse du vendeur',
             ]);
 
-            // Uploader les preuves du vendeur
             foreach ($files as $file) {
                 $this->addEvidence($dispute, $seller, $file);
             }
 
-            // Passer en statut "vendeur a répondu"
             $dispute->update(['status' => 'seller_replied']);
-
-            // Notifier l'admin que le dossier est complet
-            //  app(NotificationService::class)->notifyDisputeSellerReplied($dispute);
         });
     }
 
-    // ── RÉSOUDRE LE LITIGE (admin) ────────────────────────────────────
+    // ── RÉSOUDRE ET APPLIQUER AUTOMATIQUEMENT ────────────────────────
 
+    // Dès que l'admin clique "Résoudre", les fonds sont versés immédiatement
+    // Pas de validation manuelle — application directe via Campay
     public function resolve(
         Dispute $dispute,
         User $admin,
@@ -112,13 +98,9 @@ class DisputeService
     ): void {
 
         DB::transaction(function () use (
-            $dispute,
-            $admin,
-            $resolution,
-            $note,
-            $resolutionAmount
+            $dispute, $admin, $resolution, $note, $resolutionAmount
         ) {
-            // Enregistrer la décision
+            // 1. Enregistrer la décision
             $dispute->update([
                 'status'            => 'resolved',
                 'resolution'        => $resolution,
@@ -128,74 +110,178 @@ class DisputeService
                 'resolved_at'       => now(),
             ]);
 
-            // Après resolve() :
-            //  app(NotificationService::class)->notifyDisputeResolved($dispute);
-
-            // Appliquer la décision financière
+            // 2. Appliquer financièrement — immédiatement
             $this->applyResolution($dispute);
+
+            // 3. Terminer la commande
+            $dispute->order->update([
+                'status'       => Order::STATUS_COMPLETED,
+                'completed_at' => now(),
+            ]);
         });
     }
 
-    // ── APPLIQUER LA DÉCISION FINANCIÈRE ─────────────────────────────
+    // ── APPLICATION FINANCIÈRE DIRECTE ───────────────────────────────
 
     private function applyResolution(Dispute $dispute): void
     {
-        $order  = $dispute->order;
-        $wallet = app(WalletService::class);
+        $order  = $dispute->order->load(['buyer', 'shop.user', 'payment']);
+        $buyer  = $order->buyer;
+        $seller = $order->shop->user;
 
-        match ($dispute->resolution) {
+        match($dispute->resolution) {
 
-            // Remboursement intégral — acheteur avait raison
-            'refund_buyer' => $wallet->refund(
-                $order->buyer,
+            // Remboursement intégral → acheteur reçoit le total payé
+            'refund_buyer' => $this->refundBuyer(
+                $buyer,
                 $order->total_amount,
-                $order
+                $order,
+                'Remboursement intégral — litige résolu en faveur acheteur'
             ),
 
-            // Payer le vendeur — acheteur avait tort
-            'pay_seller' => $wallet->releaseEscrow(
-                $order->shop->user,
+            // Payer le vendeur → vendeur reçoit son montant net
+            'pay_seller' => $this->paySeller(
+                $seller,
                 $order->net_amount,
-                $order
+                $order,
+                'Paiement vendeur — litige résolu en faveur vendeur'
             ),
 
             // Remboursement partiel
+            // L'acheteur reçoit resolution_amount
+            // Le vendeur reçoit le reste
             'partial_refund' => $this->applyPartialRefund($dispute),
 
-            // Retour requis — on attend le retour avant de débloquer
-            'return_required' => null,
-
-            // Acheteur mauvaise foi — payer le vendeur
-            'buyer_bad_faith' => $wallet->releaseEscrow(
-                $order->shop->user,
-                $order->net_amount,
-                $order
+            // Retour requis — on rembourse l'acheteur
+            // Le vendeur sera payé après retour confirmé (géré manuellement)
+            'return_required' => $this->refundBuyer(
+                $buyer,
+                $order->total_amount,
+                $order,
+                'Remboursement — retour produit requis'
             ),
 
-            default => null,
-        };
+            // Acheteur de mauvaise foi → payer le vendeur
+            'buyer_bad_faith' => $this->paySeller(
+                $seller,
+                $order->net_amount,
+                $order,
+                'Paiement vendeur — acheteur de mauvaise foi'
+            ),
 
-        // Mettre à jour le statut de la commande
-        $order->update(['status' => Order::STATUS_COMPLETED]);
+            default => Log::warning('Resolution inconnue', ['resolution' => $dispute->resolution]),
+        };
     }
 
-    // Remboursement partiel
+    // ── REMBOURSER L'ACHETEUR VIA CAMPAY ─────────────────────────────
+
+    private function refundBuyer(
+        User $buyer,
+        int $amount,
+        Order $order,
+        string $description
+    ): void {
+
+        // Numéro MoMo de l'acheteur = numéro utilisé au paiement
+        $phone = '237' . ltrim($order->payment->payer_phone, '0');
+
+        try {
+            // Virement direct via Campay
+            $this->campay->disburse(
+                phone: $phone,
+                amount: $amount,
+                reference: 'REFUND-' . $order->reference . '-' . Str::uuid(),
+                description: $description
+            );
+
+            // Enregistrer dans wallet_transactions pour audit
+            $this->wallet->refund($buyer, $amount, $order);
+
+            Log::info('Buyer refunded', [
+                'order'  => $order->reference,
+                'amount' => $amount,
+                'phone'  => $phone,
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Buyer refund failed', [
+                'order' => $order->reference,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
+    }
+
+    // ── PAYER LE VENDEUR VIA CAMPAY ───────────────────────────────────
+
+    private function paySeller(
+        User $seller,
+        int $amount,
+        Order $order,
+        string $description
+    ): void {
+
+        if (! $seller->phone_momo) {
+            throw new \Exception(
+                "Le vendeur n'a pas de numéro MoMo enregistré."
+            );
+        }
+
+        $phone = '237' . ltrim($seller->phone_momo, '0');
+
+        try {
+            // Virement direct via Campay
+            $this->campay->disburse(
+                phone: $phone,
+                amount: $amount,
+                reference: 'SELLER-' . $order->reference . '-' . Str::uuid(),
+                description: $description
+            );
+
+            // Libérer le séquestre dans le wallet
+            $this->wallet->releaseEscrow($seller, $amount, $order);
+
+            Log::info('Seller paid', [
+                'order'  => $order->reference,
+                'amount' => $amount,
+                'phone'  => $phone,
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Seller payment failed', [
+                'order' => $order->reference,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
+    }
+
+    // ── REMBOURSEMENT PARTIEL ─────────────────────────────────────────
+
     private function applyPartialRefund(Dispute $dispute): void
     {
-        $order  = $dispute->order;
-        $wallet = app(WalletService::class);
-
+        $order         = $dispute->order;
         $refundAmount  = $dispute->resolution_amount ?? 0;
-        $sellerAmount  = $order->net_amount - $refundAmount;
+        $sellerAmount  = max(0, $order->net_amount - $refundAmount);
 
         // Rembourser l'acheteur partiellement
         if ($refundAmount > 0) {
-            $wallet->refund($order->buyer, $refundAmount, $order);
+            $this->refundBuyer(
+                $order->buyer,
+                $refundAmount,
+                $order,
+                "Remboursement partiel {$refundAmount} FCFA — litige {$order->reference}"
+            );
         }
 
         // Payer le vendeur le reste
         if ($sellerAmount > 0) {
-            $wallet->releaseEscrow($order->shop->user, $sellerAmount, $order);
+            $this->paySeller(
+                $order->shop->user,
+                $sellerAmount,
+                $order,
+                "Paiement partiel {$sellerAmount} FCFA — litige {$order->reference}"
+            );
         }
     }
 
@@ -208,7 +294,6 @@ class DisputeService
     ): DisputeEvidence {
 
         $type = str_starts_with($file->getMimeType(), 'image/') ? 'photo' : 'document';
-
         $path = $file->store("disputes/{$dispute->id}", 'public');
 
         return DisputeEvidence::create([
@@ -219,4 +304,4 @@ class DisputeService
             'description'  => $file->getClientOriginalName(),
         ]);
     }
-} 
+}

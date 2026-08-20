@@ -102,8 +102,8 @@ class ReviewService
     public function recalculateShopScore(int $shopId): void
     {
         $avg = Review::forShop($shopId)
-                     ->where('is_flagged', false)
-                     ->avg('rating');
+            ->where('is_flagged', false)
+            ->avg('rating');
 
         // Convertir la moyenne (1-5) en score (0-100)
         $score = $avg ? (int) round(($avg / 5) * 100) : 100;
@@ -117,8 +117,8 @@ class ReviewService
     public function recalculateBuyerTrustScore(int $userId): void
     {
         $avg = Review::forBuyer($userId)
-                     ->where('is_flagged', false)
-                     ->avg('rating');
+            ->where('is_flagged', false)
+            ->avg('rating');
 
         $score = $avg ? (int) round(($avg / 5) * 100) : 100;
 
