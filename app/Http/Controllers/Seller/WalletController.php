@@ -31,7 +31,7 @@ class WalletController extends Controller
     {
         $request->validate([
             // Le montant doit être un entier positif
-            'amount' => ['required', 'integer', 'min:1'],
+            'amount' => ['required', 'integer', 'min:1000'],
         ]);
 
         $this->walletService->requestWithdrawal(

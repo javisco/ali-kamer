@@ -246,7 +246,71 @@
             {{-- =========================================================
              VILLES DESSERVIES
         ========================================================== --}}
+            {{-- Compte Manager --}}
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-5">
+                <h2 class="font-bold text-gray-800 mb-4">Compte Manager</h2>
 
+                @php
+                    $manager = \App\Models\User::where('role', 'agency_manager')
+                        ->where('agency_id', $agency->id)
+                        ->first();
+                @endphp
+
+                @if ($manager)
+                    <div class="bg-gray-50 rounded-xl p-3">
+                        <p class="text-sm font-semibold text-gray-900">{{ $manager->name }}</p>
+                        <p class="text-xs text-gray-400">{{ $manager->phone }}</p>
+                        <span class="text-xs {{ $manager->isActive() ? 'text-emerald-500' : 'text-orange-500' }}">
+                            {{ $manager->isActive() ? 'Actif' : 'Suspendu' }}
+                        </span>
+                    </div>
+                @else
+                    <p class="text-xs text-orange-500 mb-3">Aucun compte manager.</p>
+                    <form method="POST" action="{{ route('admin.agencies.manager.store', $agency) }}" class="space-y-3">
+                        @csrf
+                        <div class="grid grid-cols-2 gap-3">
+                            <input type="text" name="name" required placeholder="Nom"
+                                class="border border-gray-300 rounded-lg px-3 py-2 text-xs">
+                            <input type="tel" name="phone" required placeholder="6XXXXXXXX"
+                                class="border border-gray-300 rounded-lg px-3 py-2 text-xs">
+                            <input type="text" name="password" required placeholder="Mot de passe"
+                                class="border border-gray-300 rounded-lg px-3 py-2 text-xs">
+                            <input type="email" name="email" placeholder="Email (optionnel)"
+                                class="border border-gray-300 rounded-lg px-3 py-2 text-xs">
+                        </div>
+                        <button class="w-full bg-indigo-600 text-white font-bold py-2 rounded-lg text-xs">
+                            Créer le compte manager
+                        </button>
+                    </form>
+                @endif
+            </div>
+
+            {{-- MoMo de l'agence --}}
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                <h2 class="font-bold text-gray-800 mb-4">Numéro MoMo (retraits)</h2>
+                <form method="POST" action="{{ route('admin.agencies.momo.update', $agency) }}" class="space-y-3">
+                    @csrf
+                    <div class="flex gap-3">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="momo_operator" value="mtn"
+                                {{ $agency->momo_operator === 'mtn' ? 'checked' : '' }}>
+                            <span class="text-sm font-semibold text-yellow-700">MTN</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="momo_operator" value="orange"
+                                {{ $agency->momo_operator === 'orange' ? 'checked' : '' }}>
+                            <span class="text-sm font-semibold text-orange-600">Orange</span>
+                        </label>
+                    </div>
+                    <div class="flex gap-3">
+                        <input type="tel" name="phone_momo" value="{{ $agency->phone_momo }}" placeholder="6XXXXXXXX"
+                            class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        <button class="bg-gray-800 text-white font-bold px-4 py-2 rounded-lg text-sm">
+                            Sauvegarder
+                        </button>
+                    </div>
+                </form>
+            </div>
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-8">
 
                 <div class="px-6 py-5 border-b border-gray-200">

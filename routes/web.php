@@ -23,18 +23,17 @@ use App\Http\Controllers\Seller\DisputeController as SellerDisputeController;
 use App\Http\Controllers\Admin\DisputeController as AdminDisputeController;
 use App\Http\Controllers\Buyer\ReviewController as BuyerReviewController;
 use App\Http\Controllers\Seller\ReviewController as SellerReviewController;
-use Illuminate\Auth\Events\Verified;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Seller\WalletController;
 use App\Http\Controllers\Buyer\WalletController as BuyerWalletcontroller;
 use App\Http\Controllers\Admin\AgencyController;
 use App\Http\Controllers\Admin\FinancialEngineController;
 use App\Http\Controllers\Admin\TutorialController as AdminTutorialController;
 use App\Http\Controllers\TutorialController;
-use App\Models\Agency;
-use App\Models\AgencyCounter;
 use App\Http\Controllers\Buyer\CartController;
+use App\Http\Controllers\Buyer\ProfileController as BuyerProfileController;
+
 use App\Http\Controllers\Buyer\WishlistController;
+use App\Http\Controllers\Agency\DashboardController as AgencyDashboard;
 
 // Route::get('/', function () {
 //         return view('welcome');
@@ -320,6 +319,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 });
 
 
+// Admin — historique de n'importe quel user
+Route::middleware(['auth', 'role:buyer'])->group(function () {
+        Route::get('/mon-historique', [BuyerWalletcontroller::class, 'history'])
+                ->name('buyer.wallet.history');
+});
+
 
 // Avis acheteur
 Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
@@ -327,7 +332,12 @@ Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
                 ->name('buyer.reviews.create');
         Route::post('/commandes/{order}/noter', [BuyerReviewController::class, 'store'])
                 ->name('buyer.reviews.store');
+        // Dans le groupe buyer
+
 });
+
+Route::get('/mon-profil', [BuyerProfileController::class, 'index'])
+        ->name('buyer.profile');
 
 // Avis vendeur sur acheteur
 Route::middleware(['auth', 'verified', 'role:seller'])->prefix('vendeur')->group(function () {
@@ -351,6 +361,12 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->group(fu
         // Blacklister un vendeur
         Route::post('/utilisateurs/{user}/blacklister', [AdminDashboardController::class, 'blacklistUser'])
                 ->name('admin.users.blacklist');
+
+        // Admin — historique de n'importe quel user
+        Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+                Route::get('/utilisateurs/{user}/historique', [AdminDashboardController::class, 'userHistory'])
+                        ->name('admin.users.history');
+        });
 });
 
 
@@ -386,6 +402,14 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         // Secrétaires
         Route::post('/agences/comptoirs/{counter}/secretaire', [AgencyController::class, 'storeSecretary'])
                 ->name('admin.agencies.secretary.store');
+
+
+//manager agency
+        Route::post('/agences/{agency}/manager', [AgencyController::class, 'storeManager'])
+                ->name('admin.agencies.manager.store');
+
+        Route::post('/agences/{agency}/momo', [AgencyController::class, 'updateAgencyMomo'])
+                ->name('admin.agencies.momo.update');
 });
 
 
@@ -460,15 +484,36 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
                 ->name('buyer.wishlist.toggle');
 });
 
-// Admin — historique de n'importe quel user
 
-Route::middleware(['auth', 'role:buyer'])->group(function () {
-        Route::get('/mon-historique', [BuyerWalletcontroller::class, 'history'])
-                ->name('buyer.wallet.history');
-});
 
-// Admin — historique de n'importe quel user
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
-        Route::get('/utilisateurs/{user}/historique', [AdminDashboardController::class, 'userHistory'])
-                ->name('admin.users.history');
-});
+
+
+
+Route::middleware(['auth', 'role:agency_manager'])
+        ->prefix('agence-manager')
+        ->group(function () {
+
+                // Dashboard
+                Route::get('/dashboard', [AgencyDashboard::class, 'index'])
+                        ->name('agency.dashboard');
+
+                // Comptoirs
+                Route::post('/comptoirs', [AgencyDashboard::class, 'storeCounter'])
+                        ->name('agency.counters.store');
+                Route::post('/comptoirs/{counter}/toggle', [AgencyDashboard::class, 'toggleCounter'])
+                        ->name('agency.counters.toggle');
+
+                // Secrétaires
+                Route::post('/comptoirs/{counter}/secretaire', [AgencyDashboard::class, 'storeSecretary'])
+                        ->name('agency.secretary.store');
+                Route::post('/secretaires/{secretary}/toggle', [AgencyDashboard::class, 'toggleSecretary'])
+                        ->name('agency.secretary.toggle');
+                Route::delete('/secretaires/{secretary}', [AgencyDashboard::class, 'deleteSecretary'])
+                        ->name('agency.secretary.delete');
+
+                // Wallet + retrait
+                Route::get('/wallet', [AgencyDashboard::class, 'wallet'])
+                        ->name('agency.wallet');
+                Route::post('/retrait', [AgencyDashboard::class, 'withdraw'])
+                        ->name('agency.withdraw');
+        });

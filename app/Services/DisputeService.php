@@ -6,10 +6,10 @@ use App\Models\Dispute;
 use App\Models\DisputeEvidence;
 use App\Models\Order;
 use App\Models\User;
+use App\Models\WalletTransaction;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class DisputeService
@@ -37,8 +37,9 @@ class DisputeService
             throw new \Exception('Un litige est déjà ouvert pour cette commande.');
         }
 
-        return DB::transaction(function () use ($order, $initiator, $type, $description, $files) {
-
+        return DB::transaction(function () use (
+            $order, $initiator, $type, $description, $files
+        ) {
             $dispute = Dispute::create([
                 'order_id'              => $order->id,
                 'initiator_id'          => $initiator->id,
@@ -69,6 +70,7 @@ class DisputeService
 
         DB::transaction(function () use ($dispute, $seller, $response, $files) {
 
+            // Enregistrer la réponse comme preuve texte
             DisputeEvidence::create([
                 'dispute_id'   => $dispute->id,
                 'submitted_by' => $seller->id,
@@ -85,10 +87,8 @@ class DisputeService
         });
     }
 
-    // ── RÉSOUDRE ET APPLIQUER AUTOMATIQUEMENT ────────────────────────
+    // ── RÉSOUDRE ET APPLIQUER ─────────────────────────────────────────
 
-    // Dès que l'admin clique "Résoudre", les fonds sont versés immédiatement
-    // Pas de validation manuelle — application directe via Campay
     public function resolve(
         Dispute $dispute,
         User $admin,
@@ -100,7 +100,7 @@ class DisputeService
         DB::transaction(function () use (
             $dispute, $admin, $resolution, $note, $resolutionAmount
         ) {
-            // 1. Enregistrer la décision
+            // Enregistrer la décision
             $dispute->update([
                 'status'            => 'resolved',
                 'resolution'        => $resolution,
@@ -110,10 +110,10 @@ class DisputeService
                 'resolved_at'       => now(),
             ]);
 
-            // 2. Appliquer financièrement — immédiatement
+            // Appliquer immédiatement
             $this->applyResolution($dispute);
 
-            // 3. Terminer la commande
+            // Clôturer la commande
             $dispute->order->update([
                 'status'       => Order::STATUS_COMPLETED,
                 'completed_at' => now(),
@@ -121,8 +121,13 @@ class DisputeService
         });
     }
 
-    // ── APPLICATION FINANCIÈRE DIRECTE ───────────────────────────────
+    // ── APPLICATION FINANCIÈRE ────────────────────────────────────────
 
+    // RÈGLE MÉTIER :
+    // - Acheteur    → remboursement DIRECT via Campay (virement MoMo)
+    // - Vendeur     → on crédite/débite son WALLET uniquement
+    //                 (il fait lui-même le retrait quand il veut)
+    // Traçabilité   → toujours enregistrée dans wallet_transactions
     private function applyResolution(Dispute $dispute): void
     {
         $order  = $dispute->order->load(['buyer', 'shop.user', 'payment']);
@@ -131,73 +136,58 @@ class DisputeService
 
         match($dispute->resolution) {
 
-            // Remboursement intégral → acheteur reçoit le total payé
-            'refund_buyer' => $this->refundBuyer(
-                $buyer,
-                $order->total_amount,
-                $order,
-                'Remboursement intégral — litige résolu en faveur acheteur'
-            ),
+            // Acheteur avait raison → remboursement MoMo direct + trace BDD
+            'refund_buyer' => $this->refundBuyer($buyer, $order->total_amount, $order),
 
-            // Payer le vendeur → vendeur reçoit son montant net
-            'pay_seller' => $this->paySeller(
-                $seller,
-                $order->net_amount,
-                $order,
-                'Paiement vendeur — litige résolu en faveur vendeur'
-            ),
+            // Vendeur avait raison → créditer son wallet (pas de virement direct)
+            'pay_seller' => $this->creditSellerWallet($seller, $order->net_amount, $order),
 
-            // Remboursement partiel
-            // L'acheteur reçoit resolution_amount
-            // Le vendeur reçoit le reste
+            // Remboursement partiel → acheteur via MoMo + vendeur via wallet
             'partial_refund' => $this->applyPartialRefund($dispute),
 
-            // Retour requis — on rembourse l'acheteur
-            // Le vendeur sera payé après retour confirmé (géré manuellement)
-            'return_required' => $this->refundBuyer(
-                $buyer,
-                $order->total_amount,
-                $order,
-                'Remboursement — retour produit requis'
-            ),
+            // Retour requis → rembourser l'acheteur via MoMo
+            'return_required' => $this->refundBuyer($buyer, $order->total_amount, $order),
 
-            // Acheteur de mauvaise foi → payer le vendeur
-            'buyer_bad_faith' => $this->paySeller(
-                $seller,
-                $order->net_amount,
-                $order,
-                'Paiement vendeur — acheteur de mauvaise foi'
-            ),
+            // Acheteur mauvaise foi → créditer le wallet vendeur
+            'buyer_bad_faith' => $this->creditSellerWallet($seller, $order->net_amount, $order),
 
-            default => Log::warning('Resolution inconnue', ['resolution' => $dispute->resolution]),
+            default => Log::warning('Résolution inconnue', [
+                'resolution' => $dispute->resolution
+            ]),
         };
     }
 
-    // ── REMBOURSER L'ACHETEUR VIA CAMPAY ─────────────────────────────
+    // ── REMBOURSEMENT ACHETEUR (virement Campay direct) ──────────────
 
-    private function refundBuyer(
-        User $buyer,
-        int $amount,
-        Order $order,
-        string $description
-    ): void {
-
-        // Numéro MoMo de l'acheteur = numéro utilisé au paiement
+    // L'acheteur reçoit son argent directement sur son MoMo
+    // car il n'a pas de wallet sur la plateforme
+    private function refundBuyer(User $buyer, int $amount, Order $order): void
+    {
+        // Numéro utilisé au moment du paiement initial
         $phone = '237' . ltrim($order->payment->payer_phone, '0');
 
         try {
-            // Virement direct via Campay
+            // Virement direct vers le MoMo de l'acheteur
             $this->campay->disburse(
                 phone: $phone,
                 amount: $amount,
                 reference: 'REFUND-' . $order->reference . '-' . Str::uuid(),
-                description: $description
+                description: "Remboursement litige commande {$order->reference}"
             );
 
-            // Enregistrer dans wallet_transactions pour audit
-            $this->wallet->refund($buyer, $amount, $order);
+            // Enregistrement de la trace dans wallet_transactions
+            // balance_after = 0 car l'acheteur n'a pas de wallet
+            WalletTransaction::create([
+                'user_id'      => $buyer->id,
+                'type'         => WalletTransaction::TYPE_CREDIT_REFUND,
+                'amount'       => $amount,
+                'balance_after' => 0,
+                'ref_type'     => 'order',
+                'ref_id'       => $order->id,
+                'note'         => "Remboursement litige {$order->reference} — virement MoMo {$phone}",
+            ]);
 
-            Log::info('Buyer refunded', [
+            Log::info('Buyer refunded via Campay', [
                 'order'  => $order->reference,
                 'amount' => $amount,
                 'phone'  => $phone,
@@ -212,76 +202,41 @@ class DisputeService
         }
     }
 
-    // ── PAYER LE VENDEUR VIA CAMPAY ───────────────────────────────────
+    // ── CRÉDITER LE WALLET VENDEUR (pas de virement direct) ──────────
 
-    private function paySeller(
-        User $seller,
-        int $amount,
-        Order $order,
-        string $description
-    ): void {
+    // Le vendeur reçoit l'argent dans son wallet plateforme
+    // Il fait lui-même le retrait vers son MoMo via la fonction Withdrawal
+    private function creditSellerWallet(User $seller, int $amount, Order $order): void
+    {
+        DB::transaction(function () use ($seller, $amount, $order) {
 
-        if (! $seller->phone_momo) {
-            throw new \Exception(
-                "Le vendeur n'a pas de numéro MoMo enregistré."
-            );
-        }
-
-        $phone = '237' . ltrim($seller->phone_momo, '0');
-
-        try {
-            // Virement direct via Campay
-            $this->campay->disburse(
-                phone: $phone,
-                amount: $amount,
-                reference: 'SELLER-' . $order->reference . '-' . Str::uuid(),
-                description: $description
-            );
-
-            // Libérer le séquestre dans le wallet
+            // Libérer le séquestre et créditer le disponible
             $this->wallet->releaseEscrow($seller, $amount, $order);
 
-            Log::info('Seller paid', [
+            Log::info('Seller wallet credited', [
                 'order'  => $order->reference,
                 'amount' => $amount,
-                'phone'  => $phone,
+                'seller' => $seller->id,
             ]);
-
-        } catch (\Exception $e) {
-            Log::error('Seller payment failed', [
-                'order' => $order->reference,
-                'error' => $e->getMessage(),
-            ]);
-            throw $e;
-        }
+        });
     }
 
     // ── REMBOURSEMENT PARTIEL ─────────────────────────────────────────
 
     private function applyPartialRefund(Dispute $dispute): void
     {
-        $order         = $dispute->order;
-        $refundAmount  = $dispute->resolution_amount ?? 0;
-        $sellerAmount  = max(0, $order->net_amount - $refundAmount);
+        $order        = $dispute->order;
+        $refundAmount = $dispute->resolution_amount ?? 0;
+        $sellerAmount = max(0, $order->net_amount - $refundAmount);
 
-        // Rembourser l'acheteur partiellement
+        // Acheteur → virement MoMo direct
         if ($refundAmount > 0) {
-            $this->refundBuyer(
-                $order->buyer,
-                $refundAmount,
-                $order,
-                "Remboursement partiel {$refundAmount} FCFA — litige {$order->reference}"
-            );
+            $this->refundBuyer($order->buyer, $refundAmount, $order);
         }
 
-        // Payer le vendeur le reste
+        // Vendeur → wallet plateforme
         if ($sellerAmount > 0) {
-            $this->paySeller(
-                $order->shop->user,
-                $sellerAmount,
-                $order,
-                "Paiement partiel {$sellerAmount} FCFA — litige {$order->reference}"
-            );
+            $this->creditSellerWallet($order->shop->user, $sellerAmount, $order);
         }
     }
 

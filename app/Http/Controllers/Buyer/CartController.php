@@ -17,7 +17,6 @@ class CartController extends Controller
 {
     public function __construct(
         private CartService $cartService,
-        private ProductVariantService $variantService,
         private AgencyService $agencyService,
         private OrderService $orderService,
     ) {}

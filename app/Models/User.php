@@ -5,6 +5,7 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -31,6 +32,7 @@ class User extends Authenticatable implements MustVerifyEmail
     const ROLE_SELLER    = 'seller';
     const ROLE_SECRETARY = 'secretary';
     const ROLE_ADMIN     = 'admin';
+    const ROLE_AGENCY_MANAGER = 'agency_manager';
 
     // ── Statuts ───────────────────────────────────────────────────────
     const STATUS_CANDIDATE = 'candidate';
@@ -174,17 +176,31 @@ class User extends Authenticatable implements MustVerifyEmail
             && $this->shop?->status === 'active';
     }
 
+
+    // Ajouter dans isSeller(), etc.
+    public function isAgencyManager(): bool
+    {
+        return $this->role === self::ROLE_AGENCY_MANAGER;
+    }
+
+    // Relation agence (pour les agency_managers)
+    public function managedAgency(): BelongsTo
+    {
+        return $this->belongsTo(Agency::class, 'agency_id');
+    }
+
+
     // Redirect après login selon le rôle — utilisé dans AuthService
     public function dashboardRoute(): string
     {
         return match ($this->role) {
-            self::ROLE_ADMIN     => 'admin.dashboard',
-            self::ROLE_SELLER    => 'seller.dashboard',
-            self::ROLE_SECRETARY => 'secretary.dashboard',
-            default              => 'buyer.home',
+            self::ROLE_ADMIN         => 'admin.dashboard',
+            self::ROLE_SELLER        => 'seller.dashboard',
+            self::ROLE_SECRETARY     => 'secretary.dashboard',
+            self::ROLE_AGENCY_MANAGER => 'agency.dashboard',
+            default                  => 'buyer.home',
         };
     }
-
     // Comptoirs assignés au secrétaire
     public function assignedCounters()
     {

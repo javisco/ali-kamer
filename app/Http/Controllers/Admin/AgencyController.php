@@ -7,12 +7,75 @@ use App\Models\Agency;
 use App\Models\AgencyCity;
 use App\Models\AgencyCounter;
 use App\Models\AdminLog;
+use App\Models\User;
 use App\Services\AgencyService;
 use Illuminate\Http\Request;
 
 class AgencyController extends Controller
 {
     public function __construct(private AgencyService $agencyService) {}
+
+
+    // Créer un compte manager pour une agence
+    public function storeManager(Request $request, Agency $agency)
+    {
+        $request->validate([
+            'name'     => ['required', 'string'],
+            'phone'    => ['required', 'string', 'regex:/^6[0-9]{8}$/', 'unique:users,phone'],
+            'email'    => ['nullable', 'email', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:8'],
+        ]);
+
+        // Vérifier qu'il n'y a pas déjà un manager pour cette agence
+        $existing = User::where('role', 'agency_manager')
+            ->where('agency_id', $agency->id)
+            ->exists();
+
+        if ($existing) {
+            return back()->withErrors(['manager' => 'Cette agence a déjà un compte manager.']);
+        }
+
+        $manager = User::create([
+            'name'      => $request->name,
+            'phone'     => $request->phone,
+            'email'     => $request->email,
+            'password'  => bcrypt($request->password),
+            'role'      => User::ROLE_AGENCY_MANAGER,
+            'status'    => User::STATUS_ACTIVE,
+            'agency_id' => $agency->id,
+        ]);
+
+        AdminLog::record(
+            auth()->user(),
+            'agency_manager.created',
+            'user',
+            $manager->id,
+            "Manager créé pour l'agence {$agency->name}"
+        );
+
+        return back()->with(
+            'success',
+            "Compte manager créé pour {$manager->name}. " .
+                "Il peut se connecter avec le numéro {$manager->phone}."
+        );
+    }
+
+    // Configurer le MoMo de l'agence pour les retraits
+    public function updateAgencyMomo(Request $request, Agency $agency)
+    {
+        $request->validate([
+            'phone_momo'    => ['required', 'string', 'regex:/^6[0-9]{8}$/'],
+            'momo_operator' => ['required', 'in:mtn,orange'],
+        ]);
+
+        $agency->update([
+            'phone_momo'    => $request->phone_momo,
+            'momo_operator' => $request->momo_operator,
+        ]);
+
+        return back()->with('success', 'Numéro MoMo de l\'agence mis à jour.');
+    }
+
 
     // ── AGENCES ───────────────────────────────────────────────────────
 
@@ -160,7 +223,8 @@ class AgencyController extends Controller
             "Affecté au comptoir {$counter->full_name}"
         );
 
-        return back()->with('success',
+        return back()->with(
+            'success',
             "Secrétaire {$secretary->name} créé et affecté à {$counter->full_name}."
         );
     }
@@ -170,10 +234,22 @@ class AgencyController extends Controller
     private function getCities(): array
     {
         return [
-            'Douala', 'Yaoundé', 'Bafoussam', 'Bamenda',
-            'Buea', 'Limbé', 'Garoua', 'Maroua',
-            'Ngaoundéré', 'Bertoua', 'Ebolowa', 'Kribi',
-            'Kumba', 'Edéa', 'Nkongsamba', 'Dschang',
+            'Douala',
+            'Yaoundé',
+            'Bafoussam',
+            'Bamenda',
+            'Buea',
+            'Limbé',
+            'Garoua',
+            'Maroua',
+            'Ngaoundéré',
+            'Bertoua',
+            'Ebolowa',
+            'Kribi',
+            'Kumba',
+            'Edéa',
+            'Nkongsamba',
+            'Dschang',
         ];
     }
 }

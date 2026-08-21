@@ -164,6 +164,12 @@ class ShippingService
                 'timer_deadline' => now()->addHours(72),
             ]);
 
+            // Créditer la commission de l'agence (1%)
+            // Appelé quand le colis arrive à destination
+            $agency = $counter->agency;
+            app(AgencyManagerService::class)->creditCommission($agency, $order);
+
+
             // OTP envoyé à l'acheteur seulement si transport inclus OU déjà payé
             // Sinon l'acheteur doit d'abord payer les frais transport
             $transportDue = ! $order->shipment->shipping_included
@@ -243,7 +249,7 @@ class ShippingService
             ]);
 
             // Libérer les fonds du vendeur
-            // app(WalletService::class)->releaseEscrow($order->shop->user, $order->net_amount, $order);
+            app(WalletService::class)->releaseEscrow($order->shop->user, $order->net_amount, $order);
         });
     }
 
