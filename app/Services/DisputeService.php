@@ -38,7 +38,11 @@ class DisputeService
         }
 
         return DB::transaction(function () use (
-            $order, $initiator, $type, $description, $files
+            $order,
+            $initiator,
+            $type,
+            $description,
+            $files
         ) {
             $dispute = Dispute::create([
                 'order_id'              => $order->id,
@@ -98,7 +102,11 @@ class DisputeService
     ): void {
 
         DB::transaction(function () use (
-            $dispute, $admin, $resolution, $note, $resolutionAmount
+            $dispute,
+            $admin,
+            $resolution,
+            $note,
+            $resolutionAmount
         ) {
             // Enregistrer la décision
             $dispute->update([
@@ -134,7 +142,7 @@ class DisputeService
         $buyer  = $order->buyer;
         $seller = $order->shop->user;
 
-        match($dispute->resolution) {
+        match ($dispute->resolution) {
 
             // Acheteur avait raison → remboursement MoMo direct + trace BDD
             'refund_buyer' => $this->refundBuyer($buyer, $order->total_amount, $order),
@@ -175,24 +183,13 @@ class DisputeService
                 description: "Remboursement litige commande {$order->reference}"
             );
 
-            // Enregistrement de la trace dans wallet_transactions
-            // balance_after = 0 car l'acheteur n'a pas de wallet
-            WalletTransaction::create([
-                'user_id'      => $buyer->id,
-                'type'         => WalletTransaction::TYPE_CREDIT_REFUND,
-                'amount'       => $amount,
-                'balance_after' => 0,
-                'ref_type'     => 'order',
-                'ref_id'       => $order->id,
-                'note'         => "Remboursement litige {$order->reference} — virement MoMo {$phone}",
-            ]);
+            $this->wallet->refund($buyer, $amount, $order);
 
             Log::info('Buyer refunded via Campay', [
                 'order'  => $order->reference,
                 'amount' => $amount,
                 'phone'  => $phone,
             ]);
-
         } catch (\Exception $e) {
             Log::error('Buyer refund failed', [
                 'order' => $order->reference,

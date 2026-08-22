@@ -11,6 +11,11 @@ class ReviewController extends Controller
 {
     public function __construct(private ReviewService $reviewService) {}
 
+    public function create(Order $order)
+    {
+        return view("seller.reviews.create", ['order' => $order]);
+    }
+
     // Vendeur note l'acheteur
     public function store(Request $request, Order $order)
     {

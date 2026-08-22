@@ -56,11 +56,11 @@
                     </svg>
                 </div>
             </div>
-
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center justify-between">
                 <div>
                     <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Dépensé</p>
-                    <p class="text-xl font-bold text-gray-900 mt-1">{{ number_format($stats['total_spent'], 0, ',', ' ') }}
+                    <p class="text-xl font-bold text-gray-900 mt-1">
+                        {{ number_format($stats['total_spent'], 0, ',', ' ') }}
                         FCFA</p>
                 </div>
                 <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center">
@@ -71,8 +71,30 @@
                 </div>
             </div>
 
-        </div>
 
+        </div>
+        <div class="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+            <a href="{{ route('buyer.wallet.history') }}" >
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">historique des depense</p>
+                    </div>
+                    <p class="text-sm font-semibold text-blue-600 hover:text-blue-800">
+                        Voir →</p>
+                </div>
+            </a>
+
+            <a href="{{ route('buyer.profile') }}">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">profile</p>
+
+                    </div>
+                    <p class="text-sm font-semibold text-blue-600 hover:text-blue-800">
+                        Voir →</p>
+                </div>
+            </a>
+        </div>
         <!-- Section Commande Active Prioritaire (Focus Séquestre & OTP) -->
         @if ($activeOrder)
             <div class="bg-gradient-to-r from-blue-900 to-indigo-900 text-white rounded-2xl shadow-lg p-6 mb-8">

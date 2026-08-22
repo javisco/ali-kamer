@@ -30,6 +30,7 @@ class DashboardService
             if ($kyc?->isRejected()) {
                     return redirect()->route('seller.kyc.rejected');
                 } else {
+
                     return redirect()->route('seller.kyc.create');
                 }
         } else
@@ -38,6 +39,10 @@ class DashboardService
         } else
         if ($user->role === 'admin') {
             return redirect()->route('admin.dashboard');
-        } else abort(403, 'vous n\'exister pas');
+        } else
+        if ($user->role === 'agency_manager')
+            return redirect()->route('agency.dashboard');
+        else
+            abort(403, 'vous n\'exister pas');
     }
 }

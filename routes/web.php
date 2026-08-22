@@ -135,6 +135,8 @@ Route::middleware(['auth', 'verified', 'role:seller', 'shop.active'])->prefix('v
                 ->name('seller.products.toggle');
         Route::delete('/produits/image/{image}', [ProductController::class, 'deleteImage'])
                 ->name('seller.products.image.delete');
+        Route::get('/mon-historique', [BuyerWalletcontroller::class, 'history'])
+                ->name('seller.wallet.history');
 });
 
 // ── Commandes acheteur ────────────────────────────────────────────
@@ -308,6 +310,8 @@ Route::middleware(['auth', 'role:seller'])->prefix('vendeur')->group(function ()
                 ->name('seller.disputes.reply');
 });
 
+
+
 // ── Litiges admin ─────────────────────────────────────────────────
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         Route::get('/litiges', [AdminDisputeController::class, 'index'])
@@ -317,14 +321,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         Route::post('/litiges/{dispute}/resoudre', [AdminDisputeController::class, 'resolve'])
                 ->name('admin.disputes.resolve');
 });
-
-
-// Admin — historique de n'importe quel user
-Route::middleware(['auth', 'role:buyer'])->group(function () {
-        Route::get('/mon-historique', [BuyerWalletcontroller::class, 'history'])
-                ->name('buyer.wallet.history');
-});
-
 
 // Avis acheteur
 Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
@@ -336,14 +332,15 @@ Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
 
 });
 
-Route::get('/mon-profil', [BuyerProfileController::class, 'index'])
-        ->name('buyer.profile');
-
 // Avis vendeur sur acheteur
 Route::middleware(['auth', 'verified', 'role:seller'])->prefix('vendeur')->group(function () {
+        Route::post('/commandes/{order}/noter-acheteur', [SellerReviewController::class, 'create'])
+                ->name('seller.reviews.create');
         Route::post('/commandes/{order}/noter-acheteur', [SellerReviewController::class, 'store'])
                 ->name('seller.reviews.store');
 });
+
+
 
 Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->group(function () {
 
@@ -363,10 +360,15 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->group(fu
                 ->name('admin.users.blacklist');
 
         // Admin — historique de n'importe quel user
-        Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
-                Route::get('/utilisateurs/{user}/historique', [AdminDashboardController::class, 'userHistory'])
-                        ->name('admin.users.history');
-        });
+        Route::get('/users/{user}/history', [AdminDashboardController::class, 'userHistory'])
+                ->name('admin.users.history');
+
+
+        //finacialengine
+        Route::get('/moteur-financier', [FinancialEngineController::class, 'index'])
+                ->name('admin.financial-engine.index');
+        Route::post('/moteur-financier', [FinancialEngineController::class, 'update'])
+                ->name('admin.financial-engine.update');
 });
 
 
@@ -404,7 +406,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
                 ->name('admin.agencies.secretary.store');
 
 
-//manager agency
+        //manager agency
         Route::post('/agences/{agency}/manager', [AgencyController::class, 'storeManager'])
                 ->name('admin.agencies.manager.store');
 
@@ -412,13 +414,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
                 ->name('admin.agencies.momo.update');
 });
 
-
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
-        Route::get('/moteur-financier', [FinancialEngineController::class, 'index'])
-                ->name('admin.financial-engine.index');
-        Route::post('/moteur-financier', [FinancialEngineController::class, 'update'])
-                ->name('admin.financial-engine.update');
-});
 
 
 // Tutoriels publics (acheteurs et vendeurs connectés)
@@ -482,6 +477,15 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
                 ->name('buyer.wishlist.index');
         Route::post('/favoris/{product}', [WishlistController::class, 'toggle'])
                 ->name('buyer.wishlist.toggle');
+
+
+        // historique des transaction
+        Route::get('/mon-historique', [BuyerWalletcontroller::class, 'history'])
+                ->name('buyer.wallet.history');
+
+
+        Route::get('/mon-profil', [BuyerProfileController::class, 'index'])
+                ->name('buyer.profile');
 });
 
 

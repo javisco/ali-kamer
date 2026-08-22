@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Order;
+use App\Models\PlatformSetting;
 use App\Models\User;
 use App\Models\WalletTransaction;
 use Illuminate\Support\Facades\DB;
@@ -83,14 +84,16 @@ class WalletService
     // Cette méthode enregistre uniquement la trace comptable
     public function refund(User $buyer, int $amount, Order $order): void
     {
+        // Enregistrement de la trace dans wallet_transactions
+        //  balance_after = 0 car l'acheteur n'a pas de wallet
         WalletTransaction::create([
             'user_id'      => $buyer->id,
             'type'         => WalletTransaction::TYPE_CREDIT_REFUND,
             'amount'       => $amount,
-            'balance_after' => 0, // acheteur n'a pas de wallet
+            'balance_after' => 0,
             'ref_type'     => 'order',
             'ref_id'       => $order->id,
-            'note'         => "Remboursement commande {$order->reference}",
+            'note'         => "Remboursement litige {$order->reference} — virement MoMo {$order->payer_phone}",
         ]);
     }
 
@@ -128,7 +131,7 @@ class WalletService
         $reference = 'WITHDRAWAL-' . $user->id . '-' . Str::uuid();
 
         // Frais Campay au retrait (1%)
-        $fees      = (int) round($amount * 0.01);
+        $fees      = (int) round($amount * PlatformSetting::getRate('gateway_payout_rate'));
         $netAmount = $amount - $fees;
 
         DB::transaction(function () use ($user, $amount, $netAmount, $phone, $reference, $fees) {
@@ -165,7 +168,6 @@ class WalletService
                     'reference' => $reference,
                     'campay'    => $result,
                 ]);
-
             } catch (\Exception $e) {
                 // En cas d'échec Campay, rembourser le wallet
                 $user->increment('wallet_available', $amount);
@@ -198,8 +200,8 @@ class WalletService
     public function history(User $user, int $perPage = 20)
     {
         return WalletTransaction::where('user_id', $user->id)
-                                ->latest()
-                                ->paginate($perPage);
+            ->latest()
+            ->paginate($perPage);
     }
 
     // ── AUDIT ─────────────────────────────────────────────────────────
@@ -213,16 +215,16 @@ class WalletService
         $available = 0;
 
         foreach ($transactions as $tx) {
-            match($tx->type) {
+            match ($tx->type) {
                 WalletTransaction::TYPE_CREDIT_ESCROW   => $pending += $tx->amount,
                 WalletTransaction::TYPE_DEBIT_ESCROW    => $pending -= $tx->amount,
                 WalletTransaction::TYPE_CREDIT_AVAILABLE,
                 WalletTransaction::TYPE_CREDIT_TRANSPORT_FEE
-                    => $available += $tx->amount,
+                => $available += $tx->amount,
                 WalletTransaction::TYPE_DEBIT_WITHDRAWAL,
                 WalletTransaction::TYPE_DEBIT_COMMISSION,
                 WalletTransaction::TYPE_DEBIT_TRANSPORT_FEE
-                    => $available -= $tx->amount,
+                => $available -= $tx->amount,
                 default => null,
             };
         }

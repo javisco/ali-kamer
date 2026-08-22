@@ -124,58 +124,65 @@
                                 </td>
 
                                 {{-- Actions --}}
-                                <td class="px-5 py-4">
-                                    <div class="flex flex-col gap-2">
+                                {{-- Actions --}}
+<td class="px-5 py-4">
+    <div class="flex flex-col gap-2">
 
-                                        {{-- Bannir / Réactiver --}}
-                                        @if (!$user->isAdmin())
-                                            @if ($user->isBanned())
-                                                <form method="POST" action="{{ route('admin.users.unban', $user) }}">
-                                                    @csrf
-                                                    <button class="text-xs text-emerald-600 hover:underline font-medium">
-                                                        Réactiver
-                                                    </button>
-                                                </form>
-                                            @else
-                                                <form method="POST" action="{{ route('admin.users.ban', $user) }}"
-                                                    onsubmit="return confirm('Bannir {{ $user->name }} ?')">
-                                                    @csrf
-                                                    <button class="text-xs text-orange-600 hover:underline font-medium">
-                                                        Bannir
-                                                    </button>
-                                                </form>
-                                            @endif
-                                        @endif
+        {{-- Voir l'historique du Wallet --}}
+        <a href="{{ route('admin.users.history', $user) }}" 
+           class="text-xs text-indigo-600 hover:underline font-medium flex items-center gap-1">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Historique Wallet
+        </a>
 
-                                        {{-- Blacklister (vendeurs uniquement) --}}
-                                        @if ($user->isSeller() && !$user->isBanned())
-                                            <div x-data="{ open: false }">
-                                                <button @click="open = !open"
-                                                    class="text-xs text-red-600 hover:underline font-medium">
-                                                    Blacklister
-                                                </button>
-                                                <div x-show="open" class="mt-2">
-                                                    <form method="POST"
-                                                        action="{{ route('admin.users.blacklist', $user) }}"
-                                                        class="flex gap-2"
-                                                        onsubmit="return confirm('Blacklister définitivement ?')">
-                                                        @csrf
-                                                        <input type="text" name="reason" required placeholder="Motif..."
-                                                            class="flex-1 border border-gray-300 rounded-lg
-                                                              px-2 py-1 text-xs">
-                                                        <button
-                                                            class="bg-red-600 text-white text-xs
-                                                               font-bold px-3 py-1 rounded-lg
-                                                               hover:bg-red-700">
-                                                            Confirmer
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        @endif
+        {{-- Bannir / Réactiver --}}
+        @if (!$user->isAdmin())
+            @if ($user->isBanned())
+                <form method="POST" action="{{ route('admin.users.unban', $user) }}">
+                    @csrf
+                    <button class="text-xs text-emerald-600 hover:underline font-medium">
+                        Réactiver
+                    </button>
+                </form>
+            @else
+                <form method="POST" action="{{ route('admin.users.ban', $user) }}"
+                    onsubmit="return confirm('Bannir {{ $user->name }} ?')">
+                    @csrf
+                    <button class="text-xs text-orange-600 hover:underline font-medium">
+                        Bannir
+                    </button>
+                </form>
+            @endif
+        @endif
 
-                                    </div>
-                                </td>
+        {{-- Blacklister (vendeurs uniquement) --}}
+        @if ($user->isSeller() && !$user->isBanned())
+            <div x-data="{ open: false }">
+                <button @click="open = !open"
+                    class="text-xs text-red-600 hover:underline font-medium">
+                    Blacklister
+                </button>
+                <div x-show="open" class="mt-2">
+                    <form method="POST"
+                        action="{{ route('admin.users.blacklist', $user) }}"
+                        class="flex gap-2"
+                        onsubmit="return confirm('Blacklister définitivement ?')">
+                        @csrf
+                        <input type="text" name="reason" required placeholder="Motif..."
+                            class="flex-1 border border-gray-300 rounded-lg px-2 py-1 text-xs">
+                        <button
+                            class="bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-lg hover:bg-red-700">
+                            Confirmer
+                        </button>
+                    </form>
+                </div>
+            </div>
+        @endif
+
+    </div>
+</td>
                             </tr>
                         @empty
                             <tr>

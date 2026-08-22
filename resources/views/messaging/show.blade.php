@@ -77,7 +77,26 @@
                         @if (!$isMine)
                             <p class="text-[11px] font-semibold text-gray-500 ml-1">{{ $message->sender->name }}</p>
                         @endif
-
+                        @if (auth()->user()->isSeller())
+                            @php
+                                $buyer = $conversation->buyer;
+                            @endphp
+                            <div class="flex items-center gap-2 mt-1">
+                                <span
+                                    class="text-xs {{ $buyer->trust_score >= 70
+                                        ? 'text-emerald-500'
+                                        : ($buyer->trust_score >= 40
+                                            ? 'text-orange-400'
+                                            : 'text-red-500') }}">
+                                    Score : {{ $buyer->trust_score }}/100
+                                </span>
+                                @if ($buyer->prepayment_required)
+                                    <span class="text-xs bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full">
+                                        ⚠ Prépaiement requis
+                                    </span>
+                                @endif
+                            </div>
+                        @endif
                         {{-- Bulle du message --}}
                         <div
                             class="px-3.5 py-2.5 rounded-2xl text-sm shadow-sm relative {{ $isMine ? 'bg-indigo-600 text-white rounded-br-none' : 'bg-white border border-gray-200 text-gray-800 rounded-bl-none' }}">

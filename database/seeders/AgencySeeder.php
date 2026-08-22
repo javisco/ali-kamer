@@ -41,7 +41,7 @@ class AgencySeeder extends Seeder
         ];
 
         $secretaryIndex = 1;
-
+        $i = 1;
         foreach ($agenciesData as $data) {
             // 1. Création de l'agence
             $agency = Agency::create([
@@ -51,6 +51,7 @@ class AgencySeeder extends Seeder
                 'contact_email' => $data['contact_email'],
                 'is_active'     => true,
             ]);
+
 
             // 2. Ajout des villes desservies
             foreach ($data['cities'] as $cityName) {
@@ -93,5 +94,24 @@ class AgencySeeder extends Seeder
                 $secretaryIndex++;
             }
         }
+        User::create([
+            'name'      => "toto",
+            'phone'     => "677777777",
+            'email'     => "toto@test.com",
+            'password'  => bcrypt("11111111"),
+            'role'      => User::ROLE_AGENCY_MANAGER,
+            'status'    => User::STATUS_ACTIVE,
+            'agency_id' => 1,
+        ]);
+
+        User::create([
+            'name'      => "tutu",
+            'phone'     => "677777770",
+            'email'     => "tutu@test.com",
+            'password'  => bcrypt("11111111"),
+            'role'      => User::ROLE_AGENCY_MANAGER,
+            'status'    => User::STATUS_ACTIVE,
+            'agency_id' => 2,
+        ]);
     }
 }

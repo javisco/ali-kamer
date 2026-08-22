@@ -8,8 +8,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class AgencyWalletTransaction extends Model
 {
     protected $fillable = [
-        'agency_id', 'type', 'amount',
-        'balance_after', 'order_id', 'note',
+        'agency_id',
+        'type',
+        'amount',
+        'balance_after',
+        'order_id',
+        'note',
     ];
 
     protected function casts(): array
@@ -34,7 +38,7 @@ class AgencyWalletTransaction extends Model
 
     public function typeLabel(): string
     {
-        return match($this->type) {
+        return match ($this->type) {
             'credit_commission'      => 'Commission colis',
             'debit_withdrawal'       => 'Retrait',
             'debit_withdrawal_failed' => 'Retrait échoué (recrédité)',

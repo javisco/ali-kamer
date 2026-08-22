@@ -580,7 +580,26 @@
                 </div>
             @endif
 
-
+            @if (auth()->user()->isSeller())
+                @php
+                    $buyer = $order->buyer;
+                @endphp
+                <div class="flex items-center gap-2 mt-1">
+                    <span
+                        class="text-xs {{ $buyer->trust_score >= 70
+                            ? 'text-emerald-500'
+                            : ($buyer->trust_score >= 40
+                                ? 'text-orange-400'
+                                : 'text-red-500') }}">
+                        Score : {{ $buyer->trust_score }}/100
+                    </span>
+                    @if ($buyer->prepayment_required)
+                        <span class="text-xs bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full">
+                            ⚠ Prépaiement requis
+                        </span>
+                    @endif
+                </div>
+            @endif
             {{-- ============================================================
              CONTENU PRINCIPAL
         ============================================================= --}}
@@ -738,7 +757,13 @@
                         </div>
 
 
-
+                        @if ($order->isCompleted())
+                            <a href="{{ route('seller.reviews.create', $order) }}"
+                                class="block w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold
+              py-3 rounded-2xl text-center text-sm transition mb-3 mt-1">
+                                ★ Noter l'acheteur
+                            </a>
+                        @endif
                         {{-- TOTAL --}}
                         <div class="px-6 py-5 border-t border-slate-200 bg-slate-50">
 
