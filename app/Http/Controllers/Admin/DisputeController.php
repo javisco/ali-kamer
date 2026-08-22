@@ -23,7 +23,7 @@ class DisputeController extends Controller
 
         $counts = [
             'open'          => Dispute::where('status', 'open')->count(),
-            'seller_replied'=> Dispute::where('status', 'seller_replied')->count(),
+            'seller_replied' => Dispute::where('status', 'seller_replied')->count(),
             'under_review'  => Dispute::where('status', 'under_review')->count(),
             'resolved'      => Dispute::where('status', 'resolved')->count(),
         ];
@@ -31,30 +31,58 @@ class DisputeController extends Controller
         return view('admin.disputes.index', compact('disputes', 'counts', 'status'));
     }
 
-    // Dossier complet d'un litige
+    // // Dossier complet d'un litige
+    // public function show(Dispute $dispute)
+    // {
+    //     // Passer en "under_review" quand l'admin ouvre le dossier
+    //     if ($dispute->status === 'seller_replied') {
+    //         $dispute->update(['status' => 'under_review']);
+    //     }
+
+    //     $dispute->load([
+    //         'order.items.product',
+    //         'order.shop',
+    //         'order.buyer',
+    //         'order.shipment',
+    //         'order.payment',
+
+    //         // Conversation liée à la commande pour preuve
+    //         'order.buyer', // messagerie accessible via order
+
+    //         'evidences.submitter',
+    //         'initiator',
+    //         'resolver',
+    //     ]);
+
+    //     return view('admin.disputes.show', compact('dispute'));
+    // }
+
+
     public function show(Dispute $dispute)
     {
-        // Passer en "under_review" quand l'admin ouvre le dossier
         if ($dispute->status === 'seller_replied') {
             $dispute->update(['status' => 'under_review']);
         }
 
         $dispute->load([
-            'order.items.product',
-            'order.shop',
+            'order.items.product.images',
+            'order.shop.user',
             'order.buyer',
             'order.shipment',
             'order.payment',
-
-            // Conversation liée à la commande pour preuve
-            'order.buyer', // messagerie accessible via order
-
             'evidences.submitter',
             'initiator',
             'resolver',
         ]);
 
-        return view('admin.disputes.show', compact('dispute'));
+        // Charger la conversation entre l'acheteur et le vendeur
+        // pour cette boutique — aide l'admin à comprendre le contexte
+        $conversation = \App\Models\Conversation::where('buyer_id', $dispute->order->buyer_id)
+            ->where('shop_id', $dispute->order->shop_id)
+            ->with(['messages.sender'])
+            ->first();
+
+        return view('admin.disputes.show', compact('dispute', 'conversation'));
     }
 
     // Résoudre le litige

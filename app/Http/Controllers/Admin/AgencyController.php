@@ -127,6 +127,7 @@ class AgencyController extends Controller
     }
 
     // Modifier une agence
+    // Modifier une agence (déjà codée, route manquait)
     public function update(Request $request, Agency $agency)
     {
         $request->validate([
@@ -137,9 +138,43 @@ class AgencyController extends Controller
 
         $this->agencyService->updateAgency($agency, $request->all());
 
+        AdminLog::record(auth()->user(), 'agency.updated', 'agency', $agency->id);
+
         return back()->with('success', 'Agence mise à jour.');
     }
 
+    // Modifier le compte agency_manager
+    public function updateManager(Request $request, User $manager)
+    {
+        // Vérifier que c'est bien un agency_manager
+        abort_unless($manager->role === 'agency_manager', 403);
+
+        $request->validate([
+            'name'     => ['required', 'string'],
+            'phone'    => ['required', 'string', 'unique:users,phone,' . $manager->id],
+            'email'    => ['nullable', 'email', 'unique:users,email,' . $manager->id],
+            'password' => ['nullable', 'string', 'min:8'],
+            'status'   => ['required', 'in:active,suspended'],
+        ]);
+
+        $data = $request->only(['name', 'phone', 'email', 'status']);
+
+        // Ne mettre à jour le mot de passe que s'il est fourni
+        if ($request->filled('password')) {
+            $data['password'] = bcrypt($request->password);
+        }
+
+        $manager->update($data);
+
+        AdminLog::record(
+            auth()->user(),
+            'agency_manager.updated',
+            'user',
+            $manager->id
+        );
+
+        return back()->with('success', 'Compte manager mis à jour.');
+    }
     // Activer / désactiver une agence
     public function toggle(Agency $agency)
     {

@@ -30,6 +30,7 @@ return new class extends Migration
             // debit_transport_fee : frais transport payés par acheteur
             // credit_transport_fee: remboursement frais transport au vendeur
             $table->enum('type', [
+                'buy',
                 'credit_escrow',
                 'debit_escrow',
                 'credit_available',

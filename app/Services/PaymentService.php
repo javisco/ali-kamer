@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Payment\WebhookController;
 use App\Models\OrderShipment;
+use App\Models\WalletTransaction;
 use Illuminate\Support\Str;
 
 class PaymentService
@@ -212,7 +213,15 @@ class PaymentService
                 'status'  => Order::STATUS_PAID,
                 'paid_at' => now(),
             ]);
-
+            WalletTransaction::create([
+                'user_id'      => $order->buyer->id,
+                'type'         => WalletTransaction::TYPE_CREDIT_BUY,
+                'amount'       => $order->net_amount,
+                'balance_after' => 0,
+                'ref_type'     => 'order',
+                'ref_id'       => $order->id,
+                'note'         => "payement de la commande {$order->reference} — virement MoMo {$order->payer_phone}",
+            ]);
             // Séquestrer les fonds pour le vendeur
             $this->wallet->creditEscrow(
                 $order->shop->user,
@@ -243,51 +252,7 @@ class PaymentService
         Log::info('Paiement échoué', ['order' => $order->reference]);
     }
 
-    // ── REMBOURSER UN ACHETEUR ────────────────────────────────────────
 
-    // Appelé lors d'un litige résolu en faveur de l'acheteur
-    // ou d'une annulation après paiement
-    public function refund(Order $order): void
-    {
-        $payment = $order->payment;
-
-        // En MVP : le remboursement est déclenché manuellement
-        // via le dashboard admin qui transfère via Campay disburse
-        $phone = '237' . ltrim($order->buyer->phone_momo ?? $payment->payer_phone, '0');
-
-        $this->campay->disburse(
-            phone: $phone,
-            amount: $order->total_amount,
-            reference: 'REFUND-' . $order->reference
-        );
-
-        $payment->update(['status' => 'refunded']);
-
-        // Enregistrer le remboursement dans le wallet
-        $this->wallet->refund($order->buyer, $order->total_amount, $order);
-    }
-
-    // ── EXÉCUTER UN RETRAIT VENDEUR ───────────────────────────────────
-
-    // Transfère les fonds disponibles vers le MoMo du vendeur
-    public function processWithdrawal(User $seller, int $amount): void
-    {
-        $phone    = '237' . ltrim($seller->phone_momo, '0');
-        $fees     = (int) round($amount * 0.01);
-        $netAmount = $amount - $fees;
-
-        DB::transaction(function () use ($seller, $amount, $netAmount, $phone) {
-
-            // Utilise /withdraw/ selon la doc Campay (pas /transfer/)
-            $this->campay->withdraw(
-                phone: $phone,
-                amount: $netAmount,
-                reference: \Str::uuid()->toString()
-            );
-
-            $this->wallet->requestWithdrawal($seller, $amount);
-        });
-    }
 
     // Paiement des frais transport via Campay
     // Séparé du paiement produit — idempotency_key différent

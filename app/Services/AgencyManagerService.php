@@ -25,7 +25,7 @@ class AgencyManagerService
         if (! $agency->servesCity($data['city'])) {
             throw new \Exception(
                 "Votre agence ne dessert pas la ville {$data['city']}. " .
-                "Contactez l'administrateur pour ajouter cette ville."
+                    "Contactez l'administrateur pour ajouter cette ville."
             );
         }
 
@@ -109,15 +109,18 @@ class AgencyManagerService
         // Vérifier qu'aucune commande n'est en cours avec ce secrétaire
         $hasActiveShipments = \App\Models\OrderShipment::where(function ($q) use ($secretary) {
             $q->where('registered_by', $secretary->id)
-              ->orWhere('validated_by', $secretary->id);
+                ->orWhere('validated_by', $secretary->id);
         })->whereHas('order', fn($q) => $q->whereNotIn('status', [
-            'completed', 'auto_completed', 'cancelled', 'failed'
+            'completed',
+            'auto_completed',
+            'cancelled',
+            'failed'
         ]))->exists();
 
         if ($hasActiveShipments) {
             throw new \Exception(
                 'Ce secrétaire a des colis en cours de traitement. ' .
-                'Désactivez-le plutôt que de le supprimer.'
+                    'Désactivez-le plutôt que de le supprimer.'
             );
         }
 
@@ -127,31 +130,126 @@ class AgencyManagerService
 
     // ── CRÉDITER LA COMMISSION D'UNE AGENCE ──────────────────────────
 
-    // Appelé depuis ShippingService quand un colis est traité
-    // L'agence gagne 1% de la valeur de chaque colis (agency_commission)
-    public function creditCommission(Agency $agency, Order $order): void
+    // // Appelé depuis ShippingService quand un colis est traité
+    // // L'agence gagne 1% de la valeur de chaque colis (agency_commission)
+    // public function creditCommission(Agency $agency, Order $order): void
+    // {
+    //     DB::transaction(function () use ($agency, $order) {
+
+    //         $amount = $order->agency_commission;
+
+    //         if ($amount <= 0) return;
+
+    //         // Créditer le wallet de l'agence
+    //         $agency->increment('wallet_available', $amount);
+    //         $agency->refresh();
+
+    //         // Tracer la transaction
+    //         \App\Models\AgencyWalletTransaction::create([
+    //             'agency_id'    => $agency->id,
+    //             'type'         => 'credit_commission',
+    //             'amount'       => $amount,
+    //             'balance_after' => $agency->wallet_available,
+    //             'order_id'     => $order->id,
+    //             'note'         => "Commission 1% colis {$order->reference}",
+    //         ]);
+    //     });
+    // }
+
+
+
+
+
+    // ── CRÉDITER LA COMMISSION AU DÉPÔT (pending) ───────────────────
+
+    // Appelé dans ShippingService::registerAtOrigin()
+    // L'agence gagne la commission en pending quand elle reçoit le colis
+    // Cela permet de tracer les colis déposés mais non livrés
+    public function creditCommissionPending(Agency $agency, Order $order): void
     {
         DB::transaction(function () use ($agency, $order) {
 
             $amount = $order->agency_commission;
-
             if ($amount <= 0) return;
 
-            // Créditer le wallet de l'agence
-            $agency->increment('wallet_available', $amount);
+            $agency->increment('wallet_pending', $amount);
             $agency->refresh();
 
-            // Tracer la transaction
+            \App\Models\AgencyWalletTransaction::create([
+                'agency_id'    => $agency->id,
+                'type'         => 'credit_commission_pending',
+                'amount'       => $amount,
+                'balance_after' => $agency->wallet_pending,
+                'order_id'     => $order->id,
+                'note'         => "Commission pending — colis déposé {$order->reference}",
+            ]);
+        });
+    }
+
+    // ── LIBÉRER LE PENDING VERS DISPONIBLE (à la livraison) ──────────
+
+    // Appelé dans ShippingService::validateOtp() quand colis remis
+    public function releaseCommissionPending(Agency $agency, Order $order): void
+    {
+        DB::transaction(function () use ($agency, $order) {
+
+            $amount = $order->agency_commission;
+            if ($amount <= 0) return;
+
+            // Déduire du pending
+            $agency->decrement('wallet_pending', $amount);
+
+            // Créditer le disponible
+            $agency->increment('wallet_available', $amount);
+
+            $agency->refresh();
+
             \App\Models\AgencyWalletTransaction::create([
                 'agency_id'    => $agency->id,
                 'type'         => 'credit_commission',
                 'amount'       => $amount,
                 'balance_after' => $agency->wallet_available,
                 'order_id'     => $order->id,
-                'note'         => "Commission 1% colis {$order->reference}",
+                'note'         => "Commission libérée — colis livré {$order->reference}",
             ]);
         });
     }
+
+    // ── STATS DÉTAILLÉES DÉPÔT / LIVRAISON ───────────────────────────
+
+    public function getDeliveryStats(Agency $agency): array
+    {
+        // Colis déposés dans les comptoirs de cette agence
+        $deposited = \App\Models\OrderShipment::where('agency_id', $agency->id)
+            ->whereNotNull('registered_at')
+            ->count();
+
+        // Colis effectivement livrés (OTP validé)
+        $delivered = \App\Models\OrderShipment::where('agency_id', $agency->id)
+            ->whereHas('order', fn($q) => $q->whereIn('status', [
+                'completed',
+                'auto_completed'
+            ]))
+            ->count();
+
+        // Colis en transit (déposés mais pas encore livrés)
+        $inTransit = $deposited - $delivered;
+
+        // Taux de livraison
+        $rate = $deposited > 0
+            ? round(($delivered / $deposited) * 100, 1)
+            : 100;
+
+        return [
+            'deposited'  => $deposited,
+            'delivered'  => $delivered,
+            'in_transit' => max(0, $inTransit),
+            'rate'       => $rate,
+        ];
+    }
+
+
+
 
     // ── RETRAIT AGENCE VIA CAMPAY ─────────────────────────────────────
 
@@ -182,7 +280,12 @@ class AgencyManagerService
         $reference = 'AGENCY-' . $agency->id . '-' . Str::uuid();
 
         DB::transaction(function () use (
-            $agency, $amount, $netAmount, $fees, $phone, $reference
+            $agency,
+            $amount,
+            $netAmount,
+            $fees,
+            $phone,
+            $reference
         ) {
             // Débiter immédiatement
             $agency->decrement('wallet_available', $amount);
@@ -205,7 +308,6 @@ class AgencyManagerService
                     'order_id'     => null,
                     'note'         => "Retrait {$agency->momo_operator} {$phone} — net {$netAmount} FCFA (frais {$fees} FCFA)",
                 ]);
-
             } catch (\Exception $e) {
                 // Rembourser si Campay échoue
                 $agency->increment('wallet_available', $amount);

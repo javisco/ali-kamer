@@ -354,7 +354,7 @@
                         </div>
 
                         {{-- Score de fiabilité de l'acheteur --}}
-                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mt-2">
                             <h2 class="font-bold text-gray-800 mb-3">Profil acheteur</h2>
                             <div class="space-y-2 text-sm">
                                 <div class="flex justify-between">
@@ -397,83 +397,6 @@
                                 </div>
                             </div>
                         </div>
-                        {{-- Formulaire notation acheteur --}}
-                        @if ($order->isCompleted())
-                            @php
-                                $alreadyRated = \App\Models\Review::where('order_id', $order->id)
-                                    ->where('reviewer_id', auth()->id())
-                                    ->where('reviewee_type', 'buyer')
-                                    ->exists();
-                            @endphp
-
-                            @if (!$alreadyRated)
-                                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                                    <h2 class="font-bold text-gray-800 mb-1">Noter l'acheteur</h2>
-                                    <p class="text-xs text-gray-400 mb-4">
-                                        Cette note influence le score de fiabilité de l'acheteur.
-                                    </p>
-
-                                    <form method="POST" action="{{ route('seller.reviews.store', $order) }}"
-                                        class="space-y-4">
-                                        @csrf
-
-                                        {{-- Étoiles --}}
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                                Note <span class="text-red-500">*</span>
-                                            </label>
-                                            <div class="flex gap-2" id="buyerStars">
-                                                @for ($i = 1; $i <= 5; $i++)
-                                                    <button type="button" onclick="setBuyerRating({{ $i }})"
-                                                        class="text-3xl text-gray-300 hover:text-yellow-400
-                                           transition star-buyer"
-                                                        data-value="{{ $i }}">★</button>
-                                                @endfor
-                                            </div>
-                                            <input type="hidden" name="rating" id="buyer_rating" required>
-                                            @error('rating')
-                                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                            @enderror
-                                        </div>
-
-                                        {{-- Commentaire --}}
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                                Commentaire <span class="text-gray-400 font-normal">(optionnel)</span>
-                                            </label>
-                                            <textarea name="body" rows="3" maxlength="500"
-                                                class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm
-                                     focus:ring-2 focus:ring-indigo-500"
-                                                placeholder="Décrivez votre expérience avec cet acheteur..."></textarea>
-                                        </div>
-
-                                        <button type="submit"
-                                            class="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold
-                               py-3 rounded-xl transition text-sm">
-                                            ★ Noter l'acheteur
-                                        </button>
-                                    </form>
-
-                                    @push('scripts')
-                                        <script>
-                                            function setBuyerRating(value) {
-                                                document.getElementById('buyer_rating').value = value;
-                                                document.querySelectorAll('.star-buyer').forEach(star => {
-                                                    const v = parseInt(star.dataset.value);
-                                                    star.classList.toggle('text-yellow-400', v <= value);
-                                                    star.classList.toggle('text-gray-300', v > value);
-                                                });
-                                            }
-                                        </script>
-                                    @endpush
-                                </div>
-                            @else
-                                <div
-                                    class="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 text-sm text-emerald-700">
-                                    ✓ Vous avez déjà noté cet acheteur.
-                                </div>
-                            @endif
-                        @endif
                         {{-- ====================================================
                          INFORMATION
                     ===================================================== --}}
@@ -580,7 +503,7 @@
                 </div>
             @endif
 
-            @if (auth()->user()->isSeller())
+            {{-- @if (auth()->user()->isSeller())
                 @php
                     $buyer = $order->buyer;
                 @endphp
@@ -599,7 +522,84 @@
                         </span>
                     @endif
                 </div>
+            @endif  --}}
+
+            {{-- Formulaire notation acheteur --}}
+            @if ($order->isCompleted())
+                @php
+                    $alreadyRated = \App\Models\Review::where('order_id', $order->id)
+                        ->where('reviewer_id', auth()->id())
+                        ->where('reviewee_type', 'buyer')
+                        ->exists();
+                @endphp
+
+                @if (!$alreadyRated)
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                        <h2 class="font-bold text-gray-800 mb-1">Noter l'acheteur</h2>
+                        <p class="text-xs text-gray-400 mb-4">
+                            Cette note influence le score de fiabilité de l'acheteur.
+                        </p>
+
+                        <form method="POST" action="{{ route('seller.reviews.store', $order) }}" class="space-y-4">
+                            @csrf
+
+                            {{-- Étoiles --}}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Note <span class="text-red-500">*</span>
+                                </label>
+                                <div class="flex gap-2" id="buyerStars">
+                                    @for ($i = 1; $i <= 5; $i++)
+                                        <button type="button" onclick="setBuyerRating({{ $i }})"
+                                            class="text-3xl text-gray-300 hover:text-yellow-400
+                                           transition star-buyer"
+                                            data-value="{{ $i }}">★</button>
+                                    @endfor
+                                </div>
+                                <input type="hidden" name="rating" id="buyer_rating" required>
+                                @error('rating')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            {{-- Commentaire --}}
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    Commentaire <span class="text-gray-400 font-normal">(optionnel)</span>
+                                </label>
+                                <textarea name="body" rows="3" maxlength="500"
+                                    class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm
+                                     focus:ring-2 focus:ring-indigo-500"
+                                    placeholder="Décrivez votre expérience avec cet acheteur..."></textarea>
+                            </div>
+
+                            <button type="submit"
+                                class="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold
+                               py-3 rounded-xl transition text-sm">
+                                ★ Noter l'acheteur
+                            </button>
+                        </form>
+
+                        @push('scripts')
+                            <script>
+                                function setBuyerRating(value) {
+                                    document.getElementById('buyer_rating').value = value;
+                                    document.querySelectorAll('.star-buyer').forEach(star => {
+                                        const v = parseInt(star.dataset.value);
+                                        star.classList.toggle('text-yellow-400', v <= value);
+                                        star.classList.toggle('text-gray-300', v > value);
+                                    });
+                                }
+                            </script>
+                        @endpush
+                    </div>
+                @else
+                    <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 text-sm text-emerald-700">
+                        ✓ Vous avez déjà noté cet acheteur.
+                    </div>
+                @endif
             @endif
+
             {{-- ============================================================
              CONTENU PRINCIPAL
         ============================================================= --}}
@@ -757,13 +757,7 @@
                         </div>
 
 
-                        @if ($order->isCompleted())
-                            <a href="{{ route('seller.reviews.create', $order) }}"
-                                class="block w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold
-              py-3 rounded-2xl text-center text-sm transition mb-3 mt-1">
-                                ★ Noter l'acheteur
-                            </a>
-                        @endif
+
                         {{-- TOTAL --}}
                         <div class="px-6 py-5 border-t border-slate-200 bg-slate-50">
 

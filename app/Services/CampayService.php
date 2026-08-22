@@ -123,6 +123,24 @@ class CampayService
         return $response->json();
     }
 
+
+    // Récupère le statut actuel d'une transaction chez Campay
+    // Utilisé par synchronize() comme fallback si le webhook tarde
+    public function getTransaction(string $reference): array
+    {
+        $response = Http::withHeaders([
+            'Authorization' => $this->authHeader(),
+            'Content-Type'  => 'application/json',
+        ])->get("{$this->baseUrl}/transaction/{$reference}/");
+
+        if (! $response->successful()) {
+            throw new \Exception(
+                'Impossible de récupérer la transaction : ' . $response->body()
+            );
+        }
+
+        return $response->json();
+    }
     // ── VÉRIFICATION STATUT TRANSACTION ──────────────────────────────
 
     public function checkStatus(string $campayReference): array

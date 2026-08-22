@@ -30,19 +30,36 @@ class AgencyWalletTransaction extends Model
     {
         return $this->belongsTo(Order::class);
     }
-
     public function isCredit(): bool
     {
-        return $this->type === 'credit_commission';
+        return in_array($this->type, [
+            'credit_commission_pending',
+            'credit_commission',
+        ]);
     }
 
     public function typeLabel(): string
     {
         return match ($this->type) {
-            'credit_commission'      => 'Commission colis',
-            'debit_withdrawal'       => 'Retrait',
-            'debit_withdrawal_failed' => 'Retrait échoué (recrédité)',
-            default                  => $this->type,
+            'credit_commission_pending' => 'Commission (en attente — colis déposé)',
+            'credit_commission'         => 'Commission libérée (colis livré)',
+            'debit_withdrawal'          => 'Retrait',
+            'debit_withdrawal_failed'   => 'Retrait échoué (recrédité)',
+            default                     => $this->type,
         };
     }
+    // public function isCredit(): bool
+    // {
+    //     return $this->type === 'credit_commission';
+    // }
+
+    // public function typeLabel(): string
+    // {
+    //     return match ($this->type) {
+    //         'credit_commission'      => 'Commission colis',
+    //         'debit_withdrawal'       => 'Retrait',
+    //         'debit_withdrawal_failed' => 'Retrait échoué (recrédité)',
+    //         default                  => $this->type,
+    //     };
+    // }
 }

@@ -312,6 +312,7 @@ Route::middleware(['auth', 'role:seller'])->prefix('vendeur')->group(function ()
 
 
 
+
 // ── Litiges admin ─────────────────────────────────────────────────
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         Route::get('/litiges', [AdminDisputeController::class, 'index'])
@@ -334,7 +335,7 @@ Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
 
 // Avis vendeur sur acheteur
 Route::middleware(['auth', 'verified', 'role:seller'])->prefix('vendeur')->group(function () {
-        Route::post('/commandes/{order}/noter-acheteur', [SellerReviewController::class, 'create'])
+        Route::get('/commandes/{order}/noter-acheteur', [SellerReviewController::class, 'create'])
                 ->name('seller.reviews.create');
         Route::post('/commandes/{order}/noter-acheteur', [SellerReviewController::class, 'store'])
                 ->name('seller.reviews.store');
@@ -521,3 +522,22 @@ Route::middleware(['auth', 'role:agency_manager'])
                 Route::post('/retrait', [AgencyDashboard::class, 'withdraw'])
                         ->name('agency.withdraw');
         });
+
+
+
+Route::get('/agences/gains', [AdminDashboardController::class, 'agencies'])
+        ->name('admin.agencies.earnings');
+Route::get('/agences/{agency}/historique', [AdminDashboardController::class, 'agencyHistory'])
+        ->name('admin.agencies.history');
+
+
+// Déjà existante mais pas appelée — maintenant active
+Route::put('/agences/{agency}', [AgencyController::class, 'update'])
+        ->name('admin.agencies.update');
+
+// Nouvelle — modifier le manager
+Route::put('/agences/managers/{manager}', [AgencyController::class, 'updateManager'])
+        ->name('admin.agencies.manager.update');
+
+Route::get('/utilisateurs/notes-basses', [AdminDashboardController::class, 'lowScoreUsers'])
+        ->name('admin.users.low-scores');

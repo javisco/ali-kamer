@@ -23,6 +23,7 @@ return new class extends Migration
 
             // Type de mouvement
             $table->enum('type', [
+                'credit_commission_pending',
                 'credit_commission', // 1% reçu pour chaque colis traité
                 'debit_withdrawal',  // retrait vers MoMo
                 'debit_withdrawal_failed', // retrait échoué — recrédité

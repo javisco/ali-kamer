@@ -71,6 +71,10 @@ class ShippingService
                 'shipped_at' => now(),
             ]);
 
+            app(AgencyManagerService::class)->creditCommissionPending(
+                $counter->agency,
+                $order
+            );
             // app(NotificationService::class)->notifyPackageRegistered($order);
         });
     }
@@ -166,9 +170,13 @@ class ShippingService
 
             // Créditer la commission de l'agence (1%)
             // Appelé quand le colis arrive à destination
-            $agency = $counter->agency;
-            app(AgencyManagerService::class)->creditCommission($agency, $order);
+            // $agency = $counter->agency;
+            //app(AgencyManagerService::class)->creditCommission($agency, $order);
 
+            app(AgencyManagerService::class)->releaseCommissionPending(
+                $order->shipment->destinationCounter->agency,
+                $order
+            );
 
             // OTP envoyé à l'acheteur seulement si transport inclus OU déjà payé
             // Sinon l'acheteur doit d'abord payer les frais transport

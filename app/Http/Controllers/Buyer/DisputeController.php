@@ -54,6 +54,13 @@ class DisputeController extends Controller
             'description' => ['required', 'string', 'min:20'],
             'files.*'     => ['nullable', 'file', 'max:5120', 'mimes:jpg,jpeg,png,pdf'],
         ]);
+        $seller = $order->shop->user;
+
+        // crediter du pending
+        $seller->increment('wallet_pending', $order->total_amount);
+
+        // debiter le disponible
+        $seller->decrement('wallet_available', $order->total_amount);
 
         $dispute = $this->disputeService->open(
             $order,

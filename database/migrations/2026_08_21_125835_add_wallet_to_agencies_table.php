@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('agencies', function (Blueprint $table) {
             // Solde disponible de l'agence (gains des commissions 1%)
             $table->unsignedBigInteger('wallet_available')->default(0)->after('is_active');
-
+            $table->unsignedBigInteger('wallet_pending')->default(0)->after('is_active');
             // Numéro MoMo de l'agence pour les retraits
             $table->string('phone_momo')->nullable()->after('wallet_available');
             $table->enum('momo_operator', ['mtn', 'orange'])->nullable()->after('phone_momo');

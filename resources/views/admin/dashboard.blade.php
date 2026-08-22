@@ -830,6 +830,21 @@
                             </p>
 
                         </a>
+                        {{-- Dans admin/dashboard.blade.php --}}
+                        <a href="{{ route('admin.users.low-scores') }}"
+                            class="block bg-red-50 border border-red-200 rounded-2xl p-4 hover:shadow-md transition">
+                            <div class="flex items-center gap-3">
+                                <span class="text-2xl">⚠</span>
+                                <div>
+                                    <p class="font-bold text-red-700">Notes basses</p>
+                                    <p class="text-xs text-red-500">
+                                        {{ \App\Models\User::where('role', 'buyer')->where('trust_score', '<', 40)->count() }}
+                                        acheteurs à surveiller
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                      
 
                     </div>
 

@@ -242,6 +242,16 @@
 
             </div>
 
+            <a href="{{ route('admin.agencies.history', ['agency' => $agency]) }}"
+                class="text-2xl text-indigo-600 hover:underline font-medium">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 m-2">
+                    <div class="flex items-center justify-between">
+
+                        voir les gians des agences →
+
+                    </div>
+                </div>
+            </a>
 
             {{-- =========================================================
              VILLES DESSERVIES
@@ -284,8 +294,60 @@
                     </form>
                 @endif
             </div>
+            {{-- Modifier le compte manager --}}
+            @if ($manager)
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-5">
+                    <h2 class="font-bold text-gray-800 mb-4">Modifier le compte manager</h2>
+                    <form method="POST" action="{{ route('admin.agencies.manager.update', $manager) }}" class="space-y-3">
+                        @csrf @method('PUT')
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Nom</label>
+                                <input type="text" name="name" value="{{ $manager->name }}" required
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Téléphone</label>
+                                <input type="tel" name="phone" value="{{ $manager->phone }}" required
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Email</label>
+                                <input type="email" name="email" value="{{ $manager->email }}"
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Statut</label>
+                                <select name="status" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                                    <option value="active" {{ $manager->status === 'active' ? 'selected' : '' }}>
+                                        Actif
+                                    </option>
+                                    <option value="suspended" {{ $manager->status === 'suspended' ? 'selected' : '' }}>
+                                        Suspendu
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-span-2">
+                                <label class="block text-xs font-medium text-gray-600 mb-1">
+                                    Nouveau mot de passe
+                                    <span class="text-gray-400 font-normal">(laisser vide pour ne pas changer)</span>
+                                </label>
+                                <input type="text" name="password"
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                                    placeholder="Nouveau mot de passe">
+                            </div>
+                        </div>
+                        <button
+                            class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold
+                           py-2.5 rounded-lg text-sm transition">
+                            Mettre à jour le manager
+                        </button>
+                    </form>
+                </div>
+            @endif
 
             {{-- MoMo de l'agence --}}
+
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                 <h2 class="font-bold text-gray-800 mb-4">Numéro MoMo (retraits)</h2>
                 <form method="POST" action="{{ route('admin.agencies.momo.update', $agency) }}" class="space-y-3">
@@ -303,8 +365,8 @@
                         </label>
                     </div>
                     <div class="flex gap-3">
-                        <input type="tel" name="phone_momo" value="{{ $agency->phone_momo }}" placeholder="6XXXXXXXX"
-                            class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        <input type="tel" name="phone_momo" value="{{ $agency->phone_momo }}"
+                            placeholder="6XXXXXXXX" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm">
                         <button class="bg-gray-800 text-white font-bold px-4 py-2 rounded-lg text-sm">
                             Sauvegarder
                         </button>

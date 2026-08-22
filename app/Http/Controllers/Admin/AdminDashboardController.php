@@ -149,4 +149,68 @@ class AdminDashboardController extends Controller
 
         return view('admin.users.history', compact('user', 'transactions'));
     }
+
+
+    // Liste des agences avec leurs gains
+    public function agencies()
+    {
+        $agencies = \App\Models\Agency::with('cities')
+            ->withCount('counters')
+            ->latest()
+            ->paginate(20);
+
+        // Stats globales agences
+        $totalAgencyPending   = \App\Models\Agency::sum('wallet_pending');
+        $totalAgencyAvailable = \App\Models\Agency::sum('wallet_available');
+
+        return view('admin.agencies.earnings', compact(
+            'agencies',
+            'totalAgencyPending',
+            'totalAgencyAvailable'
+        ));
+    }
+
+    // Historique transactions d'une agence
+    public function agencyHistory(\App\Models\Agency $agency)
+    {
+        $agencyService = app(\App\Services\AgencyManagerService::class);
+
+        $history       = $agencyService->getHistory($agency);
+        $stats         = $agencyService->getStats($agency);
+        $deliveryStats = $agencyService->getDeliveryStats($agency);
+
+        return view('admin.agencies.history', compact(
+            'agency',
+            'history',
+            'stats',
+            'deliveryStats'
+        ));
+    }
+
+
+    // Utilisateurs avec notes basses à surveiller
+    public function lowScoreUsers(Request $request)
+    {
+        $threshold = $request->get('threshold', 40);
+
+        $users = User::where('role', 'buyer')
+            ->where('trust_score', '<', $threshold)
+            ->orderBy('trust_score')
+            ->with('shop')
+            ->paginate(30);
+
+        // Répartition des scores
+        $scoreDistribution = [
+            'critical'  => User::where('role', 'buyer')->where('trust_score', '<', 20)->count(),
+            'low'       => User::where('role', 'buyer')->whereBetween('trust_score', [20, 39])->count(),
+            'medium'    => User::where('role', 'buyer')->whereBetween('trust_score', [40, 69])->count(),
+            'good'      => User::where('role', 'buyer')->where('trust_score', '>=', 70)->count(),
+        ];
+
+        return view('admin.users.low-scores', compact(
+            'users',
+            'threshold',
+            'scoreDistribution'
+        ));
+    }
 }
