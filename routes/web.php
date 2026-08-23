@@ -1,5 +1,6 @@
 <?php
 
+
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\VerifiedEmailController;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +27,7 @@ use App\Http\Controllers\Seller\ReviewController as SellerReviewController;
 use App\Http\Controllers\Seller\WalletController;
 use App\Http\Controllers\Buyer\WalletController as BuyerWalletcontroller;
 use App\Http\Controllers\Admin\AgencyController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\FinancialEngineController;
 use App\Http\Controllers\Admin\TutorialController as AdminTutorialController;
 use App\Http\Controllers\TutorialController;
@@ -364,6 +366,16 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->group(fu
         Route::get('/users/{user}/history', [AdminDashboardController::class, 'userHistory'])
                 ->name('admin.users.history');
 
+        Route::get('/agences/gains', [AdminDashboardController::class, 'agencies'])
+                ->name('admin.agencies.earnings');
+        Route::get('/agences/{agency}/historique', [AdminDashboardController::class, 'agencyHistory'])
+                ->name('admin.agencies.history');
+
+
+
+        Route::get('/utilisateurs/notes-basses', [AdminDashboardController::class, 'lowScoreUsers'])
+                ->name('admin.users.low-scores');
+
 
         //finacialengine
         Route::get('/moteur-financier', [FinancialEngineController::class, 'index'])
@@ -385,8 +397,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
                 ->name('admin.agencies.store');
         Route::get('/agences/{agency}', [AgencyController::class, 'show'])
                 ->name('admin.agencies.show');
+
         Route::put('/agences/{agency}', [AgencyController::class, 'update'])
                 ->name('admin.agencies.update');
+
+
         Route::post('/agences/{agency}/toggle', [AgencyController::class, 'toggle'])
                 ->name('admin.agencies.toggle');
 
@@ -410,6 +425,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         //manager agency
         Route::post('/agences/{agency}/manager', [AgencyController::class, 'storeManager'])
                 ->name('admin.agencies.manager.store');
+
+        // Nouvelle — modifier le manager
+        Route::put('/agences/managers/{manager}', [AgencyController::class, 'updateManager'])
+                ->name('admin.agencies.manager.update');
+
 
         Route::post('/agences/{agency}/momo', [AgencyController::class, 'updateAgencyMomo'])
                 ->name('admin.agencies.momo.update');
@@ -525,19 +545,7 @@ Route::middleware(['auth', 'role:agency_manager'])
 
 
 
-Route::get('/agences/gains', [AdminDashboardController::class, 'agencies'])
-        ->name('admin.agencies.earnings');
-Route::get('/agences/{agency}/historique', [AdminDashboardController::class, 'agencyHistory'])
-        ->name('admin.agencies.history');
-
-
-// Déjà existante mais pas appelée — maintenant active
-Route::put('/agences/{agency}', [AgencyController::class, 'update'])
-        ->name('admin.agencies.update');
-
-// Nouvelle — modifier le manager
-Route::put('/agences/managers/{manager}', [AgencyController::class, 'updateManager'])
-        ->name('admin.agencies.manager.update');
-
-Route::get('/utilisateurs/notes-basses', [AdminDashboardController::class, 'lowScoreUsers'])
-        ->name('admin.users.low-scores');
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+        Route::resource('categories', CategoryController::class)->except(['create', 'show', 'edit']);
+        Route::patch('categories/{category}/toggle-status', [CategoryController::class, 'toggleStatus'])->name('categories.toggle-status');
+});

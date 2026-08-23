@@ -11,6 +11,8 @@ class Agency extends Model
         'name',
         'slug',
         'contact_phone',
+        'phone_momo',
+        'momo_operator',
         'contact_email',
         'is_active',
     ];

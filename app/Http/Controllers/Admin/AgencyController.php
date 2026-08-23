@@ -63,6 +63,7 @@ class AgencyController extends Controller
     // Configurer le MoMo de l'agence pour les retraits
     public function updateAgencyMomo(Request $request, Agency $agency)
     {
+
         $request->validate([
             'phone_momo'    => ['required', 'string', 'regex:/^6[0-9]{8}$/'],
             'momo_operator' => ['required', 'in:mtn,orange'],
@@ -126,7 +127,7 @@ class AgencyController extends Controller
         return view('admin.agencies.show', compact('agency', 'cities'));
     }
 
-    // Modifier une agence
+
     // Modifier une agence (déjà codée, route manquait)
     public function update(Request $request, Agency $agency)
     {
