@@ -9,8 +9,9 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class WalletTransaction extends Model
 {
     // Types de transactions disponibles
-    const TYPE_CREDIT_ESCROW        = 'credit_escrow';
+
     const TYPE_CREDIT_BUY        = 'buy';
+    const TYPE_CREDIT_ESCROW        = 'credit_escrow';
     const TYPE_DEBIT_ESCROW         = 'debit_escrow';
     const TYPE_CREDIT_AVAILABLE     = 'credit_available';
     const TYPE_DEBIT_WITHDRAWAL     = 'debit_withdrawal';

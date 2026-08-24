@@ -11,6 +11,39 @@ class PlatformSettingsSeeder extends Seeder
     {
         $settings = [
 
+            // ── Taux Campay réels ─────────────────────────────────────────
+            [
+                'key'         => 'campay_collect_rate',
+                'value'       => '2',
+                'type'        => 'percentage',
+                'label'       => 'Frais Campay — collecte (encaissement acheteur)',
+                'description' => 'Taux réel prélevé par Campay sur chaque encaissement. '
+                    . 'Utilisé pour le Gross-Up côté acheteur. '
+                    . 'Vérifier sur votre dashboard Campay avant de modifier.',
+                'group'       => 'campay',
+                'sort_order'  => 1,
+            ],
+            [
+                'key'         => 'campay_payout_rate',
+                'value'       => '1',
+                'type'        => 'percentage',
+                'label'       => 'Frais Campay — décaissement (virement vers MoMo)',
+                'description' => 'Taux réel prélevé par Campay sur chaque virement sortant. '
+                    . 'Utilisé pour le Gross-Up vendeur, agence et remboursements. '
+                    . 'Vérifier sur votre dashboard Campay avant de modifier.',
+                'group'       => 'campay',
+                'sort_order'  => 2,
+            ],
+            [
+                'key'         => 'campay_fixed_fee',
+                'value'       => '0',
+                'type'        => 'integer',
+                'label'       => 'Frais fixes Campay par transaction (FCFA)',
+                'description' => 'Frais fixes éventuels par transaction Campay. 0 si aucun.',
+                'group'       => 'campay',
+                'sort_order'  => 3,
+            ],
+
             // ── Commissions et frais ──────────────────────────────────
             [
                 'key'         => 'protection_rate',

@@ -8,8 +8,13 @@ use Illuminate\Support\Facades\Cache;
 class PlatformSetting extends Model
 {
     protected $fillable = [
-        'key', 'value', 'type', 'label',
-        'description', 'group', 'sort_order',
+        'key',
+        'value',
+        'type',
+        'label',
+        'description',
+        'group',
+        'sort_order',
     ];
 
     // ── Récupérer une valeur ──────────────────────────────────────────
@@ -23,7 +28,7 @@ class PlatformSetting extends Model
 
             if (! $setting) return $default;
 
-            return match($setting->type) {
+            return match ($setting->type) {
                 'percentage' => (float) $setting->value,
                 'integer'    => (int) $setting->value,
                 'boolean'    => (bool) $setting->value,
@@ -52,7 +57,7 @@ class PlatformSetting extends Model
 
     public function getCastedValueAttribute(): mixed
     {
-        return match($this->type) {
+        return match ($this->type) {
             'percentage' => (float) $this->value,
             'integer'    => (int) $this->value,
             'boolean'    => (bool) $this->value,
@@ -63,7 +68,7 @@ class PlatformSetting extends Model
     // Libellé du type pour l'affichage
     public function typeLabel(): string
     {
-        return match($this->type) {
+        return match ($this->type) {
             'percentage' => '%',
             'integer'    => 'FCFA / nombre',
             'boolean'    => 'Oui / Non',

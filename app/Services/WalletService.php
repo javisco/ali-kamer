@@ -47,7 +47,7 @@ class WalletService
         DB::transaction(function () use ($seller, $amount, $order) {
 
             // Déduire du pending
-            $seller->decrement('wallet_pending', $amount);
+            $seller->decrement('wallet_pending', $order->net_amount);
 
             // Créditer le disponible
             $seller->increment('wallet_available', $amount);
@@ -102,89 +102,92 @@ class WalletService
     // Le vendeur demande un retrait → on appelle Campay disburse
     // → on débite son wallet disponible
     // → on trace dans wallet_transactions
-    public function requestWithdrawal(User $user, int $amount): void
+    public function requestWithdrawal(User $user, int $netAmount): void
     {
-        // Validation minimum Campay
-        if ($amount < self::MIN_WITHDRAWAL) {
+        // Vérifications
+        $minWithdrawal = (int) PlatformSetting::getValue('min_withdrawal_amount', 1000);
+
+        if ($netAmount < $minWithdrawal) {
             throw ValidationException::withMessages([
-                'amount' => 'Le montant minimum de retrait est '
-                    . number_format(self::MIN_WITHDRAWAL, 0, ',', ' ') . ' FCFA.',
+                'amount' => "Montant minimum : {$minWithdrawal} FCFA.",
             ]);
         }
 
-        // Vérifier solde suffisant
-        if ($user->wallet_available < $amount) {
+        if ($user->wallet_available < $netAmount) {
             throw ValidationException::withMessages([
                 'amount' => 'Solde insuffisant. Disponible : '
                     . number_format($user->wallet_available, 0, ',', ' ') . ' FCFA.',
             ]);
         }
 
-        // Vérifier numéro MoMo enregistré
-        if (! $user->phone_momo || ! $user->momo_operator) {
+        if (! $user->phone_momo) {
             throw ValidationException::withMessages([
-                'momo' => 'Aucun numéro Mobile Money enregistré. Contactez le support.',
+                'momo' => 'Aucun numéro MoMo enregistré.',
             ]);
         }
 
-        $phone     = '237' . ltrim($user->phone_momo, '0');
-        $reference = 'WITHDRAWAL-' . $user->id . '-' . Str::uuid();
+        $phone = '237' . ltrim($user->phone_momo, '0');
 
-        // Frais Campay au retrait (1%)
-        $fees      = (int) round($amount * PlatformSetting::getRate('gateway_payout_rate'));
-        $netAmount = $amount - $fees;
+        // Gross-Up payout : le vendeur reçoit exactement $netAmount
+        $grossUp     = $this->campay->grossUpPayout($netAmount);
+        $grossAmount = $grossUp['gross']; // Ce qu'on envoie à Campay
+        $campayFee   = $grossUp['fee'];   // Frais Campay supportés par la plateforme
 
-        DB::transaction(function () use ($user, $amount, $netAmount, $phone, $reference, $fees) {
-
-            // 1. Débiter immédiatement le wallet
-            // (avant l'appel Campay pour éviter double retrait si erreur réseau)
-            $user->decrement('wallet_available', $amount);
-            $user->refresh();
+        DB::transaction(function () use (
+            $user,
+            $netAmount,
+            $grossAmount,
+            $campayFee,
+            $phone
+        ) {
+            // Débiter le wallet du montant NET que le vendeur attendait
+            // (la plateforme supporte les frais Campay payout en plus)
+            $user->decrement('wallet_available', $netAmount);
 
             try {
-                // 2. Virement réel via Campay
-                $result = $this->campay->disburse(
+                $reference = 'WITHDRAWAL-' . $user->id . '-' . Str::uuid();
+
+                // Envoyer le montant BRUT à Campay
+                // Campay prélève ses frais → vendeur reçoit exactement $netAmount
+                $this->campay->disburse(
                     phone: $phone,
-                    amount: $netAmount,
+                    grossAmount: $grossAmount,
                     reference: $reference,
                     description: "Retrait Ali-Kamer — {$user->name}"
                 );
 
-                // 3. Trace dans wallet_transactions
-                WalletTransaction::create([
-                    'user_id'      => $user->id,
-                    'type'         => WalletTransaction::TYPE_DEBIT_WITHDRAWAL,
-                    'amount'       => $amount,
-                    'balance_after' => $user->wallet_available,
-                    'ref_type'     => 'withdrawal',
-                    'ref_id'       => null,
-                    'note'         => "Retrait {$user->momo_operator} {$phone} — net {$netAmount} FCFA (frais {$fees} FCFA) — ref: {$reference}",
-                ]);
+                $user->refresh();
 
-                Log::info('Withdrawal successful', [
-                    'user'      => $user->id,
-                    'amount'    => $amount,
-                    'net'       => $netAmount,
-                    'reference' => $reference,
-                    'campay'    => $result,
+                // Tracer dans wallet_transactions
+                WalletTransaction::create([
+                    'user_id'       => $user->id,
+                    'type'          => WalletTransaction::TYPE_DEBIT_WITHDRAWAL,
+                    'amount'        => $netAmount,
+                    'balance_after' => $user->wallet_available,
+                    'ref_type'      => 'withdrawal',
+                    'ref_id'        => null,
+                    'note'          => sprintf(
+                        'Retrait %s %s — reçu: %s FCFA, envoyé Campay: %s FCFA (frais plateforme: %s FCFA)',
+                        strtoupper($user->momo_operator ?? ''),
+                        $phone,
+                        number_format($netAmount, 0, ',', ' '),
+                        number_format($grossAmount, 0, ',', ' '),
+                        number_format($campayFee, 0, ',', ' ')
+                    ),
                 ]);
             } catch (\Exception $e) {
-                // En cas d'échec Campay, rembourser le wallet
-                $user->increment('wallet_available', $amount);
+                // Rollback si Campay échoue
+                $user->increment('wallet_available', $netAmount);
+                $user->refresh();
 
                 WalletTransaction::create([
-                    'user_id'      => $user->id,
-                    'type'         => WalletTransaction::TYPE_CREDIT_AVAILABLE,
-                    'amount'       => $amount,
-                    'balance_after' => $user->fresh()->wallet_available,
-                    'ref_type'     => 'withdrawal_failed',
-                    'ref_id'       => null,
-                    'note'         => "Retrait échoué — montant recrédité — {$e->getMessage()}",
-                ]);
-
-                Log::error('Withdrawal failed', [
-                    'user'  => $user->id,
-                    'error' => $e->getMessage(),
+                    'user_id'       => $user->id,
+                    'type'          => WalletTransaction::TYPE_CREDIT_AVAILABLE,
+                    'amount'        => $netAmount,
+                    'balance_after' => $user->wallet_available,
+                    'ref_type'      => 'withdrawal_failed',
+                    'ref_id'        => null,
+                    'note'          => 'Retrait échoué — montant recrédité : ' . $e->getMessage(),
                 ]);
 
                 throw ValidationException::withMessages([
@@ -193,7 +196,6 @@ class WalletService
             }
         });
     }
-
     // ── HISTORIQUE ────────────────────────────────────────────────────
 
     // Récupère les transactions d'un utilisateur (vendeur ou acheteur)

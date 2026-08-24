@@ -545,6 +545,9 @@ Route::middleware(['auth', 'role:agency_manager'])
 
 
 
+
+
+
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
         Route::resource('categories', CategoryController::class)->except(['create', 'show', 'edit']);
         Route::patch('categories/{category}/toggle-status', [CategoryController::class, 'toggleStatus'])->name('categories.toggle-status');

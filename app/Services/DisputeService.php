@@ -169,32 +169,43 @@ class DisputeService
 
     // L'acheteur reçoit son argent directement sur son MoMo
     // car il n'a pas de wallet sur la plateforme
-    private function refundBuyer(User $buyer, int $amount, Order $order): void
+    private function refundBuyer(User $buyer, int $netAmount, Order $order): void
     {
-        // Numéro utilisé au moment du paiement initial
         $phone = '237' . ltrim($order->payment->payer_phone, '0');
 
+        // Gross-Up : l'acheteur reçoit exactement $netAmount sur son MoMo
+        $grossUp     = $this->campay->grossUpPayout($netAmount);
+        $grossAmount = $grossUp['gross'];
+        $campayFee   = $grossUp['fee'];
+
         try {
-            // Virement direct vers le MoMo de l'acheteur
             $this->campay->disburse(
                 phone: $phone,
-                amount: $amount,
+                grossAmount: $grossAmount,
                 reference: 'REFUND-' . $order->reference . '-' . Str::uuid(),
-                description: "Remboursement litige commande {$order->reference}"
+                description: "Remboursement litige {$order->reference}"
             );
 
-            $this->wallet->refund($buyer, $amount, $order);
+            WalletTransaction::create([
+                'user_id'       => $buyer->id,
+                'type'          => WalletTransaction::TYPE_CREDIT_REFUND,
+                'amount'        => $netAmount,
+                'balance_after' => 0,
+                'ref_type'      => 'order',
+                'ref_id'        => $order->id,
+                'note'          => sprintf(
+                    'Remboursement %s — reçu: %s FCFA, envoyé Campay: %s FCFA (frais plateforme: %s FCFA)',
+                    $order->reference,
+                    number_format($netAmount, 0, ',', ' '),
+                    number_format($grossAmount, 0, ',', ' '),
+                    number_format($campayFee, 0, ',', ' ')
+                ),
+            ]);
 
-            Log::info('Buyer refunded via Campay', [
-                'order'  => $order->reference,
-                'amount' => $amount,
-                'phone'  => $phone,
-            ]);
+            $seller = $order->shop->user;
+            $seller->decrement('wallet_pending', $order->net_amount);
         } catch (\Exception $e) {
-            Log::error('Buyer refund failed', [
-                'order' => $order->reference,
-                'error' => $e->getMessage(),
-            ]);
+            Log::error('Buyer refund failed', ['error' => $e->getMessage()]);
             throw $e;
         }
     }

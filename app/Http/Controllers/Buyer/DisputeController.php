@@ -56,11 +56,12 @@ class DisputeController extends Controller
         ]);
         $seller = $order->shop->user;
 
+
         // crediter du pending
-        $seller->increment('wallet_pending', $order->total_amount);
+        $seller->increment('wallet_pending', $order->net_amount);
 
         // debiter le disponible
-        $seller->decrement('wallet_available', $order->total_amount);
+        $seller->decrement('wallet_available', $order->net_amount);
 
         $dispute = $this->disputeService->open(
             $order,

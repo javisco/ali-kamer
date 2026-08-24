@@ -110,6 +110,7 @@ class PaymentService
                     'transport_fee_paid_at' => now(),
                 ]);
 
+
                 $order = $shipment->order;
 
                 $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
@@ -117,6 +118,20 @@ class PaymentService
                 $order->update([
                     'otp_code'       => $otp,
                     'otp_expires_at' => now()->addHours(120),
+                ]);
+
+                $seller = $shipment->order->shop->user;
+
+                $seller->increment('wallet_available', $shipment->transport_fee);
+
+                WalletTransaction::create([
+                    'user_id'      => $seller->id,
+                    'type'         => WalletTransaction::TYPE_CREDIT_TRANSPORT_FEE,
+                    'amount'       => $shipment->transport_fee,
+                    'balance_after' => $seller->wallet_available,
+                    'ref_type'     => 'shipment',
+                    'ref_id'       => $shipment->id,
+                    'note'         => "payement des frais de transport {$shipment->order->reference} — virement MoMo {$shipment->order->payer_phone}",
                 ]);
 
                 Log::info('Transport fee paid via webhook, OTP generated', [
@@ -130,6 +145,7 @@ class PaymentService
 
         Log::warning('Webhook Campay : aucun paiement trouvé', $data);
     }
+
     //ajouter par chatgpt
     // ── SYNCHRONISER LE PAIEMENT AVEC CAMPAY ─────────────────────────────
 
@@ -216,7 +232,7 @@ class PaymentService
             WalletTransaction::create([
                 'user_id'      => $order->buyer->id,
                 'type'         => WalletTransaction::TYPE_CREDIT_BUY,
-                'amount'       => $order->net_amount,
+                'amount'       => $order->total_amount,
                 'balance_after' => 0,
                 'ref_type'     => 'order',
                 'ref_id'       => $order->id,
@@ -303,6 +319,16 @@ class PaymentService
             ]);
             throw $e;
         }
+
+        WalletTransaction::create([
+            'user_id'      => $order->buyer->id,
+            'type'         => WalletTransaction::TYPE_DEBIT_TRANSPORT_FEE,
+            'amount'       => $transportFee,
+            'balance_after' => 0,
+            'ref_type'     => 'shipment',
+            'ref_id'       => $order->shipment->id,
+            'note'         => "payement des frais de transport {$order->reference} — virement MoMo {$formattedPhone}",
+        ]);
     }
 
 

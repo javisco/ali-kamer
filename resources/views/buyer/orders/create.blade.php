@@ -140,7 +140,7 @@
                     {{-- COLONNE DROITE (5/12) : Récapitulatif Financier --}}
                     <div
                         class="lg:col-span-5 flex flex-col justify-between bg-indigo-50/80 rounded-2xl p-6 border-2 border-indigo-100">
-                        <div>
+                        {{-- <div>
                             <h3
                                 class="font-black text-indigo-950 text-base uppercase tracking-wider mb-4 border-b border-indigo-200/80 pb-2">
                                 Récapitulatif Financier
@@ -176,7 +176,72 @@
                                     </div>
                                 @endif
                             </div>
+                        </div> --}}
+                        {{-- Récapitulatif financier côté acheteur --}}
+                        <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-5">
+                            <h2 class="font-bold text-gray-800 mb-3">Récapitulatif</h2>
+                            <div class="space-y-2 text-sm" id="summary">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Prix article</span>
+                                    <span class="font-medium" id="s-subtotal">—</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">
+                                        Frais de protection
+                                        ({{ \App\Models\PlatformSetting::getValue('protection_rate') }}%)
+                                    </span>
+                                    <span id="s-protection">—</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">
+                                        Frais Mobile Money
+                                        ({{ \App\Models\PlatformSetting::getValue('campay_collect_rate') }}%)
+                                    </span>
+                                    <span id="s-campay">—</span>
+                                </div>
+                                <div
+                                    class="flex justify-between font-bold text-gray-900
+                    border-t border-indigo-200 pt-2 mt-2">
+                                    <span>Total à payer</span>
+                                    <span class="text-indigo-600 text-lg" id="s-total">—</span>
+                                </div>
+                            </div>
                         </div>
+
+                        @push('scripts')
+                            <script>
+                                const unitPrice = {{ $product->price }};
+                                const protRate = {{ \App\Models\PlatformSetting::getRate('protection_rate') }};
+                                const collectRate = {{ \App\Models\PlatformSetting::getRate('campay_collect_rate') }};
+                                const fixedFee = {{ (int) \App\Models\PlatformSetting::getValue('campay_fixed_fee', 0) }};
+                                const qtyInput = document.querySelector('input[name="quantity"]');
+
+                                function fmt(n) {
+                                    return new Intl.NumberFormat('fr-FR').format(Math.round(n)) + ' FCFA';
+                                }
+
+                                function update() {
+                                    const qty = parseInt(qtyInput.value) || 1;
+                                    const subtotal = unitPrice * qty;
+                                    const protection = Math.round(subtotal * protRate);
+                                    const wantNet = subtotal + protection;
+
+                                    // Gross-Up collect
+                                    const total = collectRate > 0 && collectRate < 1 ?
+                                        Math.ceil((wantNet + fixedFee) / (1 - collectRate)) :
+                                        wantNet + fixedFee;
+                                    const campay = total - wantNet;
+
+                                    document.getElementById('s-subtotal').textContent = fmt(subtotal);
+                                    document.getElementById('s-protection').textContent = fmt(protection);
+                                    document.getElementById('s-campay').textContent = fmt(campay);
+                                    document.getElementById('s-total').textContent = fmt(total);
+                                }
+
+                                qtyInput.addEventListener('input', update);
+                                update();
+                            </script>
+                        @endpush
 
                         {{-- Total final & Bouton de validation --}}
                         <div class="mt-6 pt-4 border-t-2 border-indigo-200/80">
@@ -202,7 +267,7 @@
         </div>
     </div>
 
-    @push('scripts')
+    {{-- @push('scripts')
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const unitPrice = {{ (float) $product->price }};
@@ -242,5 +307,5 @@
                 calculateTotal();
             });
         </script>
-    @endpush
+    @endpush --}}
 @endsection

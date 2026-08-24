@@ -66,17 +66,53 @@
                 </div>
 
                 {{-- Frais --}}
-                <div class="bg-gray-50 rounded-2xl border border-gray-200 p-4 text-sm space-y-2">
+                {{-- <div class="bg-gray-50 rounded-2xl border border-gray-200 p-4 text-sm space-y-2">
                     <div class="flex justify-between text-gray-500">
-                        <span>Frais retrait MoMo (1%)</span>
-                        {{-- Les frais sont déduits automatiquement par Campay --}}
-                        <span>Déduits automatiquement</span>
-                    </div>
+                        <span>Frais retrait MoMo (1%)</span> --}}
+                {{-- Les frais sont déduits automatiquement par Campay --}}
+                <span>Déduits automatiquement</span>
+                {{-- </div>
                     <div class="flex justify-between font-bold text-gray-800 border-t border-gray-200 pt-2">
                         <span>Vous recevrez environ</span>
                         <span class="text-indigo-600" id="netAmount">—</span>
                     </div>
+                </div> --}}
+
+                {{-- Simulateur Gross-Up retrait --}}
+                <div class="bg-gray-50 rounded-2xl border border-gray-200 p-4 text-sm space-y-2">
+                    <p class="font-medium text-gray-700">Détail du virement</p>
+                    <div class="flex justify-between text-gray-500">
+                        <span>Frais de virement Mobile Money</span>
+                        <span class="text-emerald-600 font-medium">Pris en charge par Ali-Kamer</span>
+                    </div>
+                    <div class="flex justify-between font-bold text-gray-800 border-t border-gray-200 pt-2">
+                        <span>Vous recevrez exactement</span>
+                        <span class="text-indigo-600" id="netAmount">—</span>
+                    </div>
                 </div>
+
+                @push('scripts')
+                    <script>
+                        const payoutRate = {{ \App\Models\PlatformSetting::getRate('campay_payout_rate') }};
+                        const fixedFee = {{ (int) \App\Models\PlatformSetting::getValue('campay_fixed_fee', 0) }};
+                        const input = document.querySelector('input[name="amount"]');
+                        const display = document.getElementById('netAmount');
+
+                        function updateNet() {
+                            const net = parseInt(input.value) || 0;
+                            if (net < 1000) {
+                                display.textContent = '—';
+                                return;
+                            }
+
+                            // Le montant saisi = montant NET que le vendeur reçoit
+                            // La plateforme calcule le Gross-Up en interne
+                            display.textContent = new Intl.NumberFormat('fr-FR').format(net) + ' FCFA';
+                        }
+
+                        input.addEventListener('input', updateNet);
+                    </script>
+                @endpush
 
                 <button type="submit"
                     class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold
