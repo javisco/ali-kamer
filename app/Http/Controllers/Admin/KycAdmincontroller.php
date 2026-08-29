@@ -54,7 +54,7 @@ class KycAdminController extends Controller
         // Vérification MoMo en temps réel via Campay
         $holderInfo = null;
         try {
-            $holderInfo = app(CampayService::class)->getHolderInfo($kyc->user->phone);
+            $holderInfo = app(CampayService::class)->getHolderInfo($kyc->user->phone ?? $kyc->user->phone_momo);
         } catch (\Exception $e) {
             // Ne pas bloquer si Campay est indisponible
             Log::warning('HolderInfo unavailable', ['error' => $e->getMessage()]);

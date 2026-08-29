@@ -113,7 +113,7 @@
                 <a href="{{ route('buyer.home') }}"
                     class="rounded-lg bg-orange-500 px-4 py-2.5 text-xs font-bold text-white">Voir les produits</a>
                 @guest
-                    <a href="{{ route('register') }}"
+                    <a href="{{ route('register.show') }}"
                         class="rounded-lg border border-orange-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700">Créer
                         un compte</a>
                 {{-- @else

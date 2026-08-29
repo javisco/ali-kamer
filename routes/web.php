@@ -42,43 +42,8 @@ use App\Http\Controllers\Agency\DashboardController as AgencyDashboard;
 // });
 
 
+require 'auth.php';
 
-//authentification
-Route::get('/register', [AuthController::class, 'showFormRegister'])->name('register.show');
-Route::post('/register', [AuthController::class, 'register'])->name('register');
-Route::get('/login', [AuthController::class, 'showFormLogin'])->name('login.show');
-Route::post('/login', [AuthController::class, 'login'])->name('login');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
-
-//verification de l'email
-
-Route::middleware(['auth'])->group(function () {
-        Route::get('/email/email-verify', [VerifiedEmailController::class, 'verifiedEmail'])->name('verification.notice');
-
-        Route::get('/email/verify/{id}/{hash}', [VerifiedEmailController::class, 'verify'])
-                ->middleware('signed')
-                ->name('verification.verify');
-        Route::post('/email/verification-notification', [VerifiedEmailController::class, 'resend'])
-                ->middleware('throttle:6,1')->name('verification.send');
-});
-
-
-
-//mot de passe oublier
-Route::middleware('guest')->group(function () {
-
-        Route::get('/forgot-password', [ForgotPasswordController::class, 'show'])
-                ->name('password.request');
-
-        Route::post('/forgot-password', [ForgotPasswordController::class, 'send'])
-                ->name('password.email');
-
-        Route::get('/reset-password/{token}', [ResetPasswordController::class, 'show'])
-                ->name('password.reset');
-
-        Route::post('/reset-password', [ResetPasswordController::class, 'update'])
-                ->name('password.update');
-});
 
 // Vendeur — KYC
 Route::middleware(['auth', 'verified', 'role:seller'])->prefix('seller')->group(function () {
@@ -101,9 +66,15 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->group(fu
 Route::middleware(['auth', 'verified', 'role:seller'])->prefix('vendeur')->group(function () {
         Route::get('/boutique/creer', [ShopController::class, 'create'])->name('seller.shop.create');
         Route::post('/boutique', [ShopController::class, 'store'])->name('seller.shop.store');
-        Route::get('/boutique/modifier', [ShopController::class, 'edit'])->name('seller.shop.edit');
-        Route::put('/boutique', [ShopController::class, 'update'])->name('seller.shop.update');
+
+        Route::middleware(['shop.active'])->group(function () {
+                Route::get('/boutique/modifier', [ShopController::class, 'edit'])->name('seller.shop.edit');
+                Route::put('/boutique', [ShopController::class, 'update'])->name('seller.shop.update');
+        });
 });
+
+
+
 
 Route::middleware(['auth', 'verified', 'role:buyer'])->prefix('acheteur')->group(function () {
         Route::get('/dashboard', [BuyerDashboardController::class, 'index'])->name('buyer.dashboard');
@@ -152,7 +123,7 @@ Route::middleware(['auth', 'verified', 'role:buyer'])->prefix('commandes')->grou
 
 
 // ── Commandes vendeur ─────────────────────────────────────────────
-Route::middleware(['auth', 'verified', 'role:seller'])->prefix('vendeur')->group(function () {
+Route::middleware(['auth', 'verified', 'role:seller','shop.active'])->prefix('vendeur')->group(function () {
         Route::get('/commandes', [SellerOrderController::class, 'index'])->name('seller.orders.index');
         Route::get('/commandes/{order}', [SellerOrderController::class, 'show'])->name('seller.orders.show');
         // Route::post('/commandes/{order}/preparer', [SellerOrderController::class, 'markPreparing'])->name('seller.orders.preparing');
@@ -206,7 +177,7 @@ Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
 });
 
 // Portefeuille vendeur
-Route::middleware(['auth', 'verified', 'role:seller'])->prefix('vendeur')->group(function () {
+Route::middleware(['auth', 'verified', 'role:seller','shop.active'])->prefix('vendeur')->group(function () {
         Route::get('/portefeuille', [WalletController::class, 'index'])
                 ->name('seller.wallet.index');
         Route::get('/portefeuille/retrait', [WalletController::class, 'withdrawForm'])
@@ -267,7 +238,7 @@ Route::middleware(['auth', 'role:secretary'])
         });
 
 // Paiement frais transport acheteur
-Route::middleware(['auth', 'role:buyer'])->group(function () {
+Route::middleware(['auth', 'role:buyer', 'verified'])->group(function () {
 
         Route::get('/commandes/{order}/transport', [BuyerOrderController::class, 'transportPayment'])
                 ->name('buyer.orders.transport');
@@ -288,7 +259,7 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
 
 
 // ── Litiges acheteur ──────────────────────────────────────────────
-Route::middleware(['auth', 'role:buyer'])->group(function () {
+Route::middleware(['auth', 'role:buyer', 'verified'])->group(function () {
         // Liste des litiges de l'acheteur
         Route::get('/litiges', [BuyerDisputeController::class, 'index'])
                 ->name('buyer.disputes.index');
@@ -303,7 +274,7 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
 });
 
 // ── Litiges vendeur ───────────────────────────────────────────────
-Route::middleware(['auth', 'role:seller'])->prefix('vendeur')->group(function () {
+Route::middleware(['auth', 'role:seller','shop.active'])->prefix('vendeur')->group(function () {
         Route::get('/litiges', [SellerDisputeController::class, 'index'])
                 ->name('seller.disputes.index');
         Route::get('/litiges/{dispute}', [SellerDisputeController::class, 'show'])
@@ -336,7 +307,7 @@ Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
 });
 
 // Avis vendeur sur acheteur
-Route::middleware(['auth', 'verified', 'role:seller'])->prefix('vendeur')->group(function () {
+Route::middleware(['auth', 'verified', 'role:seller','shop.active'])->prefix('vendeur')->group(function () {
         Route::get('/commandes/{order}/noter-acheteur', [SellerReviewController::class, 'create'])
                 ->name('seller.reviews.create');
         Route::post('/commandes/{order}/noter-acheteur', [SellerReviewController::class, 'store'])
@@ -477,7 +448,7 @@ Route::view('/toto', 'layouts.admin')->name('admin');
 
 
 
-Route::middleware(['auth', 'role:buyer'])->group(function () {
+Route::middleware(['auth', 'role:buyer', 'verified'])->group(function () {
 
         // ── Panier ────────────────────────────────────────────────────────
         Route::get('/panier', [CartController::class, 'index'])

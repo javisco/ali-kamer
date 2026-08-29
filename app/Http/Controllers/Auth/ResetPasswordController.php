@@ -8,7 +8,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Controllers\Auth\Str;
+use Illuminate\Support\Str;
 
 class ResetPasswordController extends Controller
 {

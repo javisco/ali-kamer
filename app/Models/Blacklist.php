@@ -17,6 +17,7 @@ class Blacklist extends Model
         'phone_number',
         'ip_address',
         'reason',
+        'email',
         'created_by',
     ];
 

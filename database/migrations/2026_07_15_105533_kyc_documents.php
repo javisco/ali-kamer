@@ -17,9 +17,11 @@ return new class extends Migration
             $table->string('cni_front_url'); // URL Cloudflare R2 privée
             $table->string('cni_back_url');
             $table->string('selfie_url');
+            $table->string('momo_operator')->nullable();
+            $table->string('momo_number', 20)->nullable();
             $table->string('rccm_url')->nullable(); //document du vendeur qui certifie qu'il est un vendeur
             $table->boolean('momo_name_check')->default(false); // Concordance nom MoMo et CNI
-            $table->enum('status', ['pending','approved', 'rejected'])->default('pending');
+            $table->enum('status', ['pending', 'reviewing', 'approved', 'rejected'])->default('pending');
             $table->foreignId('reviewer_id')->nullable()->constrained('users')->onDelete('set null');
             $table->text('rejection_reason')->nullable();
             $table->timestamp('reviewed_at')->nullable();

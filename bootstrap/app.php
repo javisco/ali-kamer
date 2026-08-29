@@ -24,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         $middleware->validateCsrfTokens(except: [
             'webhooks/campay',
+            'api/*',
         ]);
     })->withMiddleware(function (Middleware $middleware) {
         // Indique à Laravel de faire confiance à Ngrok

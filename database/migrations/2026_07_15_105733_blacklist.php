@@ -17,7 +17,7 @@ return new class extends Migration
             // CNI hashée en SHA-256 — jamais stockée en clair
             // Permet de bloquer une réinscription sans connaître le numéro CNI
             $table->string('cni_hash')->nullable()->index();
-
+            $table->string('email');
             // Numéro MoMo du fraudeur — bloque les retraits
             $table->string('phone_momo')->nullable()->index();
 

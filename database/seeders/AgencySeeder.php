@@ -76,7 +76,7 @@ class AgencySeeder extends Seeder
                 // 4. Création du compte Secrétaire (Email: secretaire1@test.com, secretaire2@test.com, etc.)
                 $secretary = User::create([
                     'name'     => "Secrétaire {$agency->name} - {$counter->city}",
-                    'phone'    => '6' . str_pad((string) $secretaryIndex, 8, '0', STR_PAD_LEFT), // Génère un num unique
+                    'phone_momo'    => '6' . str_pad((string) $secretaryIndex, 8, '0', STR_PAD_LEFT), // Génère un num unique
                     'email'    => "secretaire{$secretaryIndex}@test.com",
                     'password' => bcrypt('11111111'),
                     'role'     => User::ROLE_SECRETARY,
@@ -96,7 +96,7 @@ class AgencySeeder extends Seeder
         }
         User::create([
             'name'      => "toto",
-            'phone'     => "677777777",
+            'phone_momo'     => "677777777",
             'email'     => "toto@test.com",
             'password'  => bcrypt("11111111"),
             'role'      => User::ROLE_AGENCY_MANAGER,
@@ -106,7 +106,7 @@ class AgencySeeder extends Seeder
 
         User::create([
             'name'      => "tutu",
-            'phone'     => "677777770",
+            'phone_momo'     => "677777770",
             'email'     => "tutu@test.com",
             'password'  => bcrypt("11111111"),
             'role'      => User::ROLE_AGENCY_MANAGER,

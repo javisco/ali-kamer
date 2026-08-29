@@ -19,7 +19,7 @@ return new class extends Migration
             // ── Identité ──────────────────────────────────────────────
             $table->string('name');
             $table->string('email')->unique()->nullable();
-            $table->string('phone', 20)->unique();              // identifiant principal
+            $table->string('phone', 20)->nullable();              // identifiant principal
             $table->string('password');
             $table->timestamp('email_verified_at')->nullable();
             $table->timestamp('phone_verified_at')->nullable();
@@ -31,7 +31,7 @@ return new class extends Migration
             // Tous les autres rôles commencent en status=active
 
             // ── Mobile Money ──────────────────────────────────────────
-            $table->string('phone_momo', 20)->nullable();
+            $table->string('phone_momo', 20)->unique();
             $table->enum('momo_operator', ['mtn', 'orange'])->nullable();
 
             // ── Wallet ────────────────────────────────────────────────

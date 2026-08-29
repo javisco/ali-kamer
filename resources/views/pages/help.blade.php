@@ -23,7 +23,7 @@
             </p>
             <div class="mt-4 flex gap-2">
                 <a href="{{ route('login') }}" class="rounded-lg bg-slate-900 px-3 py-2 text-xs font-bold text-white">Se connecter</a>
-                <a href="{{ route('register') }}" class="rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold text-slate-700">Créer un compte</a>
+                <a href="{{ route('register.show') }}" class="rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold text-slate-700">Créer un compte</a>
             </div>
         </article>
 

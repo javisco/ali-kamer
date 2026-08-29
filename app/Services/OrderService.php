@@ -84,7 +84,7 @@ class OrderService
 
         // Frais de protection
         // Ex: 10000 × 2% = 200 FCFA
-        $protectionFee = (int) round($subtotal * $protectionRate);
+        $protectionFee = (int) ceil($subtotal * $protectionRate);
 
         // Montant que la plateforme veut recevoir nets après déduction Campay collect
         // = prix du produit + frais de protection
