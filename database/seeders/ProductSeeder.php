@@ -99,7 +99,7 @@ class ProductSeeder extends Seeder
             $spec = $techSpecs[array_rand($techSpecs)];
 
             $title = "{$base} {$variant} {$spec}";
-            $price = rand(5, 25);
+            $price = rand(1000, 25000);
             $hasDiscount = (bool) rand(0, 1);
 
             Product::create([
@@ -181,7 +181,7 @@ class ProductSeeder extends Seeder
             $color = $fashionColors[array_rand($fashionColors)];
 
             $title = "{$base} {$style} - {$color}";
-            $price = rand(5, 25);
+            $price = rand(1000, 25000);
             $hasDiscount = (bool) rand(0, 1);
 
             Product::create([
@@ -195,7 +195,7 @@ class ProductSeeder extends Seeder
                 'stock' => rand(10, 100),
                 'stock_reserved' => 0,
                 'min_quantity' => 1,
-                'shipping_included' => rand(0,1),
+                'shipping_included' => rand(0, 1),
                 'shipping_threshold_qty' => 3,
                 'specifications' => json_encode(['Taille' => 'S, M, L, XL', 'Matière' => 'Coton / Cuir', 'Origine' => 'Importation']),
                 'status' => 'visible',

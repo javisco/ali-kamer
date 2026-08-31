@@ -15,12 +15,12 @@ use Illuminate\Support\Str;
 class DisputeService
 {
     public function __construct(
-        private CampayService $campay,
+        private ElgiopayService $elgiopay,
         private WalletService $wallet
     ) {}
 
     // ── OUVRIR UN LITIGE ──────────────────────────────────────────────
-
+    // INCHANGÉ.
     public function open(
         Order $order,
         User $initiator,
@@ -64,7 +64,7 @@ class DisputeService
     }
 
     // ── RÉPONDRE AU LITIGE (vendeur) ──────────────────────────────────
-
+    // INCHANGÉ.
     public function reply(
         Dispute $dispute,
         User $seller,
@@ -74,7 +74,6 @@ class DisputeService
 
         DB::transaction(function () use ($dispute, $seller, $response, $files) {
 
-            // Enregistrer la réponse comme preuve texte
             DisputeEvidence::create([
                 'dispute_id'   => $dispute->id,
                 'submitted_by' => $seller->id,
@@ -92,7 +91,7 @@ class DisputeService
     }
 
     // ── RÉSOUDRE ET APPLIQUER ─────────────────────────────────────────
-
+    // INCHANGÉ.
     public function resolve(
         Dispute $dispute,
         User $admin,
@@ -108,7 +107,6 @@ class DisputeService
             $note,
             $resolutionAmount
         ) {
-            // Enregistrer la décision
             $dispute->update([
                 'status'            => 'resolved',
                 'resolution'        => $resolution,
@@ -118,10 +116,8 @@ class DisputeService
                 'resolved_at'       => now(),
             ]);
 
-            // Appliquer immédiatement
             $this->applyResolution($dispute);
 
-            // Clôturer la commande
             $dispute->order->update([
                 'status'       => Order::STATUS_COMPLETED,
                 'completed_at' => now(),
@@ -130,12 +126,9 @@ class DisputeService
     }
 
     // ── APPLICATION FINANCIÈRE ────────────────────────────────────────
-
-    // RÈGLE MÉTIER :
-    // - Acheteur    → remboursement DIRECT via Campay (virement MoMo)
-    // - Vendeur     → on crédite/débite son WALLET uniquement
-    //                 (il fait lui-même le retrait quand il veut)
-    // Traçabilité   → toujours enregistrée dans wallet_transactions
+    // RÈGLE MÉTIER INCHANGÉE :
+    // - Acheteur → remboursement DIRECT via Elgiopay (virement MoMo)
+    // - Vendeur  → on crédite/débite son WALLET uniquement
     private function applyResolution(Dispute $dispute): void
     {
         $order  = $dispute->order->load(['buyer', 'shop.user', 'payment']);
@@ -143,47 +136,39 @@ class DisputeService
         $seller = $order->shop->user;
 
         match ($dispute->resolution) {
-
-            // Acheteur avait raison → remboursement MoMo direct + trace BDD
-            'refund_buyer' => $this->refundBuyer($buyer, $order->total_amount, $order),
-
-            // Vendeur avait raison → créditer son wallet (pas de virement direct)
-            'pay_seller' => $this->creditSellerWallet($seller, $order->net_amount, $order),
-
-            // Remboursement partiel → acheteur via MoMo + vendeur via wallet
-            'partial_refund' => $this->applyPartialRefund($dispute),
-
-            // Retour requis → rembourser l'acheteur via MoMo
-            'return_required' => $this->refundBuyer($buyer, $order->total_amount, $order),
-
-            // Acheteur mauvaise foi → créditer le wallet vendeur
-            'buyer_bad_faith' => $this->creditSellerWallet($seller, $order->net_amount, $order),
-
-            default => Log::warning('Résolution inconnue', [
+            'refund_buyer'     => $this->refundBuyer($buyer, $order->total_amount, $order),
+            'pay_seller'       => $this->creditSellerWallet($seller, $order->net_amount, $order),
+            'partial_refund'   => $this->applyPartialRefund($dispute),
+            'return_required'  => $this->refundBuyer($buyer, $order->total_amount, $order),
+            'buyer_bad_faith'  => $this->creditSellerWallet($seller, $order->net_amount, $order),
+            default            => Log::warning('Résolution inconnue', [
                 'resolution' => $dispute->resolution
             ]),
         };
     }
 
-    // ── REMBOURSEMENT ACHETEUR (virement Campay direct) ──────────────
-
-    // L'acheteur reçoit son argent directement sur son MoMo
-    // car il n'a pas de wallet sur la plateforme
+    // ── REMBOURSEMENT ACHETEUR (virement Elgiopay direct) ──────────────
+    // Gross-Up INCHANGÉ. Seul ajout par rapport à Campay : operator +
+    // recipientName requis par l'API Elgiopay pour le payout — on utilise
+    // l'opérateur enregistré sur le paiement d'origine de la commande
+    // ($order->payment->payer_operator), puisque l'acheteur n'a pas de
+    // wallet ni de profil "opérateur MoMo" dédié comme le vendeur.
     private function refundBuyer(User $buyer, int $netAmount, Order $order): void
     {
         $phone = '237' . ltrim($order->payment->payer_phone, '0');
 
-        // Gross-Up : l'acheteur reçoit exactement $netAmount sur son MoMo
-        $grossUp     = $this->campay->grossUpPayout($netAmount);
+        $grossUp     = $this->elgiopay->grossUpPayout($netAmount);
         $grossAmount = $grossUp['gross'];
-        $campayFee   = $grossUp['fee'];
+        $gatewayFee  = $grossUp['fee'];
 
         try {
-            $this->campay->disburse(
+            $this->elgiopay->disburse(
                 phone: $phone,
                 grossAmount: $grossAmount,
                 reference: 'REFUND-' . $order->reference . '-' . Str::uuid(),
-                description: "Remboursement litige {$order->reference}"
+                description: "Remboursement litige {$order->reference}",
+                operator: $order->payment->payer_operator ?? 'mtn',
+                recipientName: $buyer->name
             );
 
             WalletTransaction::create([
@@ -194,11 +179,11 @@ class DisputeService
                 'ref_type'      => 'order',
                 'ref_id'        => $order->id,
                 'note'          => sprintf(
-                    'Remboursement %s — reçu: %s FCFA, envoyé Campay: %s FCFA (frais plateforme: %s FCFA)',
+                    'Remboursement %s — reçu: %s FCFA, envoyé Elgiopay: %s FCFA (frais plateforme: %s FCFA)',
                     $order->reference,
                     number_format($netAmount, 0, ',', ' '),
                     number_format($grossAmount, 0, ',', ' '),
-                    number_format($campayFee, 0, ',', ' ')
+                    number_format($gatewayFee, 0, ',', ' ')
                 ),
             ]);
 
@@ -211,14 +196,10 @@ class DisputeService
     }
 
     // ── CRÉDITER LE WALLET VENDEUR (pas de virement direct) ──────────
-
-    // Le vendeur reçoit l'argent dans son wallet plateforme
-    // Il fait lui-même le retrait vers son MoMo via la fonction Withdrawal
+    // INCHANGÉ.
     private function creditSellerWallet(User $seller, int $amount, Order $order): void
     {
         DB::transaction(function () use ($seller, $amount, $order) {
-
-            // Libérer le séquestre et créditer le disponible
             $this->wallet->releaseEscrow($seller, $amount, $order);
 
             Log::info('Seller wallet credited', [
@@ -230,26 +211,24 @@ class DisputeService
     }
 
     // ── REMBOURSEMENT PARTIEL ─────────────────────────────────────────
-
+    // INCHANGÉ.
     private function applyPartialRefund(Dispute $dispute): void
     {
         $order        = $dispute->order;
         $refundAmount = $dispute->resolution_amount ?? 0;
         $sellerAmount = max(0, $order->net_amount - $refundAmount);
 
-        // Acheteur → virement MoMo direct
         if ($refundAmount > 0) {
             $this->refundBuyer($order->buyer, $refundAmount, $order);
         }
 
-        // Vendeur → wallet plateforme
         if ($sellerAmount > 0) {
             $this->creditSellerWallet($order->shop->user, $sellerAmount, $order);
         }
     }
 
     // ── AJOUTER UNE PREUVE ────────────────────────────────────────────
-
+    // INCHANGÉ.
     public function addEvidence(
         Dispute $dispute,
         User $submitter,

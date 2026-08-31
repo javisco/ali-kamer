@@ -45,5 +45,11 @@ return [
         'phone_number_id' => env('WHATSAPP_PHONE_NUMBER_ID'),
         'token'           => env('WHATSAPP_TOKEN'),
     ],
+    'elgiopay' => [
+        'base_url'       => env('ELGIOPAY_BASE_URL', 'https://sandbox-api.elgiopay.com'),
+        'secret_token'   => env('ELGIOPAY_SECRET_TOKEN'),
+        'webhook_secret' => env('ELGIOPAY_WEBHOOK_SECRET'), // whsec_...
+    ],
+
 
 ];

@@ -25,8 +25,11 @@ return new class extends Migration
             // de départ et d'arrivée appartiennent à cette même agence
             $table->boolean('shipping_included');
             $table->unsignedInteger('transport_fee')->default(0);
+            $table->unsignedInteger('transport_fee_gross_amount')->nullable();
+            $table->unsignedInteger('transport_fee_gateway_fee')->nullable();
             $table->boolean('transport_fee_paid')->default(false);
             $table->timestamp('transport_fee_paid_at')->nullable();
+
 
             // Agences
             $table->foreignId('origin_counter_id')

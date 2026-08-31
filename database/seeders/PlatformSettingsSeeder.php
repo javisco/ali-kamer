@@ -11,39 +11,6 @@ class PlatformSettingsSeeder extends Seeder
     {
         $settings = [
 
-            // ── Taux Campay réels ─────────────────────────────────────────
-            [
-                'key'         => 'campay_collect_rate',
-                'value'       => '2',
-                'type'        => 'percentage',
-                'label'       => 'Frais Campay — collecte (encaissement acheteur)',
-                'description' => 'Taux réel prélevé par Campay sur chaque encaissement. '
-                    . 'Utilisé pour le Gross-Up côté acheteur. '
-                    . 'Vérifier sur votre dashboard Campay avant de modifier.',
-                'group'       => 'campay',
-                'sort_order'  => 1,
-            ],
-            [
-                'key'         => 'campay_payout_rate',
-                'value'       => '1',
-                'type'        => 'percentage',
-                'label'       => 'Frais Campay — décaissement (virement vers MoMo)',
-                'description' => 'Taux réel prélevé par Campay sur chaque virement sortant. '
-                    . 'Utilisé pour le Gross-Up vendeur, agence et remboursements. '
-                    . 'Vérifier sur votre dashboard Campay avant de modifier.',
-                'group'       => 'campay',
-                'sort_order'  => 2,
-            ],
-            [
-                'key'         => 'campay_fixed_fee',
-                'value'       => '0',
-                'type'        => 'integer',
-                'label'       => 'Frais fixes Campay par transaction (FCFA)',
-                'description' => 'Frais fixes éventuels par transaction Campay. 0 si aucun.',
-                'group'       => 'campay',
-                'sort_order'  => 3,
-            ],
-
             // ── Commissions et frais ──────────────────────────────────
             [
                 'key'         => 'protection_rate',
@@ -56,10 +23,13 @@ class PlatformSettingsSeeder extends Seeder
             ],
             [
                 'key'         => 'gateway_collect_rate',
-                'value'       => '2',
+                'value'       => '2', // Confirmé par Elgiopay : 2% sur l'encaissement acheteur
                 'type'        => 'percentage',
-                'label'       => 'Frais Campay collecte',
-                'description' => 'Frais Mobile Money à l\'encaissement. Payé par l\'acheteur.',
+                'label'       => 'Frais Elgiopay — collecte (encaissement acheteur)',
+                'description' => 'Taux réel prélevé par Elgiopay sur chaque encaissement '
+                    . '(POST /api/v1/payments). Utilisé pour le Gross-Up côté acheteur, '
+                    . 'aussi bien sur la commande principale que sur les frais de transport. '
+                    . 'Vérifier sur le dashboard Elgiopay avant de modifier.',
                 'group'       => 'commissions',
                 'sort_order'  => 2,
             ],
@@ -83,12 +53,25 @@ class PlatformSettingsSeeder extends Seeder
             ],
             [
                 'key'         => 'gateway_payout_rate',
-                'value'       => '1',
+                'value'       => '0', // Confirmé par Elgiopay : gratuit sur le décaissement vers MoMo/OM
                 'type'        => 'percentage',
-                'label'       => 'Frais Campay retrait vendeur',
-                'description' => 'Frais Mobile Money au décaissement vers le vendeur.',
+                'label'       => 'Frais Elgiopay — retrait vendeur',
+                'description' => 'Taux réel prélevé par Elgiopay sur chaque virement sortant '
+                    . '(POST /api/v1/payouts). À 0 tant qu\'Elgiopay ne facture rien sur ce trajet '
+                    . '— vérifier périodiquement sur le dashboard Elgiopay que ça n\'a pas changé.',
                 'group'       => 'commissions',
                 'sort_order'  => 5,
+            ],
+            [
+                'key'         => 'gateway_fixed_fee',
+                'value'       => '0',
+                'type'        => 'integer',
+                'label'       => 'Frais fixe Elgiopay par transaction (FCFA)',
+                'description' => 'Frais fixe additionnel éventuel, appliqué en plus du taux '
+                    . 'pourcentage dans le calcul Gross-Up (collecte ET décaissement). '
+                    . '0 si Elgiopay ne facture aucun frais fixe.',
+                'group'       => 'commissions',
+                'sort_order'  => 6,
             ],
 
             // ── Timers ────────────────────────────────────────────────
@@ -166,6 +149,6 @@ class PlatformSettingsSeeder extends Seeder
             );
         }
 
-        $this->command->info('✅ Paramètres plateforme initialisés.');
+        $this->command->info('✅ Paramètres plateforme initialisés (Elgiopay).');
     }
 }

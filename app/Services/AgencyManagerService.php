@@ -14,7 +14,7 @@ use Illuminate\Validation\ValidationException;
 
 class AgencyManagerService
 {
-    public function __construct(private CampayService $campay) {}
+    public function __construct(private ElgiopayService $elgiopay) {}
 
     // ── CRÉER UN COMPTOIR ─────────────────────────────────────────────
 
@@ -251,7 +251,7 @@ class AgencyManagerService
 
 
 
-    // ── RETRAIT AGENCE VIA CAMPAY ─────────────────────────────────────
+    // ── RETRAIT AGENCE VIA $elgiopay ─────────────────────────────────────
 
     public function requestWithdrawal(Agency $agency, int $amount): void
     {
@@ -291,7 +291,7 @@ class AgencyManagerService
             $agency->decrement('wallet_available', $amount);
 
             try {
-                $this->campay->disburse(
+                $this->$elgiopay->disburse(
                     phone: $phone,
                     amount: $netAmount,
                     reference: $reference,

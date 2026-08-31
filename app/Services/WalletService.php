@@ -13,14 +13,14 @@ use Illuminate\Validation\ValidationException;
 
 class WalletService
 {
-    // Montant minimum de retrait défini par Campay
+    // Montant minimum de retrait — vient de platform_settings
+    // ('min_withdrawal_amount'), pas d'une contrainte Elgiopay documentée.
     const MIN_WITHDRAWAL = 1000;
 
-    public function __construct(private CampayService $campay) {}
+    public function __construct(private ElgiopayService $elgiopay) {}
 
     // ── SÉQUESTRE ─────────────────────────────────────────────────────
-
-    // Créditer le séquestre d'un vendeur quand l'acheteur paie
+    // INCHANGÉ.
     public function creditEscrow(User $seller, int $amount, Order $order): void
     {
         DB::transaction(function () use ($seller, $amount, $order) {
@@ -40,21 +40,15 @@ class WalletService
         });
     }
 
-    // Libérer le séquestre vers le solde disponible du vendeur
-    // Appelé après livraison confirmée ou résolution litige en faveur vendeur
+    // INCHANGÉ.
     public function releaseEscrow(User $seller, int $amount, Order $order): void
     {
         DB::transaction(function () use ($seller, $amount, $order) {
 
-            // Déduire du pending
             $seller->decrement('wallet_pending', $order->net_amount);
-
-            // Créditer le disponible
             $seller->increment('wallet_available', $amount);
-
             $seller->refresh();
 
-            // Trace débit séquestre
             WalletTransaction::create([
                 'user_id'      => $seller->id,
                 'type'         => WalletTransaction::TYPE_DEBIT_ESCROW,
@@ -65,7 +59,6 @@ class WalletService
                 'note'         => "Libération séquestre {$order->reference}",
             ]);
 
-            // Trace crédit disponible
             WalletTransaction::create([
                 'user_id'      => $seller->id,
                 'type'         => WalletTransaction::TYPE_CREDIT_AVAILABLE,
@@ -79,13 +72,9 @@ class WalletService
     }
 
     // ── REMBOURSEMENT ACHETEUR (trace uniquement) ─────────────────────
-
-    // Le virement réel est fait dans DisputeService via Campay
-    // Cette méthode enregistre uniquement la trace comptable
+    // INCHANGÉ — le virement réel est fait dans DisputeService.
     public function refund(User $buyer, int $amount, Order $order): void
     {
-        // Enregistrement de la trace dans wallet_transactions
-        //  balance_after = 0 car l'acheteur n'a pas de wallet
         WalletTransaction::create([
             'user_id'      => $buyer->id,
             'type'         => WalletTransaction::TYPE_CREDIT_REFUND,
@@ -97,14 +86,13 @@ class WalletService
         ]);
     }
 
-    // ── RETRAIT VENDEUR (virement MoMo réel via Campay) ──────────────
-
-    // Le vendeur demande un retrait → on appelle Campay disburse
-    // → on débite son wallet disponible
-    // → on trace dans wallet_transactions
+    // ── RETRAIT VENDEUR (virement MoMo réel via Elgiopay) ──────────────
+    // Le vendeur demande un retrait → on appelle Elgiopay disburse
+    // → on débite son wallet disponible → on trace dans wallet_transactions.
+    // Gross-Up INCHANGÉ (gateway_payout_rate lu depuis platform_settings,
+    // à 0 tant qu'Elgiopay ne facture rien sur ce trajet).
     public function requestWithdrawal(User $user, int $netAmount): void
     {
-        // Vérifications
         $minWithdrawal = (int) PlatformSetting::getValue('min_withdrawal_amount', 1000);
 
         if ($netAmount < $minWithdrawal) {
@@ -129,36 +117,36 @@ class WalletService
         $phone = '237' . ltrim($user->phone_momo, '0');
 
         // Gross-Up payout : le vendeur reçoit exactement $netAmount
-        $grossUp     = $this->campay->grossUpPayout($netAmount);
-        $grossAmount = $grossUp['gross']; // Ce qu'on envoie à Campay
-        $campayFee   = $grossUp['fee'];   // Frais Campay supportés par la plateforme
+        $grossUp     = $this->elgiopay->grossUpPayout($netAmount);
+        $grossAmount = $grossUp['gross']; // Ce qu'on envoie à Elgiopay
+        $gatewayFee  = $grossUp['fee'];   // Frais Elgiopay supportés par la plateforme
 
         DB::transaction(function () use (
             $user,
             $netAmount,
             $grossAmount,
-            $campayFee,
+            $gatewayFee,
             $phone
         ) {
-            // Débiter le wallet du montant NET que le vendeur attendait
-            // (la plateforme supporte les frais Campay payout en plus)
             $user->decrement('wallet_available', $netAmount);
 
             try {
                 $reference = 'WITHDRAWAL-' . $user->id . '-' . Str::uuid();
 
-                // Envoyer le montant BRUT à Campay
-                // Campay prélève ses frais → vendeur reçoit exactement $netAmount
-                $this->campay->disburse(
+                // Envoyer le montant BRUT à Elgiopay — avec gateway_payout_rate
+                // à 0, gross === net en pratique, mais on garde le mécanisme
+                // Gross-Up générique au cas où ça change côté Elgiopay.
+                $this->elgiopay->disburse(
                     phone: $phone,
                     grossAmount: $grossAmount,
                     reference: $reference,
-                    description: "Retrait Ali-Kamer — {$user->name}"
+                    description: "Retrait Ali-Kamer — {$user->name}",
+                    operator: $user->momo_operator ?? 'mtn',
+                    recipientName: $user->name
                 );
 
                 $user->refresh();
 
-                // Tracer dans wallet_transactions
                 WalletTransaction::create([
                     'user_id'       => $user->id,
                     'type'          => WalletTransaction::TYPE_DEBIT_WITHDRAWAL,
@@ -167,16 +155,16 @@ class WalletService
                     'ref_type'      => 'withdrawal',
                     'ref_id'        => null,
                     'note'          => sprintf(
-                        'Retrait %s %s — reçu: %s FCFA, envoyé Campay: %s FCFA (frais plateforme: %s FCFA)',
+                        'Retrait %s %s — reçu: %s FCFA, envoyé Elgiopay: %s FCFA (frais plateforme: %s FCFA)',
                         strtoupper($user->momo_operator ?? ''),
                         $phone,
                         number_format($netAmount, 0, ',', ' '),
                         number_format($grossAmount, 0, ',', ' '),
-                        number_format($campayFee, 0, ',', ' ')
+                        number_format($gatewayFee, 0, ',', ' ')
                     ),
                 ]);
             } catch (\Exception $e) {
-                // Rollback si Campay échoue
+                // Rollback si Elgiopay échoue
                 $user->increment('wallet_available', $netAmount);
                 $user->refresh();
 
@@ -196,9 +184,9 @@ class WalletService
             }
         });
     }
-    // ── HISTORIQUE ────────────────────────────────────────────────────
 
-    // Récupère les transactions d'un utilisateur (vendeur ou acheteur)
+    // ── HISTORIQUE ────────────────────────────────────────────────────
+    // INCHANGÉ.
     public function history(User $user, int $perPage = 20)
     {
         return WalletTransaction::where('user_id', $user->id)
@@ -207,8 +195,7 @@ class WalletService
     }
 
     // ── AUDIT ─────────────────────────────────────────────────────────
-
-    // Recalcule les soldes depuis l'historique pour détecter les incohérences
+    // INCHANGÉ.
     public function recalculateBalances(User $user): array
     {
         $transactions = WalletTransaction::where('user_id', $user->id)->get();
