@@ -110,6 +110,7 @@ class ElgiopayService
     public function collect(
         string $phone,
         int $amount,
+        string $customer_phone,
         string $reference,
         string $description,
         string $operator = 'mtn'
@@ -119,8 +120,10 @@ class ElgiopayService
             'currency'       => 'XAF',
             'payment_method' => $this->mapOperator($operator),
             'customer_phone' => $phone,
+            'customer_name' => $customer_phone,
             'reference'      => $reference,
             'metadata'       => ['reference' => $reference],
+            'description' => $description,
         ]);
 
         Log::info('Elgiopay collect', [

@@ -8,15 +8,24 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Shop extends Model
-{    use HasFactory;
+{
+    use HasFactory;
     const STATUS_PENDING   = 'pending';
     const STATUS_ACTIVE    = 'active';
     const STATUS_SUSPENDED = 'suspended';
     const STATUS_REJECTED  = 'rejected';
 
     protected $fillable = [
-        'user_id', 'name', 'slug', 'city', 'phone',
-        'address', 'description', 'logo', 'status', 'verified_at',
+        'user_id',
+        'name',
+        'slug',
+        'city',
+        'phone',
+        'address',
+        'description',
+        'logo',
+        'status',
+        'verified_at',
     ];
 
     protected function casts(): array

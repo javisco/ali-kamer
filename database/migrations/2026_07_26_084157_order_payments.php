@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('order_id')->unique()->constrained()->cascadeOnDelete();
 
-            $table->enum('method', ['campay', 'notchpay','virtuel_card'])->default('campay');
+            $table->enum('method', ['campay','elgiopay', 'notchpay','virtuel_card'])->default('campay');
             $table->enum('status', [
                 'pending',
                 'processing',

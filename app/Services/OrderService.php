@@ -182,7 +182,7 @@ class OrderService
 
             OrderPayment::create([
                 'order_id'        => $order->id,
-                'method'          => 'campay',
+                'method'          => 'elgiopay',
                 'status'          => 'pending',
                 'idempotency_key' => OrderPayment::generateIdempotencyKey(),
                 'payer_phone'     => $data['payer_phone'],
@@ -259,7 +259,7 @@ class OrderService
 
             OrderPayment::create([
                 'order_id'        => $order->id,
-                'method'          => 'campay',
+                'method'          => 'elgiopay',
                 'status'          => 'pending',
                 'idempotency_key' => OrderPayment::generateIdempotencyKey(),
                 'payer_phone'     => $data['payer_phone'],

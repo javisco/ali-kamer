@@ -9,8 +9,6 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class WalletTransaction extends Model
 {
     // Types de transactions disponibles
-
-    const TYPE_CREDIT_BUY        = 'buy';
     const TYPE_CREDIT_ESCROW        = 'credit_escrow';
     const TYPE_DEBIT_ESCROW         = 'debit_escrow';
     const TYPE_CREDIT_AVAILABLE     = 'credit_available';
@@ -64,7 +62,7 @@ class WalletTransaction extends Model
     // Libellé lisible du type de transaction pour l'affichage
     public function typeLabel(): string
     {
-        return match ($this->type) {
+        return match($this->type) {
             self::TYPE_CREDIT_ESCROW        => 'Paiement reçu (séquestre)',
             self::TYPE_DEBIT_ESCROW         => 'Libération séquestre',
             self::TYPE_CREDIT_AVAILABLE     => 'Fonds disponibles',
@@ -74,7 +72,6 @@ class WalletTransaction extends Model
             self::TYPE_CREDIT_SECRETARY     => 'Commission secrétaire',
             self::TYPE_DEBIT_TRANSPORT_FEE  => 'Frais transport',
             self::TYPE_CREDIT_TRANSPORT_FEE => 'Remboursement transport',
-            self::TYPE_CREDIT_BUY => 'commande passer',
             default                         => $this->type,
         };
     }

@@ -34,9 +34,9 @@ class NotificationService
             $order->buyer,
             'order.paid',
             "✅ Paiement confirmé !\n\n" .
-            "Commande : {$order->reference}\n" .
-            "Montant : " . number_format($order->total_amount, 0, ',', ' ') . " FCFA\n\n" .
-            "Le vendeur prépare votre colis."
+                "Commande : {$order->reference}\n" .
+                "Montant : " . number_format($order->total_amount, 0, ',', ' ') . " FCFA\n\n" .
+                "Le vendeur prépare votre colis."
         );
 
         // Message vendeur
@@ -44,11 +44,11 @@ class NotificationService
             $order->shop->user,
             'order.paid.seller',
             "🛒 Nouvelle commande reçue !\n\n" .
-            "Référence : {$order->reference}\n" .
-            "Acheteur : {$order->buyer->name}\n" .
-            "Montant net : " . number_format($order->net_amount, 0, ',', ' ') . " FCFA\n\n" .
-            "Préparez le colis et déposez-le en agence.\n" .
-            "Code de dépôt : {$order->deposit_code}"
+                "Référence : {$order->reference}\n" .
+                "Acheteur : {$order->buyer->name}\n" .
+                "Montant net : " . number_format($order->net_amount, 0, ',', ' ') . " FCFA\n\n" .
+                "Préparez le colis et déposez-le en agence.\n" .
+                "Code de dépôt : {$order->deposit_code}"
         );
     }
 
@@ -59,9 +59,9 @@ class NotificationService
             $order->buyer,
             'order.registered',
             "📦 Votre colis a été déposé !\n\n" .
-            "Commande : {$order->reference}\n" .
-            "Destination : {$order->shipment->destination_city}\n\n" .
-            "Vous serez notifié à l'arrivée."
+                "Commande : {$order->reference}\n" .
+                "Destination : {$order->shipment->destination_city}\n\n" .
+                "Vous serez notifié à l'arrivée."
         );
     }
 
@@ -72,11 +72,11 @@ class NotificationService
             $order->buyer,
             'order.arrived',
             "🎉 Votre colis est arrivé !\n\n" .
-            "Commande : {$order->reference}\n" .
-            "Agence : {$order->shipment->destinationCounter->full_name}\n\n" .
-            "Présentez-vous avec votre CNI et ce code OTP :\n\n" .
-            "🔑 *{$order->otp_code}*\n\n" .
-            "Valable jusqu'au {$order->otp_expires_at->format('d/m/Y à H:i')}"
+                "Commande : {$order->reference}\n" .
+                "Agence : {$order->shipment->destinationCounter->full_name}\n\n" .
+                "Présentez-vous avec votre CNI et ce code OTP :\n\n" .
+                "🔑 *{$order->otp_code}*\n\n" .
+                "Valable jusqu'au {$order->otp_expires_at->format('d/m/Y à H:i')}"
         );
 
         // Notifier le vendeur que les fonds sont crédités
@@ -84,9 +84,9 @@ class NotificationService
             $order->shop->user,
             'order.arrived.seller',
             "✅ Colis arrivé à destination !\n\n" .
-            "Commande : {$order->reference}\n" .
-            "Montant crédité sur votre portefeuille : " .
-            number_format($order->net_amount, 0, ',', ' ') . " FCFA (en attente)"
+                "Commande : {$order->reference}\n" .
+                "Montant crédité sur votre portefeuille : " .
+                number_format($order->net_amount, 0, ',', ' ') . " FCFA (en attente)"
         );
     }
 
@@ -97,10 +97,10 @@ class NotificationService
             $order->buyer,
             'order.pickup.reminder',
             "⚠ Rappel : votre colis vous attend !\n\n" .
-            "Commande : {$order->reference}\n\n" .
-            "Vous avez encore {$hoursLeft}h pour récupérer votre colis.\n" .
-            "Passé ce délai, le vendeur sera automatiquement payé.\n\n" .
-            "Code OTP : *{$order->otp_code}*"
+                "Commande : {$order->reference}\n\n" .
+                "Vous avez encore {$hoursLeft}h pour récupérer votre colis.\n" .
+                "Passé ce délai, le vendeur sera automatiquement payé.\n\n" .
+                "Code OTP : *{$order->otp_code}*"
         );
     }
 
@@ -111,9 +111,9 @@ class NotificationService
             $order->shop->user,
             'order.shipping.warning',
             "⚠ URGENT : Commande non expédiée !\n\n" .
-            "Référence : {$order->reference}\n\n" .
-            "Votre colis n'a pas encore été déposé en agence.\n" .
-            "Déposez-le rapidement ou l'acheteur pourra annuler la commande."
+                "Référence : {$order->reference}\n\n" .
+                "Votre colis n'a pas encore été déposé en agence.\n" .
+                "Déposez-le rapidement ou l'acheteur pourra annuler la commande."
         );
     }
 
@@ -131,9 +131,9 @@ class NotificationService
             $otherParty,
             'dispute.opened',
             "⚠ Un litige a été ouvert !\n\n" .
-            "Commande : {$dispute->order->reference}\n" .
-            "Motif : {$dispute->typeLabel()}\n\n" .
-            "Vous avez 48h pour répondre."
+                "Commande : {$dispute->order->reference}\n" .
+                "Motif : {$dispute->typeLabel()}\n\n" .
+                "Vous avez 48h pour répondre."
         );
     }
 
@@ -158,9 +158,9 @@ class NotificationService
             $seller,
             'kyc.approved',
             "🎉 Bienvenue sur Ali-Kamer !\n\n" .
-            "Votre dossier de vérification a été approuvé.\n" .
-            "Votre boutique est maintenant active.\n" .
-            "Publiez vos premiers produits !"
+                "Votre dossier de vérification a été approuvé.\n" .
+                "Votre boutique est maintenant active.\n" .
+                "Publiez vos premiers produits !"
         );
     }
 
@@ -171,8 +171,8 @@ class NotificationService
             $seller,
             'kyc.rejected',
             "❌ Dossier KYC rejeté\n\n" .
-            "Motif : {$reason}\n\n" .
-            "Vous pouvez soumettre un nouveau dossier corrigé."
+                "Motif : {$reason}\n\n" .
+                "Vous pouvez soumettre un nouveau dossier corrigé."
         );
     }
 
@@ -235,7 +235,6 @@ class NotificationService
             }
 
             return true;
-
         } catch (\Throwable $e) {
             Log::error('WhatsApp exception', ['error' => $e->getMessage()]);
             return false;

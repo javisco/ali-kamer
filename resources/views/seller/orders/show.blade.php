@@ -96,7 +96,7 @@
                     </p>
 
                     <p class="text-2xl font-extrabold text-slate-900 mt-1">
-                        {{ number_format($order->total_amount, 0, ',', ' ') }}
+                        {{ number_format($order->subtotal, 0, ',', ' ') }}
                         <span class="text-sm font-bold text-slate-500">
                             FCFA
                         </span>
@@ -769,7 +769,7 @@
 
                                 <span class="text-xl font-extrabold text-slate-900">
 
-                                    {{ number_format($order->total_amount, 0, ',', ' ') }}
+                                    {{ number_format($order->subtotal, 0, ',', ' ') }}
 
                                     <span class="text-sm">
                                         FCFA

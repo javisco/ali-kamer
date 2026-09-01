@@ -6,6 +6,7 @@ use App\Models\AgencyCounter;
 use App\Models\Order;
 use App\Models\SecretaryCounter;
 use App\Models\User;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -48,6 +49,10 @@ class ShippingService
 
         $counter = $this->getSecretaryCounter($secretary);
         $this->checkAgencyMatch($order, $counter);
+
+        if ($counter->id == $order->shipment->destination_counter_id) {
+            throw new Exception('vous ne pouvez pas enregistrer un colis vers votre propore comptoire');
+        }
 
         // Vérifier que la commande est bien en PREPARING
         if ($order->status !== Order::STATUS_PREPARING) {

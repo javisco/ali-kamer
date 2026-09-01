@@ -36,7 +36,8 @@ class PaymentService
 
             $result = $this->elgiopay->collect(
                 phone: $phone,
-                amount: $order->total_amount,          // déjà le montant Gross-Up
+                amount: $order->total_amount,
+                customer_phone: $order->buyer->name,          // déjà le montant Gross-Up
                 reference: $payment->idempotency_key,
                 description: "Commande Ali-Kamer {$order->reference}",
                 operator: $payment->payer_operator
@@ -263,7 +264,7 @@ class PaymentService
         string $phone,
         string $operator
     ): void {
-        $transportFee = $order->shipment->transport_fee ;
+        $transportFee = $order->shipment->transport_fee;
 
         if ($transportFee <= 0) {
             throw new \Exception('Aucun frais de transport à payer.');

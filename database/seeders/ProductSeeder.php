@@ -93,13 +93,14 @@ class ProductSeeder extends Seeder
         $techVariants = ['Pro', 'Ultra', 'Max', 'Plus', 'Edition Limitée', 'Gamer RGB', 'Waterproof', 'Compact', 'Haute Vitesse', 'Reconditionné', 'Série X', 'Titanium', 'Slim', 'Smart', 'Elite', 'V2', 'Prime'];
         $techSpecs = ['64Go', '128Go', '256Go', '512Go', '1To', '8GB RAM', '16GB RAM', '32GB RAM', '10000mAh', '20000mAh', '30000mAh', '45W', '65W', '100W', '4K Ultra HD', 'Full HD 1080p', 'Class 10 V30'];
 
-        for ($i = 1; $i <= 5; $i++) {
+        for ($i = 1; $i <= 20; $i++) {
             $base = $techBases[array_rand($techBases)];
             $variant = $techVariants[array_rand($techVariants)];
             $spec = $techSpecs[array_rand($techSpecs)];
 
             $title = "{$base} {$variant} {$spec}";
             $price = rand(1000, 25000);
+            $price = round($price / 500) * 500;
             $hasDiscount = (bool) rand(0, 1);
 
             Product::create([
@@ -175,13 +176,14 @@ class ProductSeeder extends Seeder
         $fashionStyles = ['Chic', 'Slim Fit', 'Tendance', 'Confort Extra', 'Original', 'Vintage', 'Élégant', 'Urbain', 'Qualité Supérieure', 'Motif Imprimé', 'Moderne', 'Luxe Prestige', 'Casual', 'Coupe Droite', 'Broderie Hand-Made', 'Collection Été'];
         $fashionColors = ['Noir Proche', 'Blanc Pur', 'Bleu Marine', 'Beige Sable', 'Marron Chocolat', 'Rouge Bordeau', 'Doré Éclatant', 'Gris Anthracite', 'Vert Olive', 'Rose Poudré', 'Jaune Moutarde', 'Multicolore Wax'];
 
-        for ($i = 1; $i <= 5; $i++) {
+        for ($i = 1; $i <= 20; $i++) {
             $base = $fashionBases[array_rand($fashionBases)];
             $style = $fashionStyles[array_rand($fashionStyles)];
             $color = $fashionColors[array_rand($fashionColors)];
 
             $title = "{$base} {$style} - {$color}";
             $price = rand(1000, 25000);
+            $price = round($price / 500) * 500;
             $hasDiscount = (bool) rand(0, 1);
 
             Product::create([

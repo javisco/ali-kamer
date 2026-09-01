@@ -140,43 +140,7 @@
                     {{-- COLONNE DROITE (5/12) : Récapitulatif Financier --}}
                     <div
                         class="lg:col-span-5 flex flex-col justify-between bg-indigo-50/80 rounded-2xl p-6 border-2 border-indigo-100">
-                        {{-- <div>
-                            <h3
-                                class="font-black text-indigo-950 text-base uppercase tracking-wider mb-4 border-b border-indigo-200/80 pb-2">
-                                Récapitulatif Financier
-                            </h3>
 
-                            <div class="space-y-3 text-sm">
-                                <div class="flex justify-between items-center text-gray-700">
-                                    <span class="font-semibold">Sous-total (<span id="summary-qty">1</span> article)</span>
-                                    <span class="font-bold text-gray-900 text-base" id="subtotal">— FCFA</span>
-                                </div>
-                                <div class="flex justify-between items-center text-gray-700">
-                                    <span class="font-semibold">Frais de protection (2%)</span>
-                                    <span class="font-bold text-gray-900 text-base" id="protection">— FCFA</span>
-                                </div>
-                                <div class="flex justify-between items-center text-gray-700">
-                                    <span class="font-semibold">Frais Mobile Money (2%)</span>
-                                    <span class="font-bold text-gray-900 text-base" id="gateway">— FCFA</span>
-                                </div>
-
-                                @if (!$product->shipping_included)
-                                    <div
-                                        class="bg-amber-100/80 border border-amber-300 text-amber-900 text-xs p-3 rounded-xl mt-3 font-medium flex gap-2 items-start">
-                                        <span class="flex-shrink-0">⚠️</span>
-                                        <span><strong>Frais de transport non inclus :</strong> à payer directement à la
-                                            livraison en agence.</span>
-                                    </div>
-                                @else
-                                    <div
-                                        class="bg-emerald-100/80 border border-emerald-300 text-emerald-900 text-xs p-3 rounded-xl mt-3 font-medium flex gap-2 items-center">
-                                        <span class="flex-shrink-0">✓</span>
-                                        <span><strong>Frais de transport inclus</strong> vers l'agence de votre
-                                            ville.</span>
-                                    </div>
-                                @endif
-                            </div>
-                        </div> --}}
                         {{-- Récapitulatif financier côté acheteur --}}
                         <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-5">
                             <h2 class="font-bold text-gray-800 mb-3">Récapitulatif</h2>
@@ -195,9 +159,9 @@
                                 <div class="flex justify-between">
                                     <span class="text-gray-600">
                                         Frais Mobile Money
-                                        ({{ \App\Models\PlatformSetting::getValue('campay_collect_rate') }}%)
+                                        ({{ \App\Models\PlatformSetting::getValue('gateway_collect_rate') }}%)
                                     </span>
-                                    <span id="s-campay">—</span>
+                                    <span id="s-elgiopay">—</span>
                                 </div>
                                 <div
                                     class="flex justify-between font-bold text-gray-900
@@ -212,8 +176,8 @@
                             <script>
                                 const unitPrice = {{ $product->price }};
                                 const protRate = {{ \App\Models\PlatformSetting::getRate('protection_rate') }};
-                                const collectRate = {{ \App\Models\PlatformSetting::getRate('campay_collect_rate') }};
-                                const fixedFee = {{ (int) \App\Models\PlatformSetting::getValue('campay_fixed_fee', 0) }};
+                                const collectRate = {{ \App\Models\PlatformSetting::getRate('gateway_collect_rate') }};
+                                const fixedFee = {{ (int) \App\Models\PlatformSetting::getValue('gateway_fixed_fee', 0) }};
                                 const qtyInput = document.querySelector('input[name="quantity"]');
 
                                 function fmt(n) {
@@ -223,18 +187,19 @@
                                 function update() {
                                     const qty = parseInt(qtyInput.value) || 1;
                                     const subtotal = unitPrice * qty;
-                                    const protection = Math.round(subtotal * protRate);
+                                    const protection = Math.ceil(subtotal * protRate);
                                     const wantNet = subtotal + protection;
 
                                     // Gross-Up collect
                                     const total = collectRate > 0 && collectRate < 1 ?
                                         Math.ceil((wantNet + fixedFee) / (1 - collectRate)) :
                                         wantNet + fixedFee;
-                                    const campay = total - wantNet;
+
+                                    const elgiopay = total - wantNet;
 
                                     document.getElementById('s-subtotal').textContent = fmt(subtotal);
                                     document.getElementById('s-protection').textContent = fmt(protection);
-                                    document.getElementById('s-campay').textContent = fmt(campay);
+                                    document.getElementById('s-elgiopay').textContent = fmt(elgiopay);
                                     document.getElementById('s-total').textContent = fmt(total);
                                 }
 
@@ -267,45 +232,5 @@
         </div>
     </div>
 
-    {{-- @push('scripts')
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const unitPrice = {{ (float) $product->price }};
-                const qtyInput = document.getElementById('quantity');
-                const summaryQty = document.getElementById('summary-qty');
 
-                function formatCurrency(amount) {
-                    return new Intl.NumberFormat('fr-FR').format(amount) + ' FCFA';
-                }
-
-                function calculateTotal() {
-                    let qty = parseInt(qtyInput.value);
-                    const minQty = parseInt(qtyInput.getAttribute('min')) || 1;
-
-                    if (isNaN(qty) || qty < 1) {
-                        qty = minQty;
-                    }
-
-                    const subtotal = unitPrice * qty;
-                    const protection = Math.round(subtotal * 0.02);
-                    const gateway = Math.round(subtotal * 0.02);
-                    const total = subtotal + protection + gateway;
-
-                    if (summaryQty) summaryQty.textContent = qty;
-                    document.getElementById('subtotal').textContent = formatCurrency(subtotal);
-                    document.getElementById('protection').textContent = formatCurrency(protection);
-                    document.getElementById('gateway').textContent = formatCurrency(gateway);
-                    document.getElementById('total').textContent = formatCurrency(total);
-                }
-
-                // Écoute de tous les événements de saisie et de changement
-                ['input', 'change', 'keyup', 'click'].forEach(eventType => {
-                    qtyInput.addEventListener(eventType, calculateTotal);
-                });
-
-                // Calcul au chargement initial
-                calculateTotal();
-            });
-        </script>
-    @endpush --}}
 @endsection
