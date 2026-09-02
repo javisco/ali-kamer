@@ -1,58 +1,84 @@
-<?php
+ <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+    use Illuminate\Database\Migrations\Migration;
+    use Illuminate\Database\Schema\Blueprint;
+    use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+
+
+
+    // Structure standard Laravel (générée normalement par
+    // `php artisan notifications:table`). Je te la fournis directement pour
+    // éviter que tu aies à lancer la commande toi-même.
+    return new class extends Migration
     {
-        Schema::create('notifications', function (Blueprint $table) {
-            $table->id();
+        public function up(): void
+        {
+            Schema::create('notifications', function (Blueprint $table) {
+                $table->uuid('id')->primary();
+                $table->string('type');
+                $table->morphs('notifiable'); // notifiable_type + notifiable_id (indexé)
+                $table->text('data');
+                $table->timestamp('read_at')->nullable();
+                $table->timestamps();
+            });
+        }
 
-            // Destinataire de la notification
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+        public function down(): void
+        {
+            Schema::dropIfExists('notifications');
+        }
+    };
 
-            // Canal d'envoi
-            $table->enum('channel', ['whatsapp', 'sms', 'push', 'email']);
+// return new class extends Migration
+// {
+//     /**
+//      * Run the migrations.
+//      */
+//     public function up(): void
+//     {
+//         Schema::create('notifications', function (Blueprint $table) {
+//             $table->id();
 
-            // Type d'événement — ex: 'order.paid', 'dispute.opened'
-            $table->string('type');
+//             // Destinataire de la notification
+//             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
 
-            $table->string('title')->nullable();
-            $table->text('body');
+//             // Canal d'envoi
+//             $table->enum('channel', ['whatsapp', 'sms', 'push', 'email']);
 
-            // Données contextuelles (order_id, dispute_id, etc.)
-            $table->json('data')->nullable();
+//             // Type d'événement — ex: 'order.paid', 'dispute.opened'
+//             $table->string('type');
 
-            // Statut d'envoi
-            $table->enum('status', [
-                'pending',   // en file d'attente
-                'sent',      // envoyé
-                'delivered', // confirmé délivré
-                'failed',    // échec
-            ])->default('pending');
+//             $table->string('title')->nullable();
+//             $table->text('body');
 
-            // Nombre de tentatives
-            $table->unsignedTinyInteger('retry_count')->default(0);
+//             // Données contextuelles (order_id, dispute_id, etc.)
+//             $table->json('data')->nullable();
 
-            // Message d'erreur si échec
-            $table->text('error_message')->nullable();
+//             // Statut d'envoi
+//             $table->enum('status', [
+//                 'pending',   // en file d'attente
+//                 'sent',      // envoyé
+//                 'delivered', // confirmé délivré
+//                 'failed',    // échec
+//             ])->default('pending');
 
-            $table->timestamp('sent_at')->nullable();
-            $table->timestamps();
+//             // Nombre de tentatives
+//             $table->unsignedTinyInteger('retry_count')->default(0);
 
-            $table->index(['user_id', 'status']);
-            $table->index('type');
-        });
-    }
+//             // Message d'erreur si échec
+//             $table->text('error_message')->nullable();
 
-    public function down(): void
-    {
-        Schema::dropIfExists('notifications');
-    }
-};
+//             $table->timestamp('sent_at')->nullable();
+//             $table->timestamps();
+
+//             $table->index(['user_id', 'status']);
+//             $table->index('type');
+//         });
+//     }
+
+//     public function down(): void
+//     {
+//         Schema::dropIfExists('notifications');
+//     }
+// }; 

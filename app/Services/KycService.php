@@ -9,6 +9,8 @@ use App\Models\Shop;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use App\Notifications\KycApprovedNotification;
+use App\Notifications\KycRejectedNotification;
 
 class KycService
 {
@@ -73,7 +75,7 @@ class KycService
                 'status'      => 'active',
                 'verified_at' => now(),
             ]);
-
+            $kyc->user->notify(new KycApprovedNotification());
             AdminLog::record(
                 $admin,
                 'kyc.approved',
@@ -99,7 +101,7 @@ class KycService
                 'rejection_reason' => $reason,
                 'reviewed_at'      => now(),
             ]);
-
+            $kyc->user->notify(new KycRejectedNotification($reason));
             AdminLog::record(
                 $admin,
                 'kyc.rejected',

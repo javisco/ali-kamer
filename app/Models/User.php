@@ -211,4 +211,12 @@ class User extends Authenticatable implements MustVerifyEmail
             'agency_counter_id'
         )->withPivot('is_primary')->withTimestamps();
     }
+    public function routeNotificationForVonage($notification): string
+    {
+        return '237' . ltrim($this->phone_momo ?? $this->phone, '0');
+    }
+    public function routeNotificationForWhatsApp($notification): string
+    {
+        return '237' . ltrim($this->phone_momo ?? $this->phone, '0');
+    }
 }

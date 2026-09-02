@@ -41,9 +41,16 @@ return [
         'password'        => env('CAMPAY_APP_PASSWORD'),
         'base_url'        => env('CAMPAY_BASE_URL', 'https://demo.campay.net/api'),
     ],
+    'vonage' => [
+        'key'          => env('VONAGE_KEY'),
+        'secret'       => env('VONAGE_SECRET'),
+        'sms_from'     => env('VONAGE_SMS_FROM', 'AliKamer'), // nom expéditeur (11 car. max, alphanumérique)
+    ],
+
     'whatsapp' => [
         'phone_number_id' => env('WHATSAPP_PHONE_NUMBER_ID'),
-        'token'           => env('WHATSAPP_TOKEN'),
+        'access_token'     => env('WHATSAPP_ACCESS_TOKEN'),
+        'api_version'      => env('WHATSAPP_API_VERSION', 'v21.0'),
     ],
     'elgiopay' => [
         'base_url'       => env('ELGIOPAY_BASE_URL', 'https://sandbox-api.elgiopay.com'),

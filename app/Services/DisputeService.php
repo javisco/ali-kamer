@@ -11,6 +11,8 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use App\Notifications\DisputeOpenedNotification;
+use App\Notifications\DisputeResolvedNotification;
 
 class DisputeService
 {
@@ -58,7 +60,7 @@ class DisputeService
             }
 
             $order->update(['status' => Order::STATUS_DISPUTED]);
-
+            $order->shop->user->notify(new DisputeOpenedNotification($dispute));
             return $dispute;
         });
     }
@@ -117,6 +119,8 @@ class DisputeService
             ]);
 
             $this->applyResolution($dispute);
+            $dispute->order->buyer->notify(new DisputeResolvedNotification($dispute, 'buyer'));   // ← AJOUT
+            $dispute->order->shop->user->notify(new DisputeResolvedNotification($dispute, 'seller')); // ← AJOUT
 
             $dispute->order->update([
                 'status'       => Order::STATUS_COMPLETED,

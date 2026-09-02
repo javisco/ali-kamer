@@ -10,6 +10,9 @@ use App\Models\WalletTransaction;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use App\Notifications\OrderPaidNotification;
+use App\Notifications\PaymentFailedNotification;
+use App\Notifications\TransportFeePaidNotification;
 
 class PaymentService
 {
@@ -132,7 +135,7 @@ class PaymentService
                     'ref_id'       => $shipment->id,
                     'note'         => "payement des frais de transport {$shipment->order->reference} — virement MoMo {$shipment->order->payer_phone}",
                 ]);
-
+                $order->buyer->notify(new TransportFeePaidNotification($order));
                 Log::info('Transport fee paid via webhook, OTP generated', [
                     'order' => $order->reference,
                     'otp'   => $otp,
@@ -231,6 +234,7 @@ class PaymentService
                 $order->net_amount,
                 $order
             );
+            $order->shop->user->notify(new OrderPaidNotification($order));
         });
 
         Log::info('Paiement confirmé', ['order' => $order->reference]);
@@ -249,7 +253,7 @@ class PaymentService
                 $item->product->decrement('stock_reserved', $item->quantity);
             }
         });
-
+        $order->buyer->notify(new PaymentFailedNotification($order));
         Log::info('Paiement échoué', ['order' => $order->reference]);
     }
 
@@ -287,6 +291,7 @@ class PaymentService
             $result = $this->elgiopay->collect(
                 phone: $formattedPhone,
                 amount: $grossAmount,
+                customer_name:$order->buyer->name,
                 reference: $reference,
                 description: "Frais transport commande {$order->reference}",
                 operator: $operator
@@ -362,7 +367,7 @@ class PaymentService
                         'otp_code'       => $otp,
                         'otp_expires_at' => now()->addHours(120),
                     ]);
-
+                    $order->buyer->notify(new TransportFeePaidNotification($order));
                     Log::info('Transport fee paid via sync, OTP generated', [
                         'order' => $order->reference,
                         'otp'   => $otp,

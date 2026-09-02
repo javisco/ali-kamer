@@ -523,3 +523,18 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::resource('categories', CategoryController::class)->except(['create', 'show', 'edit']);
         Route::patch('categories/{category}/toggle-status', [CategoryController::class, 'toggleStatus'])->name('categories.toggle-status');
 });
+
+
+
+use App\Http\Controllers\Api\NotificationController;
+
+
+// Accessible à tout utilisateur connecté (acheteur, vendeur, admin) —
+// pas de middleware 'role:' spécifique puisque la cloche est commune.
+Route::middleware('auth')->prefix('notifications')->name('notifications.')->group(function () {
+
+    Route::get('/', [NotificationController::class, 'index'])->name('index');
+    Route::get('/unread-count', [NotificationController::class, 'unreadCount'])->name('unread-count');
+    Route::post('/{id}/read', [NotificationController::class, 'markAsRead'])->name('read');
+    Route::post('/read-all', [NotificationController::class, 'markAllAsRead'])->name('read-all');
+});

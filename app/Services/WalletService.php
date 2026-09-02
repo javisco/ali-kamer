@@ -163,6 +163,7 @@ class WalletService
                         number_format($gatewayFee, 0, ',', ' ')
                     ),
                 ]);
+                $user->notify(new WithdrawalCompletedNotification($netAmount, $phone));
             } catch (\Exception $e) {
                 // Rollback si Elgiopay échoue
                 $user->increment('wallet_available', $netAmount);
@@ -177,7 +178,7 @@ class WalletService
                     'ref_id'        => null,
                     'note'          => 'Retrait échoué — montant recrédité : ' . $e->getMessage(),
                 ]);
-
+                $user->notify(new WithdrawalFailedNotification($netAmount, $e->getMessage()));
                 throw ValidationException::withMessages([
                     'amount' => 'Le virement a échoué : ' . $e->getMessage(),
                 ]);
