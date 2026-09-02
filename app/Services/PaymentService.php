@@ -40,7 +40,7 @@ class PaymentService
             $result = $this->elgiopay->collect(
                 phone: $phone,
                 amount: $order->total_amount,
-                customer_phone: $order->buyer->name,          // déjà le montant Gross-Up
+                customer_name: $order->buyer->name,          // déjà le montant Gross-Up
                 reference: $payment->idempotency_key,
                 description: "Commande Ali-Kamer {$order->reference}",
                 operator: $payment->payer_operator

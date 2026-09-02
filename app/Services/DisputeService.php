@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use App\Notifications\DisputeOpenedNotification;
 use App\Notifications\DisputeResolvedNotification;
+use App\Notifications\AdminDisputeOpenedNotification;
+use Illuminate\Support\Facades\Notification as NotificationFacade;
 
 class DisputeService
 {
@@ -61,6 +63,11 @@ class DisputeService
 
             $order->update(['status' => Order::STATUS_DISPUTED]);
             $order->shop->user->notify(new DisputeOpenedNotification($dispute));
+            NotificationFacade::send(                                    // ← AJOUT
+                User::where('role', 'admin')->get(),                     // ← AJOUT
+                new AdminDisputeOpenedNotification($dispute)              // ← AJOUT
+            );
+
             return $dispute;
         });
     }

@@ -12,6 +12,7 @@ use App\Models\ProductVariant;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Notifications\ProductOutOfStockNotification;
 
 class OrderService
 {
@@ -116,7 +117,7 @@ class OrderService
             $availableStock = $variant
                 ? $variant->availableStock()
                 : $product->availableStock();
-
+            $this->checkStockAndNotify($variant ?? $product, $product);
             if ($availableStock < $quantity) {
                 throw new \Exception('Stock insuffisant. Disponible : ' . $availableStock);
             }
@@ -246,6 +247,7 @@ class OrderService
                     : $item->product->increment('stock_reserved', $item->quantity);
             }
 
+            $this->checkStockAndNotify($item->variant ?? $item->product, $item->product);
             $allShippingIncluded = $items->every(fn($item) => (bool) $item->product->shipping_included);
 
             OrderShipment::create([
@@ -305,5 +307,16 @@ class OrderService
                     );
                 });
             });
+    }
+
+    private function checkStockAndNotify(Product|ProductVariant $stockable, Product $product): void
+    {
+        $stockable->refresh();
+
+        if ($stockable->availableStock() <= 0) {
+            $product->shop->user->notify(
+                new ProductOutOfStockNotification($product, $stockable instanceof ProductVariant ? $stockable : null)
+            );
+        }
     }
 }
