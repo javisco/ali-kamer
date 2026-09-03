@@ -364,7 +364,7 @@
 
                 {{-- Historique --}}
 
-                <a
+                {{-- <a
                     href="{{ route('seller.wallet.history') }}"
                     @click="sidebarOpen = false"
                     class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
@@ -389,7 +389,7 @@
 
                     <span>Historique</span>
 
-                </a>
+                </a> --}}
 
 
                 {{-- =============================================

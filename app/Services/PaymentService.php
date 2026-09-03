@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\ElgiopayWebhookEvent;
 use App\Models\Order;
 use App\Models\OrderPayment;
 use App\Models\OrderShipment;
@@ -10,6 +11,9 @@ use App\Models\WalletTransaction;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use App\Notifications\OrderPaidNotification;
+use App\Notifications\PaymentFailedNotification;
+use App\Notifications\TransportFeePaidNotification;
 
 class PaymentService
 {
@@ -37,7 +41,7 @@ class PaymentService
             $result = $this->elgiopay->collect(
                 phone: $phone,
                 amount: $order->total_amount,
-                name:$order->buyer->name,          // déjà le montant Gross-Up
+                name: $order->buyer->name,          // déjà le montant Gross-Up
                 reference: $payment->idempotency_key,
                 description: "Commande Ali-Kamer {$order->reference}",
                 operator: $payment->payer_operator
@@ -132,6 +136,8 @@ class PaymentService
                     'ref_id'       => $shipment->id,
                     'note'         => "payement des frais de transport {$shipment->order->reference} — virement MoMo {$shipment->order->payer_phone}",
                 ]);
+
+                //    $order->buyer->notify(new TransportFeePaidNotification($order));
 
                 Log::info('Transport fee paid via webhook, OTP generated', [
                     'order' => $order->reference,
@@ -231,6 +237,7 @@ class PaymentService
                 $order->net_amount,
                 $order
             );
+            //  $order->shop->user->notify(new OrderPaidNotification($order));
         });
 
         Log::info('Paiement confirmé', ['order' => $order->reference]);
@@ -249,7 +256,7 @@ class PaymentService
                 $item->product->decrement('stock_reserved', $item->quantity);
             }
         });
-
+        //   $order->buyer->notify(new PaymentFailedNotification($order));
         Log::info('Paiement échoué', ['order' => $order->reference]);
     }
 
@@ -264,7 +271,7 @@ class PaymentService
         string $phone,
         string $operator
     ): void {
-        $transportFee = $order->shipment->transport_fee ;
+        $transportFee = $order->shipment->transport_fee;
 
         if ($transportFee <= 0) {
             throw new \Exception('Aucun frais de transport à payer.');
@@ -287,7 +294,7 @@ class PaymentService
             $result = $this->elgiopay->collect(
                 phone: $formattedPhone,
                 amount: $grossAmount,
-                name:$order->buyer->name,
+                name: $order->buyer->name,
                 reference: $reference,
                 description: "Frais transport commande {$order->reference}",
                 operator: $operator
@@ -363,6 +370,8 @@ class PaymentService
                         'otp_code'       => $otp,
                         'otp_expires_at' => now()->addHours(120),
                     ]);
+
+                    //  $order->buyer->notify(new TransportFeePaidNotification($order));
 
                     Log::info('Transport fee paid via sync, OTP generated', [
                         'order' => $order->reference,

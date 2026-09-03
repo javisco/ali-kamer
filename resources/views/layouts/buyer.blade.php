@@ -181,7 +181,7 @@
                     Vue globale
                 </p>
 
-                <a href="{{ route('buyer.home') }}"
+                <a href="{{ route('buyer.dashboard') }}"
                    @click="sidebarOpen = false"
                    class="sidebar-item group flex items-center gap-2.5 rounded-lg px-2.5 py-1.5
                           text-[11.5px] font-medium transition
@@ -190,7 +190,7 @@
                               : 'text-white/65 hover:bg-white/[0.06] hover:text-white' }}">
 
                     <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md
-                                 {{ request()->routeIs('buyer.home')
+                                 {{ request()->routeIs('buyer.dashboard')
                                      ? 'bg-white/10'
                                      : 'bg-white/[0.04] group-hover:bg-white/10' }}">
 

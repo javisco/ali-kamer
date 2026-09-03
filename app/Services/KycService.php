@@ -75,7 +75,7 @@ class KycService
                 'status'      => 'active',
                 'verified_at' => now(),
             ]);
-            $kyc->user->notify(new KycApprovedNotification());
+          //  $kyc->user->notify(new KycApprovedNotification());
             AdminLog::record(
                 $admin,
                 'kyc.approved',

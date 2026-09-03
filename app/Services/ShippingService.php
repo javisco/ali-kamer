@@ -12,6 +12,11 @@ use Illuminate\Support\Str;
 
 class ShippingService
 {
+
+    public function __construct(
+        private ElgiopayService $elgiopay,
+
+    ) {}
     // ── PAGE DÉPÔT — Rechercher commande par deposit_code ─────────────
 
     // Le vendeur donne son deposit_code au secrétaire départ
@@ -59,7 +64,27 @@ class ShippingService
             throw new \Exception('Cette commande ne peut plus être enregistrée au départ.');
         }
 
+
+
         DB::transaction(function () use ($order, $secretary, $counter, $transportFee) {
+
+            if ($transportFee > 0) {
+
+                // Gross-Up : l'acheteur paie ce montant, la plateforme reçoit
+                // exactement $transportFee net après déduction des frais gateway.
+                $grossUp     = $this->elgiopay->grossUpCollect($transportFee);
+                $grossAmount = $grossUp['gross'];
+                $gatewayFee  = $grossUp['fee'];
+                $order->shipment->update([
+                    'origin_counter_id' => $counter->id,
+                    'registered_by'     => $secretary->id,
+                    'registered_at'     => now(),
+
+                    // Frais transport saisis par le secrétaire
+                    // (payés en main propre par le vendeur à l'agence)
+                    'transport_fee'     => $grossAmount,
+                ]);
+            }
 
             $order->shipment->update([
                 'origin_counter_id' => $counter->id,
@@ -70,7 +95,6 @@ class ShippingService
                 // (payés en main propre par le vendeur à l'agence)
                 'transport_fee'     => $transportFee,
             ]);
-
             $order->update([
                 'status'     => Order::STATUS_REGISTERED_ORIGIN,
                 'shipped_at' => now(),

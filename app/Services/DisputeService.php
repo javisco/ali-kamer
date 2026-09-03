@@ -126,8 +126,8 @@ class DisputeService
             ]);
 
             $this->applyResolution($dispute);
-            $dispute->order->buyer->notify(new DisputeResolvedNotification($dispute, 'buyer'));   // ← AJOUT
-            $dispute->order->shop->user->notify(new DisputeResolvedNotification($dispute, 'seller')); // ← AJOUT
+          //  $dispute->order->buyer->notify(new DisputeResolvedNotification($dispute, 'buyer'));   // ← AJOUT
+         //   $dispute->order->shop->user->notify(new DisputeResolvedNotification($dispute, 'seller')); // ← AJOUT
 
             $dispute->order->update([
                 'status'       => Order::STATUS_COMPLETED,
