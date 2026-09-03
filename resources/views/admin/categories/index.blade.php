@@ -1,268 +1,207 @@
 @extends('base')
-@section('title', 'Gestion des Catégories')
+
+@section('title', 'Tableau de bord Vendeur - Ali-Kamer')
 
 @section('content')
-    <!-- Wrapper Alpine.js -->
-    <div x-data="{ 
-        editModal: false, 
-        editCategory: { id: null, name: '', parent_id: '', sort_order: 0, is_active: true } 
-    }" class="p-6 bg-gray-50 min-h-screen">
-        
-        <div class="max-w-7xl mx-auto space-y-4">
 
-            <!-- Flash Messages -->
-            @if(session('success'))
-                <div class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-sm font-medium flex items-center justify-between">
-                    <span>{{ session('success') }}</span>
-                    <button onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-800">✕</button>
-                </div>
-            @endif
 
-            @if(session('error'))
-                <div class="p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-sm font-medium flex items-center justify-between">
-                    <span>{{ session('error') }}</span>
-                    <button onclick="this.parentElement.remove()" class="text-rose-500 hover:text-rose-800">✕</button>
-                </div>
-            @endif
+    {{-- CSS d'animation --}}
+    <style>
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    </style>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="min-h-screen bg-slate-50/50 py-8 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-6xl mx-auto space-y-8 animate-fade-in">
 
-                <!-- Formulaire de création -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-fit">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">Nouvelle Catégorie</h3>
+            {{-- 1. HERO BANNER --}}
+            <div class="relative overflow-hidden bg-slate-900 rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-800">
+                {{-- Light leaks decoratifs --}}
+                <div class="absolute -right-12 -top-12 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute left-1/2 -bottom-12 w-64 h-64 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
 
-                    <form action="{{ route('admin.categories.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
-                        @csrf
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Nom *</label>
-                            <input type="text" name="name" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all outline-none">
+                <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                    <div class="space-y-2">
+                        <div class="inline-flex items-center gap-2 bg-slate-800/80 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold text-slate-200 border border-slate-700/60">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            Boutique active
                         </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Catégorie Parente</label>
-                            <select name="parent_id" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all outline-none">
-                                <option value="">Aucune (Catégorie principale)</option>
-                                @foreach ($parentCategories as $parent)
-                                    <option value="{{ $parent->id }}">{{ $parent->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Icône / Image</label>
-                            <input type="file" name="icon" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-gray-100 file:text-gray-700 file:font-semibold hover:file:bg-gray-200 transition">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Ordre d'affichage</label>
-                            <input type="number" name="sort_order" value="0" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-red-500/20 transition outline-none">
-                        </div>
-
-                        <div class="flex items-center gap-2 pt-1">
-                            <input type="checkbox" name="is_active" id="is_active" value="1" checked class="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500">
-                            <label for="is_active" class="text-sm font-medium text-gray-700">Activer la catégorie</label>
-                        </div>
-
-                        <button type="submit" class="w-full py-3 bg-red-600 text-white font-semibold rounded-xl text-sm hover:bg-red-700 shadow-sm transition">
-                            Créer la catégorie
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Arborescence des catégories -->
-                <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">Arborescence des catégories</h3>
-
-                    <div class="divide-y divide-gray-100">
-                        @foreach ($categories as $category)
-                            <div class="py-4">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center gap-3">
-                                        @if ($category->icon)
-                                            <img src="{{ asset('storage/' . $category->icon) }}" class="w-9 h-9 rounded-xl object-cover border border-gray-100">
-                                        @else
-                                            <div class="w-9 h-9 bg-gray-100 rounded-xl flex items-center justify-center text-xs font-bold text-gray-400">#</div>
-                                        @endif
-                                        <div>
-                                            <h4 class="font-bold text-gray-800 text-base">{{ $category->name }}</h4>
-                                            <span class="text-xs text-gray-400 font-medium">{{ $category->products_count }} produits</span>
-                                        </div>
-                                    </div>
-
-                                    <!-- Actions sur la catégorie parente -->
-                                    <div class="flex items-center gap-2">
-                                        <!-- Bouton Éditer -->
-                                        <button @click="
-                                            editCategory = {
-                                                id: '{{ $category->id }}',
-                                                name: '{{ addslashes($category->name) }}',
-                                                parent_id: '{{ $category->parent_id }}',
-                                                sort_order: '{{ $category->sort_order }}',
-                                                is_active: {{ $category->is_active ? 'true' : 'false' }}
-                                            };
-                                            editModal = true;
-                                        " class="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition" title="Modifier">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                            </svg>
-                                        </button>
-
-                                        <!-- Toggle Status -->
-                                        <form action="{{ route('admin.categories.toggle-status', $category) }}" method="POST">
-                                            @csrf
-                                            @method('PATCH')
-                                            <button type="submit" class="px-3 py-1 text-xs font-medium rounded-full transition {{ $category->is_active ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-gray-100 text-gray-500 border border-gray-200' }}">
-                                                {{ $category->is_active ? 'Actif' : 'Inactif' }}
-                                            </button>
-                                        </form>
-
-                                        <!-- Supprimer -->
-                                        <form action="{{ route('admin.categories.destroy', $category) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition" title="Supprimer">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-
-                                <!-- Sous-catégories -->
-                                @if ($category->children->count())
-                                    <div class="ml-8 mt-3 space-y-2 border-l-2 border-gray-100 pl-4">
-                                        @foreach ($category->children as $child)
-                                            <div class="flex items-center justify-between py-1.5 text-sm">
-                                                <span class="text-gray-700 font-medium">↳ {{ $child->name }}</span>
-                                                
-                                                <div class="flex items-center gap-3">
-                                                    <span class="text-xs text-gray-400">{{ $child->products_count }} produits</span>
-
-                                                    <!-- Modifier enfant -->
-                                                    <button @click="
-                                                        editCategory = {
-                                                            id: '{{ $child->id }}',
-                                                            name: '{{ addslashes($child->name) }}',
-                                                            parent_id: '{{ $child->parent_id }}',
-                                                            sort_order: '{{ $child->sort_order }}',
-                                                            is_active: {{ $child->is_active ? 'true' : 'false' }}
-                                                        };
-                                                        editModal = true;
-                                                    " class="text-gray-400 hover:text-indigo-600 transition" title="Modifier">
-                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                                        </svg>
-                                                    </button>
-
-                                                    <!-- Toggle Status Enfant -->
-                                                    <form action="{{ route('admin.categories.toggle-status', $child) }}" method="POST">
-                                                        @csrf
-                                                        @method('PATCH')
-                                                        <button type="submit" class="px-2 py-0.5 text-[10px] font-medium rounded-full transition {{ $child->is_active ? 'bg-emerald-50 text-emerald-600' : 'bg-gray-100 text-gray-500' }}">
-                                                            {{ $child->is_active ? 'Actif' : 'Inactif' }}
-                                                        </button>
-                                                    </form>
-
-                                                    <!-- Supprimer Enfant -->
-                                                    <form action="{{ route('admin.categories.destroy', $child) }}" method="POST" onsubmit="return confirm('Supprimer cette sous-catégorie ?');">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="text-gray-400 hover:text-red-600 transition">
-                                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                                            </svg>
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                @endif
-                            </div>
-                        @endforeach
+                        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+                            {{ $shop->name }}
+                        </h1>
+                        <p class="text-slate-400 text-xs sm:text-sm max-w-xl">
+                            Pilotez l'ensemble de votre catalogue, suivez vos commandes et gérez votre trésorerie.
+                        </p>
                     </div>
 
-                    <!-- Pagination -->
+                    {{-- Actions rapides --}}
+                    <div class="flex items-center gap-3 shrink-0">
+                        <a href="{{ route('seller.products.create') }}"
+                            class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold shadow-sm transition-all duration-150">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+                            </svg>
+                            <span>Nouveau produit</span>
+                        </a>
+
+                        <a href="{{ route('seller.shop.edit') }}" title="Paramètres de la boutique"
+                            class="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl transition border border-slate-700">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            {{-- 2. KPIs METRICS --}}
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+
+                <!-- Card 1 : Total Produits -->
+                <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:border-slate-300 transition-all">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Catalogue</span>
+                        <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                            </svg>
+                        </div>
+                    </div>
                     <div class="mt-4">
-                        {{ $categories->links() }}
+                        <p class="text-3xl font-black text-slate-900 tracking-tight">{{ $productsCount }}</p>
+                        <p class="text-xs text-slate-500 mt-1">Articles enregistrés</p>
+                    </div>
+                </div>
+
+                <!-- Card 2 : Produits Visibles -->
+                <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:border-slate-300 transition-all">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">En vente</span>
+                        <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <p class="text-3xl font-black text-emerald-600 tracking-tight">{{ $visibleCount }}</p>
+                        <p class="text-xs text-slate-500 mt-1">Produits actifs en boutique</p>
+                    </div>
+                </div>
+
+                <!-- Card 3 : Localisation -->
+                <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:border-slate-300 transition-all">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Localisation</span>
+                        <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <p class="text-2xl font-black text-slate-900 truncate tracking-tight">{{ $shop->city ?? 'Non définie' }}</p>
+                        <p class="text-xs text-slate-500 mt-1">Ville d'expédition principale</p>
                     </div>
                 </div>
 
             </div>
+
+            {{-- 3. NAVIGATION TECHNIQUE / GESTION --}}
+            <div class="space-y-4">
+                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider px-1">
+                    Gestion du commerce
+                </h2>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+                    <!-- Produits -->
+                    <a href="{{ route('seller.products.index') }}"
+                        class="group bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-blue-500 transition-all flex flex-col justify-between h-32">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                                </svg>
+                            </div>
+                            <svg class="w-4 h-4 text-slate-300 group-hover:text-blue-600 transform group-hover:translate-x-0.5 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-900 group-hover:text-blue-600 transition-colors">Mes Produits</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Gérer le catalogue</p>
+                        </div>
+                    </a>
+
+                    <!-- Commandes -->
+                    <a href="{{ route('seller.orders.index') }}"
+                        class="group bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-orange-500 transition-all flex flex-col justify-between h-32">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center group-hover:bg-orange-600 group-hover:text-white transition-colors">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                </svg>
+                            </div>
+                            <svg class="w-4 h-4 text-slate-300 group-hover:text-orange-600 transform group-hover:translate-x-0.5 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-900 group-hover:text-orange-600 transition-colors">Commandes</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Traiter les ventes</p>
+                        </div>
+                    </a>
+
+                    <!-- Portefeuille -->
+                    <a href="{{ route('seller.wallet.index') }}"
+                        class="group bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-emerald-500 transition-all flex flex-col justify-between h-32">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <svg class="w-4 h-4 text-slate-300 group-hover:text-emerald-600 transform group-hover:translate-x-0.5 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">Portefeuille</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Solde & demandes de retrait</p>
+                        </div>
+                    </a>
+
+                    <!-- Historique Transactions -->
+                    <a href="{{ route('seller.wallet.history') }}"
+                        class="group bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-indigo-500 transition-all flex flex-col justify-between h-32">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <svg class="w-4 h-4 text-slate-300 group-hover:text-indigo-600 transform group-hover:translate-x-0.5 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">Transactions</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Historique des mouvements</p>
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+
         </div>
-
-        <!-- MODAL DE MODIFICATION SÉCURISÉ & ÉLÉGANT -->
-        <template x-teleport="body">
-            <div x-show="editModal" 
-                 x-transition:enter="transition ease-out duration-200"
-                 x-transition:enter-start="opacity-0"
-                 x-transition:enter-end="opacity-100"
-                 x-transition:leave="transition ease-in duration-150"
-                 x-transition:leave-start="opacity-100"
-                 x-transition:leave-end="opacity-0"
-                 class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm" 
-                 x-cloak>
-                
-                <div @click.away="editModal = false" 
-                     class="w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden transform transition-all">
-                    
-                    <!-- Modal Header -->
-                    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
-                        <h3 class="text-base font-bold text-gray-900">Modifier la catégorie</h3>
-                        <button @click="editModal = false" class="text-gray-400 hover:text-gray-600 p-1 rounded-lg transition">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                        </button>
-                    </div>
-
-                    <!-- Modal Body -->
-                    <form :action="'{{ url('admin/categories') }}/' + editCategory.id" method="POST" enctype="multipart/form-data" class="p-6 space-y-4">
-                        @csrf
-                        @method('PUT')
-
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Nom de la catégorie *</label>
-                            <input type="text" name="name" x-model="editCategory.name" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition outline-none">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Catégorie Parente</label>
-                            <select name="parent_id" x-model="editCategory.parent_id" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition outline-none">
-                                <option value="">Aucune (Catégorie principale)</option>
-                                @foreach ($parentCategories as $parent)
-                                    <option value="{{ $parent->id }}">{{ $parent->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Nouvelle icône (Optionnel)</label>
-                            <input type="file" name="icon" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-gray-100 file:text-gray-700 file:font-semibold hover:file:bg-gray-200 transition">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Ordre d'affichage</label>
-                            <input type="number" name="sort_order" x-model="editCategory.sort_order" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-red-500/20 transition outline-none">
-                        </div>
-
-                        <div class="flex items-center gap-2 pt-1">
-                            <input type="checkbox" name="is_active" id="edit_is_active" value="1" :checked="editCategory.is_active" class="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500">
-                            <label for="edit_is_active" class="text-sm font-medium text-gray-700">Activer la catégorie</label>
-                        </div>
-
-                        <!-- Modal Actions -->
-                        <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
-                            <button type="button" @click="editModal = false" class="px-5 py-2.5 bg-gray-100 text-gray-700 rounded-xl text-sm font-semibold hover:bg-gray-200 transition">
-                                Annuler
-                            </button>
-                            <button type="submit" class="px-5 py-2.5 bg-red-600 text-white rounded-xl text-sm font-semibold hover:bg-red-700 shadow-sm transition">
-                                Enregistrer
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </template>
-
     </div>
+
 @endsection

@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\User;
 use App\Models\WalletTransaction;
 use App\Services\CampayService;
+use App\Services\ElgiopayService;
 use App\Services\KycService;
 use App\Services\WalletService;
 use Illuminate\Http\Request;
@@ -68,9 +69,9 @@ class AdminDashboardController extends Controller
             ->get();
 
         // Solde Campay en temps réel
-        $campayBalance = null;
+        $elgiopayBalance = null;
         try {
-            $campayBalance = app(CampayService::class)->getBalance();
+            $elgiopayBalance = app(ElgiopayService::class)->getBalance();
         } catch (\Exception $e) {
             \Log::warning('Campay balance unavailable', ['error' => $e->getMessage()]);
         }
@@ -80,7 +81,7 @@ class AdminDashboardController extends Controller
             'pendingKyc',
             'openDisputes',
             'recentOrders',
-            'campayBalance'
+            'elgiopayBalance'
         ));
     }
 

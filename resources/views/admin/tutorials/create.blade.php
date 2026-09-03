@@ -1,4 +1,4 @@
-@extends('base')
+@extends('layouts.admin')
 @section('title', 'Nouveau tutoriel')
 @section('content')
 <div class="bg-gray-50 min-h-screen py-8">

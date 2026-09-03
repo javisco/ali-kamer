@@ -1,206 +1,815 @@
-@extends('base')
+@extends('layouts.seller')
 
 @section('title', 'Tableau de bord Vendeur - Ali-Kamer')
 
 @section('content')
 
-    {{-- CSS d'animation --}}
-    <style>
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
+<style>
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
         }
-        .animate-fade-in { animation: fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    </style>
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 
-    <div class="min-h-screen bg-slate-50/50 py-8 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-6xl mx-auto space-y-8 animate-fade-in">
+    .animate-fade-in {
+        animation: fadeInUp .3s cubic-bezier(.16,1,.3,1) forwards;
+    }
+</style>
 
-            {{-- 1. HERO BANNER --}}
-            <div class="relative overflow-hidden bg-slate-900 rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-800">
-                {{-- Light leaks decoratifs --}}
-                <div class="absolute -right-12 -top-12 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
-                <div class="absolute left-1/2 -bottom-12 w-64 h-64 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
+<div class="min-h-screen bg-[#F7F8FA] p-4 sm:p-6 lg:p-7">
 
-                <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-                    <div class="space-y-2">
-                        <div class="inline-flex items-center gap-2 bg-slate-800/80 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold text-slate-200 border border-slate-700/60">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                            Boutique active
-                        </div>
-                        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-                            {{ $shop->name }}
-                        </h1>
-                        <p class="text-slate-400 text-xs sm:text-sm max-w-xl">
-                            Pilotez l'ensemble de votre catalogue, suivez vos commandes et gérez votre trésorerie.
-                        </p>
-                    </div>
 
-                    {{-- Actions rapides --}}
-                    <div class="flex items-center gap-3 shrink-0">
-                        <a href="{{ route('seller.products.create') }}"
-                            class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold shadow-sm transition-all duration-150">
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
-                            </svg>
-                            <span>Nouveau produit</span>
-                        </a>
+<div class="max-w-7xl mx-auto space-y-6 animate-fade-in">
 
-                        <a href="{{ route('seller.shop.edit') }}" title="Paramètres de la boutique"
-                            class="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl transition border border-slate-700">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
+    {{-- =====================================================
+        HEADER
+    ====================================================== --}}
+    <div class="flex flex-col sm:flex-row sm:items-center
+                sm:justify-between gap-4">
 
-            {{-- 2. KPIs METRICS --}}
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <div>
 
-                <!-- Card 1 : Total Produits -->
-                <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:border-slate-300 transition-all">
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Catalogue</span>
-                        <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="mt-4">
-                        <p class="text-3xl font-black text-slate-900 tracking-tight">{{ $productsCount }}</p>
-                        <p class="text-xs text-slate-500 mt-1">Articles enregistrés</p>
-                    </div>
-                </div>
+            <p class="text-[11px] font-black uppercase
+                      tracking-widest text-[#00843D]">
+                Vue d'ensemble
+            </p>
 
-                <!-- Card 2 : Produits Visibles -->
-                <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:border-slate-300 transition-all">
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">En vente</span>
-                        <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="mt-4">
-                        <p class="text-3xl font-black text-emerald-600 tracking-tight">{{ $visibleCount }}</p>
-                        <p class="text-xs text-slate-500 mt-1">Produits actifs en boutique</p>
-                    </div>
-                </div>
+            <h1 class="mt-1 text-2xl sm:text-3xl font-black
+                       tracking-tight text-slate-900">
+                Bonjour, {{ auth()->user()->name ?? 'Vendeur' }} 👋
+            </h1>
 
-                <!-- Card 3 : Localisation -->
-                <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:border-slate-300 transition-all">
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Localisation</span>
-                        <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="mt-4">
-                        <p class="text-2xl font-black text-slate-900 truncate tracking-tight">{{ $shop->city ?? 'Non définie' }}</p>
-                        <p class="text-xs text-slate-500 mt-1">Ville d'expédition principale</p>
-                    </div>
-                </div>
-
-            </div>
-
-            {{-- 3. NAVIGATION TECHNIQUE / GESTION --}}
-            <div class="space-y-4">
-                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider px-1">
-                    Gestion du commerce
-                </h2>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-
-                    <!-- Produits -->
-                    <a href="{{ route('seller.products.index') }}"
-                        class="group bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-blue-500 transition-all flex flex-col justify-between h-32">
-                        <div class="flex items-center justify-between">
-                            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                                </svg>
-                            </div>
-                            <svg class="w-4 h-4 text-slate-300 group-hover:text-blue-600 transform group-hover:translate-x-0.5 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 class="text-sm font-bold text-slate-900 group-hover:text-blue-600 transition-colors">Mes Produits</h3>
-                            <p class="text-xs text-slate-500 mt-0.5">Gérer le catalogue</p>
-                        </div>
-                    </a>
-
-                    <!-- Commandes -->
-                    <a href="{{ route('seller.orders.index') }}"
-                        class="group bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-orange-500 transition-all flex flex-col justify-between h-32">
-                        <div class="flex items-center justify-between">
-                            <div class="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center group-hover:bg-orange-600 group-hover:text-white transition-colors">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                                </svg>
-                            </div>
-                            <svg class="w-4 h-4 text-slate-300 group-hover:text-orange-600 transform group-hover:translate-x-0.5 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 class="text-sm font-bold text-slate-900 group-hover:text-orange-600 transition-colors">Commandes</h3>
-                            <p class="text-xs text-slate-500 mt-0.5">Traiter les ventes</p>
-                        </div>
-                    </a>
-
-                    <!-- Portefeuille -->
-                    <a href="{{ route('seller.wallet.index') }}"
-                        class="group bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-emerald-500 transition-all flex flex-col justify-between h-32">
-                        <div class="flex items-center justify-between">
-                            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                </svg>
-                            </div>
-                            <svg class="w-4 h-4 text-slate-300 group-hover:text-emerald-600 transform group-hover:translate-x-0.5 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 class="text-sm font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">Portefeuille</h3>
-                            <p class="text-xs text-slate-500 mt-0.5">Solde & demandes de retrait</p>
-                        </div>
-                    </a>
-
-                    <!-- Historique Transactions -->
-                    <a href="{{ route('seller.wallet.history') }}"
-                        class="group bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-indigo-500 transition-all flex flex-col justify-between h-32">
-                        <div class="flex items-center justify-between">
-                            <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </div>
-                            <svg class="w-4 h-4 text-slate-300 group-hover:text-indigo-600 transform group-hover:translate-x-0.5 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 class="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">Transactions</h3>
-                            <p class="text-xs text-slate-500 mt-0.5">Historique des mouvements</p>
-                        </div>
-                    </a>
-
-                </div>
-            </div>
+            <p class="text-sm text-slate-500 mt-1">
+                Voici ce qui se passe actuellement dans votre boutique.
+            </p>
 
         </div>
+
+        <a
+            href="{{ route('seller.products.create') }}"
+            class="
+                inline-flex items-center justify-center gap-2
+                px-4 py-2.5 rounded-xl
+                bg-[#00843D]
+                hover:bg-[#006F34]
+                text-white text-xs font-bold
+                shadow-sm hover:shadow-md
+                transition-all active:scale-95
+            "
+        >
+
+            <svg class="w-4 h-4" fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+
+                <path stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2.5"
+                    d="M12 4v16m8-8H4"/>
+
+            </svg>
+
+            Ajouter un produit
+
+        </a>
+
     </div>
+
+
+    {{-- =====================================================
+        BOUTIQUE STATUS
+    ====================================================== --}}
+    <div
+        class="
+            relative overflow-hidden
+            rounded-2xl
+            bg-[#0a1b12]
+            p-5 sm:p-6
+            border border-slate-800
+            shadow-sm
+        "
+    >
+
+        {{-- Tricolore --}}
+        <div class="absolute top-0 left-0 right-0 h-1 flex">
+            <span class="w-1/3 bg-[#00843D]"></span>
+            <span class="w-1/3 bg-[#CE1126]"></span>
+            <span class="w-1/3 bg-[#FCD116]"></span>
+        </div>
+
+        <div class="relative flex flex-col sm:flex-row
+                    sm:items-center sm:justify-between gap-4">
+
+            <div>
+
+                <div class="flex items-center gap-2">
+
+                    <span
+                        class="w-2 h-2 rounded-full
+                               bg-[#00843D] animate-pulse"
+                    ></span>
+
+                    <span
+                        class="text-[10px] font-bold uppercase
+                               tracking-wider text-[#FCD116]"
+                    >
+                        Boutique active
+                    </span>
+
+                </div>
+
+                <h2 class="text-lg sm:text-xl font-black
+                           text-white mt-2">
+                    {{ $shop->name ?? 'Ma boutique' }}
+                </h2>
+
+                <p class="text-xs text-slate-400 mt-1">
+                    {{ $shop->city ?? 'Localisation non définie' }}
+                </p>
+
+            </div>
+
+
+            <a
+                href="{{ route('seller.shop.edit') }}"
+                class="
+                    inline-flex items-center justify-center gap-2
+                    px-3.5 py-2 rounded-xl
+                    bg-white/5 hover:bg-white/10
+                    border border-white/10
+                    text-xs font-bold text-slate-200
+                    transition
+                "
+            >
+                Configurer la boutique
+
+                <svg class="w-3.5 h-3.5" fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+
+                    <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 5l7 7-7 7"/>
+
+                </svg>
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    {{-- =====================================================
+        KPI
+    ====================================================== --}}
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+
+        {{-- Produits --}}
+        <div
+            class="
+                bg-white rounded-2xl
+                border border-slate-200/80
+                p-5 shadow-sm
+                hover:shadow-md transition
+            "
+        >
+
+            <div class="flex items-center justify-between">
+
+                <span class="text-[10px] font-black uppercase
+                             tracking-wider text-slate-400">
+                    Catalogue
+                </span>
+
+                <div
+                    class="w-9 h-9 rounded-xl
+                           bg-[#00843D]/10 text-[#00843D]
+                           flex items-center justify-center"
+                >
+                    <svg class="w-5 h-5" fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24">
+
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="1.8"
+                            d="M20 7l-8-4-8 4m16 0l-8 4
+                            m8-4v10l-8 4m0-10L4 7
+                            m8 4v10M4 7v10l8 4"/>
+
+                    </svg>
+                </div>
+
+            </div>
+
+            <p class="mt-4 text-3xl font-black text-slate-900">
+                {{ $productsCount }}
+            </p>
+
+            <p class="mt-1 text-xs text-slate-500">
+                Produits enregistrés
+            </p>
+
+        </div>
+
+
+        {{-- Actifs --}}
+        <div
+            class="
+                bg-white rounded-2xl
+                border border-slate-200/80
+                p-5 shadow-sm
+                hover:shadow-md transition
+            "
+        >
+
+            <div class="flex items-center justify-between">
+
+                <span class="text-[10px] font-black uppercase
+                             tracking-wider text-slate-400">
+                    En vente
+                </span>
+
+                <div
+                    class="w-9 h-9 rounded-xl
+                           bg-[#FCD116]/20 text-[#9A7600]
+                           flex items-center justify-center"
+                >
+                    <svg class="w-5 h-5" fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24">
+
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="1.8"
+                            d="M2.458 12C3.732 7.943
+                            7.523 5 12 5
+                            c4.478 0 8.268 2.943
+                            9.542 7-1.274 4.057
+                            -5.064 7-9.542 7
+                            -4.477 0-8.268-2.943
+                            -9.542-7z"/>
+
+                        <circle cx="12" cy="12" r="3"
+                            stroke-width="1.8"/>
+
+                    </svg>
+                </div>
+
+            </div>
+
+            <p class="mt-4 text-3xl font-black text-[#00843D]">
+                {{ $visibleCount }}
+            </p>
+
+            <p class="mt-1 text-xs text-slate-500">
+                Produits visibles
+            </p>
+
+        </div>
+
+
+        {{-- Ville --}}
+        <div
+            class="
+                bg-white rounded-2xl
+                border border-slate-200/80
+                p-5 shadow-sm
+                hover:shadow-md transition
+            "
+        >
+
+            <div class="flex items-center justify-between">
+
+                <span class="text-[10px] font-black uppercase
+                             tracking-wider text-slate-400">
+                    Expédition
+                </span>
+
+                <div
+                    class="w-9 h-9 rounded-xl
+                           bg-[#CE1126]/10 text-[#CE1126]
+                           flex items-center justify-center"
+                >
+
+                    <svg class="w-5 h-5" fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24">
+
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="1.8"
+                            d="M17.657 16.657L13.414 20.9
+                            a1.998 1.998 0 01-2.827 0
+                            l-4.244-4.243
+                            a8 8 0 1111.314 0z"/>
+
+                        <circle cx="12" cy="11"
+                            r="3"
+                            stroke-width="1.8"/>
+
+                    </svg>
+
+                </div>
+
+            </div>
+
+            <p class="mt-4 text-2xl font-black text-slate-900 truncate">
+                {{ $shop->city ?? 'Non définie' }}
+            </p>
+
+            <p class="mt-1 text-xs text-slate-500">
+                Ville principale
+            </p>
+
+        </div>
+
+
+        {{-- Boutique --}}
+        <div
+            class="
+                bg-white rounded-2xl
+                border border-slate-200/80
+                p-5 shadow-sm
+                hover:shadow-md transition
+            "
+        >
+
+            <div class="flex items-center justify-between">
+
+                <span class="text-[10px] font-black uppercase
+                             tracking-wider text-slate-400">
+                    Statut
+                </span>
+
+                <div
+                    class="w-9 h-9 rounded-xl
+                           bg-[#00843D]/10 text-[#00843D]
+                           flex items-center justify-center"
+                >
+
+                    <svg class="w-5 h-5" fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24">
+
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="1.8"
+                            d="M5 13l4 4L19 7"/>
+
+                    </svg>
+
+                </div>
+
+            </div>
+
+            <p class="mt-4 text-xl font-black text-[#00843D]">
+                Active
+            </p>
+
+            <p class="mt-1 text-xs text-slate-500">
+                Boutique opérationnelle
+            </p>
+
+        </div>
+
+    </div>
+
+
+    {{-- =====================================================
+        ACTIONS + ALERTES
+    ====================================================== --}}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+        {{-- Actions rapides --}}
+        <section class="lg:col-span-1">
+
+            <div class="flex items-center justify-between mb-3">
+
+                <div>
+
+                    <h2 class="text-sm font-black text-slate-900">
+                        Actions rapides
+                    </h2>
+
+                    <p class="text-[11px] text-slate-400 mt-0.5">
+                        Les tâches les plus utiles
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="space-y-2.5">
+
+                <a
+                    href="{{ route('seller.products.create') }}"
+                    class="
+                        flex items-center gap-3
+                        p-3.5 bg-white
+                        border border-slate-200
+                        rounded-xl
+                        hover:border-[#00843D]
+                        hover:shadow-sm
+                        transition
+                        group
+                    "
+                >
+
+                    <div
+                        class="w-9 h-9 rounded-lg
+                               bg-[#00843D]/10
+                               text-[#00843D]
+                               flex items-center justify-center
+                               group-hover:bg-[#00843D]
+                               group-hover:text-white
+                               transition"
+                    >
+                        <svg class="w-4 h-4" fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24">
+
+                            <path stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 4v16m8-8H4"/>
+
+                        </svg>
+                    </div>
+
+                    <div class="flex-1">
+
+                        <p class="text-xs font-bold text-slate-800">
+                            Ajouter un produit
+                        </p>
+
+                        <p class="text-[10px] text-slate-400">
+                            Enrichir votre catalogue
+                        </p>
+
+                    </div>
+
+                    <span class="text-slate-300 group-hover:text-[#00843D]">
+                        →
+                    </span>
+
+                </a>
+
+
+                <a
+                    href="{{ route('seller.orders.index') }}"
+                    class="
+                        flex items-center gap-3
+                        p-3.5 bg-white
+                        border border-slate-200
+                        rounded-xl
+                        hover:border-[#CE1126]
+                        hover:shadow-sm
+                        transition
+                        group
+                    "
+                >
+
+                    <div
+                        class="w-9 h-9 rounded-lg
+                               bg-[#CE1126]/10
+                               text-[#CE1126]
+                               flex items-center justify-center
+                               group-hover:bg-[#CE1126]
+                               group-hover:text-white
+                               transition"
+                    >
+
+                        <svg class="w-4 h-4" fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24">
+
+                            <path stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="1.8"
+                                d="M16 11V7a4 4 0 00-8 0v4
+                                M5 9h14l1 12H4L5 9z"/>
+
+                        </svg>
+
+                    </div>
+
+                    <div class="flex-1">
+
+                        <p class="text-xs font-bold text-slate-800">
+                            Gérer les commandes
+                        </p>
+
+                        <p class="text-[10px] text-slate-400">
+                            Préparer et suivre vos ventes
+                        </p>
+
+                    </div>
+
+                    <span class="text-slate-300 group-hover:text-[#CE1126]">
+                        →
+                    </span>
+
+                </a>
+
+
+                <a
+                    href="{{ route('seller.wallet.index') }}"
+                    class="
+                        flex items-center gap-3
+                        p-3.5 bg-white
+                        border border-slate-200
+                        rounded-xl
+                        hover:border-[#FCD116]
+                        hover:shadow-sm
+                        transition
+                        group
+                    "
+                >
+
+                    <div
+                        class="w-9 h-9 rounded-lg
+                               bg-[#FCD116]/20
+                               text-[#8A6900]
+                               flex items-center justify-center
+                               group-hover:bg-[#FCD116]
+                               transition"
+                    >
+
+                        <svg class="w-4 h-4" fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24">
+
+                            <path stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="1.8"
+                                d="M3 10h18M7 15h1m4 0h1
+                                m-7 4h12a2 2 0 002-2V8
+                                a2 2 0 00-2-2H5a2 2 0 00-2 2v8
+                                a2 2 0 002 2z"/>
+
+                        </svg>
+
+                    </div>
+
+                    <div class="flex-1">
+
+                        <p class="text-xs font-bold text-slate-800">
+                            Voir le portefeuille
+                        </p>
+
+                        <p class="text-[10px] text-slate-400">
+                            Solde et retraits
+                        </p>
+
+                    </div>
+
+                    <span class="text-slate-300 group-hover:text-[#8A6900]">
+                        →
+                    </span>
+
+                </a>
+
+            </div>
+
+        </section>
+
+
+        {{-- =================================================
+            ACTIVITÉ RÉCENTE
+        ================================================== --}}
+        <section class="lg:col-span-2">
+
+            <div class="flex items-center justify-between mb-3">
+
+                <div>
+
+                    <h2 class="text-sm font-black text-slate-900">
+                        Activité récente
+                    </h2>
+
+                    <p class="text-[11px] text-slate-400 mt-0.5">
+                        Les dernières opérations de votre boutique
+                    </p>
+
+                </div>
+
+                <a
+                    href="{{ route('seller.orders.index') }}"
+                    class="text-[11px] font-bold text-[#00843D]
+                           hover:underline"
+                >
+                    Voir tout
+                </a>
+
+            </div>
+
+
+            <div
+                class="
+                    bg-white
+                    border border-slate-200
+                    rounded-2xl
+                    overflow-hidden
+                    shadow-sm
+                "
+            >
+
+                {{-- Ligne 1 --}}
+                <div
+                    class="
+                        p-4 flex items-center gap-3
+                        border-b border-slate-100
+                        hover:bg-slate-50
+                        transition
+                    "
+                >
+
+                    <div
+                        class="w-9 h-9 rounded-xl
+                               bg-[#00843D]/10
+                               text-[#00843D]
+                               flex items-center justify-center"
+                    >
+
+                        <svg class="w-4 h-4" fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24">
+
+                            <path stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="1.8"
+                                d="M5 13l4 4L19 7"/>
+
+                        </svg>
+
+                    </div>
+
+                    <div class="flex-1 min-w-0">
+
+                        <p class="text-xs font-bold text-slate-800">
+                            Boutique active
+                        </p>
+
+                        <p class="text-[10px] text-slate-400">
+                            Votre boutique est actuellement disponible.
+                        </p>
+
+                    </div>
+
+                    <span
+                        class="text-[10px] font-bold
+                               text-[#00843D]
+                               bg-[#00843D]/10
+                               px-2 py-1 rounded-full"
+                    >
+                        Active
+                    </span>
+
+                </div>
+
+
+                {{-- Ligne 2 --}}
+                <div
+                    class="
+                        p-4 flex items-center gap-3
+                        border-b border-slate-100
+                        hover:bg-slate-50
+                        transition
+                    "
+                >
+
+                    <div
+                        class="w-9 h-9 rounded-xl
+                               bg-[#FCD116]/20
+                               text-[#8A6900]
+                               flex items-center justify-center"
+                    >
+
+                        <svg class="w-4 h-4" fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24">
+
+                            <path stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="1.8"
+                                d="M12 8v4l3 3
+                                m6-3a9 9 0 11-18 0
+                                9 9 0 0118 0z"/>
+
+                        </svg>
+
+                    </div>
+
+                    <div class="flex-1 min-w-0">
+
+                        <p class="text-xs font-bold text-slate-800">
+                            Catalogue
+                        </p>
+
+                        <p class="text-[10px] text-slate-400">
+                            {{ $visibleCount }} produit(s) actuellement visible(s).
+                        </p>
+
+                    </div>
+
+                    <span
+                        class="text-[10px] font-bold
+                               text-[#8A6900]
+                               bg-[#FCD116]/20
+                               px-2 py-1 rounded-full"
+                    >
+                        Catalogue
+                    </span>
+
+                </div>
+
+
+                {{-- Ligne 3 --}}
+                <div
+                    class="
+                        p-4 flex items-center gap-3
+                        hover:bg-slate-50
+                        transition
+                    "
+                >
+
+                    <div
+                        class="w-9 h-9 rounded-xl
+                               bg-[#CE1126]/10
+                               text-[#CE1126]
+                               flex items-center justify-center"
+                    >
+
+                        <svg class="w-4 h-4" fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24">
+
+                            <path stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="1.8"
+                                d="M16 11V7a4 4 0 00-8 0v4
+                                M5 9h14l1 12H4L5 9z"/>
+
+                        </svg>
+
+                    </div>
+
+                    <div class="flex-1 min-w-0">
+
+                        <p class="text-xs font-bold text-slate-800">
+                            Commandes
+                        </p>
+
+                        <p class="text-[10px] text-slate-400">
+                            Consultez vos commandes et traitez les nouvelles ventes.
+                        </p>
+
+                    </div>
+
+                    <a
+                        href="{{ route('seller.orders.index') }}"
+                        class="text-[10px] font-bold text-[#CE1126]
+                               hover:underline"
+                    >
+                        Ouvrir
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    {{-- =====================================================
+        FOOTER MARQUE
+    ====================================================== --}}
+    <div class="flex items-center justify-center gap-2 pt-1">
+
+        <span class="w-5 h-1 rounded-full bg-[#00843D]"></span>
+        <span class="w-5 h-1 rounded-full bg-[#CE1126]"></span>
+        <span class="w-5 h-1 rounded-full bg-[#FCD116]"></span>
+
+        <span class="text-[10px] font-semibold text-slate-400 ml-1">
+            Ali-Kamer · Acheter et vendre sans stress
+        </span>
+
+    </div>
+
+</div>
+
+
+</div>
 
 @endsection

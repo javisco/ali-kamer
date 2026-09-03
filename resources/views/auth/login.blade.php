@@ -4,7 +4,7 @@
 
 @section('content')
 <!-- Conteneur principal -->
-<div class="min-h-[85vh] flex items-center justify-center px-4 py-8 bg-slate-50/50">
+<div class="min-h-[85vh] flex items-center justify-center px-4 py-8 bg-slate-50">
     <div class="w-full max-w-md">
 
         {{-- Alerte d'erreur --}}
@@ -27,20 +27,20 @@
             </div>
         @endif
 
-        <div class="bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden">
+        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
 
-            <!-- En-tête avec Logo -->
-            <div class="bg-gradient-to-br from-blue-900 via-blue-700 to-blue-600 px-6 pt-8 pb-6 text-center relative overflow-hidden">
+            <!-- En-tête avec Logo et couleurs de la charte Ali-Kamer -->
+            <div class="bg-gradient-to-br from-[#004d28] via-[#006837] to-[#046A38] px-6 pt-8 pb-6 text-center relative overflow-hidden">
                 {{-- Décor de fond subtil --}}
                 <div class="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-white/10 blur-xl"></div>
-                <div class="absolute -bottom-12 -left-12 w-32 h-32 rounded-full bg-cyan-300/10 blur-xl"></div>
+                <div class="absolute -bottom-12 -left-12 w-32 h-32 rounded-full bg-[#FFC20E]/20 blur-xl"></div>
 
                 <div class="relative z-10">
-                    <div class="inline-flex items-center justify-center p-3 bg-white rounded-2xl shadow-xl mb-3">
-                        <img src="{{ asset('images/logo.png') }}" alt="Ali-Kamer Logo" class="h-14 w-auto object-contain">
+                    <div class="inline-flex items-center justify-center p-3 bg-white rounded-2xl shadow-md mb-3">
+                        <img src="{{ asset('images/afrique.png') }}" alt="Ali-Kamer Logo" class="h-14 w-auto object-contain">
                     </div>
                     <h1 class="text-2xl font-black tracking-tight text-white">Bienvenue !</h1>
-                    <p class="text-xs text-blue-100 mt-1">Connectez-vous à votre espace personnel Ali-Kamer</p>
+                    <p class="text-xs text-emerald-100/90 mt-1">Connectez-vous à votre espace personnel Ali-Kamer</p>
                 </div>
             </div>
 
@@ -57,7 +57,7 @@
                         <input type="email" name="email" id="email" value="{{ old('email') }}"
                             placeholder="exemple@email.com"
                             class="w-full rounded-2xl border px-4 py-3.5 text-sm transition bg-slate-50/50
-                            @error('email') border-red-500 focus:ring-red-500 @else border-slate-200 focus:border-blue-600 focus:ring-4 focus:ring-blue-100 @enderror
+                            @error('email') border-red-500 focus:ring-red-500 @else border-slate-200 focus:border-[#006837] focus:ring-4 focus:ring-[#006837]/10 @enderror
                             focus:outline-none">
 
                         @error('email')
@@ -73,13 +73,13 @@
                             <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-slate-700">
                                 Mot de passe
                             </label>
-                            <a href="{{ route('password.request') }}" class="text-xs font-semibold text-blue-600 hover:text-blue-800 hover:underline">
+                            <a href="{{ route('password.request') }}" class="text-xs font-semibold text-[#006837] hover:text-[#004d28] hover:underline">
                                 Oublié ?
                             </a>
                         </div>
                         <input type="password" name="password" id="password" placeholder="••••••••"
                             class="w-full rounded-2xl border px-4 py-3.5 text-sm transition bg-slate-50/50
-                            @error('password') border-red-500 focus:ring-red-500 @else border-slate-200 focus:border-blue-600 focus:ring-4 focus:ring-blue-100 @enderror
+                            @error('password') border-red-500 focus:ring-red-500 @else border-slate-200 focus:border-[#006837] focus:ring-4 focus:ring-[#006837]/10 @enderror
                             focus:outline-none">
 
                         @error('password')
@@ -93,16 +93,16 @@
                     <div class="flex items-center pt-1">
                         <label class="flex items-center gap-2 cursor-pointer select-none">
                             <input type="checkbox" name="remember"
-                                class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                                class="h-4 w-4 rounded border-slate-300 text-[#006837] focus:ring-[#006837] cursor-pointer accent-[#006837]">
                             <span class="text-xs text-slate-600 font-medium">
                                 Se souvenir de moi
                             </span>
                         </label>
                     </div>
 
-                    <!-- Bouton Submit -->
+                    <!-- Bouton Submit (Vert avec survol foncé) -->
                     <button type="submit"
-                        class="w-full rounded-2xl bg-gradient-to-r from-blue-700 to-blue-600 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-200 transition hover:from-blue-800 hover:to-blue-700 active:scale-[0.99] mt-2">
+                        class="w-full rounded-2xl bg-[#006837] py-3.5 text-sm font-bold text-white shadow-lg shadow-[#006837]/25 transition hover:bg-[#004d28] active:scale-[0.99] mt-2">
                         Se connecter
                     </button>
                 </form>
@@ -110,7 +110,7 @@
                 <!-- Footer Inscription -->
                 <div class="mt-6 border-t border-slate-100 pt-4 text-center text-xs text-slate-600 flex items-center justify-center gap-1.5">
                     <span>Vous n'avez pas de compte ?</span>
-                    <a href="{{ route('register.show') }}" class="font-bold text-blue-600 hover:text-blue-800 hover:underline">
+                    <a href="{{ route('register.show') }}" class="font-bold text-[#006837] hover:text-[#004d28] hover:underline">
                         Créer un compte
                     </a>
                 </div>

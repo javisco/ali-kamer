@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Notifications\Concerns\HasDatabasePayload;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

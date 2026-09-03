@@ -1,4 +1,4 @@
-@extends('base')
+@extends('layouts.seller')
 
 @section('title', 'Commande #' . $order->reference)
 

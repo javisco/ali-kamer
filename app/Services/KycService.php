@@ -68,7 +68,7 @@ class KycService
             ]);
 
             // Activer le compte vendeur
-            $kyc->user->update(['status' => User::STATUS_ACTIVE]);
+      //      $kyc->user->update(['status' => User::STATUS_ACTIVE]);
 
             // Activer la boutique
             $kyc->user->shop?->update([
@@ -101,7 +101,7 @@ class KycService
                 'rejection_reason' => $reason,
                 'reviewed_at'      => now(),
             ]);
-            $kyc->user->notify(new KycRejectedNotification($reason));
+           // $kyc->user->notify(new KycRejectedNotification($reason));
             AdminLog::record(
                 $admin,
                 'kyc.rejected',

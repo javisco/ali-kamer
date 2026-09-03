@@ -1,5 +1,4 @@
-@extends('base')
-
+@extends('layouts.seller')
 @section('title', 'Mes Produits - Ali-Kamer')
 
 @section('content')

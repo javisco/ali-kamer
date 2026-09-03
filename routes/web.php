@@ -123,7 +123,7 @@ Route::middleware(['auth', 'verified', 'role:buyer'])->prefix('commandes')->grou
 
 
 // ── Commandes vendeur ─────────────────────────────────────────────
-Route::middleware(['auth', 'verified', 'role:seller','shop.active'])->prefix('vendeur')->group(function () {
+Route::middleware(['auth', 'verified', 'role:seller', 'shop.active'])->prefix('vendeur')->group(function () {
         Route::get('/commandes', [SellerOrderController::class, 'index'])->name('seller.orders.index');
         Route::get('/commandes/{order}', [SellerOrderController::class, 'show'])->name('seller.orders.show');
         // Route::post('/commandes/{order}/preparer', [SellerOrderController::class, 'markPreparing'])->name('seller.orders.preparing');
@@ -177,7 +177,7 @@ Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
 });
 
 // Portefeuille vendeur
-Route::middleware(['auth', 'verified', 'role:seller','shop.active'])->prefix('vendeur')->group(function () {
+Route::middleware(['auth', 'verified', 'role:seller', 'shop.active'])->prefix('vendeur')->group(function () {
         Route::get('/portefeuille', [WalletController::class, 'index'])
                 ->name('seller.wallet.index');
         Route::get('/portefeuille/retrait', [WalletController::class, 'withdrawForm'])
@@ -274,7 +274,7 @@ Route::middleware(['auth', 'role:buyer', 'verified'])->group(function () {
 });
 
 // ── Litiges vendeur ───────────────────────────────────────────────
-Route::middleware(['auth', 'role:seller','shop.active'])->prefix('vendeur')->group(function () {
+Route::middleware(['auth', 'role:seller', 'shop.active'])->prefix('vendeur')->group(function () {
         Route::get('/litiges', [SellerDisputeController::class, 'index'])
                 ->name('seller.disputes.index');
         Route::get('/litiges/{dispute}', [SellerDisputeController::class, 'show'])
@@ -307,7 +307,7 @@ Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
 });
 
 // Avis vendeur sur acheteur
-Route::middleware(['auth', 'verified', 'role:seller','shop.active'])->prefix('vendeur')->group(function () {
+Route::middleware(['auth', 'verified', 'role:seller', 'shop.active'])->prefix('vendeur')->group(function () {
         Route::get('/commandes/{order}/noter-acheteur', [SellerReviewController::class, 'create'])
                 ->name('seller.reviews.create');
         Route::post('/commandes/{order}/noter-acheteur', [SellerReviewController::class, 'store'])
@@ -484,7 +484,6 @@ Route::middleware(['auth', 'role:buyer', 'verified'])->group(function () {
 
 
 
-
 Route::middleware(['auth', 'role:agency_manager'])
         ->prefix('agence-manager')
         ->group(function () {
@@ -527,14 +526,14 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
 
 use App\Http\Controllers\Api\NotificationController;
-
+use App\Services\ElgiopayService;
 
 // Accessible à tout utilisateur connecté (acheteur, vendeur, admin) —
 // pas de middleware 'role:' spécifique puisque la cloche est commune.
 Route::middleware('auth')->prefix('notifications')->name('notifications.')->group(function () {
 
-    Route::get('/', [NotificationController::class, 'index'])->name('index');
-    Route::get('/unread-count', [NotificationController::class, 'unreadCount'])->name('unread-count');
-    Route::post('/{id}/read', [NotificationController::class, 'markAsRead'])->name('read');
-    Route::post('/read-all', [NotificationController::class, 'markAllAsRead'])->name('read-all');
+        Route::get('/', [NotificationController::class, 'index'])->name('index');
+        Route::get('/unread-count', [NotificationController::class, 'unreadCount'])->name('unread-count');
+        Route::post('/{id}/read', [NotificationController::class, 'markAsRead'])->name('read');
+        Route::post('/read-all', [NotificationController::class, 'markAllAsRead'])->name('read-all');
 });

@@ -37,7 +37,10 @@ class Shop extends Model
     {
         return $this->belongsTo(User::class);
     }
-
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);

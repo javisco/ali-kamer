@@ -1,1643 +1,804 @@
 <!DOCTYPE html>
-
 <html lang="fr" class="h-full bg-[#FAF9F6]">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('title', 'Ali-Kamer — Achetez et vendez sans stress')</title>
 
-```
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
-<meta name="csrf-token" content="{{ csrf_token() }}">
+    {{-- Police --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
 
-<title>@yield('title', 'Ali-Kamer — Achetez et vendez en toute sécurité')</title>
+    {{-- Assets Laravel --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-<!-- Polices Google -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    {{-- Alpine --}}
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap"
-    rel="stylesheet">
+    <style>
+        :root {
+            --ak-green: #00843D;
+            --ak-green-dark: #006B32;
+            --ak-green-deep: #004D2A;
+            --ak-red: #CE1126;
+            --ak-yellow: #FCD116;
+            --ak-cream: #FAF9F6;
+        }
 
-<!-- Assets Vite & Alpine.js -->
-@vite(['resources/css/app.css', 'resources/js/app.js'])
+        html {
+            background: var(--ak-cream);
+            scroll-behavior: smooth;
+        }
 
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
 
-<style>
-    body {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-    }
+        [x-cloak] {
+            display: none !important;
+        }
 
-    [x-cloak] {
-        display: none !important;
-    }
-</style>
+        .ak-logo {
+            display: block;
+            width: 155px;
+            height: 68px;
+            object-fit: contain;
+        }
 
-@stack('styles')
-```
+        @media (max-width: 640px) {
+            .ak-logo {
+                width: 125px;
+                height: 58px;
+            }
+        }
 
+        /* Barre de défilement discrète */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f3;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #b9d9c8;
+            border-radius: 999px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--ak-green);
+        }
+    </style>
+
+    @stack('styles')
 </head>
 
-<body class="flex flex-col min-h-screen bg-[#FAF9F6] text-slate-800 antialiased"
-    x-data="{ mobileMenuOpen: false, moreOpen: false }">
-
-```
-<!-- =========================================================
-     NAVBAR
-========================================================== -->
-
-<header
-    class="fixed top-0 left-0 right-0 z-50
-           bg-[#FAF9F6]/95 backdrop-blur-md
-           border-b border-slate-200/80
-           py-2.5">
-
-    <div class="max-w-[1440px] mx-auto px-3 sm:px-5 lg:px-6">
-
-        <div class="flex items-center gap-3 min-w-0">
-
-            <!-- =====================================================
-                 LOGO
-            ====================================================== -->
-
-            <a href="{{ route('buyer.home') }}"
-                class="flex items-center shrink-0 hover:scale-[1.02] transition-transform duration-200">
-
-                <svg xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 420 120"
-                    class="h-9 md:h-10 w-auto">
-
-                    <defs>
-
-                        <linearGradient id="akGreen" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#064E3B" />
-                            <stop offset="100%" stop-color="#043226" />
-                        </linearGradient>
-
-                        <linearGradient id="akOrange" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#F97316" />
-                            <stop offset="100%" stop-color="#EA580C" />
-                        </linearGradient>
-
-                    </defs>
-
-                    <g transform="translate(10, 0)">
-
-                        <circle cx="60" cy="60" r="50"
-                            fill="none"
-                            stroke="url(#akGreen)"
-                            stroke-width="4"
-                            stroke-dasharray="220 70" />
-
-                        <circle cx="60" cy="60" r="50"
-                            fill="none"
-                            stroke="url(#akOrange)"
-                            stroke-width="4"
-                            stroke-dasharray="90 190"
-                            stroke-dashoffset="-160" />
-
-                        <path d="M 35 90 L 60 25 L 85 90"
-                            fill="none"
-                            stroke="url(#akGreen)"
-                            stroke-width="11"
-                            stroke-linejoin="round"
-                            stroke-linecap="round" />
-
-                        <path d="M 60 25 L 85 90"
-                            fill="none"
-                            stroke="url(#akOrange)"
-                            stroke-width="11"
-                            stroke-linejoin="round"
-                            stroke-linecap="round" />
-
-                        <path d="M 40 86 C 47 98, 73 98, 80 86"
-                            fill="none"
-                            stroke="url(#akGreen)"
-                            stroke-width="5"
-                            stroke-linecap="round" />
-
-                        <path d="M 52 90 C 57 97, 63 97, 68 90"
-                            fill="none"
-                            stroke="url(#akOrange)"
-                            stroke-width="4"
-                            stroke-linecap="round" />
-
-                    </g>
-
-                    <text x="135"
-                        y="72"
-                        font-family="'Plus Jakarta Sans', sans-serif"
-                        font-weight="900"
-                        font-size="52"
-                        fill="#F97316">
-                        Ali-
-                    </text>
-
-                    <text x="225"
-                        y="72"
-                        font-family="'Plus Jakarta Sans', sans-serif"
-                        font-weight="900"
-                        font-size="52"
-                        fill="#043226">
-                        Kamer
-                    </text>
-
-                </svg>
-
-            </a>
-
-
-            <!-- =====================================================
-                 NAVIGATION DESKTOP
-            ====================================================== -->
-
-            <nav class="hidden lg:flex flex-1 min-w-0 items-center justify-center">
-
-                <div class="flex items-center gap-0.5
-                            bg-[#F1EFE9]
-                            px-1.5 py-1
-                            rounded-full
-                            shadow-inner
-                            text-slate-700
-                            font-semibold
-                            text-[13px]
-                            whitespace-nowrap
-                            max-w-full">
-
-                    <!-- ACCUEIL -->
-
-                    <a href="{{ route('buyer.home') }}"
-                        class="flex items-center gap-1.5
-                               px-3 py-1.5
-                               rounded-full
-                               transition
-                               {{ request()->routeIs('buyer.home')
-                                   ? 'bg-blue-600 text-white font-bold shadow-sm'
-                                   : 'hover:bg-white/70 hover:text-slate-900' }}">
-
-                        <svg class="w-4 h-4 shrink-0"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24">
-
-                            <path stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 00-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-
-                        </svg>
-
-                        <span>Accueil</span>
-
-                    </a>
-
-
-                    @auth
-
-                        <!-- =================================================
-                             ACHETEUR
-                        ================================================== -->
-
-                        @if (auth()->user()->role === 'buyer')
-
-                            <!-- COMMANDES -->
-
-                            <a href="{{ route('buyer.orders.index') }}"
-                                class="px-3 py-1.5 rounded-full transition
-                                {{ request()->routeIs('buyer.orders.*')
-                                    ? 'bg-blue-600 text-white font-bold shadow-sm'
-                                    : 'hover:bg-white/70 hover:text-slate-900' }}">
-
-                                Commandes
-
-                            </a>
-
-
-                            <!-- MESSAGES -->
-
-                            <a href="{{ route('messaging.index') }}"
-                                class="flex items-center gap-1.5
-                                       px-3 py-1.5
-                                       rounded-full
-                                       transition
-                                       {{ request()->routeIs('messaging.*')
-                                           ? 'bg-blue-600 text-white font-bold shadow-sm'
-                                           : 'hover:bg-white/70 hover:text-slate-900' }}">
-
-                                <svg class="w-4 h-4 shrink-0"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24">
-
-                                    <path stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-
-                                </svg>
-
-                                Messages
-
-                            </a>
-
-
-                            <!-- =================================================
-                                 PLUS
-                            ================================================== -->
-
-                            <div class="relative"
-                                @click.outside="moreOpen = false">
-
-                                <button type="button"
-                                    @click="moreOpen = !moreOpen"
-                                    class="flex items-center gap-1
-                                           px-3 py-1.5
-                                           rounded-full
-                                           transition
-                                           hover:bg-white/70
-                                           hover:text-slate-900">
-
-                                    Plus
-
-                                    <svg class="w-3.5 h-3.5 transition-transform"
-                                        :class="{ 'rotate-180': moreOpen }"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24">
-
-                                        <path stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M19 9l-7 7-7-7" />
-
-                                    </svg>
-
-                                </button>
-
-
-                                <div x-show="moreOpen"
-                                    x-cloak
-                                    x-transition
-                                    class="absolute left-1/2 -translate-x-1/2 top-full mt-2
-                                           w-52
-                                           bg-white
-                                           rounded-2xl
-                                           border border-slate-200
-                                           shadow-xl
-                                           p-1.5
-                                           z-50">
-
-                                    <!-- LITIGES -->
-
-                                    <a href="{{ route('buyer.disputes.index') }}"
-                                        class="flex items-center gap-3
-                                               px-3 py-2.5
-                                               rounded-xl
-                                               text-sm
-                                               hover:bg-slate-100
-                                               transition
-                                               {{ request()->routeIs('buyer.disputes.*')
-                                                   ? 'bg-blue-50 text-blue-700 font-bold'
-                                                   : 'text-slate-700' }}">
-
-                                        <span class="w-8 h-8 rounded-lg bg-red-50 text-red-500
-                                                     flex items-center justify-center">
-
-                                            <svg class="w-4 h-4"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24">
-
-                                                <path stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M12 9v2m0 4h.01M5.07 19h13.86a2 2 0 001.73-3L13.73 4a2 2 0 00-3.46 0L3.34 16a2 2 0 001.73 3z" />
-
-                                            </svg>
-
-                                        </span>
-
-                                        <span>Mes litiges</span>
-
-                                    </a>
-
-
-                                    <!-- TUTORIELS -->
-
-                                    <a href="{{ route('tutorials.index') }}"
-                                        class="flex items-center gap-3
-                                               px-3 py-2.5
-                                               rounded-xl
-                                               text-sm
-                                               hover:bg-slate-100
-                                               transition
-                                               {{ request()->routeIs('tutorials.*')
-                                                   ? 'bg-blue-50 text-blue-700 font-bold'
-                                                   : 'text-slate-700' }}">
-
-                                        <span class="w-8 h-8 rounded-lg bg-orange-50 text-orange-500
-                                                     flex items-center justify-center">
-
-                                            <svg class="w-4 h-4"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24">
-
-                                                <path stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18s-3.332.477-4.5 1.253" />
-
-                                            </svg>
-
-                                        </span>
-
-                                        <span>Tutoriels</span>
-
-                                    </a>
-
-
-                                    <!-- AIDE -->
-
-                                    <a href="{{ route('help') }}"
-                                        class="flex items-center gap-3
-                                               px-3 py-2.5
-                                               rounded-xl
-                                               text-sm
-                                               hover:bg-slate-100
-                                               transition
-                                               {{ request()->routeIs('help')
-                                                   ? 'bg-blue-50 text-blue-700 font-bold'
-                                                   : 'text-slate-700' }}">
-
-                                        <span class="w-8 h-8 rounded-lg bg-blue-50 text-blue-500
-                                                     flex items-center justify-center">
-
-                                            <svg class="w-4 h-4"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24">
-
-                                                <path stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M8.228 9.247a4.75 4.75 0 117.544 0c-.99.99-2.272 1.39-3.272 2.053-.676.449-1.25 1.026-1.25 2.2m0 3h.01" />
-
-                                            </svg>
-
-                                        </span>
-
-                                        <span>Centre d'aide</span>
-
-                                    </a>
-
-                                </div>
-
-                            </div>
-
-
-                        <!-- =================================================
-                             VENDEUR
-                        ================================================== -->
-
-                        @elseif (auth()->user()->role === 'seller')
-
-                            <a href="{{ route('seller.products.index') }}"
-                                class="px-3 py-1.5 rounded-full transition
-                                {{ request()->routeIs('seller.products.*')
-                                    ? 'bg-blue-600 text-white font-bold shadow-sm'
-                                    : 'hover:bg-white/70' }}">
-
-                                Produits
-
-                            </a>
-
-                            <a href="{{ route('seller.orders.index') }}"
-                                class="px-3 py-1.5 rounded-full transition
-                                {{ request()->routeIs('seller.orders.*')
-                                    ? 'bg-blue-600 text-white font-bold shadow-sm'
-                                    : 'hover:bg-white/70' }}">
-
-                                Commandes
-
-                            </a>
-
-                            <a href="{{ route('seller.disputes.index') }}"
-                                class="px-3 py-1.5 rounded-full transition
-                                {{ request()->routeIs('seller.disputes.*')
-                                    ? 'bg-blue-600 text-white font-bold shadow-sm'
-                                    : 'hover:bg-white/70' }}">
-
-                                Litiges
-
-                            </a>
-
-                        @endif
-
-
-                        <!-- =================================================
-                             MESSAGERIE VENDEUR
-                        ================================================== -->
-
-                        @if (auth()->user()->role === 'seller')
-
-                            <a href="{{ route('messaging.index') }}"
-                                class="flex items-center gap-1.5
-                                       px-3 py-1.5
-                                       rounded-full
-                                       transition
-                                       {{ request()->routeIs('messaging.*')
-                                           ? 'bg-blue-600 text-white font-bold shadow-sm'
-                                           : 'hover:bg-white/70' }}">
-
-                                <svg class="w-4 h-4 shrink-0"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24">
-
-                                    <path stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-
-                                </svg>
-
-                                Messages
-
-                            </a>
-
-                        @endif
-
-
-                        <!-- =================================================
-                             ADMIN
-                        ================================================== -->
-
-                        @if (auth()->user()->role === 'admin')
-
-                            <a href="{{ route('admin.disputes.index') }}"
-                                class="px-3 py-1.5 rounded-full transition
-                                {{ request()->routeIs('admin.disputes.*')
-                                    ? 'bg-blue-600 text-white font-bold shadow-sm'
-                                    : 'hover:bg-white/70' }}">
-
-                                Litiges
-
-                            </a>
-
-                        @endif
-
-
-                        <!-- =================================================
-                             TUTORIELS / AIDE POUR AUTRES ROLES
-                        ================================================== -->
-
-                        @if (auth()->user()->role !== 'buyer')
-
-                            <a href="{{ route('tutorials.index') }}"
-                                class="px-3 py-1.5 rounded-full transition
-                                {{ request()->routeIs('tutorials.*')
-                                    ? 'bg-blue-600 text-white font-bold shadow-sm'
-                                    : 'hover:bg-white/70' }}">
-
-                                Tutoriels
-
-                            </a>
-
-                            <a href="{{ route('help') }}"
-                                class="px-3 py-1.5 rounded-full transition
-                                {{ request()->routeIs('help')
-                                    ? 'bg-blue-600 text-white font-bold shadow-sm'
-                                    : 'hover:bg-white/70' }}">
-
-                                Aide
-
-                            </a>
-
-                        @endif
-
-
-                        <!-- =================================================
-                             ESPACE
-                        ================================================== -->
-
-                        @php
-
-                            $dashboardRoute = match (auth()->user()->role) {
-
-                                'seller' => route('seller.dashboard'),
-
-                                'secretary' => route('secretary.dashboard'),
-
-                                'admin' => route('admin.dashboard'),
-
-                                'agency_manager' => route('agency.dashboard'),
-
-                                default => route('buyer.dashboard'),
-
-                            };
-
-                            $isDashboardActive = request()->routeIs('*.dashboard');
-
-                        @endphp
-
-
-                        <a href="{{ $dashboardRoute }}"
-                            class="flex items-center gap-1.5
-                                   ml-1
-                                   px-3.5 py-1.5
-                                   rounded-full
-                                   font-bold
-                                   transition
-                                   {{ $isDashboardActive
-                                       ? 'bg-blue-700 text-white shadow-md'
-                                       : 'bg-slate-900 text-white hover:bg-black' }}">
-
-                            <svg class="w-4 h-4 shrink-0"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24">
-
-                                <path stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2-2v-2zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-
-                            </svg>
-
-                            Espace
-
-                        </a>
-
-                    @endauth
-
-                </div>
-
-            </nav>
-
-
-            <!-- =====================================================
-                 PARTIE DROITE
-            ====================================================== -->
-
-            <div class="flex items-center gap-2 shrink-0">
-
-                @auth
-
-                    <!-- NOTIFICATIONS -->
-
-                    @include('components.notification-bell')
-
-
-                    <!-- =================================================
-                         PANIER / FAVORIS
-                    ================================================== -->
-
-                    @if (auth()->user()->isBuyer())
-
-                        @php
-                            $cartCount = app(App\Services\CartService::class)
-                                ->count(auth()->user());
-
-                            $wishlistCount = auth()->user()
-                                ->wishlist()
-                                ->count();
-                        @endphp
-
-
-                        <!-- PANIER -->
-
-                        <a href="{{ route('buyer.cart.index') }}"
-                            title="Mon panier"
-                            class="relative w-9 h-9 shrink-0
-                                   flex items-center justify-center
-                                   rounded-full
-                                   bg-white
-                                   border border-slate-200
-                                   text-slate-600
-                                   hover:text-blue-600
-                                   hover:border-blue-200
-                                   hover:bg-blue-50
-                                   transition-all duration-200">
-
-                            <svg class="w-5 h-5"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24">
-
-                                <path stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="1.8"
-                                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1 5h13M9 21h.01M18 21h.01" />
-
-                            </svg>
-
-                            @if ($cartCount > 0)
-
-                                <span
-                                    class="absolute -top-1 -right-1
-                                           min-w-[17px] h-[17px] px-1
-                                           bg-blue-600 text-white
-                                           text-[9px] font-black
-                                           rounded-full
-                                           flex items-center justify-center
-                                           border-2 border-[#FAF9F6]">
-
-                                    {{ $cartCount > 99 ? '99+' : $cartCount }}
-
-                                </span>
-
-                            @endif
-
-                        </a>
-
-
-                        <!-- FAVORIS -->
-
-                        <a href="{{ route('buyer.wishlist.index') }}"
-                            title="Mes favoris"
-                            class="relative w-9 h-9 shrink-0
-                                   flex items-center justify-center
-                                   rounded-full
-                                   bg-white
-                                   border border-slate-200
-                                   text-slate-600
-                                   hover:text-red-500
-                                   hover:border-red-200
-                                   hover:bg-red-50
-                                   transition-all duration-200">
-
-                            <svg class="w-5 h-5"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24">
-
-                                <path stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="1.8"
-                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z" />
-
-                            </svg>
-
-                            @if ($wishlistCount > 0)
-
-                                <span
-                                    class="absolute -top-1 -right-1
-                                           min-w-[17px] h-[17px] px-1
-                                           bg-red-500 text-white
-                                           text-[9px] font-black
-                                           rounded-full
-                                           flex items-center justify-center
-                                           border-2 border-[#FAF9F6]">
-
-                                    {{ $wishlistCount > 99 ? '99+' : $wishlistCount }}
-
-                                </span>
-
-                            @endif
-
-                        </a>
-
-                    @endif
-
-                @endauth
-
-
-                <!-- =================================================
-                     RECHERCHE
-                ================================================== -->
-
+<body class="min-h-screen flex flex-col bg-[#FAF9F6] text-slate-800 antialiased">
+
+    {{-- =========================================================
+         NAVBAR
+         Ligne 1 : identité + recherche + actions
+         Ligne 2 : catégories + navigation rapide
+    ========================================================== --}}
+    <header
+        x-data="{
+            mobileMenuOpen: false,
+            categoriesOpen: false
+        }"
+        class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200 shadow-sm">
+
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+
+            {{-- =====================================================
+                 LIGNE PRINCIPALE
+            ====================================================== --}}
+            <div class="h-[72px] flex items-center gap-3 sm:gap-4">
+
+                {{-- LOGO --}}
+                <a href="{{ route('buyer.home') }}"
+                    aria-label="Ali-Kamer - Accueil"
+                    class="shrink-0 flex items-center">
+                    <img src="{{ asset('images/afrique.png') }}"
+                        alt="Ali-Kamer"
+                        width="155"
+                        height="68"
+                        class="ak-logo">
+                </a>
+
+                {{-- RECHERCHE DESKTOP --}}
                 @php
-
                     $searchAction = route('buyer.home');
-
-                    $searchPlaceholder = 'Rechercher...';
+                    $searchPlaceholder = 'Rechercher un produit, une catégorie...';
 
                     if (request()->routeIs('messaging.*')) {
-
                         $searchAction = route('messaging.index');
-
                         $searchPlaceholder = 'Rechercher un message...';
-
                     } elseif (request()->routeIs('seller.products.*')) {
-
                         $searchAction = route('seller.products.index');
-
-                        $searchPlaceholder = 'Filtrer vos produits...';
-
-                    } elseif (
-                        request()->routeIs('buyer.orders.*') ||
-                        request()->routeIs('seller.orders.*')
-                    ) {
-
+                        $searchPlaceholder = 'Rechercher dans vos produits...';
+                    } elseif (request()->routeIs('buyer.orders.*') || request()->routeIs('seller.orders.*')) {
                         $searchPlaceholder = 'Rechercher une commande...';
-
                     }
-
                 @endphp
 
-
-                <form id="navbar-search"
-                    action="{{ $searchAction }}"
+                <form action="{{ $searchAction }}"
                     method="GET"
-                    class="relative hidden xl:block w-44 2xl:w-52 transition-all duration-300">
+                    class="hidden sm:flex flex-1 max-w-2xl mx-auto">
 
-                    <input type="text"
-                        name="q"
-                        value="{{ request('q') }}"
-                        placeholder="{{ $searchPlaceholder }}"
-                        class="w-full
-                               h-9
-                               bg-white
-                               border border-slate-300
-                               focus:border-blue-500
-                               focus:ring-2
-                               focus:ring-blue-500/10
-                               rounded-full
-                               pl-9 pr-3
-                               text-xs
-                               outline-none
-                               shadow-sm">
+                    <div class="relative w-full h-11 bg-[#F8FAF9] border border-emerald-100 rounded-full overflow-hidden
+                                focus-within:border-[#00843D] focus-within:ring-4 focus-within:ring-emerald-500/10 transition">
 
-                    <svg class="w-4 h-4 text-slate-400
-                                absolute left-3 top-1/2
-                                -translate-y-1/2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24">
-
-                        <path stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0a7 7 0 0114 0z" />
-
-                    </svg>
-
-                </form>
-
-
-                @auth
-
-                    <!-- =================================================
-                         PROFIL ACHETEUR
-                    ================================================== -->
-
-                    @if (auth()->user()->isBuyer())
-
-                        <a href="{{ route('buyer.profile') }}"
-                            title="{{ auth()->user()->name }}"
-                            class="shrink-0">
-
-                            <div
-                                class="w-9 h-9
-                                       rounded-full
-                                       bg-blue-600
-                                       text-white
-                                       font-black
-                                       text-[11px]
-                                       flex items-center justify-center
-                                       uppercase
-                                       border-2 border-white
-                                       shadow-md
-                                       hover:scale-105
-                                       transition">
-
-                                {{ strtoupper(substr(auth()->user()->name ?? auth()->user()->email, 0, 2)) }}
-
-                            </div>
-
-                        </a>
-
-                    @endif
-
-
-                    <!-- =================================================
-                         DÉCONNEXION
-                    ================================================== -->
-
-                    <form action="{{ route('logout') }}"
-                        method="POST"
-                        class="shrink-0">
-
-                        @csrf
+                        <input type="text"
+                            name="q"
+                            value="{{ request('q') }}"
+                            placeholder="{{ $searchPlaceholder }}"
+                            autocomplete="off"
+                            class="w-full h-full bg-transparent border-0 outline-none pl-5 pr-14 text-sm text-slate-800 placeholder:text-slate-400">
 
                         <button type="submit"
-                            title="Se déconnecter"
-                            class="h-9
-                                   inline-flex items-center justify-center
-                                   gap-1.5
-                                   px-3
-                                   rounded-full
-                                   bg-red-600
-                                   hover:bg-red-700
-                                   active:scale-95
-                                   text-white
-                                   text-xs
-                                   font-extrabold
-                                   border border-red-600
-                                   shadow-md shadow-red-600/25
-                                   whitespace-nowrap
-                                   transition-all duration-200">
-
-                            <svg class="w-4 h-4 shrink-0"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24">
-
-                                <path stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2.5"
-                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-
+                            aria-label="Rechercher"
+                            class="absolute right-1 top-1 w-9 h-9 rounded-full bg-[#00843D] hover:bg-[#006B32]
+                                   text-white flex items-center justify-center transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1 8 8 8 8 0 0 1 16 0z" />
                             </svg>
-
-                            <span class="hidden 2xl:inline">
-                                Déconnexion
-                            </span>
-
                         </button>
+                    </div>
+                </form>
 
-                    </form>
+                {{-- ACTIONS À DROITE --}}
+                <div class="ml-auto flex items-center gap-1 sm:gap-2 shrink-0">
 
-                @endauth
+                    @auth
+                        @include('components.notification-bell')
 
+                        @if (auth()->user()->isBuyer())
+                            @php
+                                $cartCount = app(App\Services\CartService::class)->count(auth()->user());
+                                $wishlistCount = auth()->user()->wishlist()->count();
+                            @endphp
 
-                <!-- =================================================
-                     VISITEUR
-                ================================================== -->
+                            {{-- FAVORIS --}}
+                            <a href="{{ route('buyer.wishlist.index') }}"
+                                title="Mes favoris"
+                                aria-label="Mes favoris"
+                                class="relative w-10 h-10 rounded-full flex items-center justify-center text-slate-700
+                                       hover:text-[#CE1126] hover:bg-red-50 transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                                        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z" />
+                                </svg>
 
-                @guest
+                                @if ($wishlistCount > 0)
+                                    <span class="absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] px-1 bg-[#CE1126]
+                                                 text-white text-[9px] font-black rounded-full flex items-center justify-center
+                                                 border-2 border-white">
+                                        {{ $wishlistCount > 99 ? '99+' : $wishlistCount }}
+                                    </span>
+                                @endif
+                            </a>
 
-                    <div class="hidden sm:flex items-center gap-2">
+                            {{-- PANIER --}}
+                            <a href="{{ route('buyer.cart.index') }}"
+                                title="Mon panier"
+                                aria-label="Mon panier"
+                                class="relative w-10 h-10 rounded-full flex items-center justify-center text-slate-700
+                                       hover:text-[#00843D] hover:bg-emerald-50 transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1 5h13M9 21h.01M18 21h.01" />
+                                </svg>
 
+                                @if ($cartCount > 0)
+                                    <span class="absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] px-1 bg-[#CE1126]
+                                                 text-white text-[9px] font-black rounded-full flex items-center justify-center
+                                                 border-2 border-white">
+                                        {{ $cartCount > 99 ? '99+' : $cartCount }}
+                                    </span>
+                                @endif
+                            </a>
+                        @endif
+
+                        {{-- DASHBOARD --}}
+                        @php
+                            $dashboardRoute = match (auth()->user()->role) {
+                                'seller' => route('seller.dashboard'),
+                                'secretary' => route('secretary.dashboard'),
+                                'admin' => route('admin.dashboard'),
+                                'agency_manager' => route('agency.dashboard'),
+                                default => route('buyer.dashboard'),
+                            };
+                        @endphp
+
+                        <a href="{{ $dashboardRoute }}"
+                            title="Mon espace"
+                            class="hidden md:flex items-center gap-2 h-10 px-4 rounded-full bg-[#00843D]
+                                   hover:bg-[#006B32] text-white text-xs font-extrabold shadow-sm transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6zm10 0a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2V6zM4 16a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2zm10 0a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-2z" />
+                            </svg>
+                            Mon espace
+                        </a>
+
+                        @if (auth()->user()->isBuyer())
+                            <a href="{{ route('buyer.profile') }}"
+                                title="{{ auth()->user()->name }}"
+                                aria-label="Mon profil"
+                                class="hidden sm:block">
+                                <div class="w-10 h-10 rounded-full bg-[#006B32] text-white font-black text-xs
+                                            flex items-center justify-center uppercase border-2 border-white shadow-sm
+                                            hover:scale-105 transition">
+                                    {{ strtoupper(substr(auth()->user()->name ?? auth()->user()->email, 0, 2)) }}
+                                </div>
+                            </a>
+                        @endif
+
+                        <form action="{{ route('logout') }}" method="POST" class="hidden lg:block">
+                            @csrf
+                            <button type="submit"
+                                title="Se déconnecter"
+                                class="h-10 px-4 rounded-full border border-red-100 bg-red-50 text-[#CE1126]
+                                       hover:bg-[#CE1126] hover:text-white text-xs font-extrabold transition">
+                                Déconnexion
+                            </button>
+                        </form>
+                    @endauth
+
+                    @guest
                         <a href="{{ route('login.show') }}"
-                            class="text-xs font-bold text-slate-700
-                                   hover:text-blue-600
-                                   px-2 py-2">
-
+                            class="hidden sm:flex h-10 px-4 items-center text-sm font-bold text-slate-700 hover:text-[#00843D]">
                             Connexion
-
                         </a>
 
                         <a href="{{ route('register.show') }}"
-                            class="text-xs font-bold
-                                   bg-blue-600 hover:bg-blue-700
-                                   text-white
-                                   px-3.5 py-2
-                                   rounded-full
-                                   shadow-md shadow-blue-200">
-
+                            class="hidden sm:flex h-10 px-5 items-center rounded-full bg-[#00843D]
+                                   hover:bg-[#006B32] text-white text-sm font-extrabold shadow-sm">
                             Inscription
-
                         </a>
+                    @endguest
 
-                    </div>
+                    {{-- HAMBURGER MOBILE --}}
+                    <button type="button"
+                        @click="mobileMenuOpen = !mobileMenuOpen; categoriesOpen = false"
+                        :aria-expanded="mobileMenuOpen.toString()"
+                        aria-label="Ouvrir le menu"
+                        class="lg:hidden w-10 h-10 rounded-full bg-emerald-50 text-[#00843D]
+                               flex items-center justify-center">
+                        <svg x-show="!mobileMenuOpen" class="w-5 h-5" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
 
-                @endguest
-
-
-                <!-- =================================================
-                     MENU MOBILE
-                ================================================== -->
-
-                <button type="button"
-                    @click="mobileMenuOpen = !mobileMenuOpen"
-                    class="lg:hidden
-                           p-2
-                           rounded-xl
-                           bg-slate-200/70
-                           text-slate-700
-                           hover:bg-slate-200
-                           transition">
-
-                    <svg class="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24">
-
-                        <path x-show="!mobileMenuOpen"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M4 6h16M4 12h16M4 18h16" />
-
-                        <path x-show="mobileMenuOpen"
-                            x-cloak
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12" />
-
-                    </svg>
-
-                </button>
-
+                        <svg x-show="mobileMenuOpen" x-cloak class="w-5 h-5" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
             </div>
 
-        </div>
-
-
-        <!-- =============================================================
-             MENU MOBILE
-        ========================================================== -->
-
-        <div x-show="mobileMenuOpen"
-            x-cloak
-            x-transition
-            class="lg:hidden
-                   bg-white
-                   border-t border-slate-200
-                   mt-3
-                   px-2 pt-3 pb-5
-                   space-y-1
-                   shadow-xl
-                   rounded-b-2xl">
-
-            <a href="{{ route('buyer.home') }}"
-                class="block px-4 py-3 rounded-xl
-                       text-sm font-semibold
-                       hover:bg-slate-100">
-
-                Accueil
-
-            </a>
-
-
-            @auth
-
-                @if (auth()->user()->isBuyer())
-
-                    <a href="{{ route('buyer.orders.index') }}"
-                        class="block px-4 py-3 rounded-xl
-                               text-sm font-semibold
-                               hover:bg-slate-100">
-
-                        Mes commandes
-
-                    </a>
-
-                    <a href="{{ route('buyer.wishlist.index') }}"
-                        class="block px-4 py-3 rounded-xl
-                               text-sm font-semibold
-                               hover:bg-slate-100">
-
-                        Mes favoris
-
-                    </a>
-
-                    <a href="{{ route('buyer.cart.index') }}"
-                        class="block px-4 py-3 rounded-xl
-                               text-sm font-semibold
-                               hover:bg-slate-100">
-
-                        Mon panier
-
-                        @php
-                            $mobileCartCount = app(App\Services\CartService::class)
-                                ->count(auth()->user());
-                        @endphp
-
-                        @if ($mobileCartCount > 0)
-
-                            <span class="ml-2 inline-flex items-center justify-center
-                                         min-w-[20px] h-5 px-1
-                                         bg-blue-600 text-white
-                                         text-[10px] font-bold
-                                         rounded-full">
-
-                                {{ $mobileCartCount > 99 ? '99+' : $mobileCartCount }}
-
-                            </span>
-
-                        @endif
-
-                    </a>
-
-                    <a href="{{ route('buyer.disputes.index') }}"
-                        class="block px-4 py-3 rounded-xl
-                               text-sm font-semibold
-                               hover:bg-slate-100">
-
-                        Mes litiges
-
-                    </a>
-
-                @elseif(auth()->user()->role === 'seller')
-
-                    <a href="{{ route('seller.products.index') }}"
-                        class="block px-4 py-3 rounded-xl
-                               text-sm font-semibold
-                               hover:bg-slate-100">
-
-                        Mes produits
-
-                    </a>
-
-                    <a href="{{ route('seller.orders.index') }}"
-                        class="block px-4 py-3 rounded-xl
-                               text-sm font-semibold
-                               hover:bg-slate-100">
-
-                        Commandes reçues
-
-                    </a>
-
-                    <a href="{{ route('seller.disputes.index') }}"
-                        class="block px-4 py-3 rounded-xl
-                               text-sm font-semibold
-                               hover:bg-slate-100">
-
-                        Gestion des litiges
-
-                    </a>
-
-                @endif
-
-
-                @if (in_array(auth()->user()->role, ['buyer', 'seller']))
-
-                    <a href="{{ route('messaging.index') }}"
-                        class="block px-4 py-3 rounded-xl
-                               text-sm font-semibold
-                               hover:bg-slate-100">
-
-                        Messagerie
-
-                    </a>
-
-                @endif
-
-
-                <a href="{{ route('tutorials.index') }}"
-                    class="block px-4 py-3 rounded-xl
-                           text-sm font-semibold
-                           hover:bg-slate-100">
-
-                    Tutoriels
-
-                </a>
-
-
-                <a href="{{ route('help') }}"
-                    class="block px-4 py-3 rounded-xl
-                           text-sm font-semibold
-                           hover:bg-slate-100">
-
-                    Centre d'aide
-
-                </a>
-
-
-                <a href="{{ $dashboardRoute }}"
-                    class="block px-4 py-3 rounded-xl
-                           text-sm font-bold
-                           bg-slate-900
-                           text-white">
-
-                    Mon espace
-
-                </a>
-
-
-                @if (auth()->user()->isBuyer())
-
-                    <a href="{{ route('buyer.profile') }}"
-                        class="block px-4 py-3 rounded-xl
-                               text-sm font-semibold
-                               hover:bg-slate-100">
-
-                        Mon profil
-
-                    </a>
-
-                @endif
-
-
-                <div class="pt-3 mt-2 border-t border-slate-200
-                            flex items-center justify-between">
-
-                    <span class="text-xs font-bold text-slate-700">
-
-                        {{ auth()->user()->name }}
-
-                    </span>
-
-                    <form action="{{ route('logout') }}" method="POST">
-
-                        @csrf
+            {{-- =====================================================
+                 RECHERCHE MOBILE
+            ====================================================== --}}
+            <div class="sm:hidden pb-3">
+                <form action="{{ $searchAction }}" method="GET">
+                    <div class="relative h-10 bg-[#F8FAF9] border border-emerald-100 rounded-full overflow-hidden">
+                        <input type="text"
+                            name="q"
+                            value="{{ request('q') }}"
+                            placeholder="{{ $searchPlaceholder }}"
+                            autocomplete="off"
+                            class="w-full h-full bg-transparent border-0 outline-none pl-4 pr-12 text-xs">
 
                         <button type="submit"
-                            class="px-3.5 py-2
-                                   rounded-lg
-                                   bg-red-600
-                                   hover:bg-red-700
-                                   text-white
-                                   text-xs
-                                   font-extrabold
-                                   shadow-sm">
-
-                            Déconnexion
-
+                            aria-label="Rechercher"
+                            class="absolute right-1 top-1 w-8 h-8 rounded-full bg-[#00843D]
+                                   text-white flex items-center justify-center">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1 8 8 8 8 0 0 1 16 0z" />
+                            </svg>
                         </button>
-
-                    </form>
-
-                </div>
-
-            @endauth
-
-
-            @guest
-
-                <div class="pt-3 mt-2
-                            border-t border-slate-100
-                            flex gap-2">
-
-                    <a href="{{ route('login.show') }}"
-                        class="flex-1 text-center
-                               text-xs font-bold
-                               py-2.5
-                               border border-slate-300
-                               rounded-xl">
-
-                        Connexion
-
-                    </a>
-
-                    <a href="{{ route('register.show') }}"
-                        class="flex-1 text-center
-                               text-xs font-bold
-                               py-2.5
-                               bg-blue-600
-                               text-white
-                               rounded-xl">
-
-                        Inscription
-
-                    </a>
-
-                </div>
-
-            @endguest
-
-        </div>
-
-    </div>
-
-</header>
-
-
-<!-- ESPACEMENT NAVBAR -->
-
-<div class="pt-20"></div>
-
-
-<!-- =========================================================
-     MESSAGES FLASH
-========================================================== -->
-
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 w-full">
-
-    @if (session('success'))
-
-        <div
-            class="flex items-center gap-3
-                   rounded-2xl
-                   border border-emerald-200
-                   bg-emerald-50
-                   p-4
-                   text-sm
-                   text-emerald-800
-                   shadow-sm
-                   mb-4">
-
-            <svg class="h-5 w-5 shrink-0 text-emerald-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor">
-
-                <path stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M5 13l4 4L19 7" />
-
-            </svg>
-
-            <span>{{ session('success') }}</span>
-
-        </div>
-
-    @endif
-
-
-    @if (session('fail') || session('error'))
-
-        <div
-            class="flex items-center gap-3
-                   rounded-2xl
-                   border border-red-200
-                   bg-red-50
-                   p-4
-                   text-sm
-                   text-red-800
-                   shadow-sm
-                   mb-4">
-
-            <svg class="h-5 w-5 shrink-0 text-red-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor">
-
-                <path stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0a9 9 0 0118 0z" />
-
-            </svg>
-
-            <span>{{ session('fail') ?? session('error') }}</span>
-
-        </div>
-
-    @endif
-
-</div>
-
-
-<!-- =========================================================
-     CONTENU PRINCIPAL
-========================================================== -->
-
-<main class="flex-grow">
-
-    @yield('content')
-
-</main>
-
-
-<!-- =========================================================
-     FOOTER
-========================================================== -->
-
-<footer class="bg-slate-900 text-slate-400
-               border-t border-slate-800
-               mt-20 font-sans">
-
-    <div class="max-w-7xl mx-auto
-                px-4 sm:px-6 lg:px-8
-                py-16">
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-
-            <!-- COLONNE 1 -->
-
-            <div class="space-y-4">
-
-                <div class="text-xl font-black text-white">
-
-                    Ali-<span class="text-orange-500">Kamer</span>
-
-                </div>
-
-                <p class="text-sm leading-relaxed text-slate-400">
-
-                    La marketplace camerounaise de référence.
-                    Achetez et vendez en toute sérénité grâce à notre
-                    système d'Escrow sécurisé.
-
-                </p>
-
-                <div class="pt-2 flex flex-wrap gap-2">
-
-                    <span
-                        class="inline-flex items-center gap-1.5
-                               bg-slate-800
-                               text-emerald-400
-                               text-xs
-                               font-medium
-                               px-2.5 py-1
-                               rounded-full
-                               border border-slate-700">
-
-                        🛡️ Escrow Sécurisé
-
-                    </span>
-
-                    <span
-                        class="inline-flex items-center gap-1.5
-                               bg-slate-800
-                               text-orange-400
-                               text-xs
-                               font-medium
-                               px-2.5 py-1
-                               rounded-full
-                               border border-slate-700">
-
-                        🇨🇲 100% Cameroun
-
-                    </span>
-
-                </div>
-
+                    </div>
+                </form>
             </div>
 
+            {{-- =====================================================
+                 PETITE NAVBAR DESKTOP
+            ====================================================== --}}
+            <div class="hidden lg:flex h-[46px] items-center border-t border-slate-100">
 
-            <!-- COLONNE 2 -->
+                {{-- BOUTON TOUTES LES CATÉGORIES --}}
+                <div class="relative h-full shrink-0">
+                    <button type="button"
+                        @click="categoriesOpen = !categoriesOpen"
+                        :aria-expanded="categoriesOpen.toString()"
+                        class="h-full flex items-center gap-2.5 pr-7 text-sm font-extrabold text-slate-800
+                               hover:text-[#00843D] transition">
 
-            <div>
+                        <span class="w-8 h-8 rounded-lg bg-[#00843D] text-white flex items-center justify-center">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </span>
 
-                <h3 class="text-white font-bold text-sm
-                           tracking-wider uppercase mb-4">
+                        <span>Toutes les catégories</span>
 
-                    Navigation
+                        <svg class="w-4 h-4 transition-transform"
+                            :class="{ 'rotate-180': categoriesOpen }"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m6 9 6 6 6-6" />
+                        </svg>
+                    </button>
+                </div>
 
-                </h3>
+                <div class="w-px h-6 bg-slate-200 mx-3"></div>
 
-                <ul class="space-y-2.5 text-sm">
+                {{-- LIENS RAPIDES --}}
+                <nav class="flex items-center gap-1 text-[13px] font-bold whitespace-nowrap">
+                    <a href="{{ route('buyer.home') }}"
+                        class="px-4 py-2 rounded-lg text-[#00843D] bg-emerald-50 hover:bg-emerald-100 transition">
+                        Accueil
+                    </a>
 
-                    <li>
+                    <a href="{{ route('buyer.home') }}#produits"
+                        class="px-4 py-2 rounded-lg text-slate-600 hover:text-[#00843D] hover:bg-emerald-50 transition">
+                        Boutiques
+                    </a>
+
+                    <a href="{{ route('buyer.home') }}#produits"
+                        class="px-4 py-2 rounded-lg text-slate-600 hover:text-[#CE1126] hover:bg-red-50 transition">
+                        Promotions
+                    </a>
+
+                    <a href="{{ route('tutorials.index') }}"
+                        class="px-4 py-2 rounded-lg text-slate-600 hover:text-[#00843D] hover:bg-emerald-50 transition">
+                        Comment ça marche ?
+                    </a>
+
+                    <a href="{{ route('buyer.home') }}#agences"
+                        class="px-4 py-2 rounded-lg text-slate-600 hover:text-[#00843D] hover:bg-emerald-50 transition">
+                        Nos agences
+                    </a>
+
+                    <a href="{{ route('help') }}"
+                        class="px-4 py-2 rounded-lg text-slate-600 hover:text-[#00843D] hover:bg-emerald-50 transition">
+                        Aide
+                    </a>
+                </nav>
+            </div>
+
+            {{-- =====================================================
+                 PETITE NAVBAR MOBILE
+            ====================================================== --}}
+            <div class="lg:hidden flex items-center gap-2 h-[42px] border-t border-slate-100 overflow-x-auto scrollbar-hide">
+
+                <button type="button"
+                    @click="categoriesOpen = !categoriesOpen; mobileMenuOpen = false"
+                    :aria-expanded="categoriesOpen.toString()"
+                    class="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#00843D] text-white text-[11px] font-extrabold">
+
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+
+                    Catégories
+                </button>
+
+                <a href="{{ route('buyer.home') }}"
+                    class="shrink-0 px-3 py-1.5 rounded-lg bg-emerald-50 text-[#00843D] text-[11px] font-extrabold">
+                    Accueil
+                </a>
+
+                <a href="{{ route('buyer.home') }}#produits"
+                    class="shrink-0 px-3 py-1.5 text-slate-600 text-[11px] font-bold">
+                    Boutiques
+                </a>
+
+                <a href="{{ route('buyer.home') }}#produits"
+                    class="shrink-0 px-3 py-1.5 text-slate-600 text-[11px] font-bold">
+                    Promotions
+                </a>
+
+                <a href="{{ route('tutorials.index') }}"
+                    class="shrink-0 px-3 py-1.5 text-slate-600 text-[11px] font-bold">
+                    Comment ça marche ?
+                </a>
+
+                <a href="{{ route('help') }}"
+                    class="shrink-0 px-3 py-1.5 text-slate-600 text-[11px] font-bold">
+                    Aide
+                </a>
+            </div>
+
+            {{-- =====================================================
+                 PANNEAU DES CATÉGORIES
+                 Ouvert sous la petite navbar
+            ====================================================== --}}
+            <div x-show="categoriesOpen"
+                x-cloak
+                @click.outside="categoriesOpen = false"
+                x-transition:enter="transition ease-out duration-150"
+                x-transition:enter-start="opacity-0 -translate-y-2"
+                x-transition:enter-end="opacity-100 translate-y-0"
+                x-transition:leave="transition ease-in duration-100"
+                x-transition:leave-start="opacity-100 translate-y-0"
+                x-transition:leave-end="opacity-0 -translate-y-2"
+                class="absolute left-0 right-0 top-[118px] bg-white border-t border-slate-100 border-b
+                       shadow-xl">
+
+                <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-5">
+
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <p class="text-[11px] uppercase tracking-wider font-black text-[#00843D]">
+                                Explorer Ali-Kamer
+                            </p>
+                            <h3 class="text-lg font-black text-slate-900">
+                                Toutes les catégories
+                            </h3>
+                        </div>
+
+                        <button type="button"
+                            @click="categoriesOpen = false"
+                            class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500
+                                   flex items-center justify-center transition"
+                            aria-label="Fermer les catégories">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 6l12 12M18 6L6 18" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
+
+                        @php
+                            $akCategories = [
+                                ['name' => 'Électronique', 'icon' => '📱'],
+                                ['name' => 'Mode & vêtements', 'icon' => '👕'],
+                                ['name' => 'Maison', 'icon' => '🏠'],
+                                ['name' => 'Beauté & soins', 'icon' => '✨'],
+                                ['name' => 'Téléphones', 'icon' => '📲'],
+                                ['name' => 'Informatique', 'icon' => '💻'],
+                                ['name' => 'Électroménager', 'icon' => '🧺'],
+                                ['name' => 'Alimentation', 'icon' => '🥜'],
+                                ['name' => 'Auto & moto', 'icon' => '🚗'],
+                                ['name' => 'Agriculture', 'icon' => '🌱'],
+                            ];
+                        @endphp
+
+                        @foreach ($akCategories as $category)
+                            <a href="{{ route('buyer.home') }}#produits"
+                                class="group flex items-center gap-3 p-3 rounded-xl border border-slate-100
+                                       bg-[#FAF9F6] hover:bg-emerald-50 hover:border-emerald-200 transition">
+
+                                <span class="w-9 h-9 shrink-0 rounded-lg bg-white border border-slate-100
+                                             flex items-center justify-center text-lg shadow-sm">
+                                    {{ $category['icon'] }}
+                                </span>
+
+                                <span class="min-w-0">
+                                    <span class="block text-xs font-extrabold text-slate-800 group-hover:text-[#00843D]">
+                                        {{ $category['name'] }}
+                                    </span>
+                                    <span class="block text-[9px] text-slate-400 mt-0.5">
+                                        Découvrir
+                                    </span>
+                                </span>
+
+                                <svg class="w-3.5 h-3.5 ml-auto text-slate-300 group-hover:text-[#00843D]
+                                            group-hover:translate-x-0.5 transition"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="m9 18 6-6-6-6" />
+                                </svg>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+            {{-- =====================================================
+                 MENU MOBILE
+            ====================================================== --}}
+            <div x-show="mobileMenuOpen"
+                x-cloak
+                x-transition:enter="transition ease-out duration-150"
+                x-transition:enter-start="opacity-0 -translate-y-2"
+                x-transition:enter-end="opacity-100 translate-y-0"
+                x-transition:leave="transition ease-in duration-100"
+                x-transition:leave-start="opacity-100 translate-y-0"
+                x-transition:leave-end="opacity-0 -translate-y-2"
+                class="lg:hidden absolute left-0 right-0 top-full bg-white border-t border-emerald-100
+                       shadow-xl">
+
+                <div class="max-w-[1440px] mx-auto px-4 py-4">
+
+                    <div class="grid grid-cols-2 gap-2">
+
+                        <a href="{{ route('buyer.home') }}"
+                            class="px-4 py-3 rounded-xl bg-emerald-50 text-[#00843D] text-sm font-bold">
+                            Accueil
+                        </a>
+
+                        <a href="{{ route('buyer.home') }}#produits"
+                            class="px-4 py-3 rounded-xl bg-slate-50 text-slate-700 text-sm font-bold">
+                            Boutiques
+                        </a>
+
+                        <a href="{{ route('buyer.home') }}#produits"
+                            class="px-4 py-3 rounded-xl bg-red-50 text-[#CE1126] text-sm font-bold">
+                            Promotions
+                        </a>
 
                         <a href="{{ route('tutorials.index') }}"
-                            class="hover:text-orange-500
-                                   transition-colors">
-
-                            📖 Tutoriels & Guides
-
+                            class="px-4 py-3 rounded-xl bg-emerald-50 text-[#00843D] text-sm font-bold">
+                            Comment ça marche ?
                         </a>
 
-                    </li>
-
-                    <li>
-
-                        <a href="#"
-                            class="hover:text-orange-500
-                                   transition-colors">
-
-                            🛍️ Explorer les produits
-
+                        <a href="{{ route('buyer.home') }}#agences"
+                            class="px-4 py-3 rounded-xl bg-yellow-50 text-[#806600] text-sm font-bold">
+                            Nos agences
                         </a>
-
-                    </li>
-
-                    <li>
-
-                        <a href="#"
-                            class="hover:text-orange-500
-                                   transition-colors">
-
-                            💼 Devenir Vendeur
-
-                        </a>
-
-                    </li>
-
-                </ul>
-
-            </div>
-
-
-            <!-- COLONNE 3 -->
-
-            <div>
-
-                <h3 class="text-white font-bold text-sm
-                           tracking-wider uppercase mb-4">
-
-                    Aide & Confiance
-
-                </h3>
-
-                <ul class="space-y-2.5 text-sm">
-
-                    <li>
 
                         <a href="{{ route('help') }}"
-                            class="hover:text-orange-500
-                                   transition-colors">
-
-                            Centre d'aide & FAQ
-
+                            class="px-4 py-3 rounded-xl bg-slate-50 text-slate-700 text-sm font-bold">
+                            Aide
                         </a>
 
-                    </li>
+                        @auth
+                            <a href="{{ $dashboardRoute }}"
+                                class="px-4 py-3 rounded-xl bg-[#00843D] text-white text-sm font-bold">
+                                Mon espace
+                            </a>
 
-                    <li>
+                            @if (auth()->user()->isBuyer())
+                                <a href="{{ route('buyer.wishlist.index') }}"
+                                    class="px-4 py-3 rounded-xl bg-red-50 text-[#CE1126] text-sm font-bold">
+                                    Mes favoris
+                                </a>
 
-                        <a href="#"
-                            class="hover:text-orange-500
-                                   transition-colors">
+                                <a href="{{ route('buyer.cart.index') }}"
+                                    class="px-4 py-3 rounded-xl bg-yellow-50 text-[#806600] text-sm font-bold">
+                                    Mon panier
+                                </a>
 
-                            Comment fonctionne l'Escrow ?
+                                <a href="{{ route('buyer.profile') }}"
+                                    class="px-4 py-3 rounded-xl bg-slate-50 text-slate-700 text-sm font-bold">
+                                    Mon profil
+                                </a>
+                            @endif
 
-                        </a>
+                            <form action="{{ route('logout') }}" method="POST" class="col-span-2">
+                                @csrf
+                                <button type="submit"
+                                    class="w-full px-4 py-3 rounded-xl bg-red-50 text-[#CE1126] text-sm font-bold">
+                                    Déconnexion
+                                </button>
+                            </form>
+                        @endauth
 
-                    </li>
+                        @guest
+                            <a href="{{ route('login.show') }}"
+                                class="px-4 py-3 rounded-xl border border-emerald-100 text-slate-700 text-sm font-bold">
+                                Connexion
+                            </a>
 
-                    <li>
-
-                        <a href="#"
-                            class="hover:text-orange-500
-                                   transition-colors">
-
-                            Signaler un problème
-
-                        </a>
-
-                    </li>
-
-                    <li>
-
-                        <a href="{{ route('about') }}"
-                            class="hover:text-orange-500
-                                   transition-colors">
-
-                            À propos d'Ali-Kamer
-
-                        </a>
-
-                    </li>
-
-                </ul>
-
+                            <a href="{{ route('register.show') }}"
+                                class="px-4 py-3 rounded-xl bg-[#00843D] text-white text-sm font-bold">
+                                Inscription
+                            </a>
+                        @endguest
+                    </div>
+                </div>
             </div>
 
+        </div>
+    </header>
 
-            <!-- COLONNE 4 -->
+    {{-- =========================================================
+         ESPACE RÉSERVÉ À LA NAVBAR
+         Desktop : 72 + 46 = 118px
+         Mobile  : 72 + recherche 52 + petite navbar 42 = 166px
+    ========================================================== --}}
+    <div class="pt-[166px] lg:pt-[118px] shrink-0"></div>
 
-            <div>
+    {{-- =========================================================
+         MESSAGES FLASH
+    ========================================================== --}}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 w-full">
+        @if (session('success'))
+            <div class="flex items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4
+                        text-sm text-emerald-800 shadow-sm mb-4">
+                <svg class="h-5 w-5 shrink-0 text-[#00843D]" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M5 13l4 4L19 7" />
+                </svg>
+                <span>{{ session('success') }}</span>
+            </div>
+        @endif
 
-                <h3 class="text-white font-bold text-sm
-                           tracking-wider uppercase mb-4">
+        @if (session('fail') || session('error'))
+            <div class="flex items-center gap-3 rounded-2xl border border-red-200 bg-red-50 p-4
+                        text-sm text-red-800 shadow-sm mb-4">
+                <svg class="h-5 w-5 shrink-0 text-[#CE1126]" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{{ session('fail') ?? session('error') }}</span>
+            </div>
+        @endif
+    </div>
 
-                    Paiements Sécurisés
+    {{-- =========================================================
+         CONTENU PRINCIPAL
+    ========================================================== --}}
+    <main class="flex-grow">
+        @yield('content')
+    </main>
 
-                </h3>
+    {{-- =========================================================
+         FOOTER
+    ========================================================== --}}
+    <footer class="bg-[#004D2A] text-white border-t border-emerald-900 mt-16">
 
-                <p class="text-xs text-slate-500 mb-3">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
-                    Nous acceptons vos moyens de paiement locaux préférés :
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
 
-                </p>
+                {{-- COLONNE 1 --}}
+                <div class="space-y-4">
+                    <a href="{{ route('buyer.home') }}" class="inline-block">
+                        <img src="{{ asset('images/afrique.png') }}" alt="Ali-Kamer" width="155" height="68"
+                            class="w-[150px] h-auto object-contain">
+                    </a>
 
-                <div class="flex flex-wrap gap-2
-                            text-xs font-bold text-slate-300">
+                    <p class="text-sm leading-relaxed text-emerald-50/80">
+                        La marketplace construite au Cameroun pour l'Afrique.
+                        Achetez et vendez sans stress, en toute confiance.
+                    </p>
 
-                    <span class="bg-amber-500 text-slate-950
-                                 px-2 py-1 rounded shadow-sm">
+                    <div class="flex flex-wrap gap-2">
+                        <span class="inline-flex items-center gap-1.5 bg-white/10 text-emerald-100 text-xs font-semibold
+                                     px-3 py-1.5 rounded-full border border-white/10">
+                            🛡️ Transactions sécurisées
+                        </span>
 
-                        MTN MoMo
-
-                    </span>
-
-                    <span class="bg-orange-600 text-white
-                                 px-2 py-1 rounded shadow-sm">
-
-                        Orange Money
-
-                    </span>
-
-                    <span class="bg-blue-600 text-white
-                                 px-2 py-1 rounded shadow-sm">
-
-                        Carte Visa / Express Union
-
-                    </span>
-
+                        <span class="inline-flex items-center gap-1.5 bg-white/10 text-yellow-200 text-xs font-semibold
+                                     px-3 py-1.5 rounded-full border border-white/10">
+                            🇨🇲 100% Cameroun
+                        </span>
+                    </div>
                 </div>
 
-            </div>
+                {{-- COLONNE 2 --}}
+                <div>
+                    <h3 class="text-white font-extrabold text-sm tracking-wide uppercase mb-4">
+                        Navigation
+                    </h3>
 
+                    <ul class="space-y-3 text-sm">
+                        <li>
+                            <a href="{{ route('buyer.home') }}"
+                                class="text-emerald-50/80 hover:text-[#FCD116] transition">
+                                Accueil
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{{ route('tutorials.index') }}"
+                                class="text-emerald-50/80 hover:text-[#FCD116] transition">
+                                Tutoriels & Guides
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{{ route('about') }}"
+                                class="text-emerald-50/80 hover:text-[#FCD116] transition">
+                                À propos d'Ali-Kamer
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                {{-- COLONNE 3 --}}
+                <div>
+                    <h3 class="text-white font-extrabold text-sm tracking-wide uppercase mb-4">
+                        Aide & confiance
+                    </h3>
+
+                    <ul class="space-y-3 text-sm">
+                        <li>
+                            <a href="{{ route('help') }}"
+                                class="text-emerald-50/80 hover:text-[#FCD116] transition">
+                                Centre d'aide & FAQ
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="#" class="text-emerald-50/80 hover:text-[#FCD116] transition">
+                                Comment fonctionne l'Escrow ?
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="#" class="text-emerald-50/80 hover:text-[#FCD116] transition">
+                                Signaler un problème
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                {{-- COLONNE 4 --}}
+                <div>
+                    <h3 class="text-white font-extrabold text-sm tracking-wide uppercase mb-4">
+                        Paiements locaux
+                    </h3>
+
+                    <p class="text-xs text-emerald-50/70 mb-4 leading-relaxed">
+                        Payez facilement avec vos moyens de paiement locaux.
+                    </p>
+
+                    <div class="flex flex-wrap gap-2 text-xs font-bold">
+                        <span class="bg-[#FCD116] text-slate-900 px-3 py-1.5 rounded-lg">
+                            MTN MoMo
+                        </span>
+
+                        <span class="bg-[#CE1126] text-white px-3 py-1.5 rounded-lg">
+                            Orange Money
+                        </span>
+
+                        <span class="bg-white/10 text-white px-3 py-1.5 rounded-lg border border-white/10">
+                            Carte
+                        </span>
+                    </div>
+                </div>
+            </div>
         </div>
 
-    </div>
+        {{-- BAS FOOTER --}}
+        <div class="border-t border-white/10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row
+                        items-center justify-between gap-3 text-xs">
 
+                <div class="text-emerald-50/70 text-center sm:text-left">
+                    &copy; {{ date('Y') }} Ali-Kamer. Tous droits réservés.
+                </div>
 
-    <!-- BAS FOOTER -->
+                <div class="flex flex-wrap justify-center gap-5">
+                    <a href="#" class="text-emerald-50/70 hover:text-white transition">
+                        Conditions Générales
+                    </a>
 
-    <div class="border-t border-slate-800
-                bg-slate-950/50">
+                    <a href="#" class="text-emerald-50/70 hover:text-white transition">
+                        Politique de Confidentialité
+                    </a>
 
-        <div
-            class="max-w-7xl mx-auto
-                   px-4 sm:px-6 lg:px-8
-                   py-6
-                   flex flex-col sm:flex-row
-                   items-center justify-between
-                   gap-4
-                   text-xs">
-
-            <div class="text-slate-500
-                        text-center sm:text-left">
-
-                &copy; {{ date('Y') }} Ali-Kamer.
-                Tous droits réservés.
-
+                    <span class="text-[#FCD116] font-semibold">
+                        Construit au Cameroun pour l'Afrique 🇨🇲
+                    </span>
+                </div>
             </div>
-
-            <div class="flex flex-wrap
-                        justify-center gap-6
-                        text-slate-500">
-
-                <a href="#"
-                    class="hover:text-slate-300
-                           transition-colors">
-
-                    Conditions Générales (CGU/CGV)
-
-                </a>
-
-                <a href="#"
-                    class="hover:text-slate-300
-                           transition-colors">
-
-                    Politique de Confidentialité
-
-                </a>
-
-            </div>
-
         </div>
+    </footer>
 
-    </div>
-
-</footer>
-
-
-@stack('scripts')
-
-
-<!-- =========================================================
-     VISIBILITÉ RECHERCHE AU SCROLL
-========================================================== -->
-
-<script>
-
-    document.addEventListener('DOMContentLoaded', function () {
-
-        const searchBar = document.getElementById('navbar-search');
-
-        if (searchBar) {
-
-            const isHomePage =
-                {{ request()->routeIs('buyer.home') ? 'true' : 'false' }};
-
-            if (!isHomePage) {
-
-                searchBar.classList.remove(
-                    'opacity-0',
-                    'pointer-events-none',
-                    '-translate-y-2'
-                );
-
-                searchBar.classList.add(
-                    'opacity-100',
-                    'translate-y-0'
-                );
-
-            } else {
-
-                window.addEventListener('scroll', function () {
-
-                    if (window.scrollY > 280) {
-
-                        searchBar.classList.remove(
-                            'opacity-0',
-                            'pointer-events-none',
-                            '-translate-y-2'
-                        );
-
-                        searchBar.classList.add(
-                            'opacity-100',
-                            'translate-y-0'
-                        );
-
-                    } else {
-
-                        searchBar.classList.add(
-                            'opacity-0',
-                            'pointer-events-none',
-                            '-translate-y-2'
-                        );
-
-                        searchBar.classList.remove(
-                            'opacity-100',
-                            'translate-y-0'
-                        );
-
-                    }
-
-                });
-
-            }
-
-        }
-
-    });
-
-</script>
-```
+    @stack('scripts')
 
 </body>
-
 </html>
