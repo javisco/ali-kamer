@@ -14,7 +14,7 @@
     {
         public function up(): void
         {
-            Schema::create('notifications', function (Blueprint $table) {
+            Schema::create('note', function (Blueprint $table) {
                 $table->uuid('id')->primary();
                 $table->string('type');
                 $table->morphs('notifiable'); // notifiable_type + notifiable_id (indexé)

@@ -1,112 +1,258 @@
 @extends('base')
+
 @section('title', 'Remise de colis')
+
 @section('content')
-    <div class="bg-gray-50 min-h-screen py-8">
-        <div class="max-w-3xl mx-auto px-4">
 
-            <div class="flex items-center gap-3 mb-6">
-                <a href="{{ route('secretary.dashboard') }}" class="text-gray-400 hover:text-gray-600">←</a>
-                <h1 class="text-2xl font-extrabold text-gray-900">Remise de colis</h1>
-            </div>
+<div class="bg-[#F7F7F2] min-h-screen py-8">
 
-            @if (session('success'))
-                <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-xl mb-6 text-sm">
-                    {{ session('success') }}
-                </div>
-            @endif
+    <div class="max-w-3xl mx-auto px-4">
 
-            @if ($errors->has('otp'))
-                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 text-sm">
-                    {{ $errors->first('otp') }}
-                </div>
-            @endif
+        {{-- En-tête --}}
+        <div class="flex items-center gap-3 mb-6">
 
-            @if ($orders->isEmpty())
-                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-10 text-center">
-                    <p class="text-gray-400 text-sm">Aucun colis en attente de remise.</p>
-                </div>
-            @else
-                <p class="text-xs text-gray-500 mb-3">
-                    {{ $orders->count() }} colis en attente — saisir le code OTP de l'acheteur
+            <a href="{{ route('secretary.dashboard') }}"
+               class="w-9 h-9 flex items-center justify-center
+                      rounded-xl bg-white border border-gray-100
+                      text-gray-400 hover:text-[#016837]
+                      hover:border-green-100 transition">
+                ←
+            </a>
+
+            <div>
+                <p class="text-[10px] font-bold uppercase
+                          tracking-wider text-[#F9A01B]">
+                    Livraison
                 </p>
 
-                <div class="space-y-5">
-                    @foreach ($orders as $order)
-                        @php
-                            // Le colis est bloqué si transport non payé
-                            $transportBlocked =
-                                !$order->shipment->shipping_included &&
-                                $order->shipment->transport_fee > 0 &&
-                                !$order->shipment->transport_fee_paid;
-                        @endphp
-
-                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-
-                            {{-- Infos colis --}}
-                            <div class="flex items-start justify-between mb-4">
-                                <div>
-                                    <p class="font-bold text-gray-900">{{ $order->reference }}</p>
-                                    <p class="text-sm text-gray-500 mt-0.5">
-                                        {{ $order->shipment->recipient_name }}
-                                        — {{ $order->buyer->phone }}
-                                    </p>
-                                    <p class="text-xs text-gray-400 mt-0.5">
-                                        Arrivé le {{ $order->shipment->arrived_at?->format('d/m/Y à H:i') }}
-                                    </p>
-                                </div>
-
-                                {{-- Badge timer --}}
-                                @if ($order->timer_deadline)
-                                    <div class="text-right">
-                                        <p class="text-xs text-gray-400">Expire</p>
-                                        <p
-                                            class="text-xs font-bold {{ $order->isTimerExpired() ? 'text-red-500' : 'text-orange-500' }}">
-                                            {{ $order->timer_deadline->format('d/m H:i') }}
-                                        </p>
-                                    </div>
-                                @endif
-                            </div>
-
-                            {{-- Alerte transport non payé --}}
-                            @if ($transportBlocked)
-                                <div class="bg-orange-50 border border-orange-200 rounded-xl p-3 mb-4">
-                                    <p class="text-sm font-bold text-orange-700">
-                                        ⚠ Frais transport non payés
-                                    </p>
-                                    <p class="text-xs text-orange-600 mt-1">
-                                        L'acheteur doit payer
-                                        {{ number_format($order->shipment->transport_fee, 0, ',', ' ') }} FCFA
-                                        avant de récupérer son colis.
-                                        Le paiement se fait depuis son espace commande.
-                                    </p>
-                                </div>
-                            @endif
-
-                            {{-- Formulaire OTP --}}
-                            <form method="POST" action="{{ route('secretary.handover.otp', $order) }}">
-                                @csrf
-                                <div class="flex gap-3">
-                                    <input type="text" name="otp" maxlength="6" placeholder="_ _ _ _ _ _"
-                                        {{ $transportBlocked ? 'disabled' : '' }}
-                                        class="flex-1 border border-gray-300 rounded-xl px-4 py-3
-                                          text-center text-xl font-mono tracking-[0.4em]
-                                          focus:ring-2 focus:ring-indigo-500
-                                          {{ $transportBlocked ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : '' }}">
-                                    <button {{ $transportBlocked ? 'disabled' : '' }}
-                                        class="px-6 py-3 rounded-xl font-bold text-sm transition
-                                           {{ $transportBlocked
-                                               ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                               : 'bg-emerald-600 hover:bg-emerald-700 text-white' }}">
-                                        Valider
-                                    </button>
-                                </div>
-                            </form>
-
-                        </div>
-                    @endforeach
-                </div>
-            @endif
+                <h1 class="text-2xl font-extrabold text-gray-900">
+                    Remise de colis
+                </h1>
+            </div>
 
         </div>
+
+        {{-- Succès --}}
+        @if (session('success'))
+
+            <div class="bg-green-50 border border-green-200
+                        text-[#016837] px-4 py-3 rounded-xl mb-6
+                        text-sm flex items-center gap-2">
+
+                <span class="w-2 h-2 rounded-full bg-[#016837]"></span>
+
+                {{ session('success') }}
+
+            </div>
+
+        @endif
+
+        {{-- Erreur OTP --}}
+        @if ($errors->has('otp'))
+
+            <div class="bg-red-50 border border-red-200
+                        text-[#E30613] px-4 py-3 rounded-xl mb-6
+                        text-sm flex items-center gap-2">
+
+                <span class="w-2 h-2 rounded-full bg-[#E30613]"></span>
+
+                {{ $errors->first('otp') }}
+
+            </div>
+
+        @endif
+
+        @if ($orders->isEmpty())
+
+            <div class="bg-white rounded-2xl border border-gray-100
+                        shadow-sm p-10 text-center">
+
+                <div class="w-12 h-12 mx-auto mb-3 rounded-2xl
+                            bg-green-50 flex items-center justify-center">
+
+                    <span class="text-xl text-[#016837]">✓</span>
+
+                </div>
+
+                <p class="font-semibold text-gray-700">
+                    Aucun colis en attente de remise.
+                </p>
+
+                <p class="text-gray-400 text-sm mt-1">
+                    Les colis prêts à être remis apparaîtront ici.
+                </p>
+
+            </div>
+
+        @else
+
+            <div class="flex items-center justify-between mb-3">
+
+                <p class="text-xs text-gray-500">
+                    <span class="font-bold text-gray-900">
+                        {{ $orders->count() }}
+                    </span>
+                    colis en attente — saisir le code OTP de l'acheteur
+                </p>
+
+                <span class="w-2 h-2 rounded-full bg-[#F9A01B]"></span>
+
+            </div>
+
+            <div class="space-y-5">
+
+                @foreach ($orders as $order)
+
+                    @php
+                        // Le colis est bloqué si transport non payé
+                        $transportBlocked =
+                            !$order->shipment->shipping_included &&
+                            $order->shipment->transport_fee > 0 &&
+                            !$order->shipment->transport_fee_paid;
+                    @endphp
+
+                    <div class="bg-white rounded-2xl border border-gray-100
+                                shadow-sm p-5 hover:shadow-md
+                                transition-all">
+
+                        {{-- Infos colis --}}
+                        <div class="flex items-start justify-between mb-4">
+
+                            <div>
+
+                                <p class="font-bold text-gray-900">
+                                    {{ $order->reference }}
+                                </p>
+
+                                <p class="text-sm text-gray-500 mt-0.5">
+                                    {{ $order->shipment->recipient_name }}
+                                    — {{ $order->buyer->phone }}
+                                </p>
+
+                                <p class="text-xs text-gray-400 mt-0.5">
+                                    Arrivé le
+                                    {{ $order->shipment->arrived_at?->format('d/m/Y à H:i') }}
+                                </p>
+
+                            </div>
+
+                            {{-- Badge timer --}}
+                            @if ($order->timer_deadline)
+
+                                <div class="text-right">
+
+                                    <p class="text-xs text-gray-400">
+                                        Expire
+                                    </p>
+
+                                    <p class="text-xs font-bold
+                                        {{ $order->isTimerExpired()
+                                            ? 'text-[#E30613]'
+                                            : 'text-[#F9A01B]' }}">
+
+                                        {{ $order->timer_deadline->format('d/m H:i') }}
+
+                                    </p>
+
+                                </div>
+
+                            @endif
+
+                        </div>
+
+                        {{-- Transport non payé --}}
+                        @if ($transportBlocked)
+
+                            <div class="bg-yellow-50 border border-yellow-200
+                                        rounded-xl p-3 mb-4">
+
+                                <div class="flex items-start gap-3">
+
+                                    <div class="w-8 h-8 rounded-lg
+                                                bg-[#F9A01B]/15
+                                                flex items-center justify-center
+                                                shrink-0">
+
+                                        <span class="text-[#F9A01B] font-bold">
+                                            !
+                                        </span>
+
+                                    </div>
+
+                                    <div>
+
+                                        <p class="text-sm font-bold text-[#9A6500]">
+                                            Frais transport non payés
+                                        </p>
+
+                                        <p class="text-xs text-[#A66D00] mt-1">
+                                            L'acheteur doit payer
+                                            {{ number_format($order->shipment->transport_fee, 0, ',', ' ') }}
+                                            FCFA avant de récupérer son colis.
+                                            Le paiement se fait depuis son espace commande.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        @endif
+
+                        {{-- Formulaire OTP --}}
+                        <form method="POST"
+                              action="{{ route('secretary.handover.otp', $order) }}">
+                            @csrf
+
+                            <div class="flex flex-col sm:flex-row gap-3">
+
+                                <input
+                                    type="text"
+                                    name="otp"
+                                    maxlength="6"
+                                    placeholder="_ _ _ _ _ _"
+                                    {{ $transportBlocked ? 'disabled' : '' }}
+                                    class="flex-1 border border-gray-200
+                                           bg-gray-50 rounded-xl px-4 py-3
+                                           text-center text-xl font-mono
+                                           tracking-[0.4em]
+                                           focus:outline-none focus:bg-white
+                                           focus:border-[#016837]
+                                           focus:ring-2
+                                           focus:ring-green-500/10
+                                           {{ $transportBlocked
+                                               ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                               : '' }}">
+
+                                <button
+                                    {{ $transportBlocked ? 'disabled' : '' }}
+                                    class="px-6 py-3 rounded-xl font-bold
+                                           text-sm transition-all
+                                           {{ $transportBlocked
+                                               ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                                               : 'bg-[#016837] hover:bg-[#0a542d]
+                                                  text-white shadow-sm hover:shadow-md' }}">
+
+                                    {{ $transportBlocked
+                                        ? 'Paiement requis'
+                                        : 'Valider' }}
+
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                @endforeach
+
+            </div>
+
+        @endif
+
     </div>
+</div>
+
 @endsection

@@ -99,7 +99,7 @@ class ProductSeeder extends Seeder
             $spec = $techSpecs[array_rand($techSpecs)];
 
             $title = "{$base} {$variant} {$spec}";
-            $price = rand(1000, 25000);
+            $price = rand(100, 2000);
             $price = round($price / 500) * 500;
             $hasDiscount = (bool) rand(0, 1);
 
@@ -182,7 +182,7 @@ class ProductSeeder extends Seeder
             $color = $fashionColors[array_rand($fashionColors)];
 
             $title = "{$base} {$style} - {$color}";
-            $price = rand(1000, 25000);
+            $price = rand(100, 2000);
             $price = round($price / 500) * 500;
             $hasDiscount = (bool) rand(0, 1);
 

@@ -62,11 +62,11 @@ class DisputeService
             }
 
             $order->update(['status' => Order::STATUS_DISPUTED]);
-            $order->shop->user->notify(new DisputeOpenedNotification($dispute));
-            NotificationFacade::send(                                    // ← AJOUT
-                User::where('role', 'admin')->get(),                     // ← AJOUT
-                new AdminDisputeOpenedNotification($dispute)              // ← AJOUT
-            );
+          //  $order->shop->user->notify(new DisputeOpenedNotification($dispute));
+          //  NotificationFacade::send(                                    // ← AJOUT
+          //      User::where('role', 'admin')->get(),                     // ← AJOUT
+          //      new AdminDisputeOpenedNotification($dispute)              // ← AJOUT
+          //  );
 
             return $dispute;
         });

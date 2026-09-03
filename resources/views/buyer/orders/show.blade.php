@@ -1,443 +1,836 @@
-@extends('base')
+@extends('layouts.buyer')
 
 @section('title', 'Commande ' . $order->reference)
 
 @section('content')
-    <div class="bg-gray-50 min-h-screen py-8">
-        <div class="max-w-3xl mx-auto px-4">
 
-            {{-- En-tête --}}
-            <div class="flex items-center justify-between mb-6">
-                <div>
-                    <h1 class="text-2xl font-extrabold text-gray-900">{{ $order->reference }}</h1>
-                    <p class="text-sm text-gray-500 mt-0.5">Passée le {{ $order->created_at->format('d/m/Y à H:i') }}</p>
+<div class="min-h-screen bg-[#F7F7F2] py-6 sm:py-8">
+    <div class="max-w-3xl mx-auto px-4">
+
+        {{-- =========================================================
+            EN-TÊTE
+        ========================================================== --}}
+        <div class="flex items-start justify-between gap-4 mb-6">
+
+            <div class="min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="w-2 h-2 rounded-full bg-[#016837]"></span>
+                    <span class="text-[11px] font-extrabold uppercase tracking-wider text-[#F9A01B]">
+                        Détails de la commande
+                    </span>
                 </div>
 
-                {{-- Badge statut --}}
-                @php
-                    $statusConfig = [
-                        'pending' => ['label' => 'En attente', 'class' => 'bg-gray-100 text-gray-600'],
-                        'awaiting_payment' => ['label' => 'Paiement requis', 'class' => 'bg-amber-100 text-amber-800'],
-                        'paid' => ['label' => 'Payé', 'class' => 'bg-blue-100 text-blue-700'],
-                        'preparing' => ['label' => 'En préparation', 'class' => 'bg-indigo-100 text-indigo-700'],
-                        'registered_origin' => [
-                            'label' => 'Déposé en agence',
-                            'class' => 'bg-indigo-100 text-indigo-700',
-                        ],
-                        'in_transit' => ['label' => 'En transit', 'class' => 'bg-purple-100 text-purple-700'],
-                        'arrived_destination' => ['label' => 'Arrivé', 'class' => 'bg-teal-100 text-teal-700'],
-                        'awaiting_buyer_confirmation' => [
-                            'label' => 'À retirer',
-                            'class' => 'bg-orange-100 text-orange-700',
-                        ],
-                        'completed' => ['label' => 'Livré', 'class' => 'bg-emerald-100 text-emerald-700'],
-                        'auto_completed' => ['label' => 'Livré (auto)', 'class' => 'bg-emerald-100 text-emerald-700'],
-                        'disputed' => ['label' => 'Litige', 'class' => 'bg-red-100 text-red-700'],
-                        'cancelled' => ['label' => 'Annulée', 'class' => 'bg-gray-100 text-gray-500'],
-                        'failed' => ['label' => 'Échouée', 'class' => 'bg-red-100 text-red-600'],
-                    ];
-                    $sc = $statusConfig[$order->status] ?? [
-                        'label' => $order->status,
-                        'class' => 'bg-gray-100 text-gray-600',
-                    ];
-                @endphp
-                <span class="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider {{ $sc['class'] }}">
-                    {{ $sc['label'] }}
-                </span>
+                <h1 class="text-xl sm:text-2xl font-extrabold text-[#0a1b12] truncate">
+                    {{ $order->reference }}
+                </h1>
+
+                <p class="text-xs sm:text-sm text-gray-500 mt-1">
+                    Passée le {{ $order->created_at->format('d/m/Y à H:i') }}
+                </p>
             </div>
 
-            @if (session('success'))
-                <div
-                    class="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-xl mb-6 text-sm flex items-center gap-2">
-                    <svg class="w-5 h-5 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                    <span>{{ session('success') }}</span>
-                </div>
-            @endif
-
-            {{-- Étapes de suivi --}}
+            {{-- Badge statut --}}
             @php
-                $steps = [
-                    ['status' => ['paid'], 'label' => 'Payé'],
-                    ['status' => ['preparing'], 'label' => 'En préparation'],
-                    ['status' => ['registered_origin', 'in_transit'], 'label' => 'En route'],
-                    ['status' => ['arrived_destination', 'awaiting_buyer_confirmation'], 'label' => 'Arrivé'],
-                    ['status' => ['completed', 'auto_completed'], 'label' => 'Livré'],
+                $statusConfig = [
+                    'pending' => ['label' => 'En attente', 'class' => 'bg-gray-100 text-gray-600'],
+                    'awaiting_payment' => ['label' => 'Paiement requis', 'class' => 'bg-[#F9A01B]/15 text-[#9A5D00]'],
+                    'paid' => ['label' => 'Payé', 'class' => 'bg-[#016837]/10 text-[#016837]'],
+                    'preparing' => ['label' => 'En préparation', 'class' => 'bg-[#016837]/10 text-[#016837]'],
+                    'registered_origin' => [
+                        'label' => 'Déposé en agence',
+                        'class' => 'bg-[#016837]/10 text-[#016837]',
+                    ],
+                    'in_transit' => ['label' => 'En transit', 'class' => 'bg-[#F9A01B]/15 text-[#9A5D00]'],
+                    'arrived_destination' => ['label' => 'Arrivé', 'class' => 'bg-[#016837]/10 text-[#016837]'],
+                    'awaiting_buyer_confirmation' => [
+                        'label' => 'À retirer',
+                        'class' => 'bg-[#F9A01B]/15 text-[#9A5D00]',
+                    ],
+                    'completed' => ['label' => 'Livré', 'class' => 'bg-[#016837]/10 text-[#016837]'],
+                    'auto_completed' => ['label' => 'Livré (auto)', 'class' => 'bg-[#016837]/10 text-[#016837]'],
+                    'disputed' => ['label' => 'Litige', 'class' => 'bg-[#E30613]/10 text-[#E30613]'],
+                    'cancelled' => ['label' => 'Annulée', 'class' => 'bg-gray-100 text-gray-500'],
+                    'failed' => ['label' => 'Échouée', 'class' => 'bg-[#E30613]/10 text-[#E30613]'],
                 ];
-                $currentStep = 0;
-                foreach ($steps as $i => $step) {
-                    if (in_array($order->status, $step['status'])) {
-                        $currentStep = $i;
-                    }
-                }
-                if (in_array($order->status, ['completed', 'auto_completed'])) {
-                    $currentStep = 4;
-                }
+
+                $sc = $statusConfig[$order->status] ?? [
+                    'label' => $order->status,
+                    'class' => 'bg-gray-100 text-gray-600',
+                ];
             @endphp
 
-            @if (!in_array($order->status, ['cancelled', 'failed', 'disputed']))
-                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6">
-                    <div class="flex items-center justify-between">
-                        @foreach ($steps as $i => $step)
-                            <div class="flex flex-col items-center flex-1">
-                                <div
-                                    class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all
-                                        {{ $i <= $currentStep ? 'bg-indigo-600 text-white shadow-sm' : 'bg-gray-100 text-gray-400' }}">
-                                    @if ($i < $currentStep)
-                                        ✓
-                                    @else
-                                        {{ $i + 1 }}
-                                    @endif
-                                </div>
-                                <p
-                                    class="text-[11px] mt-2 text-center {{ $i <= $currentStep ? 'text-indigo-600 font-bold' : 'text-gray-400' }}">
-                                    {{ $step['label'] }}
-                                </p>
-                            </div>
-                            @if ($i < count($steps) - 1)
-                                <div
-                                    class="flex-1 h-0.5 {{ $i < $currentStep ? 'bg-indigo-600' : 'bg-gray-100' }} -mt-5 mx-1">
-                                </div>
-                            @endif
-                        @endforeach
-                    </div>
+            <span class="flex-shrink-0 px-3 py-1.5 rounded-full text-[10px] sm:text-xs
+                         font-extrabold uppercase tracking-wider {{ $sc['class'] }}">
+                {{ $sc['label'] }}
+            </span>
+
+        </div>
+
+
+        {{-- =========================================================
+            MESSAGE SUCCÈS
+        ========================================================== --}}
+        @if (session('success'))
+            <div class="bg-[#016837]/10 border border-[#016837]/20 text-[#016837]
+                        px-4 py-3 rounded-xl mb-5 text-sm flex items-center gap-2">
+
+                <div class="w-6 h-6 rounded-lg bg-[#016837] text-white
+                            flex items-center justify-center flex-shrink-0">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
+                         viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
                 </div>
-            @endif
-            @if ($order->isCompleted())
-                <a href="{{ route('buyer.reviews.create', $order) }}"
-                    class="block w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold
-              py-3 rounded-2xl text-center text-sm transition mb-3 mt-1">
-                    ★ Noter cette commande
-                </a>
-            @endif
-            {{-- Bloc d'instruction si le paiement est requis --}}
-            @if ($order->status === 'awaiting_payment')
-                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5 mb-6">
-                    <div class="flex items-start gap-3">
-                        <div class="p-2 bg-amber-100 rounded-xl text-amber-800 flex-shrink-0">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <div class="flex-1">
-                            <h2 class="font-bold text-amber-900 mb-1">⏳ En attente de paiement</h2>
-                            <p class="text-sm text-amber-800 mb-3">
-                                Transférez exactement <strong
-                                    class="font-extrabold">{{ number_format($order->total_amount, 0, ',', ' ') }}
-                                    FCFA</strong>
-                                vers le numéro de la plateforme ci-dessous :
-                            </p>
-                            <div class="bg-white rounded-xl border border-amber-200 p-4 space-y-2 text-sm shadow-sm">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-gray-600 font-medium">MTN MoMo</span>
-                                    <span
-                                        class="font-bold font-mono bg-yellow-50 text-yellow-800 px-2.5 py-1 rounded-lg border border-yellow-200">6XX
-                                        XXX XXX</span>
-                                </div>
-                                <div class="flex justify-between items-center border-t border-gray-100 pt-2">
-                                    <span class="text-gray-600 font-medium">Orange Money</span>
-                                    <span
-                                        class="font-bold font-mono bg-orange-50 text-orange-800 px-2.5 py-1 rounded-lg border border-orange-200">6XX
-                                        XXX XXX</span>
-                                </div>
-                            </div>
-                            <p class="text-xs text-amber-700 mt-3">
-                                Conservez l'ID de la transaction reçu par SMS après transfert. L'administrateur validera
-                                votre paiement.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            @endif
-            {{-- Code OTP si colis arrivé --}}
+
+                <span>{{ session('success') }}</span>
+            </div>
+        @endif
 
 
-            @if (
-                $order->otp_code &&
-                    in_array($order->status, [
-                        \App\Models\Order::STATUS_REGISTERED_ORIGIN,
-                        \App\Models\Order::STATUS_IN_TRANSIT,
-                        \App\Models\Order::STATUS_ARRIVED_DESTINATION,
-                        \App\Models\Order::STATUS_AWAITING_BUYER_CONFIRMATION,
-                    ]))
-                <div class="mt-6 rounded-2xl border border-blue-200 bg-blue-50 p-5">
+        {{-- =========================================================
+            ÉTAPES DE SUIVI
+        ========================================================== --}}
+        @php
+            $steps = [
+                ['status' => ['paid'], 'label' => 'Payé'],
+                ['status' => ['preparing'], 'label' => 'En préparation'],
+                ['status' => ['registered_origin', 'in_transit'], 'label' => 'En route'],
+                ['status' => ['arrived_destination', 'awaiting_buyer_confirmation'], 'label' => 'Arrivé'],
+                ['status' => ['completed', 'auto_completed'], 'label' => 'Livré'],
+            ];
 
-                    <div class="flex items-start gap-4">
+            $currentStep = 0;
 
-                        <div class="w-11 h-11 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 15v2m-4-6V9a4 4 0 118 0v2m-7 0h6a2 2 0 012 2v5a2 2 0 01-2 2H7a2 2 0 01-2-2v-5a2 2 0 012-2z" />
-                            </svg>
-                        </div>
+            foreach ($steps as $i => $step) {
+                if (in_array($order->status, $step['status'])) {
+                    $currentStep = $i;
+                }
+            }
 
-                        <div class="flex-1">
+            if (in_array($order->status, ['completed', 'auto_completed'])) {
+                $currentStep = 4;
+            }
+        @endphp
 
-                            <h3 class="font-bold text-blue-900">
-                                Votre code de retrait
-                            </h3>
+        @if (!in_array($order->status, ['cancelled', 'failed', 'disputed']))
 
-                            <p class="text-sm text-blue-700 mt-1">
-                                Présentez ce code au secrétaire lors du retrait
-                                de votre colis.
-                            </p>
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm
+                        p-4 sm:p-5 mb-5">
 
-                            <div class="mt-4 inline-flex items-center px-6 py-3 bg-white border border-blue-300 rounded-xl">
-                                <span class="text-3xl font-black tracking-[0.35em] text-blue-700">
-                                    {{ $order->otp_code }}
-                                </span>
+                <div class="flex items-center justify-between">
+
+                    @foreach ($steps as $i => $step)
+
+                        <div class="flex flex-col items-center flex-1 min-w-0">
+
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center
+                                        text-xs font-extrabold transition-all
+                                {{ $i <= $currentStep
+                                    ? 'bg-[#016837] text-white shadow-sm'
+                                    : 'bg-gray-100 text-gray-400' }}">
+
+                                @if ($i < $currentStep)
+                                    ✓
+                                @else
+                                    {{ $i + 1 }}
+                                @endif
+
                             </div>
 
-                            @if ($order->otp_expires_at)
-                                <p class="text-xs text-blue-600 mt-3">
-                                    Valable jusqu'au
-                                    {{ $order->otp_expires_at->format('d/m/Y à H:i') }}
-                                </p>
-                            @endif
-
-                        </div>
-
-                    </div>
-                </div>
-            @endif
-            {{-- Note reçue de la part du vendeur --}}
-            @if ($order->isCompleted())
-                @php
-                    $buyerReview = \App\Models\Review::where('order_id', $order->id)
-                        ->where('reviewee_type', 'buyer')
-                        ->where('reviewee_id', auth()->id())
-                        ->first();
-                @endphp
-
-                @if ($buyerReview)
-                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                        <h2 class="font-bold text-gray-800 mb-2">Votre note reçue du vendeur</h2>
-                        <div class="flex items-center gap-2">
-                            <span class="text-yellow-400 text-xl">
-                                @for ($i = 1; $i <= 5; $i++)
-                                    {{ $i <= $buyerReview->rating ? '★' : '☆' }}
-                                @endfor
-                            </span>
-                            <span class="text-lg font-bold text-gray-800">
-                                {{ $buyerReview->rating }}/5
-                            </span>
-                        </div>
-                        @if ($buyerReview->body)
-                            <p class="text-sm text-gray-600 mt-2 italic">
-                                "{{ $buyerReview->body }}"
+                            <p class="text-[9px] sm:text-[11px] mt-2 text-center leading-tight
+                                {{ $i <= $currentStep
+                                    ? 'text-[#016837] font-bold'
+                                    : 'text-gray-400' }}">
+                                {{ $step['label'] }}
                             </p>
+
+                        </div>
+
+                        @if ($i < count($steps) - 1)
+
+                            <div class="flex-1 h-0.5
+                                {{ $i < $currentStep
+                                    ? 'bg-[#016837]'
+                                    : 'bg-gray-100' }}
+                                -mt-5 mx-1">
+                            </div>
+
                         @endif
-                        <p class="text-xs text-gray-400 mt-2">
-                            Score de fiabilité actuel : {{ auth()->user()->trust_score }}/100
-                        </p>
-                    </div>
-                @endif
-            @endif
 
-            <div class="space-y-5">
-
-                {{-- Articles --}}
-                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                    <h2 class="font-bold text-gray-800 mb-4 text-xs uppercase tracking-wider text-gray-400">Articles
-                        commandés</h2>
-                    @foreach ($order->items as $item)
-                        <div class="flex items-center gap-4 py-2 {{ !$loop->last ? 'border-b border-gray-50' : '' }}">
-                            <div class="flex-1 min-w-0">
-                                <p class="font-semibold text-gray-900 text-sm line-clamp-2">{{ $item->product_title }}</p>
-                                <p class="text-xs text-gray-400 mt-0.5">
-                                    {{ number_format($item->unit_price, 0, ',', ' ') }} FCFA × {{ $item->quantity }}
-                                </p>
-                            </div>
-                            <p class="font-bold text-gray-900 text-sm flex-shrink-0">
-                                {{ number_format($item->subtotal, 0, ',', ' ') }} FCFA
-                            </p>
-                        </div>
                     @endforeach
-                </div>
 
-                {{-- Mode de Paiement (OrderPayment) --}}
-                @if ($order->payment)
-                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                        <h2 class="font-bold text-xs uppercase tracking-wider text-gray-400 mb-3">Informations de règlement
+                </div>
+            </div>
+
+        @endif
+
+
+        {{-- =========================================================
+            NOTER LA COMMANDE
+        ========================================================== --}}
+        @if ($order->isCompleted())
+
+            <a href="{{ route('buyer.reviews.create', $order) }}"
+               class="flex items-center justify-center gap-2 w-full
+                      bg-[#F9A01B] hover:bg-[#E99A0A]
+                      text-[#0a1b12] font-extrabold
+                      py-3 rounded-2xl text-center text-sm
+                      transition mb-4">
+
+                <span class="text-lg">★</span>
+                Noter cette commande
+
+            </a>
+
+        @endif
+
+
+        {{-- =========================================================
+            PAIEMENT REQUIS
+        ========================================================== --}}
+        @if ($order->status === 'awaiting_payment')
+
+            <div class="bg-[#F9A01B]/10 border border-[#F9A01B]/25
+                        rounded-2xl p-4 sm:p-5 mb-5">
+
+                <div class="flex items-start gap-3">
+
+                    <div class="w-10 h-10 rounded-xl bg-[#F9A01B]/20
+                                text-[#9A5D00] flex items-center justify-center
+                                flex-shrink-0">
+
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                             viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+
+                    </div>
+
+                    <div class="flex-1">
+
+                        <h2 class="font-extrabold text-[#0a1b12] mb-1">
+                            ⏳ En attente de paiement
                         </h2>
-                        <div class="space-y-2.5 text-sm">
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-500">Opérateur</span>
-                                <span
-                                    class="font-bold uppercase text-xs px-2.5 py-1 rounded-md border
-                                {{ $order->payment->payer_operator === 'mtn' ? 'bg-yellow-50 border-yellow-200 text-yellow-800' : 'bg-orange-50 border-orange-200 text-orange-800' }}">
-                                    {{ $order->payment->payer_operator }}
-                                </span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">Numéro payeur</span>
-                                <span class="font-medium text-gray-900">+237 {{ $order->payment->payer_phone }}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">Méthode</span>
-                                <span class="font-medium text-gray-800 capitalize">{{ $order->payment->method }}</span>
-                            </div>
-                            <div class="flex justify-between items-center border-t border-gray-50 pt-2">
-                                <span class="text-gray-500">Statut du règlement</span>
-                                <span
-                                    class="text-xs font-semibold px-2 py-0.5 rounded
-                                {{ $order->payment->status === 'completed' ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-600' }}">
-                                    {{ ucfirst($order->payment->status) }}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                @endif
-                {{-- Paiement frais transport si requis --}}
-                @if (
-                    $order->shipment &&
-                        !$order->shipment->shipping_included &&
-                        $order->shipment->transport_fee > 0 &&
-                        !$order->shipment->transport_fee_paid &&
-                        $order->status === 'awaiting_buyer_confirmation')
-                    <div class="bg-orange-50 border border-orange-200 rounded-2xl p-4 mb-4">
-                        <p class="text-sm font-bold text-orange-700 mb-1">
-                            ⚠ Frais de transport à payer avant retrait
+
+                        <p class="text-sm text-[#7A5200] mb-3">
+                            Transférez exactement
+                            <strong class="font-extrabold text-[#0a1b12]">
+                                {{ number_format($order->total_amount, 0, ',', ' ') }} FCFA
+                            </strong>
+                            vers le numéro de la plateforme ci-dessous :
                         </p>
-                        <p class="text-sm text-orange-600 mb-3">
-                            Montant : {{ number_format($order->shipment->transport_fee, 0, ',', ' ') }} FCFA
-                        </p>
-                        <a href="{{ route('buyer.orders.transport', $order) }}"
-                            class="block w-full bg-orange-500 hover:bg-orange-600 text-white font-bold
-                  py-3 rounded-xl text-center text-sm transition">
-                            Payer les frais de transport
-                        </a>
-                    </div>
-                @endif
-                {{-- Livraison (OrderShipment) --}}
-                @if ($order->shipment)
-                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                        <h2 class="font-bold text-xs uppercase tracking-wider text-gray-400 mb-3">Expédition & Livraison
-                        </h2>
-                        <div class="space-y-2 text-sm">
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">Destinataire</span>
-                                <span class="font-semibold text-gray-900">{{ $order->shipment->recipient_name }}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">Téléphone contact</span>
-                                <span class="font-medium text-gray-800">{{ $order->shipment->recipient_phone }}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">Ville de destination</span>
-                                <span class="font-medium text-gray-800">{{ $order->shipment->destination_city }}</span>
-                            </div>
-                            <div class="flex justify-between items-center pt-1">
-                                <span class="text-gray-500">Frais d'expédition</span>
-                                <span
-                                    class="text-xs font-semibold px-2.5 py-1 rounded-lg {{ $order->shipment->shipping_included ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-orange-50 text-orange-700 border border-orange-100' }}">
-                                    {{ $order->shipment->shipping_included ? '✓ Inclus dans le prix' : '⚠ Exclus — Payables à l\'arrivée' }}
+
+                        <div class="bg-white rounded-xl border border-[#F9A01B]/20
+                                    p-3.5 space-y-2 text-sm shadow-sm">
+
+                            <div class="flex justify-between items-center gap-3">
+                                <span class="text-gray-600 font-medium">
+                                    MTN MoMo
+                                </span>
+
+                                <span class="font-bold font-mono
+                                             bg-[#F9A01B]/10 text-[#9A5D00]
+                                             px-2.5 py-1 rounded-lg
+                                             border border-[#F9A01B]/20">
+                                    6XX XXX XXX
                                 </span>
                             </div>
-                            @if ($order->shipment?->transport_fee > 0)
-                                <div class="flex justify-between items-center border-t border-gray-50 pt-2 mt-2">
-                                    <span class="text-gray-500">Montant transport</span>
-                                    <span class="font-bold text-orange-600">
-                                        {{ number_format($order->shipment->transport_fee, 0, ',', ' ') }} FCFA
-                                    </span>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                @endif
 
-                {{-- Boutique --}}
-                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                    <h2 class="font-bold text-xs uppercase tracking-wider text-gray-400 mb-3">Vendeur</h2>
-                    <div class="flex items-center gap-3">
-                        <div
-                            class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 font-bold
-                                flex items-center justify-center uppercase text-sm border border-indigo-100">
-                            {{ substr($order->shop->name, 0, 2) }}
+                            <div class="flex justify-between items-center gap-3
+                                        border-t border-gray-100 pt-2">
+
+                                <span class="text-gray-600 font-medium">
+                                    Orange Money
+                                </span>
+
+                                <span class="font-bold font-mono
+                                             bg-[#E30613]/5 text-[#E30613]
+                                             px-2.5 py-1 rounded-lg
+                                             border border-[#E30613]/15">
+                                    6XX XXX XXX
+                                </span>
+
+                            </div>
+
                         </div>
-                        <div>
-                            <p class="font-semibold text-gray-900 text-sm">{{ $order->shop->name }}</p>
-                            <p class="text-xs text-gray-400">{{ $order->shop->city }}</p>
-                        </div>
+
+                        <p class="text-xs text-[#8A6500] mt-3">
+                            Conservez l'ID de la transaction reçu par SMS après transfert.
+                            L'administrateur validera votre paiement.
+                        </p>
+
                     </div>
+
                 </div>
+            </div>
 
-                {{-- Récapitulatif financier --}}
-                <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-5">
-                    <h2 class="font-bold text-gray-900 mb-3">Récapitulatif Financier</h2>
-                    <div class="space-y-2 text-sm">
-                        <div class="flex justify-between text-gray-600">
-                            <span>Sous-total articles</span>
-                            <span class="font-medium text-gray-900">{{ number_format($order->subtotal, 0, ',', ' ') }}
-                                FCFA</span>
-                        </div>
-                        <div class="flex justify-between text-gray-600">
-                            <span>Frais de protection (2%)</span>
-                            <span
-                                class="font-medium text-gray-900">{{ number_format($order->protection_fee, 0, ',', ' ') }}
-                                FCFA</span>
-                        </div>
-                        <div class="flex justify-between text-gray-600">
-                            <span>Frais Mobile Money (2%)</span>
-                            <span class="font-medium text-gray-900">{{ number_format($order->gateway_fee, 0, ',', ' ') }}
-                                FCFA</span>
-                        </div>
-                        <div
-                            class="flex justify-between font-extrabold text-gray-900 border-t border-indigo-200 pt-3 mt-2 text-base">
-                            <span>Total général</span>
-                            <span class="text-indigo-600">{{ number_format($order->total_amount, 0, ',', ' ') }}
-                                FCFA</span>
-                        </div>
+        @endif
+
+
+        {{-- =========================================================
+            CODE OTP
+        ========================================================== --}}
+        @if (
+            $order->otp_code &&
+                in_array($order->status, [
+                    \App\Models\Order::STATUS_REGISTERED_ORIGIN,
+                    \App\Models\Order::STATUS_IN_TRANSIT,
+                    \App\Models\Order::STATUS_ARRIVED_DESTINATION,
+                    \App\Models\Order::STATUS_AWAITING_BUYER_CONFIRMATION,
+                ]))
+
+            <div class="mt-5 rounded-2xl border border-[#016837]/20
+                        bg-[#016837]/5 p-4 sm:p-5">
+
+                <div class="flex items-start gap-3 sm:gap-4">
+
+                    <div class="w-11 h-11 rounded-xl bg-[#016837] text-white
+                                flex items-center justify-center flex-shrink-0">
+
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                             viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M12 15v2m-4-6V9a4 4 0 118 0v2m-7
+                                     0h6a2 2 0 012 2v5a2 2 0 01-2 2H7a2
+                                     2 0 01-2-2v-5a2 2 0 012-2z"/>
+                        </svg>
+
                     </div>
-                </div>
 
-                {{-- Actions --}}
-                <div class="flex flex-col gap-3 pt-2">
-                    @if (in_array($order->status, ['pending', 'awaiting_payment']))
-                        <form method="POST" action="{{ route('buyer.orders.cancel', $order) }}">
-                            @csrf
-                            <button
-                                class="w-full border-2 border-red-200 text-red-600 font-semibold
-                                       py-3 rounded-2xl hover:bg-red-50 transition text-sm">
-                                Annuler la commande
-                            </button>
-                        </form>
-                    @endif
-                    @if ($order->canBeDisputed())
+                    <div class="flex-1">
 
-                        @if ($order->dispute)
-                            <a href="{{ route('buyer.disputes.show', $order->dispute) }}"
-                                class="block w-full bg-red-50 border-2 border-red-200 text-red-700
-                                    font-semibold py-3 rounded-2xl hover:bg-red-100
-                                 transition text-sm text-center">
+                        <h3 class="font-extrabold text-[#0a1b12]">
+                            Votre code de retrait
+                        </h3>
 
-                                Voir le litige
+                        <p class="text-sm text-[#016837] mt-1">
+                            Présentez ce code au secrétaire lors du retrait
+                            de votre colis.
+                        </p>
 
-                            </a>
-                        @else
-                            <a href="{{ route('buyer.disputes.create', $order) }}"
-                                class="block w-full bg-orange-50 border-2 border-orange-200 text-orange-700
-                                        font-semibold py-3 rounded-2xl hover:bg-orange-100
-                                        transition text-sm text-center">
+                        <div class="mt-4 inline-flex items-center px-5 py-3
+                                    bg-white border border-[#016837]/20
+                                    rounded-xl shadow-sm">
 
-                                ⚠️ Signaler un problème / Ouvrir un litige
+                            <span class="text-2xl sm:text-3xl font-black
+                                         tracking-[0.3em] text-[#016837]">
+                                {{ $order->otp_code }}
+                            </span>
 
-                            </a>
+                        </div>
+
+                        @if ($order->otp_expires_at)
+
+                            <p class="text-xs text-[#016837] mt-3">
+                                Valable jusqu'au
+                                {{ $order->otp_expires_at->format('d/m/Y à H:i') }}
+                            </p>
+
                         @endif
 
+                    </div>
+
+                </div>
+            </div>
+
+        @endif
+
+
+        {{-- =========================================================
+            NOTE REÇUE DU VENDEUR
+        ========================================================== --}}
+        @if ($order->isCompleted())
+
+            @php
+                $buyerReview = \App\Models\Review::where('order_id', $order->id)
+                    ->where('reviewee_type', 'buyer')
+                    ->where('reviewee_id', auth()->id())
+                    ->first();
+            @endphp
+
+            @if ($buyerReview)
+
+                <div class="bg-white rounded-2xl border border-gray-100
+                            shadow-sm p-5 mb-5">
+
+                    <div class="flex items-center gap-2 mb-3">
+
+                        <div class="w-8 h-8 rounded-lg bg-[#F9A01B]/10
+                                    flex items-center justify-center">
+
+                            <span class="text-[#F9A01B]">★</span>
+
+                        </div>
+
+                        <h2 class="font-bold text-[#0a1b12]">
+                            Votre note reçue du vendeur
+                        </h2>
+
+                    </div>
+
+                    <div class="flex items-center gap-2">
+
+                        <span class="text-[#F9A01B] text-xl">
+                            @for ($i = 1; $i <= 5; $i++)
+                                {{ $i <= $buyerReview->rating ? '★' : '☆' }}
+                            @endfor
+                        </span>
+
+                        <span class="text-lg font-extrabold text-[#0a1b12]">
+                            {{ $buyerReview->rating }}/5
+                        </span>
+
+                    </div>
+
+                    @if ($buyerReview->body)
+
+                        <p class="text-sm text-gray-600 mt-2 italic">
+                            "{{ $buyerReview->body }}"
+                        </p>
+
                     @endif
 
-                    <a href="{{ route('buyer.orders.index') }}"
-                        class="block w-full bg-white border border-gray-200 text-gray-600 font-semibold
-                          py-3 rounded-2xl hover:bg-gray-50 transition text-sm text-center shadow-sm">
-                        ← Retour à mes commandes
-                    </a>
+                    <p class="text-xs text-gray-400 mt-2">
+                        Score de fiabilité actuel :
+                        <strong class="text-[#016837]">
+                            {{ auth()->user()->trust_score }}/100
+                        </strong>
+                    </p>
+
                 </div>
+
+            @endif
+
+        @endif
+
+
+        <div class="space-y-4">
+
+
+            {{-- =====================================================
+                ARTICLES
+            ====================================================== --}}
+            <div class="bg-white rounded-2xl border border-gray-100
+                        shadow-sm p-5">
+
+                <h2 class="font-extrabold text-[#0a1b12] mb-4 text-[11px]
+                           uppercase tracking-wider flex items-center gap-2">
+
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#016837]"></span>
+                    Articles commandés
+
+                </h2>
+
+                @foreach ($order->items as $item)
+
+                    <div class="flex items-center gap-3 py-2.5
+                                {{ !$loop->last ? 'border-b border-gray-50' : '' }}">
+
+                        <div class="flex-1 min-w-0">
+
+                            <p class="font-semibold text-gray-900 text-sm line-clamp-2">
+                                {{ $item->product_title }}
+                            </p>
+
+                            <p class="text-xs text-gray-400 mt-0.5">
+                                {{ number_format($item->unit_price, 0, ',', ' ') }}
+                                FCFA × {{ $item->quantity }}
+                            </p>
+
+                        </div>
+
+                        <p class="font-extrabold text-[#0a1b12] text-sm flex-shrink-0">
+                            {{ number_format($item->subtotal, 0, ',', ' ') }} FCFA
+                        </p>
+
+                    </div>
+
+                @endforeach
 
             </div>
+
+
+            {{-- =====================================================
+                MODE DE PAIEMENT
+            ====================================================== --}}
+            @if ($order->payment)
+
+                <div class="bg-white rounded-2xl border border-gray-100
+                            shadow-sm p-5">
+
+                    <h2 class="font-extrabold text-[11px] uppercase
+                               tracking-wider text-gray-400 mb-3">
+                        Informations de règlement
+                    </h2>
+
+                    <div class="space-y-2.5 text-sm">
+
+                        <div class="flex justify-between items-center gap-3">
+                            <span class="text-gray-500">
+                                Opérateur
+                            </span>
+
+                            <span class="font-bold uppercase text-[10px]
+                                         px-2.5 py-1 rounded-md border
+                                {{ $order->payment->payer_operator === 'mtn'
+                                    ? 'bg-[#F9A01B]/10 border-[#F9A01B]/20 text-[#9A5D00]'
+                                    : 'bg-[#E30613]/5 border-[#E30613]/15 text-[#E30613]' }}">
+                                {{ $order->payment->payer_operator }}
+                            </span>
+                        </div>
+
+                        <div class="flex justify-between gap-3">
+                            <span class="text-gray-500">
+                                Numéro payeur
+                            </span>
+
+                            <span class="font-medium text-gray-900 text-right">
+                                +237 {{ $order->payment->payer_phone }}
+                            </span>
+                        </div>
+
+                        <div class="flex justify-between gap-3">
+                            <span class="text-gray-500">
+                                Méthode
+                            </span>
+
+                            <span class="font-medium text-gray-800 capitalize">
+                                {{ $order->payment->method }}
+                            </span>
+                        </div>
+
+                        <div class="flex justify-between items-center gap-3
+                                    border-t border-gray-50 pt-2">
+
+                            <span class="text-gray-500">
+                                Statut du règlement
+                            </span>
+
+                            <span class="text-[10px] font-bold px-2 py-1 rounded
+                                {{ $order->payment->status === 'completed'
+                                    ? 'bg-[#016837]/10 text-[#016837]'
+                                    : 'bg-gray-100 text-gray-600' }}">
+                                {{ ucfirst($order->payment->status) }}
+                            </span>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            @endif
+
+
+            {{-- =====================================================
+                FRAIS DE TRANSPORT
+            ====================================================== --}}
+            @if (
+                $order->shipment &&
+                    !$order->shipment->shipping_included &&
+                    $order->shipment->transport_fee > 0 &&
+                    !$order->shipment->transport_fee_paid &&
+                    $order->status === 'awaiting_buyer_confirmation'
+            )
+
+                <div class="bg-[#E30613]/5 border border-[#E30613]/20
+                            rounded-2xl p-4">
+
+                    <p class="text-sm font-extrabold text-[#E30613] mb-1">
+                        ⚠ Frais de transport à payer avant retrait
+                    </p>
+
+                    <p class="text-sm text-[#E30613]/80 mb-3">
+                        Montant :
+                        {{ number_format($order->shipment->transport_fee, 0, ',', ' ') }}
+                        FCFA
+                    </p>
+
+                    <a href="{{ route('buyer.orders.transport', $order) }}"
+                       class="block w-full bg-[#E30613] hover:bg-[#B90510]
+                              text-white font-extrabold
+                              py-3 rounded-xl text-center text-sm transition">
+
+                        Payer les frais de transport
+
+                    </a>
+
+                </div>
+
+            @endif
+
+
+            {{-- =====================================================
+                EXPÉDITION & LIVRAISON
+            ====================================================== --}}
+            @if ($order->shipment)
+
+                <div class="bg-white rounded-2xl border border-gray-100
+                            shadow-sm p-5">
+
+                    <h2 class="font-extrabold text-[11px] uppercase
+                               tracking-wider text-gray-400 mb-3">
+                        Expédition & Livraison
+                    </h2>
+
+                    <div class="space-y-2.5 text-sm">
+
+                        <div class="flex justify-between gap-3">
+                            <span class="text-gray-500">Destinataire</span>
+                            <span class="font-semibold text-gray-900 text-right">
+                                {{ $order->shipment->recipient_name }}
+                            </span>
+                        </div>
+
+                        <div class="flex justify-between gap-3">
+                            <span class="text-gray-500">Téléphone contact</span>
+                            <span class="font-medium text-gray-800 text-right">
+                                {{ $order->shipment->recipient_phone }}
+                            </span>
+                        </div>
+
+                        <div class="flex justify-between gap-3">
+                            <span class="text-gray-500">Ville de destination</span>
+                            <span class="font-medium text-gray-800 text-right">
+                                {{ $order->shipment->destination_city }}
+                            </span>
+                        </div>
+
+                        <div class="flex justify-between items-center gap-3 pt-1">
+
+                            <span class="text-gray-500">
+                                Frais d'expédition
+                            </span>
+
+                            <span class="text-[10px] sm:text-xs font-bold
+                                        px-2.5 py-1 rounded-lg text-right
+                                {{ $order->shipment->shipping_included
+                                    ? 'bg-[#016837]/10 text-[#016837] border border-[#016837]/15'
+                                    : 'bg-[#F9A01B]/10 text-[#9A5D00] border border-[#F9A01B]/20' }}">
+
+                                {{ $order->shipment->shipping_included
+                                    ? '✓ Inclus dans le prix'
+                                    : '⚠ Exclus — Payables à l\'arrivée' }}
+
+                            </span>
+
+                        </div>
+
+                        @if ($order->shipment?->transport_fee > 0)
+
+                            <div class="flex justify-between items-center
+                                        border-t border-gray-50 pt-2 mt-2">
+
+                                <span class="text-gray-500">
+                                    Montant transport
+                                </span>
+
+                                <span class="font-extrabold text-[#E30613]">
+                                    {{ number_format($order->shipment->transport_fee, 0, ',', ' ') }}
+                                    FCFA
+                                </span>
+
+                            </div>
+
+                        @endif
+
+                    </div>
+                </div>
+
+            @endif
+
+
+            {{-- =====================================================
+                BOUTIQUE
+            ====================================================== --}}
+            <div class="bg-white rounded-2xl border border-gray-100
+                        shadow-sm p-5">
+
+                <h2 class="font-extrabold text-[11px] uppercase
+                           tracking-wider text-gray-400 mb-3">
+                    Vendeur
+                </h2>
+
+                <div class="flex items-center gap-3">
+
+                    <div class="w-10 h-10 rounded-xl bg-[#016837]/10
+                                text-[#016837] font-extrabold
+                                flex items-center justify-center uppercase
+                                text-sm border border-[#016837]/10">
+
+                        {{ substr($order->shop->name, 0, 2) }}
+
+                    </div>
+
+                    <div>
+                        <p class="font-bold text-gray-900 text-sm">
+                            {{ $order->shop->name }}
+                        </p>
+
+                        <p class="text-xs text-gray-400">
+                            {{ $order->shop->city }}
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
+
+            {{-- =====================================================
+                RÉCAPITULATIF FINANCIER
+            ====================================================== --}}
+            <div class="bg-[#016837]/5 border border-[#016837]/15
+                        rounded-2xl p-5">
+
+                <div class="flex items-center gap-2 mb-4">
+
+                    <div class="w-8 h-8 rounded-lg bg-[#016837]
+                                text-white flex items-center justify-center">
+
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                             viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M12 8c-1.657 0-3 .895-3 2s1.343
+                                     2 3 2 3 .895 3 2-1.343 2-3
+                                     2m0-8c1.11 0 2.08.402 2.599
+                                     1M12 8V7m0 1v8m0 0v1m0-1c-1.11
+                                     0-2.08-.402-2.599-1M21 12a9
+                                     9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+
+                    </div>
+
+                    <h2 class="font-extrabold text-[#0a1b12]">
+                        Récapitulatif financier
+                    </h2>
+
+                </div>
+
+                <div class="space-y-2.5 text-sm">
+
+                    <div class="flex justify-between text-gray-600">
+                        <span>Sous-total articles</span>
+
+                        <span class="font-medium text-gray-900">
+                            {{ number_format($order->subtotal, 0, ',', ' ') }} FCFA
+                        </span>
+                    </div>
+
+                    <div class="flex justify-between text-gray-600">
+                        <span>Frais de protection (2%)</span>
+
+                        <span class="font-medium text-gray-900">
+                            {{ number_format($order->protection_fee, 0, ',', ' ') }} FCFA
+                        </span>
+                    </div>
+
+                    <div class="flex justify-between text-gray-600">
+                        <span>Frais Mobile Money (2%)</span>
+
+                        <span class="font-medium text-gray-900">
+                            {{ number_format($order->gateway_fee, 0, ',', ' ') }} FCFA
+                        </span>
+                    </div>
+
+                    <div class="flex justify-between font-extrabold
+                                text-[#0a1b12] border-t border-[#016837]/15
+                                pt-3 mt-3 text-base">
+
+                        <span>Total général</span>
+
+                        <span class="text-[#016837]">
+                            {{ number_format($order->total_amount, 0, ',', ' ') }}
+                            FCFA
+                        </span>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+            {{-- =====================================================
+                ACTIONS
+            ====================================================== --}}
+            <div class="flex flex-col gap-3 pt-1">
+
+                @if (in_array($order->status, ['pending', 'awaiting_payment']))
+
+                    <form method="POST"
+                          action="{{ route('buyer.orders.cancel', $order) }}">
+
+                        @csrf
+
+                        <button
+                            class="w-full border-2 border-[#E30613]/20
+                                   text-[#E30613] font-bold
+                                   py-3 rounded-2xl
+                                   hover:bg-[#E30613]/5 transition text-sm">
+
+                            Annuler la commande
+
+                        </button>
+
+                    </form>
+
+                @endif
+
+
+                @if ($order->canBeDisputed())
+
+                    @if ($order->dispute)
+
+                        <a href="{{ route('buyer.disputes.show', $order->dispute) }}"
+                           class="block w-full bg-[#E30613]/5
+                                  border-2 border-[#E30613]/20
+                                  text-[#E30613] font-bold
+                                  py-3 rounded-2xl
+                                  hover:bg-[#E30613]/10
+                                  transition text-sm text-center">
+
+                            Voir le litige
+
+                        </a>
+
+                    @else
+
+                        <a href="{{ route('buyer.disputes.create', $order) }}"
+                           class="block w-full bg-[#F9A01B]/10
+                                  border-2 border-[#F9A01B]/25
+                                  text-[#9A5D00] font-bold
+                                  py-3 rounded-2xl
+                                  hover:bg-[#F9A01B]/20
+                                  transition text-sm text-center">
+
+                            ⚠️ Signaler un problème / Ouvrir un litige
+
+                        </a>
+
+                    @endif
+
+                @endif
+
+
+                <a href="{{ route('buyer.orders.index') }}"
+                   class="block w-full bg-white
+                          border border-gray-200
+                          text-gray-600 font-bold
+                          py-3 rounded-2xl
+                          hover:bg-[#F7F7F2]
+                          transition text-sm text-center shadow-sm">
+
+                    ← Retour à mes commandes
+
+                </a>
+
+            </div>
+
         </div>
     </div>
+</div>
+
 @endsection

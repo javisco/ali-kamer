@@ -1,224 +1,802 @@
-@extends('base')
+@extends('layouts.buyer')
 
 @section('title', 'Tableau de bord - Acheteur')
 
 @section('content')
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <!-- En-tête de bienvenue -->
-        <div class="mb-8">
-            <h1 class="text-2xl font-bold text-gray-900">
+<div class="mx-auto max-w-[1400px] px-4 py-5 sm:px-6 lg:px-7">
+
+    {{-- =========================================================
+        EN-TÊTE
+    ========================================================== --}}
+    <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+
+        <div>
+            <div class="mb-1.5 flex items-center gap-2">
+                <span class="inline-flex items-center rounded-md bg-[#016837]/10 px-2 py-1
+                             text-[9px] font-bold uppercase tracking-wider text-[#016837]">
+                    Espace acheteur
+                </span>
+
+                <span class="h-1 w-1 rounded-full bg-[#F9A01B]"></span>
+
+                <span class="text-[9px] font-medium text-slate-400">
+                    Mon activité
+                </span>
+            </div>
+
+            <h1 class="text-xl font-extrabold tracking-tight text-slate-900 sm:text-2xl">
                 Bonjour, {{ auth()->user()->name }} 👋
             </h1>
-            <p class="text-sm text-gray-600 mt-1">
-                Suivez vos achats sécurisés, vos commandes en transit et votre historique en un coup d'œil.
+
+            <p class="mt-1 max-w-2xl text-[11px] leading-relaxed text-slate-500 sm:text-xs">
+                Retrouvez ici vos commandes, vos dépenses et le suivi de vos achats
+                en quelques secondes.
             </p>
         </div>
 
-        <!-- Cartes de Statistiques -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+        {{-- Bouton marketplace --}}
+        <a href="/"
+           class="inline-flex w-fit items-center gap-2 rounded-lg bg-[#016837] px-3.5 py-2
+                  text-[10px] font-bold text-white shadow-sm shadow-[#016837]/20
+                  transition hover:-translate-y-0.5 hover:bg-[#015a30]">
 
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center justify-between">
+            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                      d="M3 12h18M12 3v18"/>
+            </svg>
+
+            Continuer mes achats
+        </a>
+    </div>
+
+
+    {{-- =========================================================
+        STATISTIQUES
+    ========================================================== --}}
+    <div class="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
+
+        {{-- Commandes en cours --}}
+        <div class="group relative overflow-hidden rounded-xl border border-slate-200
+                    bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+
+            <div class="absolute right-0 top-0 h-16 w-16 rounded-bl-full bg-[#016837]/5"></div>
+
+            <div class="relative flex items-start justify-between">
+
                 <div>
-                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Commandes en cours</p>
-                    <p class="text-2xl font-bold text-blue-600 mt-1">{{ $stats['active_orders'] }}</p>
+                    <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400">
+                        Commandes en cours
+                    </p>
+
+                    <p class="mt-1 text-xl font-extrabold text-[#016837]">
+                        {{ $stats['active_orders'] }}
+                    </p>
+
+                    <p class="mt-0.5 text-[9px] text-slate-400">
+                        À suivre
+                    </p>
                 </div>
-                <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+
+                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#016837]/10 text-[#016837]">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                              d="M3 7h18M5 7l1.5 12h11L19 7M9 7V5a3 3 0 016 0v2"/>
                     </svg>
                 </div>
             </div>
+        </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center justify-between">
+
+        {{-- Commandes terminées --}}
+        <div class="group relative overflow-hidden rounded-xl border border-slate-200
+                    bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+
+            <div class="absolute right-0 top-0 h-16 w-16 rounded-bl-full bg-[#016837]/5"></div>
+
+            <div class="relative flex items-start justify-between">
+
                 <div>
-                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Livrées & Terminées</p>
-                    <p class="text-2xl font-bold text-green-600 mt-1">{{ $stats['completed_orders'] }}</p>
+                    <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400">
+                        Livrées & terminées
+                    </p>
+
+                    <p class="mt-1 text-xl font-extrabold text-[#016837]">
+                        {{ $stats['completed_orders'] }}
+                    </p>
+
+                    <p class="mt-0.5 text-[9px] text-slate-400">
+                        Achats réussis
+                    </p>
                 </div>
-                <div class="w-12 h-12 bg-green-50 text-green-600 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+
+                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#016837]/10 text-[#016837]">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                              d="M5 13l4 4L19 7"/>
                     </svg>
                 </div>
             </div>
+        </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center justify-between">
+
+        {{-- Litiges --}}
+        <div class="group relative overflow-hidden rounded-xl border border-slate-200
+                    bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+
+            <div class="absolute right-0 top-0 h-16 w-16 rounded-bl-full bg-[#E30613]/5"></div>
+
+            <div class="relative flex items-start justify-between">
+
                 <div>
-                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Litiges / Réclamations</p>
-                    <p class="text-2xl font-bold text-amber-600 mt-1">{{ $stats['disputed_orders'] }}</p>
+                    <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400">
+                        Litiges / réclamations
+                    </p>
+
+                    <p class="mt-1 text-xl font-extrabold text-[#E30613]">
+                        {{ $stats['disputed_orders'] }}
+                    </p>
+
+                    <p class="mt-0.5 text-[9px] text-slate-400">
+                        Nécessitent une attention
+                    </p>
                 </div>
-                <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+
+                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#E30613]/10 text-[#E30613]">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                              d="M12 9v4M12 17h.01M10.3 4.7l-7 12A2 2 0 005 20h14a2 2 0 001.7-3.3l-7-12a2 2 0 00-3.4 0z"/>
                     </svg>
                 </div>
             </div>
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Dépensé</p>
-                    <p class="text-xl font-bold text-gray-900 mt-1">
+        </div>
+
+
+        {{-- Total dépensé --}}
+        <div class="group relative overflow-hidden rounded-xl border border-slate-200
+                    bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+
+            <div class="absolute right-0 top-0 h-16 w-16 rounded-bl-full bg-[#F9A01B]/10"></div>
+
+            <div class="relative flex items-start justify-between">
+
+                <div class="min-w-0">
+                    <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400">
+                        Total dépensé
+                    </p>
+
+                    <p class="mt-1 truncate text-lg font-extrabold text-slate-900">
                         {{ number_format($stats['total_spent'], 0, ',', ' ') }}
-                        FCFA</p>
+                        <span class="text-[10px] text-[#F9A01B]">FCFA</span>
+                    </p>
+
+                    <p class="mt-0.5 text-[9px] text-slate-400">
+                        Sur Ali-Kamer
+                    </p>
                 </div>
-                <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+
+                <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#F9A01B]/15 text-[#b87500]">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                              d="M12 3v18M16 7.5c0-1.7-1.8-3-4-3s-4 1.3-4 3 1.8 3 4 3 4 1.3 4 3-1.8 3-4 3-4-1.3-4-3"/>
                     </svg>
                 </div>
             </div>
-
-
-        </div>
-        <div class="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-            <a href="{{ route('buyer.wallet.history') }}" >
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center justify-between">
-                    <div>
-                        <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">historique des depense</p>
-                    </div>
-                    <p class="text-sm font-semibold text-blue-600 hover:text-blue-800">
-                        Voir →</p>
-                </div>
-            </a>
-
-            <a href="{{ route('buyer.profile') }}">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center justify-between">
-                    <div>
-                        <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">profile</p>
-
-                    </div>
-                    <p class="text-sm font-semibold text-blue-600 hover:text-blue-800">
-                        Voir →</p>
-                </div>
-            </a>
-        </div>
-        <!-- Section Commande Active Prioritaire (Focus Séquestre & OTP) -->
-        @if ($activeOrder)
-            <div class="bg-gradient-to-r from-blue-900 to-indigo-900 text-white rounded-2xl shadow-lg p-6 mb-8">
-                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                    <div>
-                        <div
-                            class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-500/20 text-blue-200 border border-blue-400/30 mb-3">
-                            <span class="w-2 h-2 rounded-full bg-blue-400 animate-ping mr-2"></span>
-                            Commande en cours d'expédition
-                        </div>
-                        <h2 class="text-xl font-bold">Réf : {{ $activeOrder->reference }}</h2>
-                        <p class="text-blue-200 text-sm mt-1">
-                            Vendeur : <span class="font-semibold text-white">{{ $activeOrder->shop->name }}</span> |
-                            Destination : <span
-                                class="font-semibold text-white">{{ $activeOrder->shipment->destination_city }}</span>
-                        </p>
-                    </div>
-
-                    <!-- OTP Box si disponible -->
-                    @if (
-                        $activeOrder->status === \App\Models\Order::STATUS_ARRIVED_DESTINATION ||
-                            $activeOrder->status === \App\Models\Order::STATUS_AWAITING_BUYER_CONFIRMATION)
-                        <div
-                            class="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/10 text-center min-w-[220px]">
-                            <p class="text-xs text-blue-200 uppercase tracking-wider">Votre Code OTP à remettre</p>
-                            <p class="text-3xl font-extrabold tracking-widest text-amber-400 my-1">
-                                {{ $activeOrder->otp_code }}</p>
-                            <p class="text-xs text-blue-200">À donner au guichet pour retirer le colis</p>
-                        </div>
-                    @else
-                        <a href="{{ route('buyer.orders.show', $activeOrder) }}"
-                            class="inline-flex items-center justify-center px-5 py-3 rounded-xl bg-white text-blue-900 font-semibold hover:bg-blue-50 transition shadow-sm">
-                            Suivre le colis
-                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                            </svg>
-                        </a>
-                    @endif
-                </div>
-            </div>
-        @endif
-
-        <!-- Tableau des Dernières Commandes -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-                <h2 class="text-lg font-bold text-gray-900">Commandes Récents</h2>
-                <a href="{{ route('buyer.orders.index') }}"
-                    class="text-sm font-semibold text-blue-600 hover:text-blue-800">
-                    Voir tout →
-                </a>
-            </div>
-
-            @if ($recentOrders->count() > 0)
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm text-gray-600">
-                        <thead class="bg-gray-50 text-xs uppercase text-gray-500 font-semibold">
-                            <tr>
-                                <th class="px-6 py-3">Référence</th>
-                                <th class="px-6 py-3">Boutique</th>
-                                <th class="px-6 py-3">Montant Total</th>
-                                <th class="px-6 py-3">Statut</th>
-                                <th class="px-6 py-3">Date</th>
-                                <th class="px-6 py-3 text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                            @foreach ($recentOrders as $order)
-                                <tr class="hover:bg-gray-50/50 transition">
-                                    <td class="px-6 py-4 font-semibold text-gray-900">
-                                        {{ $order->reference }}
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        {{ $order->shop->name }}
-                                    </td>
-                                    <td class="px-6 py-4 font-bold text-gray-900">
-                                        {{ number_format($order->total_amount, 0, ',', ' ') }} FCFA
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        @php
-                                            $statusClasses = [
-                                                'pending' => 'bg-gray-100 text-gray-700',
-                                                'awaiting_payment' => 'bg-amber-100 text-amber-800',
-                                                'paid' => 'bg-blue-100 text-blue-800',
-                                                'preparing' => 'bg-indigo-100 text-indigo-800',
-                                                'registered_origin' => 'bg-purple-100 text-purple-800',
-                                                'in_transit' => 'bg-blue-100 text-blue-800',
-                                                'arrived_destination' => 'bg-emerald-100 text-emerald-800',
-                                                'awaiting_buyer_confirmation' => 'bg-amber-100 text-amber-800',
-                                                'completed' => 'bg-green-100 text-green-800',
-                                                'auto_completed' => 'bg-green-100 text-green-800',
-                                                'disputed' => 'bg-red-100 text-red-800',
-                                                'cancelled' => 'bg-gray-100 text-gray-500',
-                                            ];
-                                        @endphp
-                                        <span
-                                            class="px-2.5 py-1 rounded-full text-xs font-medium {{ $statusClasses[$order->status] ?? 'bg-gray-100 text-gray-600' }}">
-                                            {{ ucfirst(str_replace('_', ' ', $order->status)) }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 text-xs text-gray-500">
-                                        {{ $order->created_at->format('d/m/Y à H:i') }}
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <a href="{{ route('buyer.orders.show', $order) }}"
-                                            class="inline-flex items-center text-xs font-semibold text-blue-600 hover:text-blue-900 bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition">
-                                            Détails
-                                        </a>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            @else
-                <div class="p-8 text-center text-gray-500">
-                    <p class="mb-4">Vous n'avez pas encore passé de commande.</p>
-                    <a href="{{ route('buyer.home') }}"
-                        class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition">
-                        Explorer le catalogue
-                    </a>
-                </div>
-            @endif
         </div>
 
     </div>
+
+
+    {{-- =========================================================
+        ACTIONS RAPIDES
+    ========================================================== --}}
+    <div class="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+
+        {{-- Historique --}}
+        <a href="{{ route('buyer.wallet.history') }}"
+           class="group flex items-center justify-between rounded-xl border border-slate-200
+                  bg-white p-3.5 shadow-sm transition hover:-translate-y-0.5 hover:border-[#016837]/20
+                  hover:shadow-md">
+
+            <div class="flex items-center gap-3">
+
+                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#016837]/10 text-[#016837]">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                              d="M3 12a9 9 0 1018 0A9 9 0 003 12zM12 7v5l3 2"/>
+                    </svg>
+                </div>
+
+                <div>
+                    <p class="text-[11px] font-bold text-slate-800">
+                        Historique des dépenses
+                    </p>
+
+                    <p class="mt-0.5 text-[9px] text-slate-400">
+                        Consultez vos paiements et dépenses
+                    </p>
+                </div>
+            </div>
+
+            <span class="flex h-7 w-7 items-center justify-center rounded-lg
+                         bg-slate-50 text-slate-400 transition
+                         group-hover:bg-[#016837] group-hover:text-white">
+                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 5l7 7-7 7"/>
+                </svg>
+            </span>
+        </a>
+
+
+        {{-- Profil --}}
+        <a href="{{ route('buyer.profile') }}"
+           class="group flex items-center justify-between rounded-xl border border-slate-200
+                  bg-white p-3.5 shadow-sm transition hover:-translate-y-0.5 hover:border-[#F9A01B]/30
+                  hover:shadow-md">
+
+            <div class="flex items-center gap-3">
+
+                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#F9A01B]/15 text-[#b87500]">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                              d="M20 21a8 8 0 00-16 0M12 13a4 4 0 100-8 4 4 0 000 8z"/>
+                    </svg>
+                </div>
+
+                <div>
+                    <p class="text-[11px] font-bold text-slate-800">
+                        Mon profil
+                    </p>
+
+                    <p class="mt-0.5 text-[9px] text-slate-400">
+                        Gérez vos informations personnelles
+                    </p>
+                </div>
+            </div>
+
+            <span class="flex h-7 w-7 items-center justify-center rounded-lg
+                         bg-slate-50 text-slate-400 transition
+                         group-hover:bg-[#F9A01B] group-hover:text-white">
+                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 5l7 7-7 7"/>
+                </svg>
+            </span>
+        </a>
+
+    </div>
+
+
+    {{-- =========================================================
+        COMMANDE EN COURS
+    ========================================================== --}}
+    @if ($activeOrder)
+
+        <div class="relative mb-5 overflow-hidden rounded-2xl bg-[#0A1B12] shadow-lg">
+
+            {{-- Décor --}}
+            <div class="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-[#016837]/30"></div>
+            <div class="absolute -bottom-20 left-1/3 h-40 w-40 rounded-full bg-[#F9A01B]/10"></div>
+
+            <div class="relative p-4 sm:p-5">
+
+                {{-- Header --}}
+                <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+
+                    <div class="flex items-center gap-3">
+
+                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10">
+                            <svg class="h-5 w-5 text-[#F9A01B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                                      d="M3 7h18M5 7l1.5 12h11L19 7M9 7V5a3 3 0 016 0v2"/>
+                            </svg>
+                        </div>
+
+                        <div>
+                            <p class="text-[9px] font-bold uppercase tracking-[0.14em] text-[#F9A01B]">
+                                Commande en cours
+                            </p>
+
+                            <h2 class="mt-0.5 text-sm font-extrabold text-white">
+                                Votre colis est en route
+                            </h2>
+                        </div>
+
+                    </div>
+
+                    <span class="inline-flex w-fit items-center rounded-full bg-[#F9A01B]/15
+                                 px-2.5 py-1 text-[9px] font-bold text-[#F9A01B]">
+
+                        <span class="mr-1.5 h-1.5 w-1.5 rounded-full bg-[#F9A01B]"></span>
+
+                        En suivi
+                    </span>
+
+                </div>
+
+
+                {{-- Informations commande --}}
+                <div class="grid gap-2 sm:grid-cols-3">
+
+                    <div class="rounded-xl border border-white/10 bg-white/[0.045] p-3">
+                        <p class="text-[8px] font-bold uppercase tracking-wider text-white/35">
+                            Référence
+                        </p>
+
+                        <p class="mt-1 text-[11px] font-bold text-white">
+                            {{ $activeOrder->reference }}
+                        </p>
+                    </div>
+
+                    <div class="rounded-xl border border-white/10 bg-white/[0.045] p-3">
+                        <p class="text-[8px] font-bold uppercase tracking-wider text-white/35">
+                            Vendeur
+                        </p>
+
+                        <p class="mt-1 truncate text-[11px] font-bold text-white">
+                            {{ $activeOrder->shop->name }}
+                        </p>
+                    </div>
+
+                    <div class="rounded-xl border border-white/10 bg-white/[0.045] p-3">
+                        <p class="text-[8px] font-bold uppercase tracking-wider text-white/35">
+                            Destination
+                        </p>
+
+                        <p class="mt-1 text-[11px] font-bold text-white">
+                            {{ $activeOrder->shipment->destination_city }}
+                        </p>
+                    </div>
+
+                </div>
+
+
+                {{-- =================================================
+                    OTP / SUIVI
+                ================================================== --}}
+                <div class="mt-3">
+
+                    @if (
+                        $activeOrder->status === \App\Models\Order::STATUS_ARRIVED_DESTINATION ||
+                        $activeOrder->status === \App\Models\Order::STATUS_AWAITING_BUYER_CONFIRMATION
+                    )
+
+                        <div class="flex flex-col gap-3 rounded-xl border border-[#F9A01B]/20
+                                    bg-[#F9A01B]/10 p-3.5 sm:flex-row sm:items-center sm:justify-between">
+
+                            <div class="flex items-center gap-3">
+
+                                <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg
+                                            bg-[#F9A01B] text-[#0A1B12]">
+
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M12 11V7m0 8h.01M5.07 19a9 9 0 1113.86 0"/>
+                                    </svg>
+                                </div>
+
+                                <div>
+                                    <p class="text-[10px] font-bold text-[#F9A01B]">
+                                        Code OTP de retrait
+                                    </p>
+
+                                    <p class="mt-0.5 text-[9px] text-white/50">
+                                        Présentez ce code au guichet pour récupérer votre colis.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                            <div class="flex items-center gap-2">
+
+                                <div class="rounded-lg bg-white px-3 py-2 text-center">
+                                    <span class="text-lg font-black tracking-[0.25em] text-[#0A1B12]">
+                                        {{ $activeOrder->otp_code }}
+                                    </span>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    @else
+
+                        <a href="{{ route('buyer.orders.show', $activeOrder) }}"
+                           class="group flex items-center justify-between rounded-xl border border-white/10
+                                  bg-white/[0.045] p-3 transition hover:bg-white/[0.08]">
+
+                            <div class="flex items-center gap-3">
+
+                                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#016837]">
+                                    <svg class="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                                              d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </div>
+
+                                <div>
+                                    <p class="text-[10px] font-bold text-white">
+                                        Suivre votre colis
+                                    </p>
+
+                                    <p class="mt-0.5 text-[9px] text-white/40">
+                                        Consultez l'avancement détaillé de votre commande.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                            <svg class="h-4 w-4 text-white/30 transition group-hover:translate-x-1 group-hover:text-[#F9A01B]"
+                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M9 5l7 7-7 7"/>
+                            </svg>
+
+                        </a>
+
+                    @endif
+
+                </div>
+
+            </div>
+        </div>
+
+    @endif
+
+
+    {{-- =========================================================
+        COMMANDES RÉCENTES
+    ========================================================== --}}
+    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+
+        {{-- Header --}}
+        <div class="flex items-center justify-between border-b border-slate-100 px-4 py-3.5">
+
+            <div>
+                <p class="text-[9px] font-bold uppercase tracking-wider text-[#016837]">
+                    Activité
+                </p>
+
+                <h2 class="mt-0.5 text-sm font-extrabold text-slate-900">
+                    Commandes récentes
+                </h2>
+            </div>
+
+            <a href="{{ route('buyer.orders.index') }}"
+               class="group inline-flex items-center gap-1 text-[10px] font-bold text-[#016837] hover:text-[#014d2c]">
+
+                Voir tout
+
+                <svg class="h-3 w-3 transition group-hover:translate-x-0.5"
+                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 5l7 7-7 7"/>
+                </svg>
+            </a>
+
+        </div>
+
+
+        @if ($recentOrders->count() > 0)
+
+            {{-- =================================================
+                VERSION DESKTOP
+            ================================================== --}}
+            <div class="hidden overflow-x-auto md:block">
+
+                <table class="w-full">
+
+                    <thead>
+                        <tr class="border-b border-slate-100 bg-slate-50/70">
+
+                            <th class="px-4 py-2.5 text-left text-[8px] font-bold uppercase tracking-wider text-slate-400">
+                                Référence
+                            </th>
+
+                            <th class="px-4 py-2.5 text-left text-[8px] font-bold uppercase tracking-wider text-slate-400">
+                                Boutique
+                            </th>
+
+                            <th class="px-4 py-2.5 text-left text-[8px] font-bold uppercase tracking-wider text-slate-400">
+                                Montant
+                            </th>
+
+                            <th class="px-4 py-2.5 text-left text-[8px] font-bold uppercase tracking-wider text-slate-400">
+                                Statut
+                            </th>
+
+                            <th class="px-4 py-2.5 text-left text-[8px] font-bold uppercase tracking-wider text-slate-400">
+                                Date
+                            </th>
+
+                            <th class="px-4 py-2.5"></th>
+
+                        </tr>
+                    </thead>
+
+                    <tbody class="divide-y divide-slate-100">
+
+                        @foreach ($recentOrders as $order)
+
+                            @php
+                                $statusClass = match ($order->status) {
+                                    \App\Models\Order::STATUS_PENDING =>
+                                        'bg-slate-100 text-slate-600',
+
+                                    \App\Models\Order::STATUS_AWAITING_PAYMENT =>
+                                        'bg-[#F9A01B]/15 text-[#9a6400]',
+
+                                    \App\Models\Order::STATUS_PAID,
+                                    \App\Models\Order::STATUS_PREPARING,
+                                    \App\Models\Order::STATUS_IN_TRANSIT =>
+                                        'bg-[#016837]/10 text-[#016837]',
+
+                                    \App\Models\Order::STATUS_REGISTERED_ORIGIN,
+                                    \App\Models\Order::STATUS_ARRIVED_DESTINATION =>
+                                        'bg-[#F9A01B]/15 text-[#9a6400]',
+
+                                    \App\Models\Order::STATUS_AWAITING_BUYER_CONFIRMATION =>
+                                        'bg-[#F9A01B]/20 text-[#8a5800]',
+
+                                    \App\Models\Order::STATUS_COMPLETED,
+                                    \App\Models\Order::STATUS_AUTO_COMPLETED =>
+                                        'bg-[#016837]/10 text-[#016837]',
+
+                                    \App\Models\Order::STATUS_DISPUTED =>
+                                        'bg-[#E30613]/10 text-[#E30613]',
+
+                                    \App\Models\Order::STATUS_CANCELLED,
+                                    \App\Models\Order::STATUS_FAILED =>
+                                        'bg-slate-100 text-slate-500',
+
+                                    default =>
+                                        'bg-slate-100 text-slate-600',
+                                };
+
+                                $statusLabel = match ($order->status) {
+                                    \App\Models\Order::STATUS_PENDING => 'En attente',
+                                    \App\Models\Order::STATUS_AWAITING_PAYMENT => 'Paiement requis',
+                                    \App\Models\Order::STATUS_PAID => 'Payée',
+                                    \App\Models\Order::STATUS_PREPARING => 'En préparation',
+                                    \App\Models\Order::STATUS_REGISTERED_ORIGIN => 'Au point de départ',
+                                    \App\Models\Order::STATUS_IN_TRANSIT => 'En transit',
+                                    \App\Models\Order::STATUS_ARRIVED_DESTINATION => 'Arrivée',
+                                    \App\Models\Order::STATUS_AWAITING_BUYER_CONFIRMATION => 'Retrait requis',
+                                    \App\Models\Order::STATUS_COMPLETED => 'Terminée',
+                                    \App\Models\Order::STATUS_AUTO_COMPLETED => 'Terminée',
+                                    \App\Models\Order::STATUS_DISPUTED => 'Litige',
+                                    \App\Models\Order::STATUS_CANCELLED => 'Annulée',
+                                    \App\Models\Order::STATUS_FAILED => 'Échec',
+                                    default => ucfirst(str_replace('_', ' ', $order->status)),
+                                };
+                            @endphp
+
+                            <tr class="group transition hover:bg-[#016837]/[0.025]">
+
+                                <td class="whitespace-nowrap px-4 py-3">
+
+                                    <span class="text-[10px] font-bold text-slate-800">
+                                        {{ $order->reference }}
+                                    </span>
+
+                                </td>
+
+                                <td class="max-w-[180px] px-4 py-3">
+
+                                    <span class="block truncate text-[10px] font-medium text-slate-600">
+                                        {{ $order->shop->name }}
+                                    </span>
+
+                                </td>
+
+                                <td class="whitespace-nowrap px-4 py-3">
+
+                                    <span class="text-[10px] font-extrabold text-slate-900">
+                                        {{ number_format($order->total_amount, 0, ',', ' ') }}
+                                    </span>
+
+                                    <span class="ml-0.5 text-[8px] font-bold text-[#F9A01B]">
+                                        FCFA
+                                    </span>
+
+                                </td>
+
+                                <td class="whitespace-nowrap px-4 py-3">
+
+                                    <span class="inline-flex items-center rounded-full px-2 py-1
+                                                 text-[8px] font-bold {{ $statusClass }}">
+
+                                        <span class="mr-1 h-1.5 w-1.5 rounded-full bg-current"></span>
+
+                                        {{ $statusLabel }}
+
+                                    </span>
+
+                                </td>
+
+                                <td class="whitespace-nowrap px-4 py-3 text-[9px] text-slate-400">
+
+                                    {{ $order->created_at->format('d/m/Y') }}
+
+                                </td>
+
+                                <td class="whitespace-nowrap px-4 py-3 text-right">
+
+                                    <a href="{{ route('buyer.orders.show', $order) }}"
+                                       class="inline-flex h-7 items-center gap-1 rounded-md px-2
+                                              text-[9px] font-bold text-[#016837]
+                                              transition hover:bg-[#016837]/10">
+
+                                        Détails
+
+                                        <svg class="h-3 w-3"
+                                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M9 5l7 7-7 7"/>
+                                        </svg>
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                        @endforeach
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            {{-- =================================================
+                VERSION MOBILE
+            ================================================== --}}
+            <div class="divide-y divide-slate-100 md:hidden">
+
+                @foreach ($recentOrders as $order)
+
+                    @php
+                        $statusClass = match ($order->status) {
+                            \App\Models\Order::STATUS_AWAITING_PAYMENT,
+                            \App\Models\Order::STATUS_REGISTERED_ORIGIN,
+                            \App\Models\Order::STATUS_ARRIVED_DESTINATION,
+                            \App\Models\Order::STATUS_AWAITING_BUYER_CONFIRMATION =>
+                                'bg-[#F9A01B]/15 text-[#946000]',
+
+                            \App\Models\Order::STATUS_PAID,
+                            \App\Models\Order::STATUS_PREPARING,
+                            \App\Models\Order::STATUS_IN_TRANSIT,
+                            \App\Models\Order::STATUS_COMPLETED,
+                            \App\Models\Order::STATUS_AUTO_COMPLETED =>
+                                'bg-[#016837]/10 text-[#016837]',
+
+                            \App\Models\Order::STATUS_DISPUTED =>
+                                'bg-[#E30613]/10 text-[#E30613]',
+
+                            default =>
+                                'bg-slate-100 text-slate-500',
+                        };
+
+                        $statusLabel = match ($order->status) {
+                            \App\Models\Order::STATUS_PENDING => 'En attente',
+                            \App\Models\Order::STATUS_AWAITING_PAYMENT => 'Paiement requis',
+                            \App\Models\Order::STATUS_PAID => 'Payée',
+                            \App\Models\Order::STATUS_PREPARING => 'Préparation',
+                            \App\Models\Order::STATUS_REGISTERED_ORIGIN => 'Au départ',
+                            \App\Models\Order::STATUS_IN_TRANSIT => 'En transit',
+                            \App\Models\Order::STATUS_ARRIVED_DESTINATION => 'Arrivée',
+                            \App\Models\Order::STATUS_AWAITING_BUYER_CONFIRMATION => 'Retrait requis',
+                            \App\Models\Order::STATUS_COMPLETED,
+                            \App\Models\Order::STATUS_AUTO_COMPLETED => 'Terminée',
+                            \App\Models\Order::STATUS_DISPUTED => 'Litige',
+                            \App\Models\Order::STATUS_CANCELLED => 'Annulée',
+                            \App\Models\Order::STATUS_FAILED => 'Échec',
+                            default => ucfirst(str_replace('_', ' ', $order->status)),
+                        };
+                    @endphp
+
+                    <a href="{{ route('buyer.orders.show', $order) }}"
+                       class="block p-3.5 transition hover:bg-slate-50">
+
+                        <div class="flex items-start justify-between gap-3">
+
+                            <div class="min-w-0">
+
+                                <div class="flex items-center gap-2">
+
+                                    <span class="text-[10px] font-extrabold text-slate-800">
+                                        {{ $order->reference }}
+                                    </span>
+
+                                    <span class="inline-flex items-center rounded-full px-1.5 py-0.5
+                                                 text-[7px] font-bold {{ $statusClass }}">
+                                        {{ $statusLabel }}
+                                    </span>
+
+                                </div>
+
+                                <p class="mt-1 truncate text-[9px] text-slate-500">
+                                    {{ $order->shop->name }}
+                                </p>
+
+                                <p class="mt-1 text-[8px] text-slate-400">
+                                    {{ $order->created_at->format('d/m/Y') }}
+                                </p>
+
+                            </div>
+
+                            <div class="shrink-0 text-right">
+
+                                <p class="text-[10px] font-extrabold text-slate-900">
+                                    {{ number_format($order->total_amount, 0, ',', ' ') }}
+                                </p>
+
+                                <p class="text-[8px] font-bold text-[#F9A01B]">
+                                    FCFA
+                                </p>
+
+                                <svg class="ml-auto mt-1 h-3 w-3 text-slate-300"
+                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M9 5l7 7-7 7"/>
+                                </svg>
+
+                            </div>
+
+                        </div>
+
+                    </a>
+
+                @endforeach
+
+            </div>
+
+        @else
+
+            {{-- =================================================
+                EMPTY STATE
+            ================================================== --}}
+            <div class="px-5 py-10 text-center">
+
+                <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-[#016837]/10 text-[#016837]">
+
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"
+                              d="M3 7h18M5 7l1.5 12h11L19 7M9 7V5a3 3 0 016 0v2"/>
+                    </svg>
+
+                </div>
+
+                <h3 class="mt-3 text-sm font-extrabold text-slate-800">
+                    Aucune commande pour le moment
+                </h3>
+
+                <p class="mx-auto mt-1 max-w-sm text-[10px] leading-relaxed text-slate-400">
+                    Explorez les produits disponibles sur Ali-Kamer et effectuez
+                    votre premier achat en toute simplicité.
+                </p>
+
+                <a href="{{ route('buyer.home') }}"
+                   class="mt-4 inline-flex items-center gap-2 rounded-lg bg-[#016837] px-4 py-2
+                          text-[10px] font-bold text-white shadow-sm transition
+                          hover:bg-[#015a30]">
+
+                    Découvrir les produits
+
+                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 5l7 7-7 7"/>
+                    </svg>
+
+                </a>
+
+            </div>
+
+        @endif
+
+    </div>
+
+</div>
+
 @endsection

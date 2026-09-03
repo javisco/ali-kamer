@@ -112,14 +112,6 @@ Route::middleware(['auth', 'verified', 'role:seller', 'shop.active'])->prefix('v
                 ->name('seller.wallet.history');
 });
 
-// ── Commandes acheteur ────────────────────────────────────────────
-Route::middleware(['auth', 'verified', 'role:buyer'])->prefix('commandes')->group(function () {
-        Route::get('/', [BuyerOrderController::class, 'index'])->name('buyer.orders.index');
-        Route::get('/passer/{product}', [BuyerOrderController::class, 'create'])->name('buyer.orders.create');
-        Route::post('/', [BuyerOrderController::class, 'store'])->name('buyer.orders.store');
-        Route::get('/{order}', [BuyerOrderController::class, 'show'])->name('buyer.orders.show');
-        Route::post('/{order}/annuler', [BuyerOrderController::class, 'cancel'])->name('buyer.orders.cancel');
-});
 
 
 // ── Commandes vendeur ─────────────────────────────────────────────
@@ -130,6 +122,55 @@ Route::middleware(['auth', 'verified', 'role:seller', 'shop.active'])->prefix('v
         Route::post('/commandes/{order}/preparer', [SellerOrderController::class, 'prepare'])
                 ->name('seller.orders.prepare');
 });
+
+
+// ── Commandes acheteur ────────────────────────────────────────────
+Route::middleware(['auth', 'verified', 'role:buyer'])->prefix('commandes')->group(function () {
+        Route::get('/', [BuyerOrderController::class, 'index'])->name('buyer.orders.index');
+        Route::get('/passer/{product}', [BuyerOrderController::class, 'create'])->name('buyer.orders.create');
+        Route::post('/', [BuyerOrderController::class, 'store'])->name('buyer.orders.store');
+        Route::get('/{order}', [BuyerOrderController::class, 'show'])->name('buyer.orders.show');
+        Route::post('/{order}/annuler', [BuyerOrderController::class, 'cancel'])->name('buyer.orders.cancel');
+});
+
+
+
+
+// Webhook Campay — pas de middleware auth (appelé par Campay)
+// Protection assurée par la vérification de signature HMAC
+Route::post('/webhooks/elgiopay', [WebhookController::class, 'campay'])
+        ->name('payment.webhook.elgiopay');
+
+// Pages paiement acheteur
+Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
+
+        Route::get('/paiement/{order}/initier', [PaymentController::class, 'initiate'])
+                ->name('buyer.payment.initiate');
+        Route::get('/paiement/{order}/attente', [PaymentController::class, 'waiting'])
+                ->name('buyer.payment.waiting');
+        Route::get('/commandes/{order}/statut', [PaymentController::class, 'status'])
+                ->name('buyer.orders.status');
+});
+
+// Paiement frais transport acheteur
+Route::middleware(['auth', 'role:buyer', 'verified'])->group(function () {
+
+        Route::get('/commandes/{order}/transport', [BuyerOrderController::class, 'transportPayment'])
+                ->name('buyer.orders.transport');
+
+        Route::post('/commandes/{order}/transport/payer', [BuyerOrderController::class, 'payTransport'])
+                ->name('buyer.orders.transport.pay');
+
+        // Page d'attente dédiée au paiement transport
+        Route::get('/commandes/{order}/transport/attente', [BuyerOrderController::class, 'transportWaiting'])
+                ->name('buyer.orders.transport.waiting');
+
+        // Vérification statut paiement transport (polling JS)
+        Route::get('/commandes/{order}/transport/statut', [BuyerOrderController::class, 'transportStatus'])
+                ->name('buyer.orders.transport.status');
+});
+
+
 
 //messagerie
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -160,21 +201,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 
-// Webhook Campay — pas de middleware auth (appelé par Campay)
-// Protection assurée par la vérification de signature HMAC
-Route::post('/webhooks/campay', [WebhookController::class, 'campay'])
-        ->name('payment.webhook.campay');
 
-// Pages paiement acheteur
-Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
-
-        Route::get('/paiement/{order}/initier', [PaymentController::class, 'initiate'])
-                ->name('buyer.payment.initiate');
-        Route::get('/paiement/{order}/attente', [PaymentController::class, 'waiting'])
-                ->name('buyer.payment.waiting');
-        Route::get('/commandes/{order}/statut', [PaymentController::class, 'status'])
-                ->name('buyer.orders.status');
-});
 
 // Portefeuille vendeur
 Route::middleware(['auth', 'verified', 'role:seller', 'shop.active'])->prefix('vendeur')->group(function () {
@@ -237,23 +264,6 @@ Route::middleware(['auth', 'role:secretary'])
                         ->name('secretary.handover.otp');
         });
 
-// Paiement frais transport acheteur
-Route::middleware(['auth', 'role:buyer', 'verified'])->group(function () {
-
-        Route::get('/commandes/{order}/transport', [BuyerOrderController::class, 'transportPayment'])
-                ->name('buyer.orders.transport');
-
-        Route::post('/commandes/{order}/transport/payer', [BuyerOrderController::class, 'payTransport'])
-                ->name('buyer.orders.transport.pay');
-
-        // Page d'attente dédiée au paiement transport
-        Route::get('/commandes/{order}/transport/attente', [BuyerOrderController::class, 'transportWaiting'])
-                ->name('buyer.orders.transport.waiting');
-
-        // Vérification statut paiement transport (polling JS)
-        Route::get('/commandes/{order}/transport/statut', [BuyerOrderController::class, 'transportStatus'])
-                ->name('buyer.orders.transport.status');
-});
 
 
 
@@ -537,3 +547,44 @@ Route::middleware('auth')->prefix('notifications')->name('notifications.')->grou
         Route::post('/{id}/read', [NotificationController::class, 'markAsRead'])->name('read');
         Route::post('/read-all', [NotificationController::class, 'markAllAsRead'])->name('read-all');
 });
+
+
+
+
+// // ── Paiement frais transport acheteur ─────────────────────────────────
+// // INCHANGÉ — seuls les controllers/services injectés dedans changent en interne.
+// Route::middleware(['auth', 'role:buyer', 'verified'])->group(function () {
+
+//         Route::get('/commandes/{order}/transport', [BuyerOrderController::class, 'transportPayment'])
+//                 ->name('buyer.orders.transport');
+
+//         Route::post('/commandes/{order}/transport/payer', [BuyerOrderController::class, 'payTransport'])
+//                 ->name('buyer.orders.transport.pay');
+
+//         Route::get('/commandes/{order}/transport/attente', [BuyerOrderController::class, 'transportWaiting'])
+//                 ->name('buyer.orders.transport.waiting');
+
+//         Route::get('/commandes/{order}/transport/statut', [BuyerOrderController::class, 'transportStatus'])
+//                 ->name('buyer.orders.transport.status');
+// });
+
+// // ── Webhook Elgiopay — pas de middleware auth (appelé par Elgiopay) ───
+// // AVANT : Route::post('/webhooks/campay', [WebhookController::class, 'campay'])
+// //         ->name('payment.webhook.campay');
+// // Protection assurée par la vérification de signature HMAC dans le controller,
+// // pas par un middleware Laravel — c'est Elgiopay qui appelle cette route, pas
+// // un utilisateur connecté.
+// Route::post('/webhooks/elgiopay', [WebhookController::class, 'elgiopay'])
+//         ->name('payment.webhook.elgiopay');
+
+// // ── Pages paiement acheteur ────────────────────────────────────────────
+// // INCHANGÉ.
+// Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
+
+//         Route::get('/paiement/{order}/initier', [PaymentController::class, 'initiate'])
+//                 ->name('buyer.payment.initiate');
+//         Route::get('/paiement/{order}/attente', [PaymentController::class, 'waiting'])
+//                 ->name('buyer.payment.waiting');
+//         Route::get('/commandes/{order}/statut', [PaymentController::class, 'status'])
+//                 ->name('buyer.orders.status');
+// });

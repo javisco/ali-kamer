@@ -1,4 +1,4 @@
-@extends('base')
+@extends('layouts.buyer')
 @section('title', 'Mes litiges')
 @section('content')
     <div class="bg-gray-50 min-h-screen py-8">

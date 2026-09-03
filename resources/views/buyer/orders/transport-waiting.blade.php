@@ -1,66 +1,68 @@
 @extends('base')
 @section('title', 'En attente — Paiement transport')
 @section('content')
-    <div class="bg-gray-50 min-h-screen py-8">
-        <div class="max-w-md mx-auto px-4 text-center">
+    <div class="bg-slate-50 min-h-screen py-8 px-4 flex items-center justify-center">
+        <div class="max-w-md w-full text-center">
 
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-10 mb-6">
+            <div class="bg-white rounded-3xl border border-slate-200/80 shadow-xl p-8 sm:p-10 mb-6 relative overflow-hidden">
+                {{-- Accent décoratif arrière-plan --}}
+                <div class="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-[#F9A01B]/10 blur-2xl"></div>
 
-                <div
-                    class="w-20 h-20 bg-orange-50 rounded-full flex items-center
-                    justify-center mx-auto mb-6">
-                    <svg class="w-10 h-10 text-orange-500 animate-pulse" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2
-                             2v14a2 2 0 002 2z" />
+                {{-- Icône animée --}}
+                <div class="w-20 h-20 bg-yellow-50 border border-[#F9A01B]/30 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xs">
+                    <svg class="w-10 h-10 text-[#F9A01B] animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                     </svg>
                 </div>
 
-                <h1 class="text-xl font-extrabold text-gray-900 mb-2">
+                <h1 class="text-xl sm:text-2xl font-black text-slate-900 uppercase tracking-tight mb-2">
                     En attente de confirmation
                 </h1>
-                <p class="text-sm text-gray-500 mb-6">
-                    Confirmez le paiement de
-                    <strong>
+                <p class="text-xs sm:text-sm text-slate-600 font-medium mb-6 leading-relaxed">
+                    Veuillez valider le paiement USSD de 
+                    <span class="font-extrabold text-[#016837]">
                         {{ number_format($order->shipment->transport_fee, 0, ',', ' ') }} FCFA
-                    </strong>
-                    sur votre téléphone.
+                    </span> 
+                    directement sur votre téléphone.
                 </p>
 
-                {{-- Étapes --}}
-                <div class="text-left space-y-3 mb-6">
-                    <div class="flex items-center gap-3 text-sm">
-                        <div
-                            class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 font-bold
-                            text-xs flex items-center justify-center flex-shrink-0">
-                            ✓</div>
-                        <span class="text-gray-600">Commande et colis arrivés</span>
+                {{-- Indication d'avancement --}}
+                <div class="text-left space-y-3.5 mb-6 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                    <div class="flex items-center gap-3 text-xs">
+                        <div class="w-6 h-6 rounded-xl bg-emerald-100 text-[#016837] font-black text-xs flex items-center justify-center shrink-0">
+                            ✓
+                        </div>
+                        <span class="text-slate-600 font-bold">Colis disponible en agence</span>
                     </div>
-                    <div class="flex items-center gap-3 text-sm">
-                        <div
-                            class="w-6 h-6 rounded-full bg-orange-500 text-white font-bold
-                            text-xs flex items-center justify-center flex-shrink-0 animate-pulse">
-                            2</div>
-                        <span class="text-gray-800 font-medium">
-                            Confirmez le paiement transport sur votre téléphone
+
+                    <div class="flex items-center gap-3 text-xs">
+                        <div class="w-6 h-6 rounded-xl bg-[#F9A01B] text-slate-900 font-black text-xs flex items-center justify-center shrink-0 animate-pulse shadow-xs">
+                            2
+                        </div>
+                        <span class="text-slate-900 font-black">
+                            Confirmation du paiement transport (MoMo / OM)
                         </span>
                     </div>
-                    <div class="flex items-center gap-3 text-sm">
-                        <div
-                            class="w-6 h-6 rounded-full bg-gray-100 text-gray-400 font-bold
-                            text-xs flex items-center justify-center flex-shrink-0">
-                            3</div>
-                        <span class="text-gray-400">Recevoir votre code OTP de retrait</span>
+
+                    <div class="flex items-center gap-3 text-xs opacity-60">
+                        <div class="w-6 h-6 rounded-xl bg-slate-200 text-slate-500 font-black text-xs flex items-center justify-center shrink-0">
+                            3
+                        </div>
+                        <span class="text-slate-500 font-bold">Réception du code OTP de retrait</span>
                     </div>
                 </div>
 
-                <div class="bg-gray-50 rounded-xl p-3 text-sm text-gray-500" id="statusArea">
-                    Vérification en cours...
+                {{-- Status dynamique --}}
+                <div class="bg-emerald-50/60 border border-emerald-100 rounded-xl p-3.5 text-xs font-bold text-[#016837] flex items-center justify-center gap-2" id="statusArea">
+                    <span class="w-2 h-2 rounded-full bg-[#016837] animate-ping"></span>
+                    <span>Vérification de la transaction en cours...</span>
                 </div>
             </div>
 
-            <a href="{{ route('buyer.orders.show', $order) }}" class="text-sm text-indigo-600 hover:underline">
-                Voir ma commande
+            {{-- Lien retour --}}
+            <a href="{{ route('buyer.orders.show', $order) }}" 
+               class="inline-flex items-center gap-1.5 text-xs font-extrabold text-slate-600 hover:text-[#016837] transition-colors">
+                <span>← Revenir au détail de la commande</span>
             </a>
 
         </div>
@@ -81,8 +83,8 @@
                     .then(data => {
                         if (data.paid) {
                             clearInterval(check);
-                            statusArea.innerHTML = '✅ Paiement confirmé ! Votre OTP vous a été envoyé.';
-                            statusArea.className = 'bg-emerald-50 rounded-xl p-3 text-sm text-emerald-600';
+                            statusArea.innerHTML = '✅ Paiement confirmé ! Redirection en cours...';
+                            statusArea.className = 'bg-emerald-100 border border-emerald-200 rounded-xl p-3.5 text-xs font-black text-[#016837]';
                             setTimeout(() => {
                                 window.location.href = '{{ route('buyer.orders.show', $order) }}';
                             }, 2000);
