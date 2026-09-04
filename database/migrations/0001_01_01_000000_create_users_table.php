@@ -25,7 +25,7 @@ return new class extends Migration
             $table->timestamp('phone_verified_at')->nullable();
             $table->foreignId('agency_id')->nullable();
             // ── Rôle & Statut ─────────────────────────────────────────
-            $table->enum('role', ['buyer', 'seller', 'secretary', 'admin'])->default('buyer');
+            $table->enum('role', ['buyer', 'seller','agency_manager', 'secretary', 'admin'])->default('buyer');
             $table->enum('status', ['candidate', 'active', 'suspended', 'banned'])->default('active');
             // Note : un vendeur commence en status=candidate jusqu'à validation KYC
             // Tous les autres rôles commencent en status=active

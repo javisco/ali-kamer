@@ -4,6 +4,7 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\Auth\VerifiedEmailController;
 use Illuminate\Support\Facades\Route;
 
@@ -60,4 +61,109 @@ Route::middleware('auth')->group(function () {
     Route::post('/email/verification-notification', [VerifiedEmailController::class, 'resend'])
         ->middleware('throttle:6,1')
         ->name('verification.send');
+});
+
+
+
+Route::get('/auth/social/complete', [
+    SocialAuthController::class,
+    'showComplete',
+])->name('social.complete');
+
+
+Route::get('/auth/{provider}/callback', [
+    SocialAuthController::class,
+    'callback',
+])->name('social.callback');
+
+Route::get('/auth/{provider}/{role}', [
+    SocialAuthController::class,
+    'redirect',
+])->name('social.redirect');
+
+
+
+Route::post('/auth/social/complete/buyer', [
+    SocialAuthController::class,
+    'completeBuyer',
+])->name('social.complete.buyer');
+
+Route::post('/auth/social/complete/seller', [
+    SocialAuthController::class,
+    'completeSeller',
+])->name('social.complete.seller');
+
+Route::get('/auth/{provider}/', [
+    SocialAuthController::class,
+    'loginRedirect',
+])->name('social.login');
+
+
+
+use App\Http\Controllers\Auth\FacebookAuthController;
+/*
+|--------------------------------------------------------------------------
+| FACEBOOK AUTHENTICATION
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('auth/facebook')->group(function () {
+
+    /*
+     * Connexion
+     */
+    Route::get('/', [
+        FacebookAuthController::class,
+        'loginRedirect',
+    ])->name('facebook.login');
+
+    /*
+     * Inscription
+     */
+    Route::get('/register/{role}', [
+        FacebookAuthController::class,
+        'registerRedirect',
+    ])->name('facebook.register');
+
+    /*
+     * Callback Facebook
+     */
+    Route::get('/callback', [
+        FacebookAuthController::class,
+        'callback',
+    ])->name('facebook.callback');
+
+    /*
+     * Complétion
+     */
+    Route::get('/complete', [
+        FacebookAuthController::class,
+        'showComplete',
+    ])->name('facebook.complete');
+
+    /*
+     * ACHETEUR
+     */
+    Route::get('/complete/buyer', [
+        FacebookAuthController::class,
+        'showBuyerComplete',
+    ])->name('facebook.complete.buyer');
+
+    Route::post('/complete/buyer', [
+        FacebookAuthController::class,
+        'completeBuyer',
+    ])->name('facebook.complete.buyer.post');
+
+    /*
+     * VENDEUR
+     */
+    Route::get('/complete/seller', [
+        FacebookAuthController::class,
+        'showSellerComplete',
+    ])->name('facebook.complete.seller');
+
+    Route::post('/complete/seller', [
+        FacebookAuthController::class,
+        'completeSeller',
+    ])->name('facebook.complete.seller.post');
 });

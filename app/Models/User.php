@@ -220,4 +220,8 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return '237' . ltrim($this->phone_momo ?? $this->phone, '0');
     }
+    public function socialAccounts(): HasMany
+    {
+        return $this->hasMany(SocialAccount::class);
+    }
 }

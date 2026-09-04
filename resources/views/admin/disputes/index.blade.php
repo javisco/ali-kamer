@@ -1,21 +1,34 @@
 @extends('layouts.admin')
 @section('title', 'Litiges')
+
 @section('content')
-    <div class="bg-gray-50 min-h-screen py-8">
-        <div class="max-w-5xl mx-auto px-4">
+    <div class="bg-gradient-to-b from-[#F3FBF6]/50 via-white to-slate-50 min-h-screen py-8">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            <h1 class="text-2xl font-extrabold text-gray-900 mb-6">Litiges</h1>
+            {{-- En-tête de page --}}
+            <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <span class="inline-block rounded-full bg-[#CE1126]/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-[#CE1126]">
+                        Gestion Admin
+                    </span>
+                    <h1 class="mt-2 text-2xl sm:text-3xl font-black tracking-tight text-slate-950">
+                        Gestion des Litiges
+                    </h1>
+                </div>
+            </div>
 
-            {{-- Onglets --}}
-            <div class="flex gap-3 mb-6">
+            {{-- Navigation par Onglets (Status) --}}
+            <div class="flex flex-wrap gap-2 mb-6 p-1.5 bg-slate-100/80 rounded-2xl border border-slate-200/60 inline-flex">
                 @foreach (['open' => 'Ouverts', 'seller_replied' => 'À examiner', 'under_review' => 'En cours', 'resolved' => 'Résolus'] as $s => $label)
                     <a href="?status={{ $s }}"
-                        class="px-4 py-2 rounded-xl text-sm font-medium transition
-                      {{ $status === $s ? 'bg-indigo-600 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50' }}">
-                        {{ $label }}
+                        class="px-4 py-2 rounded-xl text-xs font-bold transition-all duration-150 flex items-center gap-2
+                      {{ $status === $s 
+                          ? 'bg-[#00843D] text-white shadow-sm shadow-emerald-900/20' 
+                          : 'bg-transparent text-slate-600 hover:text-slate-900 hover:bg-white/60' }}">
+                        <span>{{ $label }}</span>
                         @if (isset($counts[$s]) && $counts[$s] > 0)
-                            <span
-                                class="ml-1 text-xs {{ $status === $s ? 'bg-white/20' : 'bg-gray-100' }} px-1.5 rounded-full">
+                            <span class="text-[10px] px-2 py-0.5 rounded-full font-black
+                                {{ $status === $s ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700' }}">
                                 {{ $counts[$s] }}
                             </span>
                         @endif
@@ -23,52 +36,70 @@
                 @endforeach
             </div>
 
-            {{-- Table --}}
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <table class="w-full">
-                    <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
-                        <tr>
-                            <th class="text-left px-5 py-3">Commande</th>
-                            <th class="text-left px-5 py-3">Acheteur</th>
-                            <th class="text-left px-5 py-3">Motif</th>
-                            <th class="text-left px-5 py-3">Date</th>
-                            <th class="px-5 py-3"></th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-50">
-                        @forelse($disputes as $dispute)
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-5 py-4 font-medium text-sm">
-                                    {{ $dispute->order->reference }}
-                                </td>
-                                <td class="px-5 py-4 text-sm text-gray-600">
-                                    {{ $dispute->order->buyer->name }}
-                                </td>
-                                <td class="px-5 py-4 text-sm text-gray-600">
-                                    {{ $dispute->typeLabel() }}
-                                </td>
-                                <td class="px-5 py-4 text-xs text-gray-400">
-                                    {{ $dispute->created_at->format('d/m/Y') }}
-                                </td>
-                                <td class="px-5 py-4">
-                                    <a href="{{ route('admin.disputes.show', $dispute) }}"
-                                        class="text-indigo-600 hover:underline text-sm font-medium">
-                                        Examiner →
-                                    </a>
-                                </td>
-                            </tr>
-                        @empty
+            {{-- Tableau des litiges --}}
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-slate-50/80 border-b border-slate-200/80 text-[11px] font-black uppercase tracking-wider text-slate-500">
                             <tr>
-                                <td colspan="5" class="px-5 py-10 text-center text-gray-400 text-sm">
-                                    Aucun litige {{ $status }}.
-                                </td>
+                                <th class="px-5 py-3.5">Commande</th>
+                                <th class="px-5 py-3.5">Acheteur</th>
+                                <th class="px-5 py-3.5">Motif</th>
+                                <th class="px-5 py-3.5">Date</th>
+                                <th class="px-5 py-3.5 text-right">Action</th>
                             </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-sm">
+                            @forelse($disputes as $dispute)
+                                <tr class="hover:bg-[#F3FBF6]/40 transition-colors">
+                                    <td class="px-5 py-4 font-black text-slate-900">
+                                        <span class="inline-flex items-center gap-1.5">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-[#CE1126]"></span>
+                                            {{ $dispute->order->reference }}
+                                        </span>
+                                    </td>
+                                    <td class="px-5 py-4 font-medium text-slate-700">
+                                        {{ $dispute->order->buyer->name }}
+                                    </td>
+                                    <td class="px-5 py-4 text-slate-600">
+                                        <span class="inline-block px-2.5 py-1 rounded-lg bg-slate-100 text-slate-800 text-xs font-bold border border-slate-200/60">
+                                            {{ $dispute->typeLabel() }}
+                                        </span>
+                                    </td>
+                                    <td class="px-5 py-4 text-xs font-semibold text-slate-400">
+                                        {{ $dispute->created_at->format('d/m/Y') }}
+                                    </td>
+                                    <td class="px-5 py-4 text-right">
+                                        <a href="{{ route('admin.disputes.show', $dispute) }}"
+                                            class="inline-flex items-center gap-1 text-xs font-black text-[#00843D] hover:text-[#006B32] hover:underline">
+                                            <span>Examiner</span>
+                                            <span>→</span>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="px-5 py-12 text-center">
+                                        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400 mb-3 text-xl">
+                                            🛡️
+                                        </div>
+                                        <p class="text-sm font-bold text-slate-700">Aucun litige {{ $status }}</p>
+                                        <p class="text-xs text-slate-400 mt-1">Tout fonctionne normalement dans cette catégorie.</p>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
-            <div class="mt-4">{{ $disputes->links() }}</div>
+            {{-- Pagination --}}
+            @if($disputes->hasPages())
+                <div class="mt-6">
+                    {{ $disputes->links() }}
+                </div>
+            @endif
+
         </div>
     </div>
 @endsection

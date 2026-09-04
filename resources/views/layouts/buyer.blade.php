@@ -1,418 +1,640 @@
+
 <!DOCTYPE html>
-<html lang="fr" class="h-full bg-[#F7F9F7]">
+<html lang="fr" class="h-full bg-slate-50">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', 'Ali-Kamer — Espace Acheteur')</title>
+    <title>@yield('title', 'Espace acheteur - Ali-Kamer')</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <style>
-        [x-cloak] {
-            display: none !important;
-        }
-
-        /* Scrollbar très discrète — uniquement en cas de très petit écran */
-        .sidebar-scroll::-webkit-scrollbar {
-            width: 3px;
-        }
-
-        .sidebar-scroll::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .sidebar-scroll::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, .15);
-            border-radius: 10px;
-        }
-
-        /* Animation légère */
-        @keyframes sidebarFade {
-            from {
-                opacity: 0;
-                transform: translateX(-5px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .sidebar-item {
-            animation: sidebarFade .25s ease-out;
-        }
-    </style>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     @stack('styles')
 </head>
 
-<body class="h-full text-slate-800 antialiased">
-
-<div
+<body
+    class="h-full font-sans antialiased text-slate-800 bg-slate-50"
     x-data="{ sidebarOpen: false }"
-    class="min-h-screen"
+    @keydown.escape.window="sidebarOpen = false"
 >
 
+<div class="flex h-screen overflow-hidden">
+
     {{-- =========================================================
-        OVERLAY MOBILE
+        MOBILE OVERLAY
     ========================================================== --}}
     <div
-        x-cloak
         x-show="sidebarOpen"
         x-transition.opacity
         @click="sidebarOpen = false"
-        class="fixed inset-0 z-40 bg-black/50 backdrop-blur-[2px] md:hidden"
+        class="fixed inset-0 z-40 bg-black/50 lg:hidden"
+        style="display:none;"
     ></div>
 
 
     {{-- =========================================================
-        SIDEBAR
+        SIDEBAR ACHETEUR
     ========================================================== --}}
     <aside
-        class="fixed inset-y-0 left-0 z-50 flex w-[258px] flex-col
-               bg-[#0A1B12] text-white shadow-2xl
+        class="fixed inset-y-0 left-0 z-50 flex w-64 flex-col
+               bg-[#0a1b12] text-white border-r border-slate-800
                transform transition-transform duration-300 ease-in-out
-               md:translate-x-0"
+               lg:static lg:translate-x-0"
         :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
     >
 
         {{-- =====================================================
-            LOGO / HEADER
+            LOGO
         ====================================================== --}}
-        <div class="flex h-[62px] shrink-0 items-center border-b border-white/10 px-4">
+        <div class="flex-shrink-0 px-3 py-2.5 border-b border-white/10 bg-black/20">
 
-            <a href="{{ route('buyer.home') }}"
-               class="flex items-center gap-3 min-w-0">
+            <div class="flex items-center justify-between gap-2">
 
-                <div class="relative flex h-9 w-9 shrink-0 items-center justify-center
-                            overflow-hidden rounded-xl bg-white shadow-sm">
+                <a
+                    href="{{ route('buyer.home') }}"
+                    class="flex items-center gap-2.5 min-w-0 group"
+                >
 
-                    <img
-                        src="{{ asset('images/afrique.png') }}"
-                        alt="Ali-Kamer"
-                        class="h-8 w-8 object-contain"
+                    <div
+                        class="w-9 h-9 flex-shrink-0 rounded-lg bg-white
+                               shadow-md p-1 flex items-center justify-center
+                               transition-transform duration-200 group-hover:scale-105"
                     >
-                </div>
+                        <img
+                            src="{{ asset('images/afrique.png') }}"
+                            alt="Ali-Kamer"
+                            class="w-full h-full object-contain"
+                        >
+                    </div>
 
-                <div class="min-w-0">
-                    <div class="flex items-center gap-1.5">
-                        <span class="text-[15px] font-extrabold tracking-tight">
+                    <div class="min-w-0">
+                        <div class="font-black text-sm tracking-tight text-white leading-none">
                             ALI-KAMER
-                        </span>
+                        </div>
 
-                        <span class="h-1.5 w-1.5 rounded-full bg-[#F9A01B]"></span>
+                        <div
+                            class="inline-flex items-center mt-1 px-1.5 py-0.5
+                                   rounded text-[8px] font-bold uppercase tracking-wider
+                                   text-[#F9A01B] bg-[#F9A01B]/10
+                                   border border-[#F9A01B]/30"
+                        >
+                            Espace acheteur
+                        </div>
                     </div>
 
-                    <p class="mt-0.5 text-[9px] font-medium uppercase tracking-[0.16em] text-white/45">
-                        Espace acheteur
-                    </p>
-                </div>
-            </a>
+                </a>
 
-            {{-- Fermeture mobile --}}
-            <button
-                @click="sidebarOpen = false"
-                class="ml-auto flex h-7 w-7 items-center justify-center rounded-lg
-                       text-white/50 hover:bg-white/10 hover:text-white md:hidden"
-                aria-label="Fermer le menu"
-            >
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
-        </div>
+                {{-- Fermeture mobile --}}
+                <button
+                    type="button"
+                    @click="sidebarOpen = false"
+                    class="lg:hidden p-1.5 rounded-lg text-slate-400
+                           hover:text-white hover:bg-white/10 transition"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12"
+                        />
+                    </svg>
+                </button>
 
-
-        {{-- =====================================================
-            PROFIL ACHETEUR
-        ====================================================== --}}
-        <div class="shrink-0 px-3 pt-3 pb-2">
-
-            <div class="rounded-xl border border-white/10 bg-white/[0.045] p-2.5">
-
-                <div class="flex items-center gap-2.5">
-
-                    {{-- Avatar --}}
-                    <div class="relative flex h-9 w-9 shrink-0 items-center justify-center
-                                rounded-full bg-[#016837] text-[12px] font-bold text-white
-                                ring-2 ring-[#016837]/30">
-
-                        {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
-
-                        <span class="absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5
-                                     rounded-full border-2 border-[#0A1B12] bg-emerald-400">
-                        </span>
-                    </div>
-
-                    <div class="min-w-0 flex-1">
-                        <p class="truncate text-[11.5px] font-semibold text-white">
-                            {{ auth()->user()->name }}
-                        </p>
-
-                        <p class="truncate text-[9px] text-white/40">
-                            Acheteur
-                        </p>
-                    </div>
-
-                    <span class="shrink-0 rounded-md bg-[#F9A01B]/10 px-1.5 py-1
-                                 text-[8px] font-bold uppercase tracking-wide text-[#F9A01B]">
-                        Client
-                    </span>
-                </div>
             </div>
         </div>
 
 
         {{-- =====================================================
-            MENU
+            MINI PROFIL
         ====================================================== --}}
-        <nav class="sidebar-scroll flex-1 overflow-y-auto px-3 pb-2">
+        <div class="flex-shrink-0 px-2.5 py-2 border-b border-white/10">
 
-            {{-- VUE GLOBALE --}}
-            <div class="mb-2">
+            <div class="flex items-center gap-2.5 px-2 py-1.5 rounded-lg bg-white/5">
 
-                <p class="mb-1.5 px-2 text-[8px] font-bold uppercase tracking-[0.16em] text-white/30">
-                    Vue globale
+                <div
+                    class="w-8 h-8 flex-shrink-0 rounded-lg
+                           bg-[#016837] text-[#F9A01B]
+                           flex items-center justify-center
+                           font-black text-xs"
+                >
+                    {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
+                </div>
+
+                <div class="min-w-0 flex-1">
+
+                    <p class="text-[11px] font-bold text-white truncate leading-tight">
+                        {{ auth()->user()->name ?? 'Acheteur' }}
+                    </p>
+
+                    <p class="text-[9px] text-slate-400 truncate mt-0.5">
+                        {{ auth()->user()->email ?? '' }}
+                    </p>
+
+                </div>
+
+                <span
+                    class="w-1.5 h-1.5 flex-shrink-0 rounded-full
+                           bg-emerald-500 shadow-sm shadow-emerald-500/50"
+                    title="Compte actif"
+                ></span>
+
+            </div>
+        </div>
+
+
+        {{-- =====================================================
+            NAVIGATION
+            Compacte : aucun scroll nécessaire sur desktop
+        ====================================================== --}}
+        <nav class="flex-1 min-h-0 px-2.5 py-2 overflow-hidden">
+
+            {{-- =========================
+                PRINCIPAL
+            ========================== --}}
+            <div class="mb-2.5">
+
+                <p class="px-2 mb-1 text-[8px] font-bold uppercase tracking-[0.16em] text-emerald-500/80">
+                    Principal
                 </p>
 
-                <a href="{{ route('buyer.dashboard') }}"
-                   @click="sidebarOpen = false"
-                   class="sidebar-item group flex items-center gap-2.5 rounded-lg px-2.5 py-1.5
-                          text-[11.5px] font-medium transition
-                          {{ request()->routeIs('buyer.home')
-                              ? 'bg-[#016837] text-white shadow-sm'
-                              : 'text-white/65 hover:bg-white/[0.06] hover:text-white' }}">
+                <div class="space-y-0.5">
 
-                    <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md
-                                 {{ request()->routeIs('buyer.dashboard')
-                                     ? 'bg-white/10'
-                                     : 'bg-white/[0.04] group-hover:bg-white/10' }}">
+                    {{-- Tableau de bord --}}
+                    <a
+                        href="{{ route('buyer.dashboard') }}"
+                        @click="sidebarOpen = false"
+                        class="group flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12px] font-semibold
+                               transition-all duration-200
+                               {{ request()->routeIs('buyer.dashboard')
+                                    ? 'bg-[#016837] text-white shadow-md shadow-[#016837]/30'
+                                    : 'text-slate-400 hover:bg-white/5 hover:text-white' }}"
+                    >
 
-                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                                  d="M3 12l9-9 9 9M5 10v10h14V10M9 20v-6h6v6"/>
+                        <svg
+                            class="w-4 h-4 flex-shrink-0
+                                   {{ request()->routeIs('buyer.dashboard')
+                                        ? 'text-[#F9A01B]'
+                                        : 'text-slate-500 group-hover:text-[#F9A01B]' }}"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6z
+                                   M14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6z
+                                   M4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2z
+                                   M14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                            />
                         </svg>
-                    </span>
 
-                    <span class="flex-1">Tableau de bord</span>
+                        <span class="truncate">Tableau de bord</span>
 
-                    @if(request()->routeIs('buyer.home'))
-                        <span class="h-1.5 w-1.5 rounded-full bg-[#F9A01B]"></span>
-                    @endif
-                </a>
+                    </a>
+
+
+                    {{-- Marketplace --}}
+                    {{-- <a
+                        href="{{ route('buyer.home') }}"
+                        @click="sidebarOpen = false"
+                        class="group flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12px] font-semibold
+                               text-slate-400 hover:bg-white/5 hover:text-white transition-all duration-200"
+                    >
+
+                        <svg
+                            class="w-4 h-4 flex-shrink-0 text-slate-500 group-hover:text-[#F9A01B]"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M16 11V7a4 4 0 00-8 0v4
+                                   M5 9h14l1 11H4L5 9z"
+                            />
+                        </svg>
+
+                        <span class="truncate">Marketplace</span>
+
+                    </a> --}}
+
+                </div>
             </div>
 
 
-            {{-- MES ACHATS --}}
-            <div class="mb-2">
+            {{-- =========================
+                MES ACHATS
+            ========================== --}}
+            <div class="mb-2.5">
 
-                <p class="mb-1.5 px-2 text-[8px] font-bold uppercase tracking-[0.16em] text-white/30">
+                <p class="px-2 mb-1 text-[8px] font-bold uppercase tracking-[0.16em] text-emerald-500/80">
                     Mes achats
                 </p>
 
-                <a href="{{ route('buyer.orders.index') }}"
-                   @click="sidebarOpen = false"
-                   class="sidebar-item group flex items-center gap-2.5 rounded-lg px-2.5 py-1.5
-                          text-[11.5px] font-medium transition
-                          {{ request()->routeIs('buyer.orders.*')
-                              ? 'bg-[#016837] text-white shadow-sm'
-                              : 'text-white/65 hover:bg-white/[0.06] hover:text-white' }}">
+                <div class="space-y-0.5">
 
-                    <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md
-                                 {{ request()->routeIs('buyer.orders.*')
-                                     ? 'bg-white/10'
-                                     : 'bg-white/[0.04] group-hover:bg-white/10' }}">
+                    {{-- Commandes --}}
+                    <a
+                        href="{{ route('buyer.orders.index') }}"
+                        @click="sidebarOpen = false"
+                        class="group flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12px] font-semibold
+                               transition-all duration-200
+                               {{ request()->routeIs('buyer.orders.*')
+                                    ? 'bg-[#016837] text-white shadow-md shadow-[#016837]/30'
+                                    : 'text-slate-400 hover:bg-white/5 hover:text-white' }}"
+                    >
 
-                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                                  d="M3 7h18M5 7l1.5 12h11L19 7M9 7V5a3 3 0 016 0v2"/>
+                        <svg
+                            class="w-4 h-4 flex-shrink-0
+                                   {{ request()->routeIs('buyer.orders.*')
+                                        ? 'text-[#F9A01B]'
+                                        : 'text-slate-500 group-hover:text-[#F9A01B]' }}"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2
+                                   M9 5a3 3 0 006 0
+                                   M9 12h6M9 16h4"
+                            />
                         </svg>
-                    </span>
 
-                    <span class="flex-1">Mes commandes</span>
+                        <span class="truncate flex-1">Mes commandes</span>
 
-                    @if(isset($stats['active_orders']) && $stats['active_orders'] > 0)
-                        <span class="min-w-[18px] rounded-full bg-[#F9A01B] px-1.5 py-0.5
-                                     text-center text-[8px] font-bold text-[#0A1B12]">
-                            {{ $stats['active_orders'] }}
-                        </span>
-                    @endif
-                </a>
+                    </a>
+
+
+                    {{-- Favoris --}}
+                    <a
+                        href="{{ route('buyer.wishlist.index') }}"
+                        @click="sidebarOpen = false"
+                        class="group flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12px] font-semibold
+                               transition-all duration-200
+                               {{ request()->routeIs('buyer.wishlist.*')
+                                    ? 'bg-[#016837] text-white shadow-md shadow-[#016837]/30'
+                                    : 'text-slate-400 hover:bg-white/5 hover:text-white' }}"
+                    >
+
+                        <svg
+                            class="w-4 h-4 flex-shrink-0
+                                   {{ request()->routeIs('buyer.wishlist.*')
+                                        ? 'text-[#E30613]'
+                                        : 'text-slate-500 group-hover:text-[#E30613]' }}"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06
+                                   a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84
+                                   a5.5 5.5 0 000-7.78z"
+                            />
+                        </svg>
+
+                        <span class="truncate">Mes favoris</span>
+
+                    </a>
+
+
+                    {{-- Panier --}}
+                    <a
+                        href="{{ route('buyer.cart.index') }}"
+                        @click="sidebarOpen = false"
+                        class="group flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12px] font-semibold
+                               text-slate-400 hover:bg-white/5 hover:text-white transition-all duration-200"
+                    >
+
+                        <svg
+                            class="w-4 h-4 flex-shrink-0 text-slate-500 group-hover:text-[#F9A01B]"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M3 3h2l.4 2M7 13h10l4-8H5.4
+                                   M7 13L5.4 5M7 13l-2 4h13
+                                   M9 21a1 1 0 100-2 1 1 0 000 2z
+                                   M18 21a1 1 0 100-2 1 1 0 000 2z"
+                            />
+                        </svg>
+
+                        <span class="truncate flex-1">Mon panier</span>
+
+                        @php
+                            $cartCount = 0;
+
+                            try {
+                                if (auth()->check() && method_exists(auth()->user(), 'cart')) {
+                                    $cartCount = (int) (
+                                        auth()->user()->cart?->items?->sum('quantity') ?? 0
+                                    );
+                                }
+                            } catch (\Throwable $e) {
+                                $cartCount = 0;
+                            }
+                        @endphp
+
+                        @if($cartCount > 0)
+                            <span
+                                class="min-w-[18px] h-[18px] px-1 rounded-full
+                                       bg-[#E30613] text-white text-[9px]
+                                       font-black flex items-center justify-center"
+                            >
+                                {{ $cartCount > 99 ? '99+' : $cartCount }}
+                            </span>
+                        @endif
+
+                    </a>
+
+                </div>
             </div>
 
 
-            {{-- FINANCES --}}
-            <div class="mb-2">
+            {{-- =========================
+                FINANCES
+            ========================== --}}
+            <div class="mb-2.5">
 
-                <p class="mb-1.5 px-2 text-[8px] font-bold uppercase tracking-[0.16em] text-white/30">
+                <p class="px-2 mb-1 text-[8px] font-bold uppercase tracking-[0.16em] text-emerald-500/80">
                     Finances
                 </p>
 
-                <a href="{{ route('buyer.wallet.history') }}"
-                   @click="sidebarOpen = false"
-                   class="sidebar-item group flex items-center gap-2.5 rounded-lg px-2.5 py-1.5
-                          text-[11.5px] font-medium transition
-                          {{ request()->routeIs('buyer.wallet.*')
-                              ? 'bg-[#016837] text-white shadow-sm'
-                              : 'text-white/65 hover:bg-white/[0.06] hover:text-white' }}">
+                <div class="space-y-0.5">
 
-                    <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md
-                                 {{ request()->routeIs('buyer.wallet.*')
-                                     ? 'bg-white/10'
-                                     : 'bg-white/[0.04] group-hover:bg-white/10' }}">
+                    <a
+                        href="{{ route('buyer.wallet.history') }}"
+                        @click="sidebarOpen = false"
+                        class="group flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12px] font-semibold
+                               transition-all duration-200
+                               {{ request()->routeIs('buyer.wallet.*')
+                                    ? 'bg-[#016837] text-white shadow-md shadow-[#016837]/30'
+                                    : 'text-slate-400 hover:bg-white/5 hover:text-white' }}"
+                    >
 
-                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                                  d="M3 7h18v12H3zM3 10h18M16 15h2"/>
+                        <svg
+                            class="w-4 h-4 flex-shrink-0
+                                   {{ request()->routeIs('buyer.wallet.*')
+                                        ? 'text-[#F9A01B]'
+                                        : 'text-slate-500 group-hover:text-[#F9A01B]' }}"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2
+                                   3 0 3 .895 3 2-1.343 2-3 2
+                                   m0-8c1.11 0 2.08.402 2.599 1
+                                   M12 8V6m0 12v-2
+                                   M18 12a6 6 0 11-12 0 6 6 0 0112 0z"
+                            />
                         </svg>
-                    </span>
 
-                    <span class="flex-1">Historique des dépenses</span>
-                </a>
+                        <span class="truncate">Mes transactions</span>
+
+                    </a>
+
+                </div>
             </div>
 
 
-            {{-- MON COMPTE --}}
-            <div class="mb-2">
+            {{-- =========================
+                COMMUNICATION
+            ========================== --}}
+            <div class="mb-2.5">
 
-                <p class="mb-1.5 px-2 text-[8px] font-bold uppercase tracking-[0.16em] text-white/30">
-                    Mon compte
-                </p>
-
-                <a href="{{ route('buyer.profile') }}"
-                   @click="sidebarOpen = false"
-                   class="sidebar-item group flex items-center gap-2.5 rounded-lg px-2.5 py-1.5
-                          text-[11.5px] font-medium transition
-                          {{ request()->routeIs('buyer.profile')
-                              ? 'bg-[#016837] text-white shadow-sm'
-                              : 'text-white/65 hover:bg-white/[0.06] hover:text-white' }}">
-
-                    <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md
-                                 {{ request()->routeIs('buyer.profile')
-                                     ? 'bg-white/10'
-                                     : 'bg-white/[0.04] group-hover:bg-white/10' }}">
-
-                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                                  d="M20 21a8 8 0 00-16 0M12 13a4 4 0 100-8 4 4 0 000 8z"/>
-                        </svg>
-                    </span>
-
-                    <span class="flex-1">Mon profil</span>
-                </a>
-            </div>
-
-
-            {{-- COMMUNICATION --}}
-            <div class="mb-2">
-
-                <p class="mb-1.5 px-2 text-[8px] font-bold uppercase tracking-[0.16em] text-white/30">
+                <p class="px-2 mb-1 text-[8px] font-bold uppercase tracking-[0.16em] text-emerald-500/80">
                     Communication
                 </p>
 
-                {{-- Messages --}}
-                <a href="{{ route('messaging.index') }}"
-                   @click="sidebarOpen = false"
-                   class="sidebar-item group flex items-center gap-2.5 rounded-lg px-2.5 py-1.5
-                          text-[11.5px] font-medium transition
-                          {{ request()->routeIs('messaging.*')
-                              ? 'bg-[#016837] text-white shadow-sm'
-                              : 'text-white/65 hover:bg-white/[0.06] hover:text-white' }}">
+                <div class="space-y-0.5">
 
-                    <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md
-                                 bg-white/[0.04] group-hover:bg-white/10">
+                    {{-- Messages --}}
+                    <a
+                        href="{{ route('messaging.index') }}"
+                        @click="sidebarOpen = false"
+                        class="group flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12px] font-semibold
+                               transition-all duration-200
+                               {{ request()->routeIs('messaging.*')
+                                    ? 'bg-[#016837] text-white shadow-md shadow-[#016837]/30'
+                                    : 'text-slate-400 hover:bg-white/5 hover:text-white' }}"
+                    >
 
-                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                                  d="M4 5h16v11H8l-4 4V5z"/>
-                        </svg>
-                    </span>
-
-                    <span class="flex-1">Messages</span>
-                </a>
-
-
-                {{-- Notifications --}}
-                <a href="#"
-                   @click="sidebarOpen = false"
-                   class="sidebar-item group flex items-center gap-2.5 rounded-lg px-2.5 py-1.5
-                          text-[11.5px] font-medium transition
-                          {{ request()->routeIs('notifications.*')
-                              ? 'bg-[#016837] text-white shadow-sm'
-                              : 'text-white/65 hover:bg-white/[0.06] hover:text-white' }}">
-
-                    <span class="relative flex h-7 w-7 shrink-0 items-center justify-center rounded-md
-                                 bg-white/[0.04] group-hover:bg-white/10">
-
-                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                                  d="M18 8a6 6 0 00-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/>
+                        <svg
+                            class="w-4 h-4 flex-shrink-0
+                                   {{ request()->routeIs('messaging.*')
+                                        ? 'text-[#F9A01B]'
+                                        : 'text-slate-500 group-hover:text-[#F9A01B]' }}"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M8 10h8M8 14h5
+                                   M21 12a8 8 0 01-8 8H7l-4 2 1.5-4.5
+                                   A8 8 0 1121 12z"
+                            />
                         </svg>
 
-                        {{-- Badge notifications --}}
-                        <span
-                            id="buyer-notification-badge"
-                            class="absolute -right-1 -top-1 hidden min-w-[14px] h-[14px]
-                                   items-center justify-center rounded-full
-                                   bg-[#E30613] px-1 text-[7px] font-bold text-white">
-                        </span>
-                    </span>
+                        <span class="truncate flex-1">Messages</span>
 
-                    <span class="flex-1">Notifications</span>
-                </a>
+                    </a>
 
+
+                    {{-- Notifications --}}
+                    <a
+                        href="{{ route('notifications.index') }}"
+                        @click="sidebarOpen = false"
+                        class="group flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12px] font-semibold
+                               text-slate-400 hover:bg-white/5 hover:text-white transition-all duration-200"
+                    >
+
+                        <svg
+                            class="w-4 h-4 flex-shrink-0 text-slate-500 group-hover:text-[#F9A01B]"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11
+                                   a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341
+                                   C7.67 6.165 6 8.388 6 11v3.159
+                                   c0 .538-.214 1.055-.595 1.436L4 17h5
+                                   m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                            />
+                        </svg>
+
+                        <span class="truncate flex-1">Notifications</span>
+
+                        @if(isset($unreadNotifications) && $unreadNotifications > 0)
+                            <span
+                                class="min-w-[18px] h-[18px] px-1 rounded-full
+                                       bg-[#E30613] text-white text-[9px]
+                                       font-black flex items-center justify-center"
+                            >
+                                {{ $unreadNotifications > 99 ? '99+' : $unreadNotifications }}
+                            </span>
+                        @endif
+
+                    </a>
+
+                </div>
             </div>
 
 
-            {{-- ASSISTANCE --}}
-            <div class="mb-1">
+            {{-- =========================
+                MON COMPTE
+            ========================== --}}
+            <div class="mb-2.5">
 
-                <p class="mb-1.5 px-2 text-[8px] font-bold uppercase tracking-[0.16em] text-white/30">
+                <p class="px-2 mb-1 text-[8px] font-bold uppercase tracking-[0.16em] text-emerald-500/80">
+                    Mon compte
+                </p>
+
+                <div class="space-y-0.5">
+
+                    {{-- Profil --}}
+                    <a
+                        href="{{ route('buyer.profile') }}"
+                        @click="sidebarOpen = false"
+                        class="group flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12px] font-semibold
+                               transition-all duration-200
+                               {{ request()->routeIs('buyer.profile')
+                                    ? 'bg-[#016837] text-white shadow-md shadow-[#016837]/30'
+                                    : 'text-slate-400 hover:bg-white/5 hover:text-white' }}"
+                    >
+
+                        <svg
+                            class="w-4 h-4 flex-shrink-0
+                                   {{ request()->routeIs('buyer.profile')
+                                        ? 'text-[#F9A01B]'
+                                        : 'text-slate-500 group-hover:text-[#F9A01B]' }}"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0z
+                                   M12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                            />
+                        </svg>
+
+                        <span class="truncate">Mon profil</span>
+
+                    </a>
+
+                </div>
+            </div>
+
+
+            {{-- =========================
+                ASSISTANCE
+            ========================== --}}
+            <div>
+
+                <p class="px-2 mb-1 text-[8px] font-bold uppercase tracking-[0.16em] text-emerald-500/80">
                     Assistance
                 </p>
 
-                <a href="{{ route('help') }}"
-                   @click="sidebarOpen = false"
-                   class="sidebar-item group flex items-center gap-2.5 rounded-lg px-2.5 py-1.5
-                          text-[11.5px] font-medium text-white/65 transition
-                          hover:bg-white/[0.06] hover:text-white">
+                <div class="space-y-0.5">
 
-                    <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md
-                                 bg-white/[0.04] group-hover:bg-white/10">
+                    {{-- Tutoriels --}}
+                    <a
+                        href="{{ route('tutorials.index') }}"
+                        @click="sidebarOpen = false"
+                        class="group flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12px] font-semibold
+                               text-slate-400 hover:bg-white/5 hover:text-white transition-all duration-200"
+                    >
 
-                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                                  d="M9.5 9a2.5 2.5 0 115 0c0 2-2.5 2-2.5 2v2M12 17h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        <svg
+                            class="w-4 h-4 flex-shrink-0 text-slate-500 group-hover:text-[#F9A01B]"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 6.253v13
+                                   m0-13C10.832 5.477 9.246 5 7.5 5
+                                   S4.168 5.477 3 6.253v13
+                                   C4.168 18.477 5.754 18 7.5 18
+                                   s3.332.477 4.5 1.253
+                                   m0-13C13.168 5.477 14.754 5 16.5 5
+                                   s3.332.477 4.5 1.253v13
+                                   C19.832 18.477 18.246 18 16.5 18
+                                   s-3.332.477-4.5 1.253"
+                            />
                         </svg>
-                    </span>
 
-                    <span class="flex-1">Centre d'aide</span>
-                </a>
+                        <span class="truncate">Tutoriels</span>
 
-                <a href="{{ route('tutorials.index') }}"
-                   @click="sidebarOpen = false"
-                   class="sidebar-item group flex items-center gap-2.5 rounded-lg px-2.5 py-1.5
-                          text-[11.5px] font-medium text-white/65 transition
-                          hover:bg-white/[0.06] hover:text-white">
+                    </a>
 
-                    <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md
-                                 bg-white/[0.04] group-hover:bg-white/10">
 
-                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                                  d="M4 5h16v14H4zM8 9h8M8 13h5"/>
+                    {{-- Centre d'aide --}}
+                    <a
+                        href="{{ route('help') }}"
+                        @click="sidebarOpen = false"
+                        class="group flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12px] font-semibold
+                               text-slate-400 hover:bg-white/5 hover:text-white transition-all duration-200"
+                    >
+
+                        <svg
+                            class="w-4 h-4 flex-shrink-0 text-slate-500 group-hover:text-[#F9A01B]"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M8.228 9c.549-1.165 1.907-2 3.772-2
+                                   2.21 0 4 1.343 4 3 0 1.4-.9 2.3-2.2 2.8
+                                   -.9.35-1.8 1.05-1.8 2.2v.5
+                                   M12 18h.01
+                                   M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
                         </svg>
-                    </span>
 
-                    <span class="flex-1">Tutoriels</span>
-                </a>
+                        <span class="truncate">Centre d'aide</span>
 
+                    </a>
+
+                </div>
             </div>
 
         </nav>
@@ -421,48 +643,73 @@
         {{-- =====================================================
             FOOTER SIDEBAR
         ====================================================== --}}
-        <div class="shrink-0 border-t border-white/10 px-3 py-2.5">
+        <div class="flex-shrink-0 px-2.5 py-2 border-t border-white/10 bg-black/20">
 
-            {{-- Marketplace --}}
-            <a href="/"
-               class="group mb-1.5 flex items-center gap-2.5 rounded-lg px-2.5 py-1.5
-                      text-[11px] font-medium text-white/60 transition
-                      hover:bg-white/[0.06] hover:text-white">
+            {{-- Retour marketplace --}}
+            <a
+                href="{{ route('buyer.home') }}"
+                @click="sidebarOpen = false"
+                class="flex items-center gap-2.5 px-2.5 py-2 rounded-lg
+                       bg-white/10 hover:bg-white/20
+                       text-white text-[11px] font-semibold
+                       transition-all duration-200"
+            >
 
-                <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md
-                             bg-[#F9A01B]/10 text-[#F9A01B]">
+                <svg
+                    class="w-4 h-4 flex-shrink-0 text-[#F9A01B]"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3
+                           m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0h6"
+                    />
+                </svg>
 
-                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                              d="M3 12h18M12 3v18"/>
-                    </svg>
-                </span>
+                <span class="truncate">Retour à la Marketplace</span>
 
-                <span>Retour à la Marketplace</span>
             </a>
 
 
             {{-- Déconnexion --}}
-            <form method="POST" action="{{ route('logout') }}">
+            <form
+                method="POST"
+                action="{{ route('logout') }}"
+                class="mt-1"
+            >
                 @csrf
 
                 <button
                     type="submit"
-                    class="group flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5
-                           text-[11px] font-medium text-white/45 transition
-                           hover:bg-[#E30613]/10 hover:text-[#ff6670]"
+                    class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg
+                           text-[11px] font-semibold text-slate-400
+                           hover:text-white hover:bg-[#E30613]
+                           transition-all duration-200"
                 >
 
-                    <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md
-                                 bg-white/[0.04] group-hover:bg-[#E30613]/10">
-
-                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                                  d="M15 17l5-5-5-5M20 12H9M13 5V4a2 2 0 00-2-2H5a2 2 0 00-2 2v16a2 2 0 002 2h6a2 2 0 002-2v-1"/>
-                        </svg>
-                    </span>
+                    <svg
+                        class="w-4 h-4 flex-shrink-0"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M17 16l4-4m0 0l-4-4m4 4H7
+                               m6 4v1a3 3 0 01-3 3H6
+                               a3 3 0 01-3-3V7a3 3 0 013-3h4
+                               a3 3 0 013 3v1"
+                        />
+                    </svg>
 
                     <span>Déconnexion</span>
+
                 </button>
             </form>
 
@@ -472,112 +719,376 @@
 
 
     {{-- =========================================================
-        ZONE PRINCIPALE
+        MAIN AREA
     ========================================================== --}}
-    <div class="min-h-screen md:pl-[258px]">
+    <div class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+
 
         {{-- =====================================================
             TOPBAR
         ====================================================== --}}
-        <header class="sticky top-0 z-30 h-[58px] border-b border-slate-200/80
-                       bg-white/95 backdrop-blur-md">
+        <header
+            class="flex-shrink-0 bg-white border-b border-slate-200
+                   sticky top-0 z-30"
+        >
 
-            <div class="flex h-full items-center justify-between px-4 sm:px-6">
+            <div class="flex items-center justify-between gap-3 px-4 sm:px-6 py-3">
 
-                <div class="flex items-center gap-3">
+                {{-- LEFT --}}
+                <div class="flex items-center gap-3 min-w-0">
 
-                    {{-- Hamburger mobile --}}
+                    {{-- Mobile menu --}}
                     <button
+                        type="button"
                         @click="sidebarOpen = true"
-                        class="flex h-8 w-8 items-center justify-center rounded-lg
-                               border border-slate-200 bg-white text-slate-600
-                               shadow-sm hover:bg-slate-50 md:hidden"
-                        aria-label="Ouvrir le menu"
+                        class="lg:hidden p-2 rounded-xl
+                               text-slate-600 bg-slate-50
+                               border border-slate-200
+                               hover:bg-slate-100 transition"
                     >
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M4 6h16M4 12h16M4 18h16"/>
+                        <svg
+                            class="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16"
+                            />
                         </svg>
                     </button>
 
-                    <div>
-                        <div class="flex items-center gap-2">
 
-                            <span class="h-2 w-2 rounded-full bg-[#016837]"></span>
+                    {{-- Indicateur --}}
+                    <div class="flex items-center gap-2 min-w-0">
 
-                            <span class="text-[11px] font-bold uppercase tracking-wider text-[#016837]">
-                                Espace acheteur
+                        <span
+                            class="w-2 h-2 flex-shrink-0 rounded-full
+                                   bg-[#016837]
+                                   shadow-sm shadow-[#016837]/50"
+                        ></span>
+
+                        <span
+                            class="hidden sm:block text-[10px] font-bold
+                                   uppercase tracking-wider text-slate-500 truncate"
+                        >
+                            Espace acheteur
+                        </span>
+
+                        @hasSection('breadcrumb')
+
+                            <span class="hidden md:block text-slate-300">/</span>
+
+                            <span
+                                class="hidden md:block text-xs font-semibold
+                                       text-slate-700 truncate"
+                            >
+                                @yield('breadcrumb')
                             </span>
-                        </div>
 
-                        <p class="hidden text-[9px] text-slate-400 sm:block">
-                            Achetez en toute confiance sur Ali-Kamer
-                        </p>
+                        @endif
+
                     </div>
                 </div>
 
 
-                {{-- Partie droite --}}
-                <div class="flex items-center gap-2">
+                {{-- RIGHT --}}
+                <div class="flex items-center gap-1.5 sm:gap-2.5">
 
-                    {{-- Notifications rapides --}}
-                    <a href="{{ route('notifications.index') }}"
-                       class="relative flex h-8 w-8 items-center justify-center rounded-lg
-                              text-slate-500 transition hover:bg-slate-100 hover:text-[#016837]">
+                    {{-- Notifications --}}
+                    <a
+                        href="{{ route('notifications.index') }}"
+                        class="relative p-2 rounded-xl
+                               text-slate-500 hover:text-[#016837]
+                               hover:bg-[#016837]/5 transition"
+                        title="Notifications"
+                    >
 
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                                  d="M18 8a6 6 0 00-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/>
+                        <svg
+                            class="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11
+                                   a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341
+                                   C7.67 6.165 6 8.388 6 11v3.159
+                                   c0 .538-.214 1.055-.595 1.436L4 17h5
+                                   m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                            />
                         </svg>
 
-                        <span
-                            id="top-notification-badge"
-                            class="absolute right-1 top-1 hidden h-3.5 min-w-[14px]
-                                   items-center justify-center rounded-full
-                                   bg-[#E30613] px-1 text-[7px] font-bold text-white">
-                        </span>
+                        @if(isset($unreadNotifications) && $unreadNotifications > 0)
+                            <span
+                                class="absolute top-1 right-1 w-2 h-2 rounded-full
+                                       bg-[#E30613] ring-2 ring-white"
+                            ></span>
+                        @endif
+
                     </a>
 
 
-                    {{-- Séparateur --}}
-                    <div class="hidden h-6 w-px bg-slate-200 sm:block"></div>
+                    {{-- Messages --}}
+                    <a
+                        href="{{ route('messaging.index') }}"
+                        class="hidden sm:flex p-2 rounded-xl
+                               text-slate-500 hover:text-[#016837]
+                               hover:bg-[#016837]/5 transition"
+                        title="Messages"
+                    >
+
+                        <svg
+                            class="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M8 10h8M8 14h5
+                                   M21 12a8 8 0 01-8 8H7l-4 2 1.5-4.5
+                                   A8 8 0 1121 12z"
+                            />
+                        </svg>
+
+                    </a>
 
 
-                    {{-- Utilisateur --}}
-                    <div class="flex items-center gap-2">
+                    {{-- Profil --}}
+                    <div class="flex items-center gap-2 pl-2 border-l border-slate-200">
 
-                        <div class="hidden text-right sm:block">
-                            <p class="max-w-[130px] truncate text-[10px] font-semibold text-slate-700">
-                                {{ auth()->user()->name }}
-                            </p>
-
-                            <p class="text-[8px] text-slate-400">
-                                Acheteur
-                            </p>
+                        <div
+                            class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl
+                                   bg-[#016837] text-[#F9A01B]
+                                   flex items-center justify-center
+                                   font-black text-xs sm:text-sm shadow-sm"
+                        >
+                            {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
                         </div>
 
-                        <div class="flex h-8 w-8 items-center justify-center rounded-full
-                                    bg-[#016837] text-[11px] font-bold text-white
-                                    ring-2 ring-[#016837]/10">
+                        <div class="hidden md:block max-w-[150px]">
 
-                            {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
+                            <p class="text-xs font-bold text-slate-800 truncate">
+                                {{ auth()->user()->name ?? 'Acheteur' }}
+                            </p>
+
+                            <p class="text-[9px] text-slate-400 truncate">
+                                Acheteur
+                            </p>
 
                         </div>
 
                     </div>
+
+
+                    {{-- Déconnexion rapide --}}
+                    <form
+                        method="POST"
+                        action="{{ route('logout') }}"
+                        class="hidden sm:block"
+                    >
+                        @csrf
+
+                        <button
+                            type="submit"
+                            class="p-2 rounded-xl text-red-400
+                                   hover:text-white hover:bg-[#E30613]
+                                   transition"
+                            title="Déconnexion"
+                        >
+
+                            <svg
+                                class="w-5 h-5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M17 16l4-4m0 0l-4-4m4 4H7
+                                       m6 4v1a3 3 0 01-3 3H6
+                                       a3 3 0 01-3-3V7a3 3 0 013-3h4
+                                       a3 3 0 013 3v1"
+                                />
+                            </svg>
+
+                        </button>
+                    </form>
 
                 </div>
 
             </div>
+
         </header>
 
 
         {{-- =====================================================
             CONTENU
         ====================================================== --}}
-        <main class="min-h-[calc(100vh-58px)] bg-[#F7F9F7]">
+        <main class="flex-1 overflow-y-auto bg-slate-50">
 
-            @yield('content')
+            <div class="p-4 sm:p-6 max-w-[1600px] w-full mx-auto">
+
+                {{-- =================================================
+                    SUCCESS
+                ================================================== --}}
+                @if(session('success'))
+
+                    <div
+                        class="mb-4 flex items-start gap-3 p-3 rounded-xl
+                               bg-emerald-50 border border-emerald-200
+                               text-emerald-800"
+                    >
+
+                        <div
+                            class="w-8 h-8 flex-shrink-0 rounded-lg
+                                   bg-emerald-100 flex items-center justify-center"
+                        >
+                            <svg
+                                class="w-4 h-4 text-[#016837]"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M5 13l4 4L19 7"
+                                />
+                            </svg>
+                        </div>
+
+                        <div class="min-w-0">
+
+                            <p class="text-[10px] font-black uppercase tracking-wide">
+                                Opération réussie
+                            </p>
+
+                            <p class="text-sm mt-0.5">
+                                {{ session('success') }}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                @endif
+
+
+                {{-- =================================================
+                    ERROR
+                ================================================== --}}
+                @if(session('error'))
+
+                    <div
+                        class="mb-4 flex items-start gap-3 p-3 rounded-xl
+                               bg-red-50 border border-red-200
+                               text-red-800"
+                    >
+
+                        <div
+                            class="w-8 h-8 flex-shrink-0 rounded-lg
+                                   bg-red-100 flex items-center justify-center"
+                        >
+                            <svg
+                                class="w-4 h-4 text-[#E30613]"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"
+                                />
+                            </svg>
+                        </div>
+
+                        <div class="min-w-0">
+
+                            <p class="text-[10px] font-black uppercase tracking-wide">
+                                Une erreur est survenue
+                            </p>
+
+                            <p class="text-sm mt-0.5">
+                                {{ session('error') }}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                @endif
+
+
+                {{-- =================================================
+                    VALIDATION ERRORS
+                ================================================== --}}
+                @if($errors->any())
+
+                    <div
+                        class="mb-4 p-3 rounded-xl
+                               bg-red-50 border border-red-200
+                               text-red-800"
+                    >
+
+                        <div class="flex items-center gap-2 mb-2">
+
+                            <svg
+                                class="w-5 h-5 text-[#E30613]"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M12 9v2m0 4h.01M5.07 19h13.86
+                                       a2 2 0 001.73-3L13.73 4
+                                       a2 2 0 00-3.46 0L3.34 16
+                                       a2 2 0 001.73 3z"
+                                />
+                            </svg>
+
+                            <p class="text-sm font-black">
+                                Vérifiez les informations saisies.
+                            </p>
+
+                        </div>
+
+                        <ul class="ml-7 space-y-1 text-xs">
+
+                            @foreach($errors->all() as $error)
+                                <li>• {{ $error }}</li>
+                            @endforeach
+
+                        </ul>
+
+                    </div>
+
+                @endif
+
+
+                {{-- =================================================
+                    PAGE
+                ================================================== --}}
+                @yield('content')
+
+            </div>
 
         </main>
 
@@ -585,7 +1096,12 @@
 
 </div>
 
+
+{{-- =========================================================
+    SCRIPTS
+========================================================== --}}
 @stack('scripts')
 
 </body>
 </html>
+
