@@ -1,17 +1,14 @@
 <?php
 
 
-use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\Auth\VerifiedEmailController;
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Seller\KycSellerController;
-use App\Http\Controllers\Admin\KycAdmincontroller;
+use App\Http\Controllers\Admin\KycAdminController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Seller\ProductController;
 use App\Http\Controllers\Buyer\CatalogController;
 use App\Http\Controllers\Seller\ShopController;
-use App\Http\Controllers\Auth\ForgotPasswordController;
-use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Buyer\OrderController as BuyerOrderController;
 use App\Http\Controllers\Seller\OrderController as SellerOrderController;
 use App\Http\Controllers\Buyer\DashboardController as BuyerDashboardController;

@@ -1,4 +1,10 @@
-@extends('base')
+@php
+    $layout = auth()->user()->isBuyer()
+        ? 'layouts.buyer'
+        : 'layouts.seller';
+@endphp
+
+@extends($layout)
 
 @section('title', 'Messages')
 
@@ -43,16 +49,11 @@
             </div>
 
             @if ($totalUnread > 0)
-
-                {{-- Badge total messages non lus --}}
                 <span class="bg-[#E30613] text-white
                              text-xs font-bold px-3 py-1.5
                              rounded-full shadow-sm">
-
                     {{ $totalUnread }} non lu(s)
-
                 </span>
-
             @endif
 
         </div>
@@ -111,7 +112,11 @@
                     @php
                         $user = auth()->user();
                         $unread = $conv->unreadCount($user->id);
-                        $partner = $user->isBuyer() ? $conv->shop->name : $conv->buyer->name;
+
+                        $partner = $user->isBuyer()
+                            ? $conv->shop->name
+                            : $conv->buyer->name;
+
                         $last = $conv->lastMessage;
                     @endphp
 
@@ -154,14 +159,9 @@
                                 </p>
 
                                 @if ($last)
-
-                                    <p class="text-xs text-gray-400
-                                              flex-shrink-0">
-
+                                    <p class="text-xs text-gray-400 flex-shrink-0">
                                         {{ $last->sent_at->diffForHumans() }}
-
                                     </p>
-
                                 @endif
 
                             </div>
@@ -173,7 +173,6 @@
 
                                     <p class="text-xs text-gray-500 truncate">
 
-                                        {{-- Aperçu du dernier message --}}
                                         @if ($last->isText())
 
                                             {{ Str::limit($last->body, 60) }}
@@ -193,7 +192,6 @@
                                 @endif
 
 
-                                {{-- Badge messages non lus --}}
                                 @if ($unread > 0)
 
                                     <span class="bg-[#E30613] text-white

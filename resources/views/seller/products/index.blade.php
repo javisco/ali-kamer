@@ -6,37 +6,36 @@
     {{-- Style d'animation d'entrée --}}
     <style>
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .animate-fade-in { animation: fadeInUp 0.35s ease-out forwards; }
+        .animate-fade-in { animation: fadeInUp 0.3s ease-out forwards; }
     </style>
 
-    <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 bg-slate-50 min-h-screen">
+    <div class="min-h-screen bg-[#F7F7F2] py-6 px-3 sm:px-6">
+        <div class="max-w-6xl mx-auto animate-fade-in space-y-5">
 
-        <div class="animate-fade-in space-y-6">
-
-            {{-- 1. HERO BANNER BLEU --}}
-            <div class="relative overflow-hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white rounded-3xl p-6 sm:p-8 shadow-xl">
-                <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+            {{-- 1. HERO BANNER ALI-KAMER --}}
+            <div class="bg-[#016837] text-white rounded-2xl p-5 sm:p-6 shadow-xs relative overflow-hidden">
+                <div class="absolute -right-8 -bottom-8 w-40 h-40 bg-white/5 rounded-full pointer-events-none"></div>
 
                 <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
-                        <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold text-white mb-3 border border-white/20">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                        <div class="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-xs px-3 py-1 rounded-full text-xs font-semibold text-white mb-2 border border-white/15">
+                            <span class="w-2 h-2 rounded-full bg-[#F9A01B]"></span>
                             Gestion du Catalogue
                         </div>
-                        <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-white">
+                        <h1 class="text-xl sm:text-2xl font-black uppercase tracking-wider text-white">
                             Mes Produits
                         </h1>
-                        <p class="text-blue-100 text-xs sm:text-sm mt-1 max-w-lg font-medium">
+                        <p class="text-white/80 text-xs sm:text-sm mt-0.5 max-w-lg font-medium">
                             Gérez votre catalogue, contrôlez la visibilité et publiez vos articles sur Ali-Kamer.
                         </p>
                     </div>
 
                     <a href="{{ route('seller.products.create') }}"
-                        class="inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-100 active:scale-95 text-blue-700 font-bold px-5 py-3 rounded-xl text-xs sm:text-sm shadow-lg transition-all duration-200 shrink-0">
-                        <svg class="w-4 h-4 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        class="inline-flex items-center justify-center gap-2 bg-[#F9A01B] hover:bg-[#e08e14] active:scale-95 text-[#0a1b12] font-black px-4 py-2.5 rounded-xl text-xs sm:text-sm shadow-sm transition shrink-0">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
                         </svg>
                         <span>Ajouter un produit</span>
@@ -46,8 +45,8 @@
 
             {{-- 2. ALERTE DE SUCCÈS --}}
             @if (session('success'))
-                <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl px-5 py-4 text-xs sm:text-sm font-semibold flex items-center gap-3 shadow-sm">
-                    <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="bg-[#016837]/10 border border-[#016837]/20 text-[#016837] rounded-xl px-4 py-3 text-xs sm:text-sm font-bold flex items-center gap-2.5 shadow-xs">
+                    <svg class="w-5 h-5 shrink-0 text-[#016837]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <span>{{ session('success') }}</span>
@@ -55,73 +54,176 @@
             @endif
 
             {{-- 3. CARTES STATISTIQUES --}}
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
 
-                <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:border-blue-300 transition">
-                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Articles</p>
-                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
-                        {{ $products->total() }}
+                <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-xs">
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-gray-400">Total Articles</p>
+                    <h2 class="text-xl sm:text-2xl font-black text-[#0a1b12] mt-0.5">
+                        {{ $totalCount ?? $products->total() }}
                     </h2>
                 </div>
 
-                <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:border-emerald-300 transition">
-                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400">En Ligne</p>
-                    <h2 class="text-2xl sm:text-3xl font-black text-emerald-600 mt-1">
-                        {{ $products->where('status', 'visible')->count() }}
+                <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-xs">
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-gray-400">En Ligne</p>
+                    <h2 class="text-xl sm:text-2xl font-black text-[#016837] mt-0.5">
+                        {{ $visibleCount ?? $products->where('status', 'visible')->count() }}
                     </h2>
                 </div>
 
-                <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:border-amber-300 transition">
-                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Masqués</p>
-                    <h2 class="text-2xl sm:text-3xl font-black text-amber-500 mt-1">
-                        {{ $products->where('status', 'hidden')->count() }}
+                <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-xs">
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-gray-400">Masqués</p>
+                    <h2 class="text-xl sm:text-2xl font-black text-[#F9A01B] mt-0.5">
+                        {{ $hiddenCount ?? $products->where('status', 'hidden')->count() }}
                     </h2>
                 </div>
 
-                <div class="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover:border-red-300 transition">
-                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Stock Faible (< 5)</p>
-                    <h2 class="text-2xl sm:text-3xl font-black text-red-600 mt-1">
-                        {{ $products->where('stock', '<', 5)->count() }}
+                <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-xs">
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-gray-400">Stock Faible (< 5)</p>
+                    <h2 class="text-xl sm:text-2xl font-black text-[#E30613] mt-0.5">
+                        {{ $lowStockCount ?? $products->where('stock', '<', 5)->count() }}
                     </h2>
                 </div>
 
             </div>
 
-            {{-- 4. TABLEAU DES PRODUITS --}}
-            <div class="bg-white border border-slate-200/80 rounded-3xl shadow-sm overflow-hidden">
-                <div class="overflow-x-auto">
+            {{-- 4. LISTE & TABLEAU DES PRODUITS --}}
+            <div class="bg-white border border-gray-200 rounded-2xl shadow-xs overflow-hidden">
+                
+                {{-- VUE MOBILE (Cartes fluides) --}}
+                <div class="block sm:hidden divide-y divide-gray-100">
+                    @forelse($products as $product)
+                        <div class="p-3.5 space-y-3">
+                            <div class="flex items-center gap-3">
+                                @if ($product->images->first())
+                                    <img src="{{ Storage::url($product->images->first()->url) }}" alt="{{ $product->title }}"
+                                        class="w-12 h-12 rounded-lg object-cover border border-gray-200 shrink-0">
+                                @else
+                                    <div class="w-12 h-12 rounded-lg bg-[#F7F7F2] border border-gray-200 flex items-center justify-center text-gray-400 shrink-0">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                    </div>
+                                @endif
+
+                                <div class="min-w-0 flex-1">
+                                    <h3 class="font-bold text-[#0a1b12] text-xs truncate">
+                                        {{ $product->title }}
+                                    </h3>
+                                    <p class="text-[11px] text-gray-400">
+                                        {{ $product->category->name ?? 'Sans catégorie' }}
+                                    </p>
+                                    <div class="font-black text-[#016837] text-xs mt-0.5">
+                                        {{ number_format($product->price, 0, ',', ' ') }} FCFA
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between text-xs pt-1 border-t border-gray-50">
+                                <div>
+                                    @if ($product->stock < 5)
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#E30613]/10 text-[#E30613]">
+                                            ⚠️ {{ $product->stock }} stock
+                                        </span>
+                                    @else
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#016837]/10 text-[#016837]">
+                                            {{ $product->stock }} stock
+                                        </span>
+                                    @endif
+                                </div>
+
+                                {{-- Actions Mobile --}}
+                                <div class="flex items-center gap-1.5">
+                                    <a href="{{ route('seller.products.view', $product->id) }}" title="Voir"
+                                        class="p-1.5 bg-[#F7F7F2] text-[#0a1b12] hover:bg-[#016837] hover:text-white rounded-lg transition border border-gray-200">
+                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                    </a>
+
+                                    <a href="{{ route('seller.products.edit', $product) }}" title="Modifier"
+                                        class="p-1.5 bg-[#F7F7F2] text-[#0a1b12] hover:bg-[#016837] hover:text-white rounded-lg transition border border-gray-200">
+                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                    </a>
+
+                                    {{-- Bascule Visibilité Mobile --}}
+                                    <form action="{{ route('seller.products.toggle', $product) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" 
+                                            title="{{ $product->status == 'visible' ? 'Masquer le produit' : 'Rendre visible' }}"
+                                            class="p-1.5 {{ $product->status == 'visible' ? 'bg-[#F9A01B]/20 text-[#0a1b12] hover:bg-[#F9A01B]' : 'bg-[#016837]/10 text-[#016837] hover:bg-[#016837] hover:text-white' }} rounded-lg transition border border-gray-200">
+                                            @if($product->status == 'visible')
+                                                {{-- Icône Œil Barré (Masquer) --}}
+                                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858-5.908a8.982 8.982 0 013.682-.763c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21M3 3l18 18" />
+                                                </svg>
+                                            @else
+                                                {{-- Icône Œil Ouvert (Afficher) --}}
+                                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                            @endif
+                                        </button>
+                                    </form>
+
+                                    <form action="{{ route('seller.products.destroy', $product) }}" method="POST"
+                                        onsubmit="return confirm('Supprimer ce produit ?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            class="p-1.5 bg-[#E30613]/10 text-[#E30613] hover:bg-[#E30613] hover:text-white rounded-lg transition border border-red-200">
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="py-12 text-center">
+                            <p class="text-xs text-gray-500">Aucun produit dans le catalogue</p>
+                        </div>
+                    @endforelse
+                </div>
+
+                {{-- VUE TABLEAU (Écrans moyens & grands) --}}
+                <div class="hidden sm:block overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-slate-50/80 border-b border-slate-200 text-xs font-extrabold uppercase tracking-wider text-slate-400">
-                                <th class="px-6 py-4">Produit</th>
-                                <th class="px-6 py-4">Prix</th>
-                                <th class="px-6 py-4">Stock</th>
-                                <th class="px-6 py-4">Statut</th>
-                                <th class="px-6 py-4 text-center">Actions</th>
+                            <tr class="bg-[#F7F7F2]/80 border-b border-gray-200 text-[11px] font-black uppercase tracking-wider text-gray-500">
+                                <th class="px-5 py-3.5">Produit</th>
+                                <th class="px-5 py-3.5">Prix</th>
+                                <th class="px-5 py-3.5">Stock</th>
+                                <th class="px-5 py-3.5">Statut</th>
+                                <th class="px-5 py-3.5 text-center">Actions</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100 text-sm">
+                        <tbody class="divide-y divide-gray-100 text-xs sm:text-sm">
                             @forelse($products as $product)
-                                <tr class="hover:bg-blue-50/40 transition-colors">
+                                <tr class="hover:bg-[#F7F7F2]/50 transition-colors">
                                     
                                     {{-- Produit --}}
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center gap-4">
+                                    <td class="px-5 py-3.5">
+                                        <div class="flex items-center gap-3">
                                             @if ($product->images->first())
                                                 <img src="{{ Storage::url($product->images->first()->url) }}" alt="{{ $product->title }}"
-                                                    class="w-14 h-14 rounded-xl object-cover border border-slate-200 shrink-0">
+                                                    class="w-11 h-11 rounded-lg object-cover border border-gray-200 shrink-0">
                                             @else
-                                                <div class="w-14 h-14 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 shrink-0">
-                                                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                                <div class="w-11 h-11 rounded-lg bg-[#F7F7F2] border border-gray-200 flex items-center justify-center text-gray-400 shrink-0">
+                                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                                     </svg>
                                                 </div>
                                             @endif
                                             <div class="min-w-0">
-                                                <h3 class="font-bold text-slate-800 text-sm truncate max-w-xs">
+                                                <h3 class="font-bold text-[#0a1b12] text-xs sm:text-sm truncate max-w-xs">
                                                     {{ $product->title }}
                                                 </h3>
-                                                <p class="text-xs text-slate-400 font-medium">
+                                                <p class="text-xs text-gray-400 font-medium">
                                                     {{ $product->category->name ?? 'Sans catégorie' }}
                                                 </p>
                                             </div>
@@ -129,73 +231,76 @@
                                     </td>
 
                                     {{-- Prix --}}
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="font-extrabold text-blue-700">
-                                            {{ number_format($product->price, 0, ',', ' ') }} <span class="text-xs font-bold">FCFA</span>
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
+                                        <div class="font-black text-[#016837]">
+                                            {{ number_format($product->price, 0, ',', ' ') }} <span class="text-[10px]">FCFA</span>
                                         </div>
                                         @if (method_exists($product, 'hasDiscount') ? $product->hasDiscount() : ($product->old_price && $product->old_price > $product->price))
-                                            <div class="text-slate-400 line-through text-xs font-medium">
+                                            <div class="text-gray-400 line-through text-[11px] font-medium">
                                                 {{ number_format($product->old_price, 0, ',', ' ') }} FCFA
                                             </div>
                                         @endif
                                     </td>
 
                                     {{-- Stock --}}
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
                                         @if ($product->stock < 5)
-                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-extrabold bg-red-100 text-red-700 border border-red-200">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-black bg-[#E30613]/10 text-[#E30613] border border-[#E30613]/20">
                                                 ⚠️ {{ $product->stock }} en stock
                                             </span>
                                         @else
-                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#016837]/10 text-[#016837] border border-[#016837]/20">
                                                 {{ $product->stock }} en stock
                                             </span>
                                         @endif
                                     </td>
 
-                                    {{-- Statut --}}
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    {{-- Statut (Badge informatif) --}}
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
                                         @if ($product->status == 'visible')
-                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600 border border-emerald-200">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#016837]/10 text-[#016837] border border-[#016837]/20">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-[#016837]"></span>
                                                 Visible
                                             </span>
                                         @else
-                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-500 border border-slate-200">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-gray-100 text-gray-500 border border-gray-200">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
                                                 Masqué
                                             </span>
                                         @endif
                                     </td>
 
                                     {{-- Actions --}}
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex items-center justify-center gap-2">
+                                    <td class="px-5 py-3.5 whitespace-nowrap">
+                                        <div class="flex items-center justify-center gap-1.5">
                                             
-                                            <a href="{{ route('seller.products.view', $product->id) }}" title="Voir l'annonce"
-                                                class="p-2 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-xl transition border border-blue-200">
+                                            <a href="{{ route('seller.products.view', $product->id) }}" title="Aperçu public"
+                                                class="p-1.5 bg-[#F7F7F2] text-[#0a1b12] hover:bg-[#016837] hover:text-white rounded-lg transition border border-gray-200">
                                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                                                 </svg>
                                             </a>
 
                                             <a href="{{ route('seller.products.edit', $product) }}" title="Modifier"
-                                                class="p-2 bg-slate-100 text-slate-700 hover:bg-slate-800 hover:text-white rounded-xl transition border border-slate-200">
+                                                class="p-1.5 bg-[#F7F7F2] text-[#0a1b12] hover:bg-[#016837] hover:text-white rounded-lg transition border border-gray-200">
                                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                 </svg>
                                             </a>
 
+                                            {{-- Bascule Visibilité Écran Large --}}
                                             <form action="{{ route('seller.products.toggle', $product) }}" method="POST">
                                                 @csrf
-                                                <button type="submit" title="{{ $product->status == 'visible' ? 'Masquer' : 'Publier' }}"
-                                                    class="p-2 {{ $product->status == 'visible' ? 'bg-amber-50 text-amber-600 border-amber-200 hover:bg-amber-500' : 'bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-600' }} hover:text-white rounded-xl transition border">
+                                                <button type="submit" 
+                                                    title="{{ $product->status == 'visible' ? 'Masquer le produit' : 'Publier le produit' }}"
+                                                    class="p-1.5 {{ $product->status == 'visible' ? 'bg-[#F9A01B]/20 text-[#0a1b12] border-[#F9A01B]/30 hover:bg-[#F9A01B]' : 'bg-[#016837]/10 text-[#016837] border-[#016837]/20 hover:bg-[#016837] hover:text-white' }} rounded-lg transition border">
                                                     @if($product->status == 'visible')
+                                                        {{-- Icône Œil Barré (Masquer) --}}
                                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858-5.908a8.982 8.982 0 013.682-.763c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21M3 3l18 18" />
                                                         </svg>
                                                     @else
+                                                        {{-- Icône Œil Ouvert (Afficher) --}}
                                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -209,7 +314,7 @@
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" title="Supprimer"
-                                                    class="p-2 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-xl transition border border-red-200">
+                                                    class="p-1.5 bg-[#E30613]/10 text-[#E30613] hover:bg-[#E30613] hover:text-white rounded-lg transition border border-[#E30613]/20">
                                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                     </svg>
@@ -222,18 +327,18 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="py-16 text-center">
-                                        <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                                            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <td colspan="5" class="py-12 text-center">
+                                        <div class="w-12 h-12 bg-[#016837]/10 text-[#016837] rounded-xl flex items-center justify-center mx-auto mb-2">
+                                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                                             </svg>
                                         </div>
-                                        <h3 class="text-base font-bold text-slate-800">Aucun produit dans le catalogue</h3>
-                                        <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+                                        <h3 class="text-sm font-bold text-[#0a1b12]">Aucun produit dans le catalogue</h3>
+                                        <p class="text-xs text-gray-400 mt-0.5 max-w-sm mx-auto">
                                             Commencez dès maintenant en ajoutant votre premier article pour le mettre en vente.
                                         </p>
                                         <a href="{{ route('seller.products.create') }}"
-                                            class="inline-flex items-center gap-2 mt-5 bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs shadow-md shadow-blue-600/25 transition">
+                                            class="inline-flex items-center gap-1.5 mt-4 bg-[#016837] hover:bg-[#0a542d] text-white font-bold px-4 py-2 rounded-xl text-xs shadow-xs transition">
                                             <span>Ajouter un premier produit</span>
                                         </a>
                                     </td>
@@ -246,13 +351,12 @@
 
             {{-- 5. PAGINATION --}}
             @if($products->hasPages())
-                <div class="mt-6 flex justify-center">
+                <div class="mt-4 flex justify-center">
                     {{ $products->links() }}
                 </div>
             @endif
 
         </div>
-
     </div>
 
 @endsection

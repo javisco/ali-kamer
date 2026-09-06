@@ -1,495 +1,331 @@
-@extends('base')
+<!DOCTYPE html>
+<html lang="fr" class="bg-white">
 
-@section('title', 'Créer votre boutique - Ali-Kamer')
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créer votre boutique — {{ config('app.name', 'Ali-Kamer') }}</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
 
-@section('content')
+<body class="min-h-screen font-sans antialiased text-slate-800 bg-white overflow-y-auto">
 
-<div class="min-h-screen bg-[#FAF9F6] py-10">
+    <div class="min-h-screen w-full bg-white flex flex-col lg:flex-row">
 
-    <div class="max-w-6xl mx-auto px-4">
+        <!-- =====================================================
+             COLONNE GAUCHE : FORMULAIRE COMPACT & LISIBLE
+        ====================================================== -->
+        <div class="w-full lg:w-1/2 flex flex-col justify-between p-6 sm:p-8 lg:p-10 xl:p-12 bg-white shrink-0">
 
-        <div class="grid lg:grid-cols-2 gap-8">
+            <!-- En-tête / Logo -->
+            <div class="flex items-center justify-between shrink-0 mb-6 lg:mb-8">
+                <a href="/" class="group flex items-center gap-2 transition-transform active:scale-95">
+                    <div class="p-2 rounded-xl bg-slate-50 border border-slate-100 shadow-sm group-hover:border-slate-200">
+                        <img src="{{ asset('images/afrique.png') }}" alt="Ali-Kamer Logo" class="h-9 sm:h-10 w-auto object-contain">
+                    </div>
+                </a>
+                <span class="text-xs font-extrabold tracking-wider text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full uppercase">FR</span>
+            </div>
 
-            {{-- =====================================================
-                 FORMULAIRE
-            ====================================================== --}}
-            <div class="bg-white rounded-3xl border border-gray-100
-                        shadow-sm p-6 sm:p-8">
-
-                <div class="mb-7">
-
-                    <span class="inline-flex items-center gap-2
-                                 rounded-full bg-[#006837]/10
-                                 px-3 py-1.5 text-xs font-bold text-[#006837]">
+            <!-- Section Principale / Formulaire -->
+            <div class="my-auto max-w-xl w-full mx-auto py-2">
+                
+                <!-- Titre & Sous-titre -->
+                <div class="mb-5">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#006837]/10 text-[#006837] text-xs font-bold mb-2.5">
                         <span class="w-2 h-2 rounded-full bg-[#006837]"></span>
                         Inscription vendeur
-                    </span>
-
-                    <h1 class="mt-4 text-2xl sm:text-3xl font-black text-gray-900">
-                        Créez votre boutique
-                    </h1>
-
-                    <p class="mt-2 text-sm leading-6 text-gray-500">
-                        Votre identité Google a été récupérée.
-                        Complétez maintenant les informations de votre activité.
+                    </div>
+                    <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Créez votre boutique</h1>
+                    <p class="text-sm text-slate-600 mt-1.5 font-medium">
+                        Votre identité Google a été récupérée. Complétez maintenant les informations de votre activité.
                     </p>
-
                 </div>
 
-
-                {{-- =================================================
-                     COMPTE GOOGLE
-                ================================================== --}}
-                <div class="mb-7 rounded-2xl bg-green-50
-                            border border-green-100 p-4">
-
-                    <div class="flex items-center gap-3">
-
+                <!-- COMPTE GOOGLE -->
+                <div class="mb-5 rounded-xl bg-slate-50 border border-slate-200 p-3.5 flex items-center justify-between shadow-sm">
+                    <div class="flex items-center gap-3 min-w-0">
                         @if(!empty($socialPending['avatar']))
-
-                            <img
-                                src="{{ $socialPending['avatar'] }}"
-                                alt="Profil Google"
-                                class="w-11 h-11 rounded-full object-cover"
-                            >
-
+                            <img src="{{ $socialPending['avatar'] }}" alt="Profil Google" class="w-10 h-10 rounded-full object-cover border border-slate-200 shrink-0">
                         @else
-
-                            <div class="w-11 h-11 rounded-full bg-[#006837]
-                                        flex items-center justify-center
-                                        text-white font-black">
-                                {{ strtoupper(
-                                    substr(
-                                        $socialPending['name'] ?? 'A',
-                                        0,
-                                        1
-                                    )
-                                ) }}
+                            <div class="w-10 h-10 rounded-full bg-[#006837] flex items-center justify-center text-white font-black text-sm shrink-0">
+                                {{ strtoupper(substr($socialPending['name'] ?? 'A', 0, 1)) }}
                             </div>
-
                         @endif
 
                         <div class="min-w-0">
-
-                            <p class="text-sm font-bold text-gray-900 truncate">
-                                {{ $socialPending['name'] }}
+                            <p class="text-sm font-bold text-slate-900 truncate">
+                                {{ $socialPending['name'] ?? 'Utilisateur Google' }}
                             </p>
-
                             @if(!empty($socialPending['provider_email']))
-                                <p class="text-xs text-gray-500 truncate">
+                                <p class="text-xs text-slate-500 truncate">
                                     {{ $socialPending['provider_email'] }}
                                 </p>
                             @endif
-
                         </div>
-
-                        <span class="ml-auto text-xs font-bold
-                                     text-[#006837] whitespace-nowrap">
-                            ✓ Google
-                        </span>
-
                     </div>
 
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-100 text-emerald-800 text-xs font-extrabold shrink-0 border border-emerald-200">
+                        ✓ Google
+                    </span>
                 </div>
 
-
-                {{-- =================================================
-                     ERREURS
-                ================================================== --}}
+                <!-- ERREURS -->
                 @if($errors->any())
-
-                    <div class="mb-6 rounded-2xl bg-red-50
-                                border border-red-100 p-4">
-
-                        <p class="text-sm font-bold text-red-700 mb-2">
-                            Vérifiez les informations suivantes :
-                        </p>
-
-                        <ul class="space-y-1 text-xs text-red-600">
-
+                    <div class="mb-5 rounded-xl border border-red-200 bg-red-50 p-3.5 text-sm text-red-700 shadow-sm">
+                        <p class="font-bold text-xs text-red-800 mb-1">Vérifiez les informations suivantes :</p>
+                        <ul class="list-disc list-inside text-xs text-red-600 space-y-1">
                             @foreach($errors->all() as $error)
-                                <li>• {{ $error }}</li>
+                                <li>{{ $error }}</li>
                             @endforeach
-
                         </ul>
-
                     </div>
-
                 @endif
 
-
-                <form
-                    method="POST"
-                    action="{{ route('social.complete.seller') }}"
-                    class="space-y-6"
-                >
-
+                <form method="POST" action="{{ route('social.complete.seller') }}" class="space-y-5">
                     @csrf
 
-
-                    {{-- =================================================
-                         MOBILE MONEY
-                    ================================================== --}}
-                    <div>
-
-                        <h2 class="text-sm font-black text-gray-900 mb-1">
-                            Paiements Mobile Money
-                        </h2>
-
-                        <p class="text-xs text-gray-500 mb-4">
-                            Ces informations seront utilisées pour vos paiements vendeur.
-                        </p>
-
-
-                        <div class="mb-4">
-
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                Numéro Mobile Money
-                                <span class="text-red-500">*</span>
-                            </label>
-
-                            <input
-                                type="text"
-                                name="phone_momo"
-                                value="{{ old('phone_momo') }}"
-                                placeholder="6XXXXXXXX"
-                                required
-                                class="w-full rounded-xl border border-gray-200
-                                       px-4 py-3 text-sm outline-none
-                                       focus:border-[#006837]
-                                       focus:ring-2 focus:ring-[#006837]/10"
-                            >
-
-                            @error('phone_momo')
-                                <p class="mt-1 text-xs text-red-600">
-                                    {{ $message }}
-                                </p>
-                            @enderror
-
+                    <!-- PAIEMENTS MOBILE MONEY -->
+                    <div class="space-y-3.5">
+                        <div class="flex items-center gap-2 border-b border-slate-200 pb-1.5">
+                            <span class="flex h-5 w-5 items-center justify-center rounded-full bg-[#006837]/10 text-xs font-extrabold text-[#006837]">1</span>
+                            <h2 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider">Paiements Mobile Money</h2>
                         </div>
 
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-800">
+                                    Numéro Mobile Money <span class="text-red-500">*</span>
+                                </label>
+                                <span class="text-[#006837] font-semibold text-xs">(retraits)</span>
+                            </div>
 
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Opérateur
-                            <span class="text-red-500">*</span>
-                        </label>
+                            <div class="grid grid-cols-2 gap-2.5 mb-2.5">
+                                <label class="flex items-center gap-2 border rounded-xl p-3 cursor-pointer transition-all
+                                    {{ old('momo_operator') === 'mtn' ? 'border-yellow-400 bg-yellow-50/60 ring-2 ring-yellow-400/20' : 'border-slate-200 hover:border-slate-300' }}">
+                                    <input type="radio" name="momo_operator" value="mtn" {{ old('momo_operator') === 'mtn' ? 'checked' : '' }} required class="accent-[#006837] w-4 h-4">
+                                    <span class="text-xs font-bold text-yellow-800">MTN MoMo</span>
+                                </label>
 
-                        <div class="grid grid-cols-2 gap-3">
+                                <label class="flex items-center gap-2 border rounded-xl p-3 cursor-pointer transition-all
+                                    {{ old('momo_operator') === 'orange' ? 'border-orange-400 bg-orange-50/60 ring-2 ring-orange-400/20' : 'border-slate-200 hover:border-slate-300' }}">
+                                    <input type="radio" name="momo_operator" value="orange" {{ old('momo_operator') === 'orange' ? 'checked' : '' }} class="accent-[#006837] w-4 h-4">
+                                    <span class="text-xs font-bold text-orange-700">Orange Money</span>
+                                </label>
+                            </div>
 
-                            <label class="cursor-pointer">
-
-                                <input
-                                    type="radio"
-                                    name="momo_operator"
-                                    value="mtn"
-                                    class="peer sr-only"
-                                    {{ old('momo_operator') === 'mtn' ? 'checked' : '' }}
-                                >
-
-                                <div class="rounded-xl border border-gray-200
-                                            px-4 py-3 text-center font-bold
-                                            peer-checked:border-[#FFC20E]
-                                            peer-checked:bg-yellow-50
-                                            transition">
-                                    MTN
+                            <div class="flex rounded-xl border overflow-hidden transition bg-slate-50 hover:bg-white focus-within:bg-white
+                                @error('phone_momo') border-red-500 @else border-slate-200 focus-within:border-[#006837] focus-within:ring-2 focus-within:ring-[#006837]/20 @enderror">
+                                <div class="px-3.5 flex items-center bg-slate-100 text-slate-700 text-xs font-bold border-r border-slate-200 shrink-0">
+                                    🇨🇲 +237
                                 </div>
+                                <input type="tel" name="phone_momo" value="{{ old('phone_momo') }}" required placeholder="6 XX XX XX XX" maxlength="9"
+                                    class="w-full bg-transparent px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none font-medium">
+                            </div>
+                        </div>
 
+                        <!-- TÉLÉPHONE DIRECT -->
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">
+                                Téléphone d'appel <span class="text-slate-400 font-normal">(optionnel)</span>
                             </label>
-
-
-                            <label class="cursor-pointer">
-
-                                <input
-                                    type="radio"
-                                    name="momo_operator"
-                                    value="orange"
-                                    class="peer sr-only"
-                                    {{ old('momo_operator') === 'orange' ? 'checked' : '' }}
-                                >
-
-                                <div class="rounded-xl border border-gray-200
-                                            px-4 py-3 text-center font-bold
-                                            peer-checked:border-[#FF7900]
-                                            peer-checked:bg-orange-50
-                                            transition">
-                                    Orange
+                            <div class="flex rounded-xl border overflow-hidden transition bg-slate-50 hover:bg-white focus-within:bg-white border-slate-200 focus-within:border-[#006837] focus-within:ring-2 focus-within:ring-[#006837]/20">
+                                <div class="px-3.5 flex items-center bg-slate-100 text-slate-700 text-xs font-bold border-r border-slate-200 shrink-0">
+                                    +237
                                 </div>
+                                <input type="tel" name="phone" value="{{ old('phone') }}" placeholder="6 XX XX XX XX" maxlength="9"
+                                    class="w-full bg-transparent px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none font-medium">
+                            </div>
+                        </div>
+                    </div>
 
+                    <!-- INFORMATION BOUTIQUE -->
+                    <div class="space-y-3.5 pt-2">
+                        <div class="flex items-center gap-2 border-b border-slate-200 pb-1.5">
+                            <span class="flex h-5 w-5 items-center justify-center rounded-full bg-[#006837]/10 text-xs font-extrabold text-[#006837]">2</span>
+                            <h2 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider">Votre Boutique</h2>
+                        </div>
+
+                        <!-- Nom de la boutique -->
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">
+                                Nom de la boutique <span class="text-red-500">*</span>
                             </label>
-
+                            <input type="text" name="shop_name" value="{{ old('shop_name') }}" required placeholder="Ex : Ma Boutique"
+                                class="w-full rounded-xl border px-3.5 py-2.5 text-sm text-slate-900 transition bg-slate-50 hover:bg-white focus:bg-white
+                                @error('shop_name') border-red-500 @else border-slate-200 focus:border-[#006837] focus:ring-2 focus:ring-[#006837]/20 @enderror focus:outline-none font-medium">
                         </div>
 
-                        @error('momo_operator')
-                            <p class="mt-1 text-xs text-red-600">
-                                {{ $message }}
-                            </p>
-                        @enderror
-
-                    </div>
-
-
-                    {{-- =================================================
-                         TELEPHONE
-                    ================================================== --}}
-                    <div>
-
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Téléphone
-                            <span class="text-xs font-normal text-gray-400">
-                                (optionnel)
-                            </span>
-                        </label>
-
-                        <input
-                            type="text"
-                            name="phone"
-                            value="{{ old('phone') }}"
-                            placeholder="6XXXXXXXX"
-                            class="w-full rounded-xl border border-gray-200
-                                   px-4 py-3 text-sm outline-none
-                                   focus:border-[#006837]
-                                   focus:ring-2 focus:ring-[#006837]/10"
-                        >
-
-                    </div>
-
-
-                    {{-- =================================================
-                         BOUTIQUE
-                    ================================================== --}}
-                    <div>
-
-                        <h2 class="text-sm font-black text-gray-900 mb-1">
-                            Votre boutique
-                        </h2>
-
-                        <p class="text-xs text-gray-500 mb-4">
-                            Ces informations permettront aux acheteurs de découvrir votre activité.
-                        </p>
-
-
-                        <div class="space-y-4">
-
+                        <!-- Ville + Catégorie -->
+                        <div class="grid sm:grid-cols-2 gap-3.5">
                             <div>
-
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    Nom de la boutique
-                                    <span class="text-red-500">*</span>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">
+                                    Ville <span class="text-red-500">*</span>
                                 </label>
-
-                                <input
-                                    type="text"
-                                    name="shop_name"
-                                    value="{{ old('shop_name') }}"
-                                    placeholder="Ex : Ma Boutique"
-                                    required
-                                    class="w-full rounded-xl border border-gray-200
-                                           px-4 py-3 text-sm outline-none
-                                           focus:border-[#006837]
-                                           focus:ring-2 focus:ring-[#006837]/10"
-                                >
-
+                                <input type="text" name="city" value="{{ old('city') }}" required placeholder="Ex : Yaoundé"
+                                    class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 transition bg-slate-50 hover:bg-white focus:bg-white focus:border-[#006837] focus:ring-2 focus:ring-[#006837]/20 focus:outline-none font-medium">
                             </div>
 
-
                             <div>
-
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    Ville
-                                    <span class="text-red-500">*</span>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">
+                                    Catégorie <span class="text-red-500">*</span>
                                 </label>
-
-                                <input
-                                    type="text"
-                                    name="city"
-                                    value="{{ old('city') }}"
-                                    placeholder="Ex : Yaoundé"
-                                    required
-                                    class="w-full rounded-xl border border-gray-200
-                                           px-4 py-3 text-sm outline-none
-                                           focus:border-[#006837]
-                                           focus:ring-2 focus:ring-[#006837]/10"
-                                >
-
+                                <input type="text" name="category" value="{{ old('category') }}" required placeholder="Ex : Électronique"
+                                    class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 transition bg-slate-50 hover:bg-white focus:bg-white focus:border-[#006837] focus:ring-2 focus:ring-[#006837]/20 focus:outline-none font-medium">
                             </div>
-
-
-                            <div>
-
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    Catégorie
-                                    <span class="text-red-500">*</span>
-                                </label>
-
-                                <input
-                                    type="text"
-                                    name="category"
-                                    value="{{ old('category') }}"
-                                    placeholder="Ex : Électronique"
-                                    required
-                                    class="w-full rounded-xl border border-gray-200
-                                           px-4 py-3 text-sm outline-none
-                                           focus:border-[#006837]
-                                           focus:ring-2 focus:ring-[#006837]/10"
-                                >
-
-                            </div>
-
-
-                            <div>
-
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    Description
-                                    <span class="text-xs font-normal text-gray-400">
-                                        (optionnelle)
-                                    </span>
-                                </label>
-
-                                <textarea
-                                    name="description"
-                                    rows="4"
-                                    placeholder="Présentez brièvement votre boutique..."
-                                    class="w-full rounded-xl border border-gray-200
-                                           px-4 py-3 text-sm outline-none resize-none
-                                           focus:border-[#006837]
-                                           focus:ring-2 focus:ring-[#006837]/10"
-                                >{{ old('description') }}</textarea>
-
-                            </div>
-
                         </div>
 
+                        <!-- Description -->
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">
+                                Description <span class="text-slate-400 font-normal">(optionnelle)</span>
+                            </label>
+                            <textarea name="description" rows="3" placeholder="Présentez brièvement votre boutique..."
+                                class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 bg-slate-50 hover:bg-white focus:bg-white focus:border-[#006837] focus:ring-2 focus:ring-[#006837]/20 focus:outline-none font-medium resize-none">{{ old('description') }}</textarea>
+                        </div>
                     </div>
 
-
-                    <button
-                        type="submit"
-                        class="w-full rounded-xl bg-[#006837]
-                               px-5 py-3.5 text-sm font-extrabold text-white
-                               hover:bg-[#004d28] transition shadow-sm"
-                    >
-                        Créer ma boutique
+                    <!-- Bouton Submit -->
+                    <button type="submit"
+                        class="w-full rounded-xl bg-[#006837] py-3.5 text-sm font-bold text-white shadow-lg shadow-[#006837]/25 transition-all hover:bg-[#004d28] active:scale-[0.99] flex items-center justify-center gap-2 group mt-2">
+                        <span>Créer ma boutique</span>
+                        <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
                     </button>
 
-                    <p class="text-center text-xs text-gray-400">
-                        Après la création de votre boutique,
-                        vous serez redirigé vers l'étape suivante de votre inscription vendeur.
+                    <p class="text-center text-xs text-slate-500 mt-2 font-medium">
+                        Après la création de votre boutique, vous serez redirigé vers l'étape suivante.
                     </p>
-
                 </form>
 
             </div>
 
+            <!-- Mini Footer -->
+            <div class="shrink-0 pt-6 mt-6 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
+                <span>&copy; {{ date('Y') }} Ali-Kamer</span>
+                <span>Vendre au Cameroun</span>
+            </div>
+        </div>
 
-            {{-- =====================================================
-                 PANNEAU DROIT
-            ====================================================== --}}
-            <div class="hidden lg:flex rounded-3xl overflow-hidden
-                        bg-[#006837] relative">
 
-                <div class="absolute inset-0 bg-gradient-to-br
-                            from-[#006837] to-[#004d28]">
+        <!-- =====================================================
+             PANNEAU DROIT : MARKETING & PRESENTATION
+        ====================================================== -->
+        <div class="hidden lg:flex w-1/2 min-h-full bg-gradient-to-br from-[#004d28] via-[#006837] to-[#00381d] text-white p-8 xl:p-12 flex-col justify-between relative overflow-hidden shrink-0">
+
+            <!-- Cercles décoratifs d'arrière-plan -->
+            <div class="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-[#FFC20E]/15 blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-20 -left-20 w-96 h-96 rounded-full bg-[#CE1126]/15 blur-3xl pointer-events-none"></div>
+
+            <!-- Filigrane Logo Afrique -->
+            <div class="absolute -right-12 top-1/2 -translate-y-1/2 opacity-10 pointer-events-none">
+                <img src="{{ asset('images/afrique.png') }}" alt="" class="w-[500px] h-auto object-contain">
+            </div>
+
+            <div class="relative z-10">
+                <!-- En-tête Droite : SUBTIMÉ AVEC GLASSMORPHISM & HALO -->
+                <div class="flex items-center justify-between">
+                    <span class="inline-flex items-center gap-2 text-xs font-black tracking-widest uppercase text-emerald-100 bg-white/10 border border-white/20 px-3.5 py-1.5 rounded-full backdrop-blur-md shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-[#FFC20E] animate-pulse"></span>
+                        Marketplace Cameroun
+                    </span>
+
+                    <!-- CARTE DU LOGO SUBTIMÉE -->
+                    <div class="relative group">
+                        <!-- Halo doré en arrière plan -->
+                        <div class="absolute -inset-1 bg-gradient-to-r from-[#FFC20E]/30 to-[#CE1126]/20 rounded-2xl blur-md opacity-70 group-hover:opacity-100 transition duration-500"></div>
+
+                        <!-- Card Principale -->
+                        <div class="relative px-3.5 py-2 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-white/20 shadow-2xl flex items-center gap-3">
+                            <div class="p-1.5 rounded-xl bg-white/15 border border-white/20 shadow-inner">
+                                <img src="{{ asset('images/afrique.png') }}" alt="Ali-Kamer Logo" class="h-9 w-auto object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.3)]">
+                            </div>
+                            <div class="flex flex-col pr-1">
+                                <span class="font-black text-base text-white tracking-wider leading-none">
+                                    ALI<span class="text-[#FFC20E]">-KAMER</span>
+                                </span>
+                                <span class="text-[9px] font-bold text-emerald-200/80 tracking-widest uppercase mt-0.5">Plateforme Vendeurs</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="relative z-10 p-10 text-white
-                            flex flex-col justify-between">
+                <h2 class="text-2xl xl:text-3xl font-black mt-10 leading-tight tracking-tight">
+                    Vendez au Cameroun. <br>
+                    <span class="text-[#FFC20E]">Développez votre activité.</span>
+                </h2>
 
+                <p class="text-sm text-emerald-100/90 mt-3 leading-relaxed max-w-md font-medium">
+                    Créez votre boutique et présentez vos produits aux acheteurs partout au Cameroun.
+                </p>
+            </div>
+
+            <!-- ÉTAPES ET AVANTAGES -->
+            <div class="relative z-10 space-y-4 my-8 max-w-md">
+
+                <!-- Étape 1 -->
+                <div class="flex items-start gap-4 p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-colors">
+                    <div class="w-10 h-10 rounded-xl bg-[#FFC20E] text-slate-900 flex items-center justify-center font-black text-base shrink-0 shadow-md">
+                        1
+                    </div>
                     <div>
-
-                        <span class="inline-flex rounded-full
-                                     bg-white/10 border border-white/10
-                                     px-3 py-1.5 text-xs font-bold">
-                            🇨🇲 Ali-Kamer
-                        </span>
-
-                        <h2 class="mt-7 text-3xl font-black leading-tight">
-                            Vendez au Cameroun.
-                            <br>
-                            Développez votre activité.
-                        </h2>
-
-                        <p class="mt-5 text-sm leading-6 text-white/80">
-                            Créez votre boutique et présentez vos produits
-                            aux acheteurs partout au Cameroun.
-                        </p>
-
+                        <p class="text-base font-black text-white">Créez votre boutique</p>
+                        <p class="text-xs text-white/80 mt-0.5 font-medium">Présentez votre activité.</p>
                     </div>
-
-
-                    <div class="space-y-5">
-
-                        <div class="flex items-start gap-3">
-
-                            <div class="w-9 h-9 rounded-xl bg-[#FFC20E]
-                                        text-gray-900 flex items-center
-                                        justify-center font-black">
-                                1
-                            </div>
-
-                            <div>
-                                <p class="font-bold">
-                                    Créez votre boutique
-                                </p>
-
-                                <p class="text-xs text-white/70 mt-1">
-                                    Présentez votre activité.
-                                </p>
-                            </div>
-
-                        </div>
-
-
-                        <div class="flex items-start gap-3">
-
-                            <div class="w-9 h-9 rounded-xl bg-[#CE1126]
-                                        text-white flex items-center
-                                        justify-center font-black">
-                                2
-                            </div>
-
-                            <div>
-                                <p class="font-bold">
-                                    Ajoutez vos produits
-                                </p>
-
-                                <p class="text-xs text-white/70 mt-1">
-                                    Commencez à vendre sur Ali-Kamer.
-                                </p>
-                            </div>
-
-                        </div>
-
-
-                        <div class="flex items-start gap-3">
-
-                            <div class="w-9 h-9 rounded-xl bg-[#FFC20E]
-                                        text-gray-900 flex items-center
-                                        justify-center font-black">
-                                3
-                            </div>
-
-                            <div>
-                                <p class="font-bold">
-                                    Développez vos ventes
-                                </p>
-
-                                <p class="text-xs text-white/70 mt-1">
-                                    Touchez davantage de clients.
-                                </p>
-                            </div>
-
-                        </div>
-
-                    </div>
-
                 </div>
 
+                <!-- Étape 2 -->
+                <div class="flex items-start gap-4 p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-colors">
+                    <div class="w-10 h-10 rounded-xl bg-[#CE1126] text-white flex items-center justify-center font-black text-base shrink-0 shadow-md">
+                        2
+                    </div>
+                    <div>
+                        <p class="text-base font-black text-white">Ajoutez vos produits</p>
+                        <p class="text-xs text-white/80 mt-0.5 font-medium">Commencez à vendre sur Ali-Kamer.</p>
+                    </div>
+                </div>
+
+                <!-- Étape 3 -->
+                <div class="flex items-start gap-4 p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-colors">
+                    <div class="w-10 h-10 rounded-xl bg-[#FFC20E] text-slate-900 flex items-center justify-center font-black text-base shrink-0 shadow-md">
+                        3
+                    </div>
+                    <div>
+                        <p class="text-base font-black text-white">Développez vos ventes</p>
+                        <p class="text-xs text-white/80 mt-0.5 font-medium">Touchez davantage de clients.</p>
+                    </div>
+                </div>
+
+                <!-- Message Bas -->
+                <div class="rounded-2xl bg-white/10 border border-white/15 p-4 backdrop-blur-sm">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-9 h-9 rounded-xl bg-[#FFC20E] text-slate-900 flex items-center justify-center font-black shrink-0 text-base shadow">
+                            ✓
+                        </div>
+                        <div>
+                            <p class="text-sm font-black text-white">Pensé pour les vendeurs camerounais</p>
+                            <p class="text-xs text-white/80 mt-0.5 font-medium">Achetez et vendez sans stress.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Couleurs du Drapeau -->
+            <div class="relative z-10 pt-4 border-t border-white/15 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="h-2 w-12 rounded-full bg-[#006837]"></span>
+                    <span class="h-2 w-12 rounded-full bg-[#FFC20E]"></span>
+                    <span class="h-2 w-12 rounded-full bg-[#CE1126]"></span>
+                </div>
+                <span class="text-xs text-white/60 font-semibold">Ali-Kamer Marketplace</span>
             </div>
 
         </div>
 
     </div>
 
-</div>
+</body>
 
-@endsection
+</html>

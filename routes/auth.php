@@ -63,7 +63,11 @@ Route::middleware('auth')->group(function () {
         ->name('verification.send');
 });
 
-
+/*
+|--------------------------------------------------------------------------
+| GOOGLE AUTHENTICATION
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/auth/social/complete', [
     SocialAuthController::class,

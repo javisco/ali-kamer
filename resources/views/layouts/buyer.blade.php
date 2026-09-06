@@ -799,7 +799,8 @@
                 <div class="flex items-center gap-1.5 sm:gap-2.5">
 
                     {{-- Notifications --}}
-                    <a
+                    @include('components.notification-bell')
+                    {{-- <a
                         href="{{ route('notifications.index') }}"
                         class="relative p-2 rounded-xl
                                text-slate-500 hover:text-[#016837]
@@ -823,7 +824,7 @@
                                    c0 .538-.214 1.055-.595 1.436L4 17h5
                                    m6 0v1a3 3 0 11-6 0v-1m6 0H9"
                             />
-                        </svg>
+                        </svg> 
 
                         @if(isset($unreadNotifications) && $unreadNotifications > 0)
                             <span
@@ -832,7 +833,7 @@
                             ></span>
                         @endif
 
-                    </a>
+                    </a> --}}
 
 
                     {{-- Messages --}}

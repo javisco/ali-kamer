@@ -144,7 +144,7 @@ class FacebookAuthService
 
         $this->ensurePendingRegistration(
             $pending,
-            User::ROLE_BUYER
+            User::ROLE_BUYER,
         );
 
         app(AuthService::class)->checkBlacklist(

@@ -1,5 +1,10 @@
-@extends('base')
+@php
+    $layout = auth()->user()->isBuyer()
+        ? 'layouts.buyer'
+        : 'layouts.seller';
+@endphp
 
+@extends($layout)
 @section('title', 'Conversation')
 
 @section('content')

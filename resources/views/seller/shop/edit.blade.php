@@ -1,97 +1,138 @@
 @extends('layouts.seller')
-@section('title','edit')
+@section('title', 'Modifier ma boutique - Ali-Kamer')
+
 @section('content')
-    <div class="max-w-2xl mx-auto py-6 px-4">
-        <!-- Bloc En-tête ALI-KAMER avec titre agrandi (text-2xl) -->
-        <div class="bg-blue-600 rounded-t-3xl px-6 py-6 text-center shadow-lg">
-            <h1 class="text-2xl font-black text-white tracking-wider uppercase">ALI-KAMER</h1>
-            <!-- Augmentation de text-xxs à text-sm -->
-            <p class="text-blue-100 text-sm font-semibold mt-1">Modifier ma boutique</p>
-        </div>
+    <div class="min-h-screen bg-[#F7F7F2] py-8 px-4 sm:px-6">
+        <div class="max-w-2xl mx-auto space-y-0">
 
-        <!-- Corps du formulaire -->
-        <div class="bg-white rounded-b-3xl p-6 sm:p-8 shadow-xl border-x border-b border-gray-100/50">
+            <!-- 1. EN-TÊTE BANNIÈRE ALI-KAMER -->
+            <div class="bg-[#016837] rounded-t-3xl p-6 text-center shadow-xs relative overflow-hidden">
+                <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-white/5 rounded-full pointer-events-none"></div>
+                
+                <span class="inline-block bg-[#F9A01B] text-[#0a1b12] text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full mb-2">
+                    Espace Vendeur
+                </span>
+                <h1 class="text-2xl font-black text-white tracking-wider uppercase">
+                    ALI-KAMER
+                </h1>
+                <p class="text-white/80 text-sm font-medium mt-0.5">
+                    Modifier les informations de ma boutique
+                </p>
+            </div>
 
-            @if (session('success'))
-                <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-xl mb-4 shadow-sm text-base font-medium">
-                    {{ session('success') }}
-                </div>
-            @endif
+            <!-- 2. CORPS DU FORMULAIRE -->
+            <div class="bg-white rounded-b-3xl p-6 sm:p-8 shadow-xs border-x border-b border-gray-200">
 
-            @if ($errors->any())
-                <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-xl mb-4 shadow-sm">
-                    <ul class="list-disc list-inside space-y-0.5 text-sm font-medium">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+                {{-- Alertes de Succès --}}
+                @if (session('success'))
+                    <div class="bg-[#016837]/10 border border-[#016837]/20 text-[#016837] px-4 py-3 rounded-xl mb-5 text-sm font-bold flex items-center gap-2">
+                        <svg class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>{{ session('success') }}</span>
+                    </div>
+                @endif
 
-            <form method="POST" action="{{ route('seller.shop.update') }}" enctype="multipart/form-data" class="space-y-5">
-                @csrf
-                @method('PUT')
+                {{-- Alertes d'Erreurs --}}
+                @if ($errors->any())
+                    <div class="bg-[#E30613]/10 border border-[#E30613]/20 text-[#E30613] px-4 py-3 rounded-xl mb-5">
+                        <ul class="list-disc list-inside space-y-1 text-xs font-bold">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
-                <!-- LIGNE 1 : Nom de la boutique + Ville -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div>
-                        <!-- Augmentation des labels de text-xs à text-sm -->
-                        <label class="block text-sm font-bold uppercase tracking-wide text-gray-700 mb-1.5">Nom de la boutique</label>
-                        <!-- Augmentation du texte de saisie de text-sm à text-base -->
-                        <input type="text" name="name" value="{{ old('name', $shop->name) }}" required
-                            class="w-full border border-gray-200 rounded-xl px-4 py-3 text-base font-medium transition duration-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 hover:border-gray-300 shadow-sm">
+                <form method="POST" action="{{ route('seller.shop.update') }}" enctype="multipart/form-data" class="space-y-5">
+                    @csrf
+                    @method('PUT')
+
+                    <!-- LIGNE 1 : Nom de la boutique + Ville -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-wider text-[#0a1b12] mb-1.5">
+                                Nom de la boutique <span class="text-[#E30613]">*</span>
+                            </label>
+                            <input type="text" name="name" value="{{ old('name', $shop->name) }}" required
+                                class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold text-[#0a1b12] transition duration-200 focus:outline-none focus:border-[#016837] focus:ring-2 focus:ring-[#016837]/20 hover:border-gray-300 shadow-xs">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-wider text-[#0a1b12] mb-1.5">
+                                Ville <span class="text-[#E30613]">*</span>
+                            </label>
+                            <input type="text" name="city" value="{{ old('city', $shop->city) }}" required
+                                class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold text-[#0a1b12] transition duration-200 focus:outline-none focus:border-[#016837] focus:ring-2 focus:ring-[#016837]/20 hover:border-gray-300 shadow-xs">
+                        </div>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-bold uppercase tracking-wide text-gray-700 mb-1.5">Ville</label>
-                        <input type="text" name="city" value="{{ old('city', $shop->city) }}" required
-                            class="w-full border border-gray-200 rounded-xl px-4 py-3 text-base font-medium transition duration-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 hover:border-gray-300 shadow-sm">
+                    <!-- LIGNE 2 : Téléphone + Adresse -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-wider text-[#0a1b12] mb-1.5">
+                                Téléphone <span class="text-[#E30613]">*</span>
+                            </label>
+                            <input type="text" name="phone" value="{{ old('phone', $shop->phone) }}" required
+                                class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold text-[#0a1b12] transition duration-200 focus:outline-none focus:border-[#016837] focus:ring-2 focus:ring-[#016837]/20 hover:border-gray-300 shadow-xs">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-wider text-[#0a1b12] mb-1.5">
+                                Adresse physique
+                            </label>
+                            <input type="text" name="address" value="{{ old('address', $shop->address) }}"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold text-[#0a1b12] transition duration-200 focus:outline-none focus:border-[#016837] focus:ring-2 focus:ring-[#016837]/20 hover:border-gray-300 shadow-xs">
+                        </div>
                     </div>
-                </div>
 
-                <!-- LIGNE 2 : Téléphone + Adresse -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <!-- Description -->
                     <div>
-                        <label class="block text-sm font-bold uppercase tracking-wide text-gray-700 mb-1.5">Téléphone</label>
-                        <input type="text" name="phone" value="{{ old('phone', $shop->phone) }}" required
-                            class="w-full border border-gray-200 rounded-xl px-4 py-3 text-base font-medium transition duration-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 hover:border-gray-300 shadow-sm">
+                        <label class="block text-xs font-black uppercase tracking-wider text-[#0a1b12] mb-1.5">
+                            Description de la boutique
+                        </label>
+                        <textarea name="description" rows="3"
+                            class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold text-[#0a1b12] transition duration-200 focus:outline-none focus:border-[#016837] focus:ring-2 focus:ring-[#016837]/20 hover:border-gray-300 shadow-xs">{{ old('description', $shop->description) }}</textarea>
                     </div>
 
+                    <!-- Logo (Aperçu + Input) -->
                     <div>
-                        <label class="block text-sm font-bold uppercase tracking-wide text-gray-700 mb-1.5">Adresse</label>
-                        <input type="text" name="address" value="{{ old('address', $shop->address) }}"
-                            class="w-full border border-gray-200 rounded-xl px-4 py-3 text-base font-medium transition duration-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 hover:border-gray-300 shadow-sm">
+                        <label class="block text-xs font-black uppercase tracking-wider text-[#0a1b12] mb-1.5">
+                            Logo de la boutique
+                        </label>
+                        
+                        <div class="flex items-center gap-4">
+                            @if(isset($shop->logo) && $shop->logo)
+                                <img src="{{ Storage::url($shop->logo) }}" alt="Logo boutique" 
+                                    class="w-14 h-14 rounded-xl object-cover border border-gray-200 shrink-0">
+                            @else
+                                <div class="w-14 h-14 rounded-xl bg-[#F7F7F2] border border-gray-200 flex items-center justify-center text-gray-400 shrink-0">
+                                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                            @endif
+
+                            <input type="file" name="logo" accept="image/*"
+                                class="w-full border border-gray-200 rounded-xl p-2 text-xs font-semibold text-[#0a1b12] transition duration-200 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-black file:bg-[#016837]/10 file:text-[#016837] hover:file:bg-[#016837] hover:file:text-white cursor-pointer shadow-xs">
+                        </div>
                     </div>
-                </div>
 
-                <!-- Description -->
-                <div>
-                    <label class="block text-sm font-bold uppercase tracking-wide text-gray-700 mb-1.5">Description</label>
-                    <textarea name="description" rows="3"
-                        class="w-full border border-gray-200 rounded-xl px-4 py-3 text-base font-medium transition duration-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 hover:border-gray-300 shadow-sm">{{ old('description', $shop->description) }}</textarea>
-                </div>
+                    <!-- Boutons d'action -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3">
+                        <a href="{{ url()->previous() }}" 
+                            class="sm:col-span-1 w-full border border-gray-200 text-[#0a1b12] font-bold py-3 px-4 rounded-xl hover:bg-[#F7F7F2] active:scale-98 transition text-sm text-center shadow-xs block">
+                            Retour
+                        </a>
+                        
+                        <button type="submit" 
+                            class="sm:col-span-2 w-full bg-[#F9A01B] hover:bg-[#e08e14] text-[#0a1b12] font-black py-3 px-4 rounded-xl active:scale-98 transition text-sm tracking-wide shadow-xs">
+                            Enregistrer les modifications
+                        </button>
+                    </div>
+                </form>
+            </div>
 
-                <!-- Logo -->
-                <div>
-                    <label class="block text-sm font-bold uppercase tracking-wide text-gray-700 mb-1.5">Logo</label>
-                    <input type="file" name="logo" accept="image/*"
-                        class="w-full border border-gray-200 rounded-xl p-2.5 text-base font-medium transition duration-200 file:mr-4 file:py-2 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer shadow-sm">
-                </div>
-
-                <!-- Boutons d'action : Texte agrandi à text-base -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-                    <a href="{{ url()->previous() }}" 
-                        class="sm:col-span-1 w-full border border-gray-200 text-gray-600 font-bold py-3.5 px-4 rounded-xl hover:bg-gray-50 hover:border-gray-300 active:scale-[0.98] transition-all duration-150 text-base text-center shadow-sm block">
-                        Retour
-                    </a>
-                    
-                    <button type="submit" 
-                        class="sm:col-span-2 w-full bg-blue-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-blue-600/20 hover:bg-blue-700 hover:shadow-xl hover:shadow-blue-600/30 hover:-translate-y-0.5 active:scale-[0.99] active:translate-y-0 transition-all duration-150 text-base tracking-wide">
-                        Enregistrer
-                    </button>
-                </div>
-            </form>
         </div>
     </div>
 @endsection
-

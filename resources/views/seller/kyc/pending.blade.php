@@ -1,214 +1,670 @@
-@extends('base')
+<!DOCTYPE html>
 
-@section('title', 'Vérification KYC en cours')
+<html lang="fr" class="h-full">
 
-{{-- Désactivation des sections du layout de base --}}
-@section('navbar') @endsection
-@section('footer') @endsection
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-@section('content')
-<div class="h-screen w-full flex items-center justify-center bg-slate-100 p-4 sm:p-6 lg:p-8 overflow-hidden">
 
-    <!-- CARTE PRINCIPALE STYLE CONNEXION (Conteneur central sans scroll) -->
-    <div class="w-full max-w-5xl h-full max-h-[640px] bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col lg:flex-row border border-slate-200/80">
+<title>Vérification KYC en cours — Ali-Kamer</title>
 
-        <!-- ================= CÔTÉ GAUCHE : STATUT & INFOS ================= -->
-        <div class="w-full lg:w-7/12 h-full p-5 sm:p-6 lg:p-8 flex flex-col justify-between overflow-hidden">
+{{-- Tailwind autonome --}}
+<script src="https://cdn.tailwindcss.com"></script>
 
-            <!-- 1. En-tête / Logo -->
-            <div class="flex items-center justify-between shrink-0">
-                <a href="/" class="group flex items-center gap-2 transition-transform active:scale-95">
-                    <div class="p-1.5 rounded-xl bg-slate-50 border border-slate-100 shadow-sm">
-                        <img src="{{ asset('images/afrique.png') }}" alt="Ali-Kamer Logo" class="h-8 w-auto object-contain">
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    aliGreen: '#006837',
+                    aliGreenDark: '#004d28',
+                    aliRed: '#EA2328',
+                    aliYellow: '#FFC20E',
+                },
+                fontFamily: {
+                    sans: ['Plus Jakarta Sans', 'sans-serif'],
+                }
+            }
+        }
+    }
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet"
+>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    html,
+    body {
+        min-height: 100%;
+        margin: 0;
+    }
+
+    body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background:
+            radial-gradient(circle at 10% 10%, rgba(0, 104, 55, .07), transparent 28%),
+            radial-gradient(circle at 90% 90%, rgba(234, 35, 40, .06), transparent 28%),
+            #f8fafc;
+    }
+
+    .page-enter {
+        animation: pageEnter .55s ease-out both;
+    }
+
+    .soft-pulse {
+        animation: softPulse 2s ease-in-out infinite;
+    }
+
+    .floating {
+        animation: floating 5s ease-in-out infinite;
+    }
+
+    @keyframes pageEnter {
+        from {
+            opacity: 0;
+            transform: translateY(12px) scale(.99);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    @keyframes softPulse {
+        0%, 100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        50% {
+            opacity: .65;
+            transform: scale(.92);
+        }
+    }
+
+    @keyframes floating {
+        0%, 100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-8px);
+        }
+    }
+
+    .glass {
+        background: rgba(255, 255, 255, .10);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+    }
+
+    @media (max-width: 1023px) {
+        .mobile-scroll {
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0, 104, 55, .25) transparent;
+        }
+    }
+</style>
+
+
+</head>
+
+<body class="text-slate-900">
+
+
+<main class="min-h-screen w-full flex items-center justify-center p-3 sm:p-5 lg:p-8">
+
+    <div
+        class="page-enter w-full max-w-6xl min-h-[620px] lg:h-[680px] bg-white rounded-[2rem] shadow-[0_25px_80px_rgba(15,23,42,.12)] overflow-hidden border border-slate-200/80 flex flex-col lg:flex-row"
+    >
+
+        {{-- =========================================================
+            COLONNE GAUCHE
+        ========================================================== --}}
+        <section
+            class="mobile-scroll w-full lg:w-[58%] p-5 sm:p-7 lg:p-9 flex flex-col bg-white"
+        >
+
+            {{-- Logo + statut --}}
+            <div class="flex items-center justify-between gap-4 shrink-0">
+
+                <a
+                    href="/"
+                    class="group flex items-center gap-2.5 transition-all duration-200 hover:-translate-y-0.5 active:scale-95"
+                >
+                    <div
+                        class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-slate-50 border border-slate-200 shadow-sm flex items-center justify-center overflow-hidden"
+                    >
+                        <img
+                            src="{{ asset('images/afrique.png') }}"
+                            alt="Ali-Kamer"
+                            class="h-8 sm:h-9 w-auto object-contain"
+                        >
+                    </div>
+
+                    <div class="hidden sm:block">
+                        <p class="text-sm font-black tracking-tight text-slate-900">
+                            Ali-Kamer
+                        </p>
+                        <p class="text-[9px] font-bold uppercase tracking-[.18em] text-slate-400">
+                            Espace vendeur
+                        </p>
                     </div>
                 </a>
-                <span class="inline-flex items-center gap-1.5 text-[10px] font-black tracking-widest text-[#FFC20E] bg-[#FFC20E]/10 px-3 py-1 rounded-full uppercase border border-[#FFC20E]/30">
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#FFC20E] animate-ping"></span>
+
+                <span
+                    class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 bg-[#FFC20E]/10 border border-[#FFC20E]/30 text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-amber-900 whitespace-nowrap"
+                >
+                    <span class="relative flex h-2 w-2">
+                        <span
+                            class="absolute inline-flex h-full w-full rounded-full bg-[#EA2328] opacity-70 animate-ping"
+                        ></span>
+                        <span
+                            class="relative inline-flex h-2 w-2 rounded-full bg-[#EA2328]"
+                        ></span>
+                    </span>
                     Examen en cours
                 </span>
+
             </div>
 
-            <!-- 2. Contenu principal compact -->
-            <div class="my-auto space-y-3.5">
 
-                <!-- Card de statut avec loader -->
-                <div class="rounded-2xl bg-gradient-to-br from-amber-500/10 via-amber-50/40 to-slate-50 p-3.5 border border-[#FFC20E]/30 flex items-center gap-3.5">
-                    <div class="relative flex items-center justify-center shrink-0">
-                        <div class="w-12 h-12 rounded-2xl bg-[#FFC20E]/20 flex items-center justify-center text-2xl shadow-inner">
+            {{-- Contenu principal --}}
+            <div class="flex-1 flex flex-col justify-center py-7 lg:py-5">
+
+                {{-- Statut principal --}}
+                <div
+                    class="rounded-[1.4rem] border border-[#FFC20E]/30 bg-gradient-to-br from-[#FFC20E]/15 via-amber-50/50 to-slate-50 p-4 sm:p-5 flex items-center gap-4"
+                >
+
+                    <div class="relative shrink-0">
+
+                        <div
+                            class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#FFC20E]/20 flex items-center justify-center text-2xl sm:text-3xl shadow-inner"
+                        >
                             ⏳
                         </div>
-                        <span class="absolute -top-1 -right-1 flex h-3.5 w-3.5">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#EA2328] opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-[#EA2328]"></span>
+
+                        <span class="absolute -top-1.5 -right-1.5 flex h-4 w-4">
+                            <span
+                                class="absolute inline-flex h-full w-full rounded-full bg-[#EA2328] opacity-60 animate-ping"
+                            ></span>
+
+                            <span
+                                class="relative inline-flex h-4 w-4 rounded-full bg-[#EA2328] border-2 border-white"
+                            ></span>
                         </span>
+
+                    </div>
+
+                    <div class="min-w-0">
+                        <p
+                            class="text-[9px] sm:text-[10px] uppercase tracking-[.16em] font-black text-amber-700 mb-1"
+                        >
+                            Statut actuel
+                        </p>
+
+                        <h1
+                            class="text-xl sm:text-2xl font-black tracking-tight text-slate-900 leading-tight"
+                        >
+                            Dossier en traitement
+                        </h1>
+
+                        <p class="text-[11px] sm:text-xs text-slate-500 font-medium mt-1 leading-relaxed">
+                            Vos documents ont bien été reçus et sont actuellement examinés par notre équipe.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                {{-- Informations dossier --}}
+                <div
+                    class="mt-3.5 rounded-[1.4rem] border border-slate-200 bg-slate-50/70 p-4"
+                >
+
+                    <div class="flex items-center gap-2 mb-3">
+
+                        <div
+                            class="w-8 h-8 rounded-xl bg-[#006837]/10 text-[#006837] flex items-center justify-center"
+                        >
+                            <svg
+                                class="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                />
+                            </svg>
+                        </div>
+
+                        <div>
+                            <h2 class="text-[10px] font-black uppercase tracking-wider text-slate-700">
+                                Informations du dossier
+                            </h2>
+
+                            <p class="text-[9px] text-slate-400 font-medium">
+                                Suivi de votre demande de vérification
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="space-y-2.5 text-[11px] sm:text-xs">
+
+                        {{-- Date --}}
+                        <div
+                            class="flex items-center justify-between gap-4 pb-2.5 border-b border-slate-200/80"
+                        >
+                            <span class="text-slate-500 font-medium">
+                                Date de soumission
+                            </span>
+
+                            <span class="font-bold text-slate-800 text-right">
+                                {{ $kyc->created_at->format('d/m/Y à H:i') }}
+                            </span>
+                        </div>
+
+
+                        {{-- Statut --}}
+                        <div
+                            class="flex items-center justify-between gap-4 pb-2.5 border-b border-slate-200/80"
+                        >
+                            <span class="text-slate-500 font-medium">
+                                Statut du dossier
+                            </span>
+
+                            <span
+                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FFC20E]/15 border border-[#FFC20E]/40 text-[9px] font-black text-amber-900 whitespace-nowrap"
+                            >
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#EA2328]"></span>
+                                En traitement
+                            </span>
+                        </div>
+
+
+                        {{-- Délai --}}
+                        <div
+                            class="flex items-center justify-between gap-4"
+                        >
+                            <span class="text-slate-500 font-medium">
+                                Délai estimé
+                            </span>
+
+                            <span class="font-black text-[#006837] text-right">
+                                24 à 48 h ouvrables
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                {{-- Notification --}}
+                <div
+                    class="mt-3.5 rounded-[1.3rem] border border-[#006837]/20 bg-[#006837]/5 p-3.5 flex items-start gap-3"
+                >
+
+                    <div
+                        class="w-9 h-9 rounded-xl bg-[#006837] text-white flex items-center justify-center shrink-0 shadow-sm"
+                    >
+                        <svg
+                            class="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                            />
+                        </svg>
                     </div>
 
                     <div>
-                        <h1 class="text-xl font-black text-slate-900 tracking-tight">Dossier en traitement</h1>
-                        <p class="text-xs text-slate-500 font-medium mt-0.5">
-                            Merci d'avoir soumis vos documents. Notre équipe procède à leur vérification.
+                        <h3
+                            class="text-[9px] font-black uppercase tracking-[.15em] text-[#006837]"
+                        >
+                            Vous serez informé
+                        </h3>
+
+                        <p class="text-[10px] sm:text-[11px] text-slate-600 mt-1 leading-relaxed">
+                            Une notification vous sera envoyée dès que votre dossier sera validé.
+                            Vous pourrez également être informé par
+                            <strong class="text-slate-700">SMS, WhatsApp ou e-mail</strong>.
                         </p>
                     </div>
+
                 </div>
 
-                <!-- Détails de la demande -->
-                <div class="rounded-2xl border border-slate-200/80 bg-slate-50/50 p-3.5 space-y-2 text-xs">
-                    <h2 class="text-[10px] font-black uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                        <svg class="w-3.5 h-3.5 text-[#006837]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                        </svg>
-                        Informations sur la demande
-                    </h2>
 
-                    <div class="flex items-center justify-between border-b border-slate-200/60 pb-1.5">
-                        <span class="text-slate-500 font-medium">Date de soumission</span>
-                        <span class="font-bold text-slate-800">{{ $kyc->created_at->format('d/m/Y à H:i') }}</span>
+                {{-- Recommandations --}}
+                <div
+                    class="mt-3.5 rounded-[1.3rem] bg-slate-50 border border-slate-100 p-3.5"
+                >
+
+                    <h3
+                        class="text-[9px] font-black uppercase tracking-[.15em] text-slate-500 mb-2"
+                    >
+                        Pendant l'attente
+                    </h3>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-[#EA2328] shrink-0"></span>
+                            <span class="text-[10px] text-slate-500 font-medium">
+                                Ne renvoyez pas un nouveau dossier
+                            </span>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-[#FFC20E] shrink-0"></span>
+                            <span class="text-[10px] text-slate-500 font-medium">
+                                Vérifiez vos e-mails et spams
+                            </span>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-[#006837] shrink-0"></span>
+                            <span class="text-[10px] text-slate-500 font-medium">
+                                Préparez vos premiers produits
+                            </span>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-slate-400 shrink-0"></span>
+                            <span class="text-[10px] text-slate-500 font-medium">
+                                Consultez les ressources vendeur
+                            </span>
+                        </div>
+
                     </div>
 
-                    <div class="flex items-center justify-between border-b border-slate-200/60 pb-1.5">
-                        <span class="text-slate-500 font-medium">Statut du dossier</span>
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#FFC20E]/20 text-amber-900 border border-[#FFC20E]/40">
-                            <span class="w-1.5 h-1.5 rounded-full bg-[#EA2328]"></span>
-                            En traitement
-                        </span>
-                    </div>
-
-                    <div class="flex items-center justify-between">
-                        <span class="text-slate-500 font-medium">Délai d'attente estimé</span>
-                        <span class="font-bold text-[#006837]">24 à 48 heures ouvrables</span>
-                    </div>
-                </div>
-
-                <!-- Box Notification -->
-                <div class="rounded-2xl border border-[#006837]/20 bg-[#006837]/5 p-3 flex items-start gap-3">
-                    <div class="p-1.5 rounded-xl bg-[#006837] text-white shrink-0 mt-0.5">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-[10px] font-bold text-[#006837] uppercase tracking-wider">Mode d'information</h3>
-                        <p class="text-[11px] text-slate-600 mt-0.5 leading-relaxed">
-                            Vous recevrez une notification directe ainsi qu'un alerte **SMS / WhatsApp** ou e-mail dès la validation.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Recommendations -->
-                <div class="rounded-2xl bg-slate-50 p-3 border border-slate-100">
-                    <h3 class="text-[10px] font-bold text-slate-700 uppercase tracking-wider mb-1">Recommandations :</h3>
-                    <ul class="grid grid-cols-2 gap-1.5 text-[11px] text-slate-500 font-medium">
-                        <li class="flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-[#EA2328] shrink-0"></span>
-                            Ne renvoyez pas de dossier
-                        </li>
-                        <li class="flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-[#FFC20E] shrink-0"></span>
-                            Vérifiez vos spams
-                        </li>
-                        <li class="flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-[#006837] shrink-0"></span>
-                            Préparez vos produits
-                        </li>
-                        <li class="flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0"></span>
-                            Consultez le guide
-                        </li>
-                    </ul>
                 </div>
 
             </div>
 
-            <!-- 3. Navigation / Footer interne -->
-            <div class="shrink-0 pt-2 flex items-center justify-between text-xs text-slate-400 border-t border-slate-100">
-                <a href="/" class="inline-flex items-center gap-1.5 font-bold text-slate-500 hover:text-[#006837] transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+
+            {{-- Footer --}}
+            <div
+                class="shrink-0 pt-4 border-t border-slate-100 flex items-center justify-between gap-4"
+            >
+
+                <a
+                    href="/"
+                    class="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-black text-slate-500 hover:text-[#006837] transition-colors"
+                >
+                    <svg
+                        class="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                        />
                     </svg>
-                    <span>Tableau de bord</span>
+
+                    Retour à l'accueil
                 </a>
-                <span class="text-[11px]">Ali-Kamer &copy; {{ date('Y') }}</span>
-            </div>
 
-        </div>
-
-        <!-- ================= CÔTÉ DROIT : BANNIÈRE INTERNE (STYLE AUTH) ================= -->
-        <div class="hidden lg:flex w-5/12 h-full bg-gradient-to-br from-[#004d28] via-[#006837] to-[#8B0000] text-white p-7 flex-col justify-between relative overflow-hidden shrink-0">
-
-            <!-- Arrière-plan lumineux et filigrane -->
-            <div class="absolute -top-16 -right-16 w-64 h-64 rounded-full bg-[#FFC20E]/20 blur-3xl pointer-events-none"></div>
-            <div class="absolute -bottom-16 -left-16 w-64 h-64 rounded-full bg-[#EA2328]/25 blur-3xl pointer-events-none"></div>
-
-            <div class="absolute -right-10 top-1/2 -translate-y-1/2 opacity-10 pointer-events-none">
-                <img src="{{ asset('images/afrique.png') }}" alt="" class="w-[380px] h-auto object-contain">
-            </div>
-
-            <!-- En-tête bannière -->
-            <div class="relative z-10">
-                <span class="inline-flex items-center gap-1.5 text-[10px] font-black tracking-widest uppercase text-[#FFC20E] bg-black/20 px-3 py-1 rounded-full backdrop-blur-md border border-[#FFC20E]/30">
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#006837]"></span>
-                    Plateforme Vendeur
+                <span class="text-[9px] sm:text-[10px] font-semibold text-slate-400">
+                    Ali-Kamer © {{ date('Y') }}
                 </span>
 
-                <h2 class="text-2xl font-black mt-5 leading-tight tracking-tight">
-                    Votre boutique sera <br>bientôt <span class="text-[#FFC20E]">opérationnelle !</span>
-                </h2>
-                <p class="text-xs text-emerald-100/90 mt-2 leading-relaxed font-normal">
-                    Nos agents examinent vos pièces pour activer votre compte.
-                </p>
             </div>
 
-            <!-- Étapes de validation -->
-            <div class="relative z-10 space-y-2.5 my-auto">
+        </section>
 
-                <div class="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 flex items-center gap-3">
-                    <div class="w-7 h-7 rounded-lg bg-[#006837] text-white flex items-center justify-center text-xs font-bold shrink-0 shadow">
+
+        {{-- =========================================================
+            COLONNE DROITE
+        ========================================================== --}}
+        <section
+            class="hidden lg:flex relative w-[42%] overflow-hidden bg-gradient-to-br from-[#004d28] via-[#006837] to-[#780f12] text-white p-8 flex-col justify-between"
+        >
+
+            {{-- Effets lumineux --}}
+            <div
+                class="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-[#FFC20E]/20 blur-3xl"
+            ></div>
+
+            <div
+                class="absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-[#EA2328]/25 blur-3xl"
+            ></div>
+
+            <div
+                class="absolute top-1/2 right-[-120px] -translate-y-1/2 opacity-[.07] pointer-events-none"
+            >
+                <img
+                    src="{{ asset('images/afrique.png') }}"
+                    alt=""
+                    class="w-[480px] h-auto object-contain"
+                >
+            </div>
+
+
+            {{-- Header --}}
+            <div class="relative z-10">
+
+                <div
+                    class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/20 border border-white/10 backdrop-blur-md"
+                >
+                    <span
+                        class="w-2 h-2 rounded-full bg-[#FFC20E] soft-pulse"
+                    ></span>
+
+                    <span
+                        class="text-[9px] font-black uppercase tracking-[.17em] text-[#FFC20E]"
+                    >
+                        Espace vendeur
+                    </span>
+                </div>
+
+
+                <h2
+                    class="text-2xl xl:text-3xl font-black leading-tight tracking-tight mt-6"
+                >
+                    Votre boutique est
+                    <span class="text-[#FFC20E]">
+                        presque prête.
+                    </span>
+                </h2>
+
+                <p
+                    class="text-xs text-emerald-50/80 leading-relaxed mt-3 max-w-sm"
+                >
+                    La vérification KYC protège les vendeurs et les acheteurs
+                    et contribue à créer une marketplace de confiance au Cameroun.
+                </p>
+
+            </div>
+
+
+            {{-- Timeline --}}
+            <div class="relative z-10 my-auto py-8 space-y-3">
+
+                {{-- Etape 1 --}}
+                <div
+                    class="glass rounded-2xl border border-white/15 p-4 flex items-center gap-3"
+                >
+
+                    <div
+                        class="w-9 h-9 rounded-xl bg-[#006837] border border-white/20 flex items-center justify-center font-black text-sm shrink-0"
+                    >
                         ✓
                     </div>
+
                     <div>
-                        <h3 class="text-xs font-bold text-white">1. Soumission du dossier</h3>
-                        <p class="text-[10px] text-emerald-100/80">Reçu avec succès.</p>
+                        <h3 class="text-xs font-black text-white">
+                            1. Dossier soumis
+                        </h3>
+
+                        <p class="text-[10px] text-emerald-100/70 mt-0.5">
+                            Vos documents ont été reçus.
+                        </p>
                     </div>
+
                 </div>
 
-                <div class="p-3 rounded-xl bg-black/20 backdrop-blur-md border border-[#FFC20E]/40 flex items-center gap-3 shadow-lg">
-                    <div class="w-7 h-7 rounded-lg bg-[#FFC20E] text-slate-900 flex items-center justify-center text-xs font-bold shrink-0 shadow animate-pulse">
+
+                {{-- Etape 2 --}}
+                <div
+                    class="rounded-2xl bg-black/20 backdrop-blur-md border border-[#FFC20E]/40 p-4 flex items-center gap-3 shadow-lg"
+                >
+
+                    <div
+                        class="w-9 h-9 rounded-xl bg-[#FFC20E] text-slate-900 flex items-center justify-center font-black text-sm shrink-0 soft-pulse"
+                    >
                         2
                     </div>
+
                     <div>
-                        <h3 class="text-xs font-bold text-[#FFC20E]">2. Examen (En cours)</h3>
-                        <p class="text-[10px] text-emerald-100/90">Vérification d'identité.</p>
+                        <h3 class="text-xs font-black text-[#FFC20E]">
+                            2. Vérification
+                        </h3>
+
+                        <p class="text-[10px] text-emerald-100/80 mt-0.5">
+                            Notre équipe examine actuellement votre dossier.
+                        </p>
                     </div>
+
                 </div>
 
-                <div class="p-3 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 flex items-center gap-3 opacity-75">
-                    <div class="w-7 h-7 rounded-lg bg-[#EA2328] text-white flex items-center justify-center text-xs font-bold shrink-0 shadow">
+
+                {{-- Etape 3 --}}
+                <div
+                    class="glass rounded-2xl border border-white/10 p-4 flex items-center gap-3 opacity-80"
+                >
+
+                    <div
+                        class="w-9 h-9 rounded-xl bg-[#EA2328] border border-white/20 flex items-center justify-center font-black text-sm shrink-0"
+                    >
                         3
                     </div>
+
                     <div>
-                        <h3 class="text-xs font-bold text-white">3. Badge Vendeur</h3>
-                        <p class="text-[10px] text-emerald-100/80">Activation des ventes.</p>
+                        <h3 class="text-xs font-black text-white">
+                            3. Activation vendeur
+                        </h3>
+
+                        <p class="text-[10px] text-emerald-100/70 mt-0.5">
+                            Votre boutique pourra commencer à vendre.
+                        </p>
                     </div>
+
                 </div>
 
             </div>
 
-            <!-- Pied de bannière -->
-            <div class="relative z-10 pt-3 border-t border-white/15 flex items-center justify-between text-xs">
+
+            {{-- Bloc confiance --}}
+            <div
+                class="relative z-10 rounded-2xl bg-white/10 border border-white/10 backdrop-blur-md p-4 mb-4"
+            >
+
+                <div class="flex items-start gap-3">
+
+                    <div
+                        class="w-9 h-9 rounded-xl bg-[#FFC20E] text-slate-900 flex items-center justify-center shrink-0"
+                    >
+                        <svg
+                            class="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                            />
+                        </svg>
+                    </div>
+
+                    <div>
+                        <h3 class="text-[10px] font-black uppercase tracking-wider">
+                            Vos données sont protégées
+                        </h3>
+
+                        <p class="text-[9px] text-emerald-50/70 mt-1 leading-relaxed">
+                            Les informations transmises sont utilisées uniquement
+                            dans le cadre de la vérification de votre identité.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {{-- Footer droit --}}
+            <div
+                class="relative z-10 pt-4 border-t border-white/15 flex items-center justify-between"
+            >
+
                 <div>
-                    <p class="text-[10px] text-emerald-100/80 font-medium">Assistance</p>
-                    <p class="text-xs font-black text-[#FFC20E]">support@ali-kamer.cm</p>
+                    <p class="text-[9px] text-emerald-100/60 uppercase tracking-wider font-bold">
+                        Assistance
+                    </p>
+
+                    <p class="text-[10px] font-black text-[#FFC20E] mt-0.5">
+                        support@ali-kamer.cm
+                    </p>
                 </div>
-                <div class="flex items-center gap-1">
-                    <span class="w-2 h-2 rounded-full bg-[#006837] border border-white/40"></span>
-                    <span class="w-2 h-2 rounded-full bg-[#EA2328] border border-white/40"></span>
-                    <span class="w-2 h-2 rounded-full bg-[#FFC20E] border border-white/40"></span>
+
+
+                <div class="flex items-center gap-1.5">
+
+                    <span
+                        class="w-2.5 h-2.5 rounded-full bg-[#006837] border border-white/40"
+                    ></span>
+
+                    <span
+                        class="w-2.5 h-2.5 rounded-full bg-[#EA2328] border border-white/40"
+                    ></span>
+
+                    <span
+                        class="w-2.5 h-2.5 rounded-full bg-[#FFC20E] border border-white/40"
+                    ></span>
+
                 </div>
+
             </div>
 
-        </div>
+        </section>
 
     </div>
 
-</div>
-@endsection
+</main>
+
+
+</body>
+
+</html>

@@ -1,197 +1,205 @@
 @extends('layouts.admin')
 
-@section('title', 'Gestion des dossiers KYC')
+@section('title', 'Gestion des dossiers KYC - Ali-Kamer')
 
 @section('content')
 
-<div class="max-w-7xl mx-auto py-8">
+<div class="min-h-screen bg-[#F7F7F2] py-6 px-3 sm:px-6">
+    <div class="max-w-7xl mx-auto space-y-6">
 
-    @if(session('success'))
-        <div class="mb-6 rounded-lg border border-green-300 bg-green-50 px-5 py-4 text-green-700 shadow">
-            {{ session('success') }}
-        </div>
-    @endif
+        <!-- 1. BANNIÈRE EN-TÊTE ALI-KAMER -->
+        <div class="bg-[#016837] text-white rounded-2xl p-5 sm:p-6 shadow-xs relative overflow-hidden">
+            <div class="absolute -right-8 -bottom-8 w-40 h-40 bg-white/5 rounded-full pointer-events-none"></div>
 
-    <!-- En-tête -->
-    <div class="flex items-center justify-between mb-8">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-800">
-                Gestion des dossiers KYC
-            </h1>
-
-            <p class="mt-1 text-gray-500">
-                Examinez et gérez les demandes de vérification d'identité des vendeurs.
-            </p>
-        </div>
-    </div>
-
-    <!-- Statistiques -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-
-        <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-5 shadow-sm">
-            <p class="text-sm text-yellow-700 font-medium">
-                En attente
-            </p>
-
-            <h2 class="text-3xl font-bold mt-2 text-yellow-800">
-                {{ $counts['pending'] }}
-            </h2>
+            <div class="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-xs px-3 py-1 rounded-full text-xs font-semibold text-white mb-2 border border-white/15">
+                        <span class="w-2 h-2 rounded-full bg-[#F9A01B]"></span>
+                        Administration
+                    </div>
+                    <h1 class="text-xl sm:text-2xl font-black uppercase tracking-wider text-white">
+                        Gestion des dossiers KYC
+                    </h1>
+                    <p class="text-white/80 text-xs sm:text-sm mt-0.5 font-medium">
+                        Examinez et gérez les demandes de vérification d'identité des vendeurs.
+                    </p>
+                </div>
+            </div>
         </div>
 
-        <div class="bg-green-50 border border-green-200 rounded-xl p-5 shadow-sm">
-            <p class="text-sm text-green-700 font-medium">
-                Approuvés
-            </p>
+        <!-- 2. ALERTE DE SUCCÈS -->
+        @if(session('success'))
+            <div class="bg-[#016837]/10 border border-[#016837]/20 text-[#016837] rounded-xl px-4 py-3 text-xs sm:text-sm font-bold flex items-center gap-2.5 shadow-xs">
+                <svg class="w-5 h-5 shrink-0 text-[#016837]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{{ session('success') }}</span>
+            </div>
+        @endif
 
-            <h2 class="text-3xl font-bold mt-2 text-green-800">
-                {{ $counts['approved'] }}
-            </h2>
+        <!-- 3. STATISTIQUES (KPIs) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+            <!-- En attente -->
+            <div class="bg-white border border-[#F9A01B]/40 rounded-2xl p-5 shadow-xs">
+                <p class="text-[11px] font-bold uppercase tracking-wider text-[#F9A01B] mb-1">
+                    En attente
+                </p>
+                <h2 class="text-3xl font-black text-[#0a1b12]">
+                    {{ $counts['pending'] }}
+                </h2>
+            </div>
+
+            <!-- Approuvés -->
+            <div class="bg-white border border-[#016837]/30 rounded-2xl p-5 shadow-xs">
+                <p class="text-[11px] font-bold uppercase tracking-wider text-[#016837] mb-1">
+                    Approuvés
+                </p>
+                <h2 class="text-3xl font-black text-[#016837]">
+                    {{ $counts['approved'] }}
+                </h2>
+            </div>
+
+            <!-- Rejetés -->
+            <div class="bg-white border border-[#E30613]/30 rounded-2xl p-5 shadow-xs">
+                <p class="text-[11px] font-bold uppercase tracking-wider text-[#E30613] mb-1">
+                    Rejetés
+                </p>
+                <h2 class="text-3xl font-black text-[#E30613]">
+                    {{ $counts['rejected'] }}
+                </h2>
+            </div>
+
         </div>
 
-        <div class="bg-red-50 border border-red-200 rounded-xl p-5 shadow-sm">
-            <p class="text-sm text-red-700 font-medium">
-                Rejetés
-            </p>
+        <!-- 4. FILTRES -->
+        <div class="flex flex-wrap gap-2.5">
 
-            <h2 class="text-3xl font-bold mt-2 text-red-800">
-                {{ $counts['rejected'] }}
-            </h2>
+            @foreach ([
+                'pending' => 'En attente',
+                'approved' => 'Approuvés',
+                'rejected' => 'Rejetés'
+            ] as $s => $label)
+
+                <a href="?status={{ $s }}"
+                    class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-xs
+                    {{ $status === $s
+                        ? 'bg-[#016837] text-white'
+                        : 'bg-white border border-gray-200 text-[#0a1b12] hover:bg-[#F7F7F2]' }}">
+
+                    <span>{{ $label }}</span>
+
+                    <span class="rounded-full px-2 py-0.5 text-[10px] font-black
+                        {{ $status === $s ? 'bg-[#F9A01B] text-[#0a1b12]' : 'bg-gray-100 text-gray-600' }}">
+                        {{ $counts[$s] }}
+                    </span>
+
+                </a>
+
+            @endforeach
+
         </div>
 
-    </div>
+        <!-- 5. TABLEAU DE DONNÉES -->
+        <div class="overflow-hidden rounded-2xl bg-white border border-gray-200 shadow-xs">
 
-    <!-- Filtres -->
-    <div class="flex flex-wrap gap-3 mb-6">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
 
-        @foreach ([
-            'pending' => 'En attente',
-            'approved' => 'Approuvés',
-            'rejected' => 'Rejetés'
-        ] as $s => $label)
+                    <thead class="bg-[#F7F7F2]">
 
-            <a href="?status={{ $s }}"
-                class="px-5 py-2 rounded-lg font-medium transition
+                        <tr class="text-left text-[11px] font-black uppercase tracking-wider text-[#0a1b12]">
 
-                {{ $status === $s
-                    ? 'bg-blue-600 text-white shadow'
-                    : 'bg-white border text-gray-600 hover:bg-gray-100' }}">
+                            <th class="px-6 py-3.5">
+                                Vendeur
+                            </th>
 
-                {{ $label }}
+                            <th class="px-6 py-3.5">
+                                Téléphone
+                            </th>
 
-                <span class="ml-2 rounded-full px-2 py-0.5 text-xs
-                    {{ $status === $s ? 'bg-blue-500' : 'bg-gray-200 text-gray-700' }}">
-                    {{ $counts[$s] }}
-                </span>
+                            <th class="px-6 py-3.5">
+                                Date de soumission
+                            </th>
 
-            </a>
+                            <th class="px-6 py-3.5 text-center">
+                                Action
+                            </th>
 
-        @endforeach
+                        </tr>
 
-    </div>
+                    </thead>
 
-    <!-- Tableau -->
-    <div class="overflow-hidden rounded-xl bg-white shadow-lg">
+                    <tbody class="divide-y divide-gray-100 text-xs">
 
-        <table class="min-w-full">
+                        @forelse($dossiers as $kyc)
 
-            <thead class="bg-gray-100">
+                            <tr class="hover:bg-[#F7F7F2]/50 transition">
 
-                <tr class="text-left text-sm uppercase tracking-wide text-gray-600">
+                                <td class="px-6 py-4">
+                                    <div class="font-bold text-[#0a1b12]">
+                                        {{ $kyc->user->name }}
+                                    </div>
+                                </td>
 
-                    <th class="px-6 py-4">
-                        Vendeur
-                    </th>
+                                <td class="px-6 py-4 font-semibold text-gray-600">
+                                    {{ $kyc->user->phone }}
+                                </td>
 
-                    <th class="px-6 py-4">
-                        Téléphone
-                    </th>
+                                <td class="px-6 py-4 font-medium text-gray-500">
+                                    {{ $kyc->created_at->format('d/m/Y H:i') }}
+                                </td>
 
-                    <th class="px-6 py-4">
-                        Date de soumission
-                    </th>
+                                <td class="px-6 py-4 text-center">
+                                    <a href="{{ route('admin.kyc.show', $kyc) }}"
+                                        class="inline-flex items-center rounded-xl bg-[#F9A01B] hover:bg-[#e08e14] active:scale-98 px-4 py-2 text-xs font-black text-[#0a1b12] transition shadow-xs uppercase tracking-wider">
+                                        Examiner
+                                    </a>
+                                </td>
 
-                    <th class="px-6 py-4 text-center">
-                        Action
-                    </th>
+                            </tr>
 
-                </tr>
+                        @empty
 
-            </thead>
+                            <tr>
 
-            <tbody class="divide-y divide-gray-200">
+                                <td colspan="4" class="py-16 text-center">
 
-                @forelse($dossiers as $kyc)
+                                    <div class="w-12 h-12 bg-[#F7F7F2] rounded-full flex items-center justify-center mx-auto mb-3 text-gray-400">
+                                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                    </div>
 
-                    <tr class="hover:bg-gray-50 transition">
+                                    <p class="text-sm font-bold text-[#0a1b12]">
+                                        Aucun dossier trouvé
+                                    </p>
 
-                        <td class="px-6 py-4">
+                                    <p class="text-xs text-gray-400 mt-0.5">
+                                        Aucun dossier {{ strtolower($label ?? $status) }} n'est disponible actuellement.
+                                    </p>
 
-                            <div class="font-semibold text-gray-800">
-                                {{ $kyc->user->name }}
-                            </div>
+                                </td>
 
-                        </td>
+                            </tr>
 
-                        <td class="px-6 py-4 text-gray-600">
+                        @endforelse
 
-                            {{ $kyc->user->phone }}
+                    </tbody>
 
-                        </td>
+                </table>
+            </div>
 
-                        <td class="px-6 py-4 text-gray-500">
+        </div>
 
-                            {{ $kyc->created_at->format('d/m/Y H:i') }}
-
-                        </td>
-
-                        <td class="px-6 py-4 text-center">
-
-                            <a href="{{ route('admin.kyc.show', $kyc) }}"
-                                class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700">
-
-                                Examiner
-
-                            </a>
-
-                        </td>
-
-                    </tr>
-
-                @empty
-
-                    <tr>
-
-                        <td colspan="4" class="py-16 text-center">
-
-                            <div class="text-5xl mb-3">
-                                📂
-                            </div>
-
-                            <p class="text-lg font-semibold text-gray-600">
-                                Aucun dossier trouvé
-                            </p>
-
-                            <p class="text-gray-400 mt-1">
-                                Aucun dossier {{ strtolower($label ?? $status) }} n'est disponible actuellement.
-                            </p>
-
-                        </td>
-
-                    </tr>
-
-                @endforelse
-
-            </tbody>
-
-        </table>
+        {{-- Pagination --}}
+        @if($dossiers->hasPages())
+            <div class="mt-4">
+                {{ $dossiers->links() }}
+            </div>
+        @endif
 
     </div>
-
-    {{-- Pagination --}}
-    <div class="mt-6">
-        {{ $dossiers->links() }}
-    </div>
-
 </div>
 
 @endsection

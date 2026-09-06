@@ -1,4 +1,10 @@
-@extends('base')
+@php
+    $layout = auth()->user()->isBuyer()
+        ? 'layouts.buyer'
+        : 'layouts.seller';
+@endphp
+
+@extends($layout)
 @section('title', 'Tutoriels')
 @section('content')
 <div class="bg-gray-50 min-h-screen py-8">

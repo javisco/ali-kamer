@@ -14,26 +14,43 @@
         {{-- =========================================================
         1. HERO SECTION — ALIGNÉ SUR LA MAQUETTE
     ========================================================== --}}
+        <style>
+            #hero-ali-kamer {
+                transform-origin: top center;
+                will-change: opacity, transform, max-height, padding;
+            }
+
+            #hero-ali-kamer.ak-hero-hiding {
+                opacity: 0;
+                transform: translateY(-35px);
+                max-height: 0 !important;
+                padding-top: 0 !important;
+                padding-bottom: 0 !important;
+                border-bottom-width: 0 !important;
+            }
+        </style>
         <section id="hero-ali-kamer"
             class="relative overflow-hidden bg-gradient-to-r from-[#F3FBF6] via-white to-[#FFFDF3] border-b border-slate-100">
 
-            <div class="relative max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="min-h-[300px] lg:min-h-[322px] grid lg:grid-cols-[1fr_1.05fr] items-center">
+            <div class="relative max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
+                {{-- Grille fluide à 3 colonnes sur grand écran --}}
+                <div
+                    class="min-h-[300px] lg:min-h-[320px] grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr_0.9fr] items-center gap-8 lg:gap-6">
 
-                    {{-- Bloc gauche --}}
-                    <div class="relative z-10 py-8 lg:py-7">
+                    {{-- Colonne 1 : Titre & Actions principal --}}
+                    <div class="relative z-10">
                         <h1
-                            class="text-[44px] sm:text-[54px] lg:text-[62px] leading-[0.98] font-black tracking-tight text-slate-950">
+                            class="text-[42px] sm:text-[52px] lg:text-[58px] leading-[0.98] font-black tracking-tight text-slate-950">
                             <span class="text-[#00843D]">Ali</span><span class="text-[#CE1126]">-</span><span
                                 class="text-slate-950">Kamer</span>
                         </h1>
 
-                        <h2 class="mt-1 text-[25px] sm:text-[30px] lg:text-[35px] leading-tight font-black text-slate-950">
+                        <h2 class="mt-1 text-[24px] sm:text-[28px] lg:text-[32px] leading-tight font-black text-slate-950">
                             Construit au Cameroun
                             <span class="block text-[#00843D]">pour l'Afrique</span>
                         </h2>
 
-                        <p class="mt-3 max-w-[480px] text-sm sm:text-[15px] leading-relaxed text-slate-700">
+                        <p class="mt-3 max-w-[440px] text-sm sm:text-[15px] leading-relaxed text-slate-700">
                             La marketplace qui vous connecte aux meilleures
                             <br class="hidden sm:block">
                             opportunités, en toute confiance.
@@ -41,8 +58,8 @@
 
                         <a href="#produits"
                             class="mt-4 inline-flex items-center gap-2 rounded-full bg-[#00843D] hover:bg-[#006B32]
-                              px-5 py-2.5 text-sm font-black text-white shadow-md shadow-emerald-900/15
-                              transition hover:-translate-y-0.5">
+                      px-5 py-2.5 text-sm font-black text-white shadow-md shadow-emerald-900/15
+                      transition hover:-translate-y-0.5">
                             Découvrir nos produits
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
@@ -51,7 +68,7 @@
                         </a>
 
                         <div
-                            class="mt-5 flex flex-wrap items-center gap-x-7 gap-y-2.5 text-[11px] font-bold text-slate-700">
+                            class="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2.5 text-[11px] font-bold text-slate-700">
                             <div class="flex items-center gap-2">
                                 <span
                                     class="flex h-7 w-7 items-center justify-center rounded-full bg-[#00843D] text-white">✓</span>
@@ -75,18 +92,14 @@
                         </div>
                     </div>
 
-                    {{-- Bloc droit : l'Afrique, avec le Cameroun mis en exergue --}}
-                    <div
-                        class="relative h-full min-h-[300px] flex items-center justify-center lg:justify-end pr-0 lg:pr-24">
-
+                    {{-- Colonne 2 : Carte de l'Afrique (Isolée au centre) --}}
+                    <div class="relative flex flex-col items-center justify-center">
                         {{-- Halo continental --}}
                         <div
-                            class="absolute inset-y-4 left-8 right-20 rounded-full
-                                bg-[radial-gradient(circle_at_center,rgba(0,132,61,.15),transparent_68%)]">
+                            class="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_center,rgba(0,132,61,.12),transparent_70%)] pointer-events-none">
                         </div>
 
-                        {{-- Afrique stylisée : le Cameroun est le point de départ mis en évidence --}}
-                        <div class="relative z-10 w-[250px] sm:w-[285px] lg:w-[330px]">
+                        <div class="relative z-10 w-full max-w-[240px] sm:max-w-[270px]">
                             <svg viewBox="0 0 360 390" class="w-full h-auto drop-shadow-md"
                                 aria-label="Afrique avec le Cameroun mis en évidence">
                                 <defs>
@@ -111,12 +124,10 @@
                                     </filter>
                                 </defs>
 
-                                {{-- Silhouette africa --}}
                                 <path
                                     d="M164 17c31-10 66 0 79 25 12 23 8 39 31 53 20 13 34 38 27 58-6 17-22 26-21 44 2 25 29 43 20 67-9 26-39 33-52 51-13 18-14 47-33 55-18 8-39-11-56-27-17-16-36-24-46-44-10-19-7-41-18-58-13-19-38-30-46-53-9-23 4-47 21-64 17-17 33-29 41-51 7-23 17-55 53-56z"
                                     fill="url(#akAfricaGreen)" stroke="#006B32" stroke-width="4" />
 
-                                {{-- Lignes décoratives discrètes pour donner une lecture continentale --}}
                                 <path d="M91 106c38 12 75 14 113 5 34-8 61-5 88 10" fill="none" stroke="#FCD116"
                                     stroke-width="3" opacity=".65" />
                                 <path d="M78 207c40-9 76-3 112 12 36 15 68 17 99 7" fill="none" stroke="#FFFFFF"
@@ -124,7 +135,6 @@
                                 <path d="M104 286c34-14 70-13 106 2 31 13 52 13 75 4" fill="none" stroke="#CE1126"
                                     stroke-width="3" opacity=".55" />
 
-                                {{-- Zone Cameroun mise en exergue --}}
                                 <g filter="url(#akGlow)">
                                     <circle cx="139" cy="178" r="27" fill="#CE1126" opacity=".24" />
                                     <circle cx="139" cy="178" r="18" fill="url(#akCameroon)" stroke="#FFFFFF"
@@ -132,17 +142,14 @@
                                     <circle cx="139" cy="178" r="7" fill="#FCD116" />
                                 </g>
 
-                                {{-- Étoile camerounaise --}}
                                 <path d="M139 165l3.7 9 9.7.8-7.4 6.2 2.3 9.4-8.3-5-8.3 5 2.3-9.4-7.4-6.2 9.7-.8z"
                                     fill="#FCD116" stroke="#FFFFFF" stroke-width="1.5" />
 
-                                {{-- Trait vers le label Cameroun --}}
                                 <path d="M151 178 C174 168, 190 165, 211 166" fill="none" stroke="#CE1126"
                                     stroke-width="3" />
                                 <circle cx="214" cy="166" r="4" fill="#FCD116" stroke="#CE1126"
                                     stroke-width="2" />
 
-                                {{-- Label --}}
                                 <g>
                                     <rect x="207" y="139" width="110" height="48" rx="12" fill="white"
                                         stroke="#CE1126" stroke-width="2" />
@@ -153,55 +160,62 @@
                                 </g>
                             </svg>
 
-                            <div
-                                class="absolute -bottom-1 left-1/2 -translate-x-1/2 whitespace-nowrap
-                                    rounded-full border border-[#FCD116]/70 bg-white/95 px-4 py-1.5
-                                    text-[11px] font-black text-[#006B32] shadow-sm">
-                                🇨🇲 Né au Cameroun · Pensé pour l'Afrique
+                            {{-- Badge sous la carte --}}
+                            <div class="mt-3 text-center">
+                                <span
+                                    class="inline-block whitespace-nowrap rounded-full border border-[#FCD116]/70 bg-white px-3.5 py-1 text-[11px] font-black text-[#006B32] shadow-xs">
+                                    🇨🇲 Né au Cameroun · Pensé pour l'Afrique
+                                </span>
                             </div>
                         </div>
+                    </div>
 
-                        {{-- Signature de marque --}}
-                        <div class="relative z-20 hidden sm:block ml-[-4px] lg:ml-[-12px] max-w-[155px]">
-                            <p class="font-serif text-[28px] lg:text-[32px] italic leading-[0.95] text-slate-900">
+                    {{-- Colonne 3 : Signature de marque & Garanties (Placées proprement à droite) --}}
+                    <div
+                        class="relative z-10 flex flex-col justify-center gap-6 border-t lg:border-t-0 lg:border-l border-slate-200/60 pt-6 lg:pt-0 lg:pl-8">
+
+                        {{-- Signature --}}
+                        <div>
+                            <p class="font-serif text-[26px] sm:text-[30px] italic leading-[1] text-slate-900">
                                 Acheter<br>
                                 et vendez<br>
                                 <span class="text-[#00843D]">sans stress</span>
                             </p>
-                            <div class="mt-3 h-1.5 w-28 rotate-[-7deg] rounded-full bg-[#FCD116]"></div>
-                            <p class="mt-3 text-[10px] font-black uppercase tracking-wide text-[#CE1126]">
+                            <div class="mt-2 h-1.5 w-24 rotate-[-5deg] rounded-full bg-[#FCD116]"></div>
+                            <p class="mt-2 text-[10px] font-black uppercase tracking-wide text-[#CE1126]">
                                 Du Cameroun pour l'Afrique
                             </p>
                         </div>
 
-                        {{-- Garanties à droite --}}
-                        <div class="absolute right-0 top-1/2 z-30 hidden xl:flex -translate-y-1/2 flex-col gap-4">
+                        {{-- Liste des garanties --}}
+                        <div class="flex flex-col gap-3">
                             <div class="flex items-center gap-3">
                                 <span
-                                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#00843D] text-lg text-white">🔒</span>
-                                <span class="w-28 text-xs font-bold leading-tight text-slate-700">Des
+                                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#00843D] text-sm text-white shadow-xs">🔒</span>
+                                <span class="text-xs font-bold leading-tight text-slate-700">Des
                                     transactions<br>sécurisées</span>
                             </div>
                             <div class="flex items-center gap-3">
                                 <span
-                                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#00843D] text-lg text-white">🚚</span>
-                                <span class="w-28 text-xs font-bold leading-tight text-slate-700">Un réseau<br>d'agences
-                                    fiable</span>
+                                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#00843D] text-sm text-white shadow-xs">🚚</span>
+                                <span class="text-xs font-bold leading-tight text-slate-700">Un réseau
+                                    d'agences<br>fiable</span>
                             </div>
                             <div class="flex items-center gap-3">
                                 <span
-                                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#00843D] text-lg text-white">📱</span>
-                                <span class="w-28 text-xs font-bold leading-tight text-slate-700">MTN MoMo<br>Orange
-                                    Money</span>
+                                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#00843D] text-sm text-white shadow-xs">📱</span>
+                                <span class="text-xs font-bold leading-tight text-slate-700">MTN MoMo / Orange Money</span>
                             </div>
                             <div class="flex items-center gap-3">
                                 <span
-                                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#00843D] text-lg text-white">👥</span>
-                                <span class="w-28 text-xs font-bold leading-tight text-slate-700">Une plateforme<br>100%
+                                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#00843D] text-sm text-white shadow-xs">👥</span>
+                                <span class="text-xs font-bold leading-tight text-slate-700">Une plateforme<br>100%
                                     africaine</span>
                             </div>
                         </div>
+
                     </div>
+
                 </div>
             </div>
         </section>
@@ -808,5 +822,76 @@
         </section>
 
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
 
+            const hero = document.getElementById('hero-ali-kamer');
+
+            if (!hero) return;
+
+            let heroHidden = false;
+
+            function hideHero() {
+
+                if (heroHidden) return;
+
+                heroHidden = true;
+
+                /*
+                 * Petit délai pour garantir que le navigateur
+                 * ait bien rendu le Hero avant l'animation.
+                 */
+                requestAnimationFrame(() => {
+
+                    requestAnimationFrame(() => {
+                        hero.classList.add('ak-hero-hiding');
+                    });
+
+                });
+            }
+
+            /*
+             * ---------------------------------------------------------
+             * DISPARITION AUTOMATIQUE APRÈS 30 SECONDES
+             * ---------------------------------------------------------
+             */
+            const autoHideTimer = setTimeout(() => {
+                hideHero();
+            }, 10000);
+
+
+            /*
+             * ---------------------------------------------------------
+             * SI L'UTILISATEUR COMMENCE À DESCENDRE
+             * ---------------------------------------------------------
+             *
+             * On ne le fait pas disparaître immédiatement.
+             * On attend une petite distance afin d'éviter
+             * un déclenchement accidentel.
+             */
+            let scrollTriggered = false;
+
+            window.addEventListener('scroll', function() {
+
+                if (scrollTriggered || heroHidden) return;
+
+                if (window.scrollY > 180) {
+
+                    scrollTriggered = true;
+
+                    clearTimeout(autoHideTimer);
+
+                    // Petite temporisation pour rendre
+                    // le comportement plus naturel.
+                    setTimeout(() => {
+                        hideHero();
+                    }, 350);
+                }
+
+            }, {
+                passive: true
+            });
+
+        });
+    </script>
 @endsection

@@ -1,172 +1,200 @@
 @extends('layouts.admin')
-@section('title', 'Modifier le tutoriel')
+
+@section('title', 'Modifier le tutoriel - Ali-Kamer')
+
 @section('content')
-<div class="bg-gray-50 min-h-screen py-8">
-<div class="max-w-2xl mx-auto px-4">
+<div class="min-h-screen bg-[#F7F7F2] py-6 px-3 sm:px-6">
+    <div class="max-w-2xl mx-auto space-y-6">
 
-    <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-extrabold text-gray-900">Modifier le tutoriel</h1>
-        <a href="{{ route('admin.tutorials.index') }}" class="text-sm text-gray-500 hover:underline">
-            ← Retour à la liste
-        </a>
-    </div>
+        <!-- 1. BANNIÈRE EN-TÊTE ALI-KAMER -->
+        <div class="bg-[#016837] text-white rounded-2xl p-5 sm:p-6 shadow-xs relative overflow-hidden">
+            <div class="absolute -right-8 -bottom-8 w-40 h-40 bg-white/5 rounded-full pointer-events-none"></div>
 
-    @if($errors->any())
-        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 text-sm">
-            @foreach($errors->all() as $error)<p>{{ $error }}</p>@endforeach
-        </div>
-    @endif
+            <div class="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-xs px-3 py-1 rounded-full text-xs font-semibold text-white mb-2 border border-white/15">
+                        <span class="w-2 h-2 rounded-full bg-[#F9A01B]"></span>
+                        Centre d'Aide & Formations
+                    </div>
+                    <h1 class="text-xl sm:text-2xl font-black uppercase tracking-wider text-white">
+                        Modifier le Tutoriel
+                    </h1>
+                    <p class="text-white/80 text-xs sm:text-sm mt-0.5 font-medium">
+                        Mettez à jour le contenu, le type ou les informations de ciblage du tutoriel.
+                    </p>
+                </div>
 
-    <form method="POST" action="{{ route('admin.tutorials.update', $tutorial) }}"
-          class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-5">
-        @csrf
-        @method('PUT')
-
-        <div class="grid grid-cols-2 gap-4">
-
-            {{-- Type --}}
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">
-                    Type <span class="text-red-500">*</span>
-                </label>
-                <select name="type" required
-                        class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm
-                               focus:ring-2 focus:ring-indigo-500">
-                    <option value="video" {{ old('type', $tutorial->type) === 'video' ? 'selected' : '' }}>
-                        🎬 Vidéo
-                    </option>
-                    <option value="text" {{ old('type', $tutorial->type) === 'text' ? 'selected' : '' }}>
-                        📖 Texte
-                    </option>
-                </select>
-            </div>
-
-            {{-- Pour qui --}}
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">
-                    Destiné à <span class="text-red-500">*</span>
-                </label>
-                <select name="role_target" required
-                        class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm
-                               focus:ring-2 focus:ring-indigo-500">
-                    <option value="buyer"  {{ old('role_target', $tutorial->role_target) === 'buyer'  ? 'selected' : '' }}>
-                        Acheteurs
-                    </option>
-                    <option value="seller" {{ old('role_target', $tutorial->role_target) === 'seller' ? 'selected' : '' }}>
-                        Vendeurs
-                    </option>
-                    <option value="all"    {{ old('role_target', $tutorial->role_target) === 'all'    ? 'selected' : '' }}>
-                        Tous
-                    </option>
-                </select>
+                <div>
+                    <a href="{{ route('admin.tutorials.index') }}" 
+                       class="inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold px-3.5 py-2 rounded-xl transition">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        <span>Retour</span>
+                    </a>
+                </div>
             </div>
         </div>
 
-        {{-- Catégorie --}}
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-                Catégorie <span class="text-red-500">*</span>
-            </label>
-            <select name="category" required
-                    class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm
-                           focus:ring-2 focus:ring-indigo-500">
-                <option value="">-- Choisir --</option>
-                @foreach($categories as $value => $label)
-                    <option value="{{ $value }}" {{ old('category', $tutorial->category) === $value ? 'selected' : '' }}>
-                        {{ $label }}
-                    </option>
+        <!-- 2. MESSAGES D'ERREURS -->
+        @if($errors->any())
+            <div class="bg-[#E30613]/10 border border-[#E30613]/20 text-[#E30613] rounded-xl p-4 text-xs font-bold space-y-1 shadow-xs">
+                @foreach($errors->all() as $error)
+                    <p class="flex items-center gap-1.5">
+                        <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>{{ $error }}</span>
+                    </p>
                 @endforeach
-            </select>
-        </div>
+            </div>
+        @endif
 
-        {{-- Titre --}}
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-                Titre <span class="text-red-500">*</span>
-            </label>
-            <input type="text" name="title" value="{{ old('title', $tutorial->title) }}" required
-                   placeholder="Ex: Comment passer sa première commande"
-                   class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm
-                          focus:ring-2 focus:ring-indigo-500">
-        </div>
+        <!-- 3. FORMULAIRE -->
+        <form method="POST" action="{{ route('admin.tutorials.update', $tutorial) }}"
+              class="bg-white rounded-2xl border border-gray-200 shadow-xs p-5 sm:p-6 space-y-5">
+            @csrf
+            @method('PUT')
 
-        {{-- URL Vidéo --}}
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-                URL de la vidéo
-                <span class="text-gray-400 font-normal">(YouTube ou autre)</span>
-            </label>
-            <input type="url" name="video_url" value="{{ old('video_url', $tutorial->video_url) }}"
-                   placeholder="https://www.youtube.com/watch?v=..."
-                   class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm
-                          focus:ring-2 focus:ring-indigo-500">
-        </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-        {{-- Thumbnail --}}
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-                URL miniature
-                <span class="text-gray-400 font-normal">(optionnel)</span>
-            </label>
-            <input type="url" name="thumbnail_url" value="{{ old('thumbnail_url', $tutorial->thumbnail_url) }}"
-                   placeholder="https://..."
-                   class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm
-                          focus:ring-2 focus:ring-indigo-500">
-        </div>
+                {{-- Type --}}
+                <div>
+                    <label class="block text-xs font-bold text-[#0a1b12] uppercase tracking-wider mb-1.5">
+                        Type <span class="text-[#E30613]">*</span>
+                    </label>
+                    <select name="type" required
+                            class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#0a1b12] focus:outline-none focus:border-[#016837] focus:ring-2 focus:ring-[#016837]/20 shadow-xs bg-white">
+                        <option value="video" {{ old('type', $tutorial->type) === 'video' ? 'selected' : '' }}>
+                            🎬 Vidéo
+                        </option>
+                        <option value="text" {{ old('type', $tutorial->type) === 'text' ? 'selected' : '' }}>
+                            📖 Texte
+                        </option>
+                    </select>
+                </div>
 
-        {{-- Durée & Ordre --}}
-        <div class="grid grid-cols-2 gap-4">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">
-                    Durée <span class="text-gray-400 font-normal">(minutes)</span>
-                </label>
-                <input type="number" name="duration_minutes" value="{{ old('duration_minutes', $tutorial->duration_minutes) }}"
-                       min="1" placeholder="Ex: 5"
-                       class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm
-                              focus:ring-2 focus:ring-indigo-500">
+                {{-- Pour qui --}}
+                <div>
+                    <label class="block text-xs font-bold text-[#0a1b12] uppercase tracking-wider mb-1.5">
+                        Destiné à <span class="text-[#E30613]">*</span>
+                    </label>
+                    <select name="role_target" required
+                            class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#0a1b12] focus:outline-none focus:border-[#016837] focus:ring-2 focus:ring-[#016837]/20 shadow-xs bg-white">
+                        <option value="buyer"  {{ old('role_target', $tutorial->role_target) === 'buyer'  ? 'selected' : '' }}>
+                            Acheteurs
+                        </option>
+                        <option value="seller" {{ old('role_target', $tutorial->role_target) === 'seller' ? 'selected' : '' }}>
+                            Vendeurs
+                        </option>
+                        <option value="all"    {{ old('role_target', $tutorial->role_target) === 'all'    ? 'selected' : '' }}>
+                            Tous
+                        </option>
+                    </select>
+                </div>
             </div>
 
+            {{-- Catégorie --}}
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">
-                    Ordre d'affichage
+                <label class="block text-xs font-bold text-[#0a1b12] uppercase tracking-wider mb-1.5">
+                    Catégorie <span class="text-[#E30613]">*</span>
                 </label>
-                <input type="number" name="sort_order" value="{{ old('sort_order', $tutorial->sort_order) }}"
-                       min="0"
-                       class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm
-                              focus:ring-2 focus:ring-indigo-500">
+                <select name="category" required
+                        class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#0a1b12] focus:outline-none focus:border-[#016837] focus:ring-2 focus:ring-[#016837]/20 shadow-xs bg-white">
+                    <option value="">-- Choisir une catégorie --</option>
+                    @foreach($categories as $value => $label)
+                        <option value="{{ $value }}" {{ old('category', $tutorial->category) === $value ? 'selected' : '' }}>
+                            {{ $label }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
-        </div>
 
-        {{-- Contenu texte --}}
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-                Contenu texte
-                <span class="text-gray-400 font-normal">(optionnel — complément à la vidéo)</span>
-            </label>
-            <textarea name="content" rows="6"
-                      class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm
-                             focus:ring-2 focus:ring-indigo-500"
-                      placeholder="Description, étapes, conseils...">{{ old('content', $tutorial->content) }}</textarea>
-        </div>
+            {{-- Titre --}}
+            <div>
+                <label class="block text-xs font-bold text-[#0a1b12] uppercase tracking-wider mb-1.5">
+                    Titre <span class="text-[#E30613]">*</span>
+                </label>
+                <input type="text" name="title" value="{{ old('title', $tutorial->title) }}" required
+                       placeholder="Ex: Comment passer sa première commande"
+                       class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#0a1b12] focus:outline-none focus:border-[#016837] focus:ring-2 focus:ring-[#016837]/20 shadow-xs">
+            </div>
 
-        <div class="flex gap-4 pt-2">
-            <button type="submit" name="publish" value="0"
-                    class="flex-1 border-2 border-gray-300 text-gray-700 font-bold
-                           py-3 rounded-xl transition hover:bg-gray-50">
-                Enregistrer en brouillon
-            </button>
-            <button type="submit" name="publish" value="1"
-                    class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold
-                           py-3 rounded-xl transition">
-                Mettre à jour et publier
-            </button>
-        </div>
+            {{-- URL Vidéo --}}
+            <div>
+                <label class="block text-xs font-bold text-[#0a1b12] uppercase tracking-wider mb-1">
+                    URL de la vidéo
+                    <span class="text-gray-400 font-normal lowercase">(YouTube ou autre)</span>
+                </label>
+                <input type="url" name="video_url" value="{{ old('video_url', $tutorial->video_url) }}"
+                       placeholder="https://www.youtube.com/watch?v=..."
+                       class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#0a1b12] focus:outline-none focus:border-[#016837] focus:ring-2 focus:ring-[#016837]/20 shadow-xs">
+                <p class="text-[11px] text-gray-400 font-medium mt-1">
+                    Collez simplement l'URL YouTube — le lecteur est généré automatiquement.
+                </p>
+            </div>
 
-        <a href="{{ route('admin.tutorials.index') }}"
-           class="block text-center text-sm text-gray-400 hover:underline">
-            Annuler
-        </a>
-    </form>
-</div>
+            {{-- Thumbnail --}}
+            <div>
+                <label class="block text-xs font-bold text-[#0a1b12] uppercase tracking-wider mb-1">
+                    URL de la miniature
+                    <span class="text-gray-400 font-normal lowercase">(optionnel)</span>
+                </label>
+                <input type="url" name="thumbnail_url" value="{{ old('thumbnail_url', $tutorial->thumbnail_url) }}"
+                       placeholder="https://..."
+                       class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#0a1b12] focus:outline-none focus:border-[#016837] focus:ring-2 focus:ring-[#016837]/20 shadow-xs">
+            </div>
+
+            {{-- Durée & Ordre --}}
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-[#0a1b12] uppercase tracking-wider mb-1">
+                        Durée <span class="text-gray-400 font-normal lowercase">(minutes)</span>
+                    </label>
+                    <input type="number" name="duration_minutes" value="{{ old('duration_minutes', $tutorial->duration_minutes) }}"
+                           min="1" placeholder="Ex: 5"
+                           class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#0a1b12] focus:outline-none focus:border-[#016837] focus:ring-2 focus:ring-[#016837]/20 shadow-xs">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-[#0a1b12] uppercase tracking-wider mb-1">
+                        Ordre d'affichage
+                    </label>
+                    <input type="number" name="sort_order" value="{{ old('sort_order', $tutorial->sort_order) }}"
+                           min="0"
+                           class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#0a1b12] focus:outline-none focus:border-[#016837] focus:ring-2 focus:ring-[#016837]/20 shadow-xs">
+                    <p class="text-[11px] text-gray-400 font-medium mt-1">0 = affiché en premier</p>
+                </div>
+            </div>
+
+            {{-- Contenu texte --}}
+            <div>
+                <label class="block text-xs font-bold text-[#0a1b12] uppercase tracking-wider mb-1">
+                    Contenu texte
+                    <span class="text-gray-400 font-normal lowercase">(optionnel — complément)</span>
+                </label>
+                <textarea name="content" rows="5"
+                          class="w-full border border-gray-200 rounded-xl p-3.5 text-xs font-medium text-[#0a1b12] focus:outline-none focus:border-[#016837] focus:ring-2 focus:ring-[#016837]/20 shadow-xs"
+                          placeholder="Description, étapes détaillées, conseils pratiques...">{{ old('content', $tutorial->content) }}</textarea>
+            </div>
+
+            <!-- BOUTONS D'ACTION -->
+            <div class="flex flex-col sm:flex-row gap-3 pt-3">
+                <button type="submit" name="publish" value="0"
+                        class="flex-1 bg-white hover:bg-gray-50 text-[#0a1b12] font-black py-3 rounded-xl border border-gray-300 transition text-xs shadow-xs uppercase tracking-wider">
+                    Enregistrer en brouillon
+                </button>
+                <button type="submit" name="publish" value="1"
+                        class="flex-1 bg-[#F9A01B] hover:bg-[#e08e14] active:scale-98 text-[#0a1b12] font-black py-3 rounded-xl transition text-xs shadow-xs uppercase tracking-wider">
+                    Mettre à jour et publier
+                </button>
+            </div>
+
+            <a href="{{ route('admin.tutorials.index') }}"
+               class="block text-center text-xs font-bold text-gray-400 hover:text-[#0a1b12] transition">
+                Annuler
+            </a>
+        </form>
+    </div>
 </div>
 @endsection

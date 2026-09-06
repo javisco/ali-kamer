@@ -1,151 +1,146 @@
 @extends('layouts.seller')
 
-@section('title', 'Retrait Mobile Money')
+@section('title', 'Retrait Mobile Money - Ali-Kamer')
 
 @section('content')
-    <div class="bg-gray-50 min-h-screen py-8">
-        <div class="max-w-md mx-auto px-4">
+    <div class="min-h-screen bg-[#F7F7F2] py-6 px-3 sm:px-6">
+        <div class="max-w-md mx-auto space-y-5">
 
-            <h1 class="text-2xl font-extrabold text-gray-900 mb-2">Retrait Mobile Money</h1>
-            <p class="text-sm text-gray-500 mb-6">Traitement sous 24h ouvrables.</p>
+            <!-- 1. EN-TÊTE BANNIÈRE ALI-KAMER -->
+            <div class="bg-[#016837] text-white rounded-2xl p-5 shadow-xs relative overflow-hidden text-center">
+                <div class="absolute -right-6 -bottom-6 w-28 h-28 bg-white/5 rounded-full pointer-events-none"></div>
 
+                <span class="inline-block bg-[#F9A01B] text-[#0a1b12] text-[10px] font-black uppercase tracking-widest px-3 py-0.5 rounded-full mb-2">
+                    Demande de Retrait
+                </span>
+                <h1 class="text-xl font-black uppercase tracking-wider text-white">
+                    Retrait Mobile Money
+                </h1>
+                <p class="text-white/80 text-xs font-medium mt-1">
+                    Traitement garanti sous 24h ouvrables.
+                </p>
+            </div>
+
+            <!-- 2. GESTION DES ERreurs -->
             @if ($errors->any())
-                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 text-sm">
+                <div class="bg-[#E30613]/10 border border-[#E30613]/20 text-[#E30613] rounded-xl p-4 text-xs font-bold space-y-1 shadow-xs">
                     @foreach ($errors->all() as $error)
-                        <p>{{ $error }}</p>
+                        <p class="flex items-center gap-1.5">
+                            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>{{ $error }}</span>
+                        </p>
                     @endforeach
                 </div>
             @endif
 
-            {{-- Solde disponible --}}
-            <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-5 mb-6">
-                <p class="text-sm text-indigo-600 mb-1">Solde disponible</p>
-                <p class="text-3xl font-extrabold text-indigo-700">
+            <!-- 3. SOLDE DISPONIBLE -->
+            <div class="bg-white border border-[#016837]/30 rounded-2xl p-4 text-center shadow-xs">
+                <p class="text-[11px] font-bold uppercase tracking-wider text-[#016837] mb-1">
+                    Solde Disponible au Retrait
+                </p>
+                <p class="text-3xl font-black text-[#016837]">
                     {{ number_format($user->wallet_available, 0, ',', ' ') }}
-                    <span class="text-base font-semibold">FCFA</span>
+                    <span class="text-xs font-bold text-[#016837]">FCFA</span>
                 </p>
             </div>
 
-            <form method="POST" action="{{ route('seller.wallet.withdraw.post') }}" class="space-y-5">
+            <!-- 4. FORMULAIRE DE RETRAIT -->
+            <form method="POST" action="{{ route('seller.wallet.withdraw.post') }}" class="space-y-4">
                 @csrf
 
                 {{-- Numéro MoMo --}}
-                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                    <h2 class="font-bold text-gray-800 mb-3">Numéro de réception</h2>
-                    <div class="space-y-2 text-sm">
-                        <div class="flex justify-between">
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-xs p-4">
+                    <h2 class="font-black text-xs uppercase tracking-wider text-[#0a1b12] mb-3 border-b border-gray-100 pb-2">
+                        Compte de réception MoMo
+                    </h2>
+                    <div class="space-y-2 text-xs font-medium">
+                        <div class="flex justify-between items-center">
                             <span class="text-gray-500">Opérateur</span>
-                            <span class="font-semibold uppercase">{{ $user->momo_operator }}</span>
+                            <span class="font-black text-[#0a1b12] uppercase bg-[#F7F7F2] px-2.5 py-0.5 rounded-md border border-gray-200">
+                                {{ $user->momo_operator }}
+                            </span>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Numéro</span>
-                            <span class="font-semibold">+237 {{ $user->phone_momo }}</span>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-500">Numéro de téléphone</span>
+                            <span class="font-bold text-[#0a1b12]">+237 {{ $user->phone_momo }}</span>
                         </div>
                     </div>
-                    {{-- Le numéro MoMo est celui enregistré au KYC — non modifiable ici --}}
-                    <p class="text-xs text-gray-400 mt-3">
-                        Pour modifier votre numéro MoMo, contactez le support.
+                    <p class="text-[10px] text-gray-400 mt-3 font-medium flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Pour modifier ce numéro enregistré lors de votre KYC, contactez le support.
                     </p>
                 </div>
 
-                {{-- Montant --}}
-                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">
-                        Montant à retirer (FCFA) <span class="text-red-500">*</span>
+                {{-- Saisie du Montant --}}
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-xs p-4">
+                    <label class="block text-xs font-black uppercase tracking-wider text-[#0a1b12] mb-1.5">
+                        Montant à retirer (FCFA) <span class="text-[#E30613]">*</span>
                     </label>
                     <input type="number" name="amount" value="{{ old('amount') }}" min="1000"
                         max="{{ $user->wallet_available }}" placeholder="Ex: 5000"
-                        class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm
-                          focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                    <p class="text-xs text-gray-400 mt-1">
-                        Minimum 1 000 FCFA — Maximum {{ number_format($user->wallet_available, 0, ',', ' ') }} FCFA
+                        class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold text-[#0a1b12] transition duration-200 focus:outline-none focus:border-[#016837] focus:ring-2 focus:ring-[#016837]/20 hover:border-gray-300 shadow-xs">
+                    
+                    <p class="text-[10px] text-gray-400 font-medium mt-1.5">
+                        Min. 1 000 FCFA — Max. {{ number_format($user->wallet_available, 0, ',', ' ') }} FCFA
                     </p>
+                    
                     @error('amount')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        <p class="text-[#E30613] text-xs font-bold mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
-                {{-- Frais --}}
-                {{-- <div class="bg-gray-50 rounded-2xl border border-gray-200 p-4 text-sm space-y-2">
-                    <div class="flex justify-between text-gray-500">
-                        <span>Frais retrait MoMo (1%)</span> --}}
-                {{-- Les frais sont déduits automatiquement par Campay --}}
-                <span>Déduits automatiquement</span>
-                {{-- </div>
-                    <div class="flex justify-between font-bold text-gray-800 border-t border-gray-200 pt-2">
-                        <span>Vous recevrez environ</span>
-                        <span class="text-indigo-600" id="netAmount">—</span>
-                    </div>
-                </div> --}}
-
-                {{-- Simulateur Gross-Up retrait --}}
-                <div class="bg-gray-50 rounded-2xl border border-gray-200 p-4 text-sm space-y-2">
-                    <p class="font-medium text-gray-700">Détail du virement</p>
-                    <div class="flex justify-between text-gray-500">
+                {{-- Détail du virement --}}
+                <div class="bg-white rounded-2xl border border-gray-200 p-4 text-xs space-y-2 shadow-xs">
+                    <p class="font-black text-[#0a1b12] uppercase tracking-wider text-[11px]">Détail du virement</p>
+                    <div class="flex justify-between text-gray-500 font-medium">
                         <span>Frais de virement Mobile Money</span>
-                        <span class="text-emerald-600 font-medium">Pris en charge par Ali-Kamer</span>
+                        <span class="text-[#016837] font-bold">Pris en charge par Ali-Kamer</span>
                     </div>
-                    <div class="flex justify-between font-bold text-gray-800 border-t border-gray-200 pt-2">
+                    <div class="flex justify-between font-black text-[#0a1b12] border-t border-gray-100 pt-2 text-sm">
                         <span>Vous recevrez exactement</span>
-                        <span class="text-indigo-600" id="netAmount">—</span>
+                        <span class="text-[#016837]" id="netAmount">—</span>
                     </div>
                 </div>
 
-                @push('scripts')
-                    <script>
-                        const payoutRate = {{ \App\Models\PlatformSetting::getRate('campay_payout_rate') }};
-                        const fixedFee = {{ (int) \App\Models\PlatformSetting::getValue('campay_fixed_fee', 0) }};
-                        const input = document.querySelector('input[name="amount"]');
-                        const display = document.getElementById('netAmount');
-
-                        function updateNet() {
-                            const net = parseInt(input.value) || 0;
-                            if (net < 1000) {
-                                display.textContent = '—';
-                                return;
-                            }
-
-                            // Le montant saisi = montant NET que le vendeur reçoit
-                            // La plateforme calcule le Gross-Up en interne
-                            display.textContent = new Intl.NumberFormat('fr-FR').format(net) + ' FCFA';
-                        }
-
-                        input.addEventListener('input', updateNet);
-                    </script>
-                @endpush
-
+                {{-- Boutons d'action --}}
                 <button type="submit"
-                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold
-                       py-4 rounded-2xl transition text-sm">
+                    class="w-full bg-[#F9A01B] hover:bg-[#e08e14] active:scale-98 text-[#0a1b12] font-black
+                       py-3.5 rounded-xl transition text-sm shadow-xs uppercase tracking-wider">
                     Confirmer le retrait
                 </button>
 
                 <a href="{{ route('seller.wallet.index') }}"
-                    class="block text-center text-sm text-gray-500 hover:underline">
-                    Annuler
+                    class="block text-center text-xs font-bold text-gray-500 hover:text-[#0a1b12] hover:underline pt-1 transition">
+                    Annuler et retourner au portefeuille
                 </a>
             </form>
+
         </div>
     </div>
 
     @push('scripts')
         <script>
-            // Calcul en temps réel du montant net après frais MoMo (1%)
-            const input = document.querySelector('input[name="amount"]');
-            const net = document.getElementById('netAmount');
+            document.addEventListener('DOMContentLoaded', function () {
+                const input = document.querySelector('input[name="amount"]');
+                const display = document.getElementById('netAmount');
 
-            function update() {
-                const amount = parseInt(input.value) || 0;
-                if (amount < 1000) {
-                    net.textContent = '—';
-                    return;
+                function updateNet() {
+                    const net = parseInt(input.value) || 0;
+                    if (net < 1000) {
+                        display.textContent = '—';
+                        return;
+                    }
+                    display.textContent = new Intl.NumberFormat('fr-FR').format(net) + ' FCFA';
                 }
-                const fees = Math.round(amount * 0.01);
-                const result = amount - fees;
-                net.textContent = new Intl.NumberFormat('fr-FR').format(result) + ' FCFA';
-            }
 
-            input.addEventListener('input', update);
+                if (input) {
+                    input.addEventListener('input', updateNet);
+                }
+            });
         </script>
     @endpush
 @endsection

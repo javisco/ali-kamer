@@ -1,5 +1,10 @@
-@extends('base')
+@php
+    $layout = auth()->user()->isBuyer()
+        ? 'layouts.buyer'
+        : 'layouts.seller';
+@endphp
 
+@extends($layout)
 @section('title', 'À propos — Ali-Kamer')
 @section('meta_description', 'Découvrez la mission et le fonctionnement d’Ali-Kamer, marketplace camerounaise.')
 

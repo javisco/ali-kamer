@@ -1,99 +1,131 @@
 @extends('layouts.seller')
 
-@section('title', 'Mon portefeuille')
+@section('title', 'Mon portefeuille - Ali-Kamer')
 
 @section('content')
-    <div class="bg-gray-50 min-h-screen py-8">
-        <div class="max-w-3xl mx-auto px-4">
+    <div class="min-h-screen bg-[#F7F7F2] py-6 px-3 sm:px-6">
+        <div class="max-w-3xl mx-auto space-y-5">
 
-            <h1 class="text-2xl font-extrabold text-gray-900 mb-6">Mon portefeuille</h1>
+            <!-- 1. HERO BANNER ALI-KAMER -->
+            <div class="bg-[#016837] text-white rounded-2xl p-5 sm:p-6 shadow-xs relative overflow-hidden">
+                <div class="absolute -right-8 -bottom-8 w-40 h-40 bg-white/5 rounded-full pointer-events-none"></div>
 
+                <div class="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <div class="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-xs px-3 py-1 rounded-full text-xs font-semibold text-white mb-2 border border-white/15">
+                            <span class="w-2 h-2 rounded-full bg-[#F9A01B]"></span>
+                            Finances & Retraits
+                        </div>
+                        <h1 class="text-xl sm:text-2xl font-black uppercase tracking-wider text-white">
+                            Mon Portefeuille
+                        </h1>
+                        <p class="text-white/80 text-xs sm:text-sm mt-0.5 font-medium">
+                            Suivez vos soldes, vos transactions et effectuez vos retraits vers Mobile Money.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. ALERTE DE SUCCÈS -->
             @if (session('success'))
-                <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-xl mb-6 text-sm">
-                    {{ session('success') }}
+                <div class="bg-[#016837]/10 border border-[#016837]/20 text-[#016837] rounded-xl px-4 py-3 text-xs sm:text-sm font-bold flex items-center gap-2.5 shadow-xs">
+                    <svg class="w-5 h-5 shrink-0 text-[#016837]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>{{ session('success') }}</span>
                 </div>
             @endif
 
-            {{-- Soldes --}}
-            <div class="grid grid-cols-2 gap-4 mb-6">
+            <!-- 3. SOLDES (EN ATTENTE / DISPONIBLE) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
 
                 {{-- Solde en attente --}}
-                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                    <p class="text-xs text-gray-500 uppercase tracking-wider mb-1">En attente</p>
-                    <p class="text-2xl font-extrabold text-gray-400">
-                        {{ number_format($user->wallet_pending, 0, ',', ' ') }}
-                        <span class="text-sm font-semibold">FCFA</span>
+                <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-xs">
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1">
+                        En Attente (Séquestre)
                     </p>
-                    {{-- Fonds séquestrés — non retirables --}}
-                    <p class="text-xs text-gray-400 mt-1">
-                        Fonds séquestrés — libérés après livraison confirmée
+                    <p class="text-2xl sm:text-3xl font-black text-gray-400">
+                        {{ number_format($user->wallet_pending, 0, ',', ' ') }}
+                        <span class="text-xs font-bold text-gray-400">FCFA</span>
+                    </p>
+                    <p class="text-xs text-gray-400 font-medium mt-1.5 flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                        Libérés après confirmation de livraison
                     </p>
                 </div>
 
                 {{-- Solde disponible --}}
-                <div class="bg-white rounded-2xl border border-indigo-100 shadow-sm p-5">
-                    <p class="text-xs text-indigo-500 uppercase tracking-wider mb-1">Disponible</p>
-                    <p class="text-2xl font-extrabold text-indigo-600">
-                        {{ number_format($user->wallet_available, 0, ',', ' ') }}
-                        <span class="text-sm font-semibold">FCFA</span>
+                <div class="bg-white rounded-2xl border border-[#016837]/30 p-5 shadow-xs">
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-[#016837] mb-1">
+                        Solde Disponible
                     </p>
-                    {{-- Fonds retirables vers MoMo --}}
-                    <p class="text-xs text-indigo-400 mt-1">
-                        Retirable vers MoMo (min. 1 000 FCFA)
+                    <p class="text-2xl sm:text-3xl font-black text-[#016837]">
+                        {{ number_format($user->wallet_available, 0, ',', ' ') }}
+                        <span class="text-xs font-bold text-[#016837]">FCFA</span>
+                    </p>
+                    <p class="text-xs text-[#016837]/80 font-medium mt-1.5 flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5 shrink-0 text-[#016837]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Retirable vers Mobile Money (min. 1 000 FCFA)
                     </p>
                 </div>
+
             </div>
 
-            {{-- Bouton retrait --}}
+            <!-- 4. BOUTON D'ACTION (RETRAIT) -->
             @if ($user->wallet_available >= 1000)
                 <a href="{{ route('seller.wallet.withdraw') }}"
-                    class="block w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold
-                  py-3.5 rounded-2xl text-center mb-6 transition text-sm">
-                    Retirer vers Mobile Money
+                    class="block w-full bg-[#F9A01B] hover:bg-[#e08e14] active:scale-98 text-[#0a1b12] font-black
+                    py-3.5 rounded-xl text-center shadow-xs transition text-sm">
+                    Demander un retrait Mobile Money
                 </a>
             @else
-                {{-- Bouton désactivé si solde insuffisant --}}
-                <div
-                    class="w-full bg-gray-200 text-gray-400 font-bold py-3.5 rounded-2xl
-                    text-center mb-6 text-sm cursor-not-allowed">
+                <div class="w-full bg-gray-200 text-gray-400 font-bold py-3.5 rounded-xl text-center text-sm cursor-not-allowed border border-gray-300/60">
                     Solde insuffisant pour un retrait (min. 1 000 FCFA)
                 </div>
             @endif
 
-            {{-- Historique des transactions --}}
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <div class="px-5 py-4 border-b border-gray-50">
-                    <h2 class="font-bold text-gray-800">Historique des transactions</h2>
+            <!-- 5. HISTORIQUE DES TRANSACTIONS -->
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-xs overflow-hidden">
+                <div class="px-5 py-3.5 bg-[#F7F7F2]/80 border-b border-gray-200 flex items-center justify-between">
+                    <h2 class="font-black text-xs uppercase tracking-wider text-[#0a1b12]">
+                        Historique des transactions
+                    </h2>
                 </div>
 
                 @if ($transactions->isEmpty())
-                    <div class="px-5 py-10 text-center text-gray-400 text-sm">
-                        Aucune transaction pour l'instant.
+                    <div class="px-5 py-12 text-center text-gray-400 text-xs">
+                        <svg class="w-8 h-8 text-gray-300 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        Aucune transaction enregistrée pour le moment.
                     </div>
                 @else
-                    <div class="divide-y divide-gray-50">
+                    <div class="divide-y divide-gray-100">
                         @foreach ($transactions as $tx)
-                            <div class="flex items-center justify-between px-5 py-4">
-                                <div class="flex-1 min-w-0">
-                                    {{-- Libellé de la transaction --}}
-                                    <p class="text-sm font-medium text-gray-900">{{ $tx->typeLabel() }}</p>
+                            <div class="flex items-center justify-between px-5 py-3.5 hover:bg-[#F7F7F2]/40 transition">
+                                <div class="flex-1 min-w-0 pr-4">
+                                    <p class="text-xs sm:text-sm font-bold text-[#0a1b12]">
+                                        {{ $tx->typeLabel() }}
+                                    </p>
                                     @if ($tx->note)
-                                        <p class="text-xs text-gray-400 mt-0.5 truncate">{{ $tx->note }}</p>
+                                        <p class="text-[11px] text-gray-400 mt-0.5 truncate">{{ $tx->note }}</p>
                                     @endif
-                                    <p class="text-xs text-gray-300 mt-0.5">
+                                    <p class="text-[10px] text-gray-400 mt-0.5 font-medium">
                                         {{ $tx->created_at->format('d/m/Y à H:i') }}
                                     </p>
                                 </div>
 
-                                {{-- Montant avec couleur selon crédit/débit --}}
-                                <div class="text-right flex-shrink-0 ml-4">
-                                    <p
-                                        class="font-bold text-sm {{ $tx->isCredit() ? 'text-emerald-600' : 'text-red-500' }}">
+                                {{-- Montant (Crédit / Débit) --}}
+                                <div class="text-right shrink-0">
+                                    <p class="font-black text-xs sm:text-sm {{ $tx->isCredit() ? 'text-[#016837]' : 'text-[#E30613]' }}">
                                         {{ $tx->isCredit() ? '+' : '-' }}
                                         {{ number_format($tx->amount, 0, ',', ' ') }} FCFA
                                     </p>
-                                    {{-- Solde après opération pour audit --}}
-                                    <p class="text-xs text-gray-300 mt-0.5">
+                                    <p class="text-[10px] text-gray-400 mt-0.5 font-medium">
                                         Solde : {{ number_format($tx->balance_after, 0, ',', ' ') }} FCFA
                                     </p>
                                 </div>
@@ -101,9 +133,11 @@
                         @endforeach
                     </div>
 
-                    <div class="px-5 py-4 border-t border-gray-50">
-                        {{ $transactions->links() }}
-                    </div>
+                    @if($transactions->hasPages())
+                        <div class="px-5 py-3 border-t border-gray-100">
+                            {{ $transactions->links() }}
+                        </div>
+                    @endif
                 @endif
             </div>
 
