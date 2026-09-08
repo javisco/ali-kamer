@@ -85,12 +85,28 @@ class AgencyManagerService
         $counter->update(['is_active' => ! $counter->is_active]);
     }
 
+    // ── VÉRIFIER L'APPARTENANCE D'UN SECRÉTAIRE ─────────────────────
+
+    private function assertSecretaryBelongsToAgency(Agency $agency, User $secretary): void
+    {
+        abort_unless($secretary->isSecretary(), 403, "L'utilisateur spécifié n'est pas un secrétaire.");
+
+        $belongsToAgency = ($secretary->agency_id === $agency->id)
+            || $secretary->agencyCounters()->where('agency_id', $agency->id)->exists();
+
+        abort_unless($belongsToAgency, 403, "Ce secrétaire n'appartient pas à votre agence.");
+
+        // Synchroniser agency_id si absent (ex: secrétaire créé avant le fix)
+        if ($secretary->agency_id !== $agency->id) {
+            $secretary->update(['agency_id' => $agency->id]);
+        }
+    }
+
     // ── ACTIVER / DÉSACTIVER UN SECRÉTAIRE ───────────────────────────
 
     public function toggleSecretary(Agency $agency, User $secretary): void
     {
-        // Vérifier que le secrétaire appartient à cette agence
-        abort_unless($secretary->agency_id === $agency->id, 403);
+        $this->assertSecretaryBelongsToAgency($agency, $secretary);
 
         $newStatus = $secretary->isActive()
             ? User::STATUS_SUSPENDED
@@ -99,12 +115,36 @@ class AgencyManagerService
         $secretary->update(['status' => $newStatus]);
     }
 
+    // ── MODIFIER LES INFOS D'UN SECRÉTAIRE ────────────────────────────
+
+    public function updateSecretary(
+        Agency $agency,
+        User $secretary,
+        array $data
+    ): User {
+        $this->assertSecretaryBelongsToAgency($agency, $secretary);
+
+        $updateData = [
+            'name'  => $data['name'],
+            'phone' => $data['phone'],
+            'email' => $data['email'] ?? null,
+        ];
+
+        if (! empty($data['password'])) {
+            $updateData['password'] = bcrypt($data['password']);
+        }
+
+        $secretary->update($updateData);
+
+        return $secretary;
+    }
+
     // ── SUPPRIMER UN SECRÉTAIRE ───────────────────────────────────────
 
     // Uniquement si aucun colis en cours de traitement
     public function deleteSecretary(Agency $agency, User $secretary): void
     {
-        abort_unless($secretary->agency_id === $agency->id, 403);
+        $this->assertSecretaryBelongsToAgency($agency, $secretary);
 
         // Vérifier qu'aucune commande n'est en cours avec ce secrétaire
         $hasActiveShipments = \App\Models\OrderShipment::where(function ($q) use ($secretary) {
@@ -124,8 +164,10 @@ class AgencyManagerService
             );
         }
 
-        $secretary->agencyCounters()->detach();
-        $secretary->delete();
+        DB::transaction(function () use ($secretary) {
+            $secretary->agencyCounters()->detach();
+            $secretary->delete();
+        });
     }
 
     // ── CRÉDITER LA COMMISSION D'UNE AGENCE ──────────────────────────

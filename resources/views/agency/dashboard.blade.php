@@ -230,35 +230,93 @@
                         <div class="mt-4">
                             @if ($counter->secretary)
                                 @php $sec = $counter->secretary->secretary; @endphp
-                                <div class="bg-slate-50 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-slate-100">
-                                    <div class="flex items-center gap-3">
-                                        <div class="h-9 w-9 rounded-full bg-emerald-100 text-[#00843D] font-black text-xs flex items-center justify-center">
-                                            {{ strtoupper(substr($sec->name, 0, 1)) }}
+                                <div class="bg-slate-50 rounded-xl p-4 border border-slate-100"
+                                     x-data="{ editOpen: false }">
+                                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                        <div class="flex items-center gap-3">
+                                            <div class="h-9 w-9 rounded-full bg-emerald-100 text-[#00843D] font-black text-xs flex items-center justify-center">
+                                                {{ strtoupper(substr($sec->name, 0, 1)) }}
+                                            </div>
+                                            <div>
+                                                <p class="text-xs font-extrabold text-slate-900">{{ $sec->name }}</p>
+                                                <p class="text-xs text-slate-500 font-medium">📞 {{ $sec->phone }}</p>
+                                                @if ($sec->email)
+                                                    <p class="text-[11px] text-slate-400 font-medium">✉️ {{ $sec->email }}</p>
+                                                @endif
+                                            </div>
                                         </div>
-                                        <div>
-                                            <p class="text-xs font-extrabold text-slate-900">{{ $sec->name }}</p>
-                                            <p class="text-xs text-slate-500 font-medium">📞 {{ $sec->phone }}</p>
+
+                                        <div class="flex items-center gap-3 border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-200">
+                                            <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-md {{ $sec->isActive() ? 'bg-emerald-100 text-[#00843D]' : 'bg-amber-100 text-amber-700' }}">
+                                                {{ $sec->isActive() ? 'Opérationnel' : 'Suspendu' }}
+                                            </span>
+
+                                            <button type="button" @click="editOpen = !editOpen"
+                                                class="text-xs font-bold text-[#00843D] hover:text-[#006B32] transition flex items-center gap-1">
+                                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                                Modifier
+                                            </button>
+
+                                            <form method="POST" action="{{ route('agency.secretary.toggle', $sec) }}">
+                                                @csrf
+                                                <button class="text-xs font-bold text-slate-600 hover:text-slate-900 transition">
+                                                    {{ $sec->isActive() ? 'Suspendre' : 'Réactiver' }}
+                                                </button>
+                                            </form>
+
+                                            <form method="POST" action="{{ route('agency.secretary.delete', $sec) }}"
+                                                onsubmit="return confirm('Supprimer définitivement ce secrétaire ?')">
+                                                @csrf @method('DELETE')
+                                                <button class="text-xs font-bold text-[#CE1126] hover:underline">
+                                                    Supprimer
+                                                </button>
+                                            </form>
                                         </div>
                                     </div>
 
-                                    <div class="flex items-center gap-3 border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-200">
-                                        <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-md {{ $sec->isActive() ? 'bg-emerald-100 text-[#00843D]' : 'bg-amber-100 text-amber-700' }}">
-                                            {{ $sec->isActive() ? 'Opérationnel' : 'Suspendu' }}
-                                        </span>
-
-                                        <form method="POST" action="{{ route('agency.secretary.toggle', $sec) }}">
+                                    {{-- Formulaire de modification --}}
+                                    <div x-show="editOpen" x-cloak class="mt-4 pt-4 border-t border-slate-200">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <h4 class="text-xs font-extrabold text-slate-800">Modifier les informations de {{ $sec->name }}</h4>
+                                            <button type="button" @click="editOpen = false" class="text-xs text-slate-400 hover:text-slate-600 font-medium">
+                                                ✕ Fermer
+                                            </button>
+                                        </div>
+                                        <form method="POST" action="{{ route('agency.secretary.update', $sec) }}" class="space-y-3">
                                             @csrf
-                                            <button class="text-xs font-bold text-slate-600 hover:text-slate-900 transition">
-                                                {{ $sec->isActive() ? 'Suspendre' : 'Réactiver' }}
-                                            </button>
-                                        </form>
-
-                                        <form method="POST" action="{{ route('agency.secretary.delete', $sec) }}"
-                                            onsubmit="return confirm('Supprimer définitivement ce secrétaire ?')">
-                                            @csrf @method('DELETE')
-                                            <button class="text-xs font-bold text-[#CE1126] hover:underline">
-                                                Supprimer
-                                            </button>
+                                            @method('PUT')
+                                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                                                <div>
+                                                    <label class="block text-[11px] font-bold text-slate-600 mb-1">Nom complet <span class="text-[#CE1126]">*</span></label>
+                                                    <input type="text" name="name" value="{{ old('name', $sec->name) }}" required
+                                                        class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-semibold text-slate-800 focus:border-[#00843D] focus:ring-1 focus:ring-[#00843D]">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-[11px] font-bold text-slate-600 mb-1">N° Téléphone <span class="text-[#CE1126]">*</span></label>
+                                                    <input type="tel" name="phone" value="{{ old('phone', $sec->phone) }}" required placeholder="6XXXXXXXX"
+                                                        class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-semibold text-slate-800 focus:border-[#00843D] focus:ring-1 focus:ring-[#00843D]">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-[11px] font-bold text-slate-600 mb-1">Nouveau mot de passe</label>
+                                                    <input type="password" name="password" placeholder="Laisser vide si inchangé"
+                                                        class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-semibold text-slate-800 placeholder-slate-400 focus:border-[#00843D] focus:ring-1 focus:ring-[#00843D]">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-[11px] font-bold text-slate-600 mb-1">Email (Optionnel)</label>
+                                                    <input type="email" name="email" value="{{ old('email', $sec->email) }}" placeholder="email@exemple.com"
+                                                        class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-semibold text-slate-800 placeholder-slate-400 focus:border-[#00843D] focus:ring-1 focus:ring-[#00843D]">
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-2 pt-1">
+                                                <button type="submit" class="bg-[#00843D] hover:bg-[#006B32] text-white font-bold py-2 px-4 rounded-lg text-xs transition shadow-xs">
+                                                    Enregistrer les modifications
+                                                </button>
+                                                <button type="button" @click="editOpen = false" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 px-4 rounded-lg text-xs transition">
+                                                    Annuler
+                                                </button>
+                                            </div>
                                         </form>
                                     </div>
                                 </div>

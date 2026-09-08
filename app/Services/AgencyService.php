@@ -106,12 +106,13 @@ class AgencyService
 
             // Créer le compte utilisateur
             $secretary = User::create([
-                'name'     => $data['name'],
-                'phone'    => $data['phone'],
-                'email'    => $data['email'] ?? null,
-                'password' => bcrypt($data['password']),
-                'role'     => User::ROLE_SECRETARY,
-                'status'   => User::STATUS_ACTIVE,
+                'name'      => $data['name'],
+                'phone'     => $data['phone'],
+                'email'     => $data['email'] ?? null,
+                'password'  => bcrypt($data['password']),
+                'role'      => User::ROLE_SECRETARY,
+                'status'    => User::STATUS_ACTIVE,
+                'agency_id' => $counter->agency_id,
             ]);
 
             // Affecter au comptoir

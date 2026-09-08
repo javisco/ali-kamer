@@ -48,6 +48,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'role',
         'status',
+        'agency_id',
         'phone_momo',
         'momo_operator',
         'wallet_pending',
@@ -186,6 +187,12 @@ class User extends Authenticatable implements MustVerifyEmail
 
     // Relation agence (pour les agency_managers)
     public function managedAgency(): BelongsTo
+    {
+        return $this->belongsTo(Agency::class, 'agency_id');
+    }
+
+    // Relation agence directe (pour les secrétaires et managers)
+    public function agency(): BelongsTo
     {
         return $this->belongsTo(Agency::class, 'agency_id');
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications;
+namespace App\Notifications\Products;
 
 use App\Models\Product;
 use App\Models\ProductVariant;

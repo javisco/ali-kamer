@@ -9,8 +9,8 @@ use App\Models\Shop;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use App\Notifications\KycApprovedNotification;
-use App\Notifications\KycRejectedNotification;
+use App\Notifications\Kyc\KycApprovedNotification;
+use App\Notifications\Kyc\KycRejectedNotification;
 
 class KycService
 {
@@ -68,14 +68,14 @@ class KycService
             ]);
 
             // Activer le compte vendeur
-      //      $kyc->user->update(['status' => User::STATUS_ACTIVE]);
+            //      $kyc->user->update(['status' => User::STATUS_ACTIVE]);
 
             // Activer la boutique
             $kyc->user->shop?->update([
                 'status'      => 'active',
                 'verified_at' => now(),
             ]);
-          //  $kyc->user->notify(new KycApprovedNotification());
+            //  $kyc->user->notify(new KycApprovedNotification());
             AdminLog::record(
                 $admin,
                 'kyc.approved',
@@ -101,7 +101,7 @@ class KycService
                 'rejection_reason' => $reason,
                 'reviewed_at'      => now(),
             ]);
-           // $kyc->user->notify(new KycRejectedNotification($reason));
+            // $kyc->user->notify(new KycRejectedNotification($reason));
             AdminLog::record(
                 $admin,
                 'kyc.rejected',
@@ -111,8 +111,6 @@ class KycService
             );
         });
 
-        // Décommenter en production :
-        // app(NotificationService::class)->notifyKycRejected($kyc->user, $reason);
     }
 
     // ── URL TEMPORAIRE POUR LES FICHIERS ─────────────────────────────
@@ -153,6 +151,7 @@ class KycService
             // On stocke phone, phone_momo et IP pour bloquer toute réinscription
             Blacklist::create([
                 'phone_number' => $seller->phone,
+                'email' => $seller->email,
                 'phone_momo'   => $seller->phone_momo,
                 'ip_address'   => request()->ip(),
                 'reason'       => $reason,

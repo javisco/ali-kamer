@@ -12,7 +12,7 @@ use App\Models\ProductVariant;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use App\Notifications\ProductOutOfStockNotification;
+use App\Notifications\Products\ProductOutOfStockNotification;
 
 class OrderService
 {
@@ -213,6 +213,7 @@ class OrderService
                 'reference'           => Order::generateReference(),
                 'buyer_id'            => $buyer->id,
                 'shop_id'             => $shopId,
+
                 'status'              => Order::STATUS_AWAITING_PAYMENT,
                 'subtotal'            => $fin['subtotal'],
                 'protection_fee'      => $fin['protection_fee'],

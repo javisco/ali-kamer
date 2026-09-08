@@ -6,6 +6,9 @@ use App\Models\AgencyCounter;
 use App\Models\Order;
 use App\Models\SecretaryCounter;
 use App\Models\User;
+use App\Notifications\Shippings\BuyerArrivalWithOtpNotification;
+use App\Notifications\Shippings\BuyerTransportFeeNotification;
+use App\Notifications\Shippings\PackageRegisteredNotification;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -104,7 +107,9 @@ class ShippingService
                 $counter->agency,
                 $order
             );
-            // app(NotificationService::class)->notifyPackageRegistered($order);
+            // $order->buyer->notify(
+            //  new PackageRegisteredNotification($order)
+            //);
         });
     }
 
@@ -194,13 +199,11 @@ class ShippingService
             $order->update([
                 'status'         => Order::STATUS_AWAITING_BUYER_CONFIRMATION,
                 'arrived_at'     => now(),
-                'timer_deadline' => now()->addHours(72),
+                'timer_deadline' => now()->addDays(4),
             ]);
 
             // Créditer la commission de l'agence (1%)
             // Appelé quand le colis arrive à destination
-            // $agency = $counter->agency;
-            //app(AgencyManagerService::class)->creditCommission($agency, $order);
 
             app(AgencyManagerService::class)->releaseCommissionPending(
                 $order->shipment->destinationCounter->agency,
@@ -217,13 +220,17 @@ class ShippingService
                 // Transport inclus ou déjà payé → envoyer OTP directement
                 $order->update([
                     'otp_code'       => $otp,
-                    'otp_expires_at' => now()->addHours(120),
+                    'otp_expires_at' => now()->addDays(10),
                 ]);
-                // app(NotificationService::class)->notifyBuyerArrivalWithOtp($order, $otp);
+                //       $order->buyer?->notify(
+                //        new BuyerArrivalWithOtpNotification($order, $otp)
+                //     );
             } else {
                 // Transport non payé → informer l'acheteur de payer d'abord
                 // L'OTP sera généré après le paiement du transport
-                // app(NotificationService::class)->notifyBuyerTransportFee($order);
+                //  $order->buyer?->notify(
+                //      new BuyerTransportFeeNotification($order)
+                //  );
             }
         });
     }

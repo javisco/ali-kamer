@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications;
+namespace App\Notifications\Kyc;
 
 use App\Notifications\Concerns\HasDatabasePayload;
 use Illuminate\Bus\Queueable;

@@ -11,9 +11,9 @@ use App\Models\WalletTransaction;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use App\Notifications\OrderPaidNotification;
-use App\Notifications\PaymentFailedNotification;
-use App\Notifications\TransportFeePaidNotification;
+use App\Notifications\Payments\OrderPaidNotification;
+use App\Notifications\Payments\PaymentFailedNotification;
+use App\Notifications\Payments\TransportFeePaidNotification;
 
 class PaymentService
 {
