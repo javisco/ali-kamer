@@ -102,10 +102,19 @@
                             {{-- Informations transaction --}}
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2">
-                                    <span class="w-2 h-2 rounded-full {{ $tx->isCredit() ? 'bg-[#016837]' : 'bg-[#E30613]' }}"></span>
+                                    <span class="w-2 h-2 rounded-full {{ $tx->isEscrowTransfer() ? 'bg-blue-500' : ($tx->isCredit() ? 'bg-[#016837]' : 'bg-[#E30613]') }}"></span>
                                     <p class="text-xs font-bold text-[#0a1b12] truncate">
                                         {{ $tx->typeLabel() }}
                                     </p>
+                                    @if ($tx->isEscrowTransfer())
+                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                                            ⇄ Déblocage
+                                        </span>
+                                    @elseif ($tx->isEscrow())
+                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                                            Séquestre
+                                        </span>
+                                    @endif
                                 </div>
 
                                 @if ($tx->note)
@@ -121,11 +130,22 @@
 
                             {{-- Montant & Solde après --}}
                             <div class="text-right flex-shrink-0">
-                                <p class="font-black text-xs sm:text-sm {{ $tx->isCredit() ? 'text-[#016837]' : 'text-[#E30613]' }}">
-                                    {{ $tx->isCredit() ? '+' : '-' }} {{ number_format($tx->amount, 0, ',', ' ') }} <span class="text-[10px] font-bold">FCFA</span>
-                                </p>
+                                @if ($tx->isEscrowTransfer())
+                                    <p class="font-black text-xs sm:text-sm text-blue-700">
+                                        ⇄ {{ number_format($tx->amount, 0, ',', ' ') }} <span class="text-[10px] font-bold">FCFA</span>
+                                    </p>
+                                @elseif ($tx->isCredit())
+                                    <p class="font-black text-xs sm:text-sm text-[#016837]">
+                                        + {{ number_format($tx->amount, 0, ',', ' ') }} <span class="text-[10px] font-bold">FCFA</span>
+                                    </p>
+                                @else
+                                    <p class="font-black text-xs sm:text-sm text-[#E30613]">
+                                        - {{ number_format($tx->amount, 0, ',', ' ') }} <span class="text-[10px] font-bold">FCFA</span>
+                                    </p>
+                                @endif
+
                                 <p class="text-[10px] text-gray-400 font-semibold mt-0.5">
-                                    Solde : {{ number_format($tx->balance_after, 0, ',', ' ') }} FCFA
+                                    {{ $tx->balanceLabel() }} : {{ number_format($tx->balance_after, 0, ',', ' ') }} FCFA
                                 </p>
                             </div>
 

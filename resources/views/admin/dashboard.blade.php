@@ -488,7 +488,7 @@
                 SOLDE ELGIOPAY
             ========================================================== --}}
             @if ($elgiopayBalance)
-                <div
+                <div x-data="{ withdrawModal: false, amount: '', operator: 'MTN', phone: '', recipient_name: '' }"
                     class="relative overflow-hidden bg-white rounded-[22px]
                     border border-green-900/10
                     shadow-[0_3px_16px_rgba(0,77,42,0.06)] p-5 mb-6">
@@ -499,26 +499,34 @@
                         <div class="w-1/3 bg-[#CE1126]"></div>
                     </div>
 
-                    <h2 class="font-black text-[#004D2A] mb-4 flex items-center gap-2 pt-1">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pt-1">
+                        <h2 class="font-black text-[#004D2A] flex items-center gap-2">
+                            <span
+                                class="w-9 h-9 rounded-xl bg-green-50 text-[#00843D]
+                                flex items-center justify-center">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                                        d="M3 7h18M5 7V5a2 2 0 012-2h10a2 2 0 012 2v2M5 7v12a2 2 0 002 2h10a2 2 0 002-2V7M8 11h8" />
+                                </svg>
+                            </span>
+                            <span>
+                                Solde elgiopay plateforme
+                            </span>
+                        </h2>
 
-                        <span
-                            class="w-9 h-9 rounded-xl bg-green-50 text-[#00843D]
-                            flex items-center justify-center">
-
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                                    d="M3 7h18M5 7V5a2 2 0 012-2h10a2 2 0 012 2v2M5 7v12a2 2 0 002 2h10a2 2 0 002-2V7M8 11h8" />
-
-                            </svg>
-
-                        </span>
-
-                        <span>
-                            Solde elgiopay plateforme
-                        </span>
-
-                    </h2>
+                        @if (($elgiopayBalance['available_balance'] ?? 0) >= 1000)
+                            <button @click="withdrawModal = true" type="button"
+                                class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl
+                                bg-[#00843D] hover:bg-[#006830] text-white text-xs font-black shadow-sm
+                                transition active:scale-95">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                                <span>Effectuer un retrait</span>
+                            </button>
+                        @endif
+                    </div>
 
 
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -583,6 +591,110 @@
                         </div>
 
                     </div>
+
+                    {{-- Modal Retrait Elgiopay --}}
+                    <template x-teleport="body">
+                        <div x-show="withdrawModal"
+                            x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0"
+                            x-transition:enter-end="opacity-100"
+                            x-transition:leave="transition ease-in duration-150"
+                            x-transition:leave-start="opacity-100"
+                            x-transition:leave-end="opacity-0"
+                            class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-[#0a1b12]/70 backdrop-blur-sm"
+                            x-cloak>
+
+                            <div @click.away="withdrawModal = false"
+                                class="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+
+                                {{-- Modal Header --}}
+                                <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-[#0a1b12] text-white">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-9 h-9 rounded-xl bg-[#00843D]/20 text-[#00843D] flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-[#FCD116]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-bold text-white text-base">Retrait de fonds Elgiopay</h3>
+                                            <p class="text-xs text-slate-400">Vers un compte Mobile Money</p>
+                                        </div>
+                                    </div>
+                                    <button @click="withdrawModal = false" type="button" class="text-slate-400 hover:text-white transition">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                {{-- Form --}}
+                                <form action="{{ route('admin.withdraw') }}" method="POST" class="p-5 space-y-4">
+                                    @csrf
+
+                                    <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 flex items-center justify-between">
+                                        <span>Solde disponible :</span>
+                                        <span class="font-black text-emerald-900 text-sm">
+                                            {{ number_format($elgiopayBalance['available_balance'] ?? 0, 0, ',', ' ') }} FCFA
+                                        </span>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 mb-1">Montant à retirer (FCFA) *</label>
+                                        <input type="number" name="amount" x-model="amount" min="1000" max="{{ $elgiopayBalance['available_balance'] ?? 0 }}" required
+                                            placeholder="Ex: 50000"
+                                            class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00843D]">
+                                        <p class="text-[11px] text-slate-500 mt-1">Minimum : 1 000 FCFA</p>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 mb-1">Opérateur *</label>
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <label class="cursor-pointer border rounded-xl p-3 flex items-center gap-2 transition"
+                                                :class="operator === 'MTN' ? 'border-[#FCD116] bg-amber-50/50 ring-2 ring-[#FCD116]/50' : 'border-slate-200 hover:bg-slate-50'">
+                                                <input type="radio" name="operator" value="MTN" x-model="operator" class="text-[#FCD116] focus:ring-[#FCD116]">
+                                                <span class="text-xs font-bold text-slate-800">MTN MoMo</span>
+                                            </label>
+                                            <label class="cursor-pointer border rounded-xl p-3 flex items-center gap-2 transition"
+                                                :class="operator === 'ORANGE' ? 'border-orange-500 bg-orange-50/50 ring-2 ring-orange-500/50' : 'border-slate-200 hover:bg-slate-50'">
+                                                <input type="radio" name="operator" value="ORANGE" x-model="operator" class="text-orange-600 focus:ring-orange-500">
+                                                <span class="text-xs font-bold text-slate-800">Orange Money</span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 mb-1">Numéro de téléphone *</label>
+                                        <div class="relative">
+                                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-xs font-bold text-slate-400">+237</span>
+                                            <input type="text" name="phone" x-model="phone" required maxlength="9" pattern="^6[0-9]{8}$"
+                                                placeholder="6XXXXXXXX"
+                                                class="w-full pl-14 pr-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00843D]">
+                                        </div>
+                                        <p class="text-[11px] text-slate-500 mt-1">9 chiffres commençant par 6 (ex: 670123456)</p>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 mb-1">Nom du bénéficiaire (optionnel)</label>
+                                        <input type="text" name="recipient_name" x-model="recipient_name" maxlength="100"
+                                            placeholder="Ex: John Doe"
+                                            class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00843D]">
+                                    </div>
+
+                                    <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+                                        <button @click="withdrawModal = false" type="button"
+                                            class="px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition">
+                                            Annuler
+                                        </button>
+                                        <button type="submit"
+                                            class="px-5 py-2 text-xs font-black text-white bg-[#00843D] hover:bg-[#006830] rounded-xl shadow transition active:scale-95">
+                                            Confirmer le retrait
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </template>
 
                 </div>
             @endif

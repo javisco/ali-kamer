@@ -13,7 +13,9 @@ class WalletController extends Controller
     // Page portefeuille vendeur avec historique des transactions
     public function index()
     {
-        $user         = auth()->user();
+        $user = auth()->user();
+        $this->walletService->syncSellerBalances($user);
+        $user->refresh();
         $transactions = $this->walletService->history($user);
 
         return view('seller.wallet.index', compact('user', 'transactions'));

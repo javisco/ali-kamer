@@ -199,7 +199,38 @@ class DisputeService
             ]);
 
             $seller = $order->shop->user;
-            $seller->decrement('wallet_pending', $order->net_amount);
+            // Déterminer le montant net à débiter du vendeur (plafonné au net_amount)
+            $sellerDeduct = min($order->net_amount, $netAmount);
+
+            if ($sellerDeduct > 0) {
+                // Débiter d'abord depuis le séquestre sans provoquer de négatif
+                $fromPending = min($seller->wallet_pending, $sellerDeduct);
+                if ($fromPending > 0) {
+                    $seller->decrement('wallet_pending', $fromPending);
+                }
+
+                // Si le reste provient de fonds déjà libérés (disponible)
+                $remainingDeduct = $sellerDeduct - $fromPending;
+                if ($remainingDeduct > 0) {
+                    $fromAvailable = min($seller->wallet_available, $remainingDeduct);
+                    if ($fromAvailable > 0) {
+                        $seller->decrement('wallet_available', $fromAvailable);
+                    }
+                }
+
+                $seller->refresh();
+
+                // Enregistrer la transaction pour le vendeur afin que son portefeuille reste cohérent
+                WalletTransaction::create([
+                    'user_id'       => $seller->id,
+                    'type'          => WalletTransaction::TYPE_CREDIT_REFUND,
+                    'amount'        => $sellerDeduct,
+                    'balance_after' => $seller->wallet_available,
+                    'ref_type'      => 'order',
+                    'ref_id'        => $order->id,
+                    'note'          => "Débit suite à remboursement litige {$order->reference}",
+                ]);
+            }
         } catch (\Exception $e) {
             Log::error('Buyer refund failed', ['error' => $e->getMessage()]);
             throw $e;

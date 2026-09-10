@@ -47,28 +47,31 @@ class WalletService
     {
         DB::transaction(function () use ($seller, $amount, $order) {
 
-            $seller->decrement('wallet_pending', $order->net_amount);
+            $pendingToDecrement = min($seller->wallet_pending, $order->net_amount);
+            if ($pendingToDecrement > 0) {
+                $seller->decrement('wallet_pending', $pendingToDecrement);
+            }
             $seller->increment('wallet_available', $amount);
             $seller->refresh();
 
             WalletTransaction::create([
-                'user_id'      => $seller->id,
-                'type'         => WalletTransaction::TYPE_DEBIT_ESCROW,
-                'amount'       => $amount,
+                'user_id'       => $seller->id,
+                'type'          => WalletTransaction::TYPE_DEBIT_ESCROW,
+                'amount'        => $amount,
                 'balance_after' => $seller->wallet_pending,
-                'ref_type'     => 'order',
-                'ref_id'       => $order->id,
-                'note'         => "Libération séquestre {$order->reference}",
+                'ref_type'      => 'order',
+                'ref_id'        => $order->id,
+                'note'          => "Transfert séquestre vers disponible — {$order->reference}",
             ]);
 
             WalletTransaction::create([
-                'user_id'      => $seller->id,
-                'type'         => WalletTransaction::TYPE_CREDIT_AVAILABLE,
-                'amount'       => $amount,
+                'user_id'       => $seller->id,
+                'type'          => WalletTransaction::TYPE_CREDIT_AVAILABLE,
+                'amount'        => $amount,
                 'balance_after' => $seller->wallet_available,
-                'ref_type'     => 'order',
-                'ref_id'       => $order->id,
-                'note'         => "Fonds disponibles commande {$order->reference}",
+                'ref_type'      => 'order',
+                'ref_id'        => $order->id,
+                'note'          => "Fonds disponibles commande {$order->reference}",
             ]);
         });
     }
@@ -215,7 +218,8 @@ class WalletService
                 => $available += $tx->amount,
                 WalletTransaction::TYPE_DEBIT_WITHDRAWAL,
                 WalletTransaction::TYPE_DEBIT_COMMISSION,
-                WalletTransaction::TYPE_DEBIT_TRANSPORT_FEE
+                WalletTransaction::TYPE_DEBIT_TRANSPORT_FEE,
+                WalletTransaction::TYPE_DEBIT_REFUND
                 => $available -= $tx->amount,
                 default => null,
             };
@@ -225,5 +229,40 @@ class WalletService
             'pending'   => max(0, $pending),
             'available' => max(0, $available),
         ];
+    }
+
+    /**
+     * Synchronise et garantit la cohérence des soldes du vendeur
+     * (séquestre et disponible) entre transactions et statut réel des commandes.
+     */
+    public function syncSellerBalances(User $seller): void
+    {
+        $balances = $this->recalculateBalances($seller);
+
+        // Si le vendeur a une boutique, recalculer le montant réel sous séquestre
+        $shop = $seller->relationLoaded('shop') ? $seller->shop : $seller->shop()->first();
+        if ($shop) {
+            $pendingOrdersSum = Order::where('shop_id', $shop->id)
+                ->whereIn('status', [
+                    Order::STATUS_PAID,
+                    Order::STATUS_PREPARING,
+                    Order::STATUS_REGISTERED_ORIGIN,
+                    Order::STATUS_IN_TRANSIT,
+                    Order::STATUS_ARRIVED_DESTINATION,
+                    Order::STATUS_AWAITING_BUYER_CONFIRMATION,
+                    Order::STATUS_DISPUTED,
+                ])
+                ->sum('net_amount');
+
+            // Le séquestre correspond au montant net des commandes en cours non finalisées
+            if ($pendingOrdersSum > 0 || $balances['pending'] > 0) {
+                $balances['pending'] = max(0, (int) $pendingOrdersSum);
+            }
+        }
+
+        $seller->update([
+            'wallet_pending'   => max(0, $balances['pending']),
+            'wallet_available' => max(0, $balances['available']),
+        ]);
     }
 }

@@ -325,9 +325,11 @@ Route::middleware(['auth', 'verified', 'role:seller', 'shop.active','check.statu
 
 Route::middleware(['auth', 'verified', 'role:admin','check.status'])->prefix('admin')->group(function () {
 
-        // Dashboard
+        // Dashboard & Retrait
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])
                 ->name('admin.dashboard');
+        Route::post('/retrait', [AdminDashboardController::class, 'withdraw'])
+                ->name('admin.withdraw');
 
         // Utilisateurs
         Route::get('/utilisateurs', [AdminDashboardController::class, 'users'])

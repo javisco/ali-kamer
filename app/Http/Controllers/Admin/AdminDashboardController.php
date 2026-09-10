@@ -14,6 +14,7 @@ use App\Services\ElgiopayService;
 use App\Services\KycService;
 use App\Services\WalletService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 
 class AdminDashboardController extends Controller
@@ -213,5 +214,60 @@ class AdminDashboardController extends Controller
             'threshold',
             'scoreDistribution'
         ));
+    }
+
+    // Retrait des fonds de la plateforme vers Mobile Money (Admin)
+    public function withdraw(Request $request, ElgiopayService $elgiopay)
+    {
+        $request->validate([
+            'amount'         => ['required', 'integer', 'min:1000'],
+            'phone'          => ['required', 'string', 'regex:/^6[0-9]{8}$/'],
+            'operator'       => ['required', 'in:mtn,orange'],
+            'recipient_name' => ['nullable', 'string', 'max:255'],
+        ], [
+            'amount.min'     => 'Le montant minimum de retrait est de 1 000 FCFA.',
+            'phone.regex'    => 'Le numéro doit être au format camerounais à 9 chiffres (6XXXXXXXX).',
+            'operator.in'    => 'L\'opérateur doit être MTN ou Orange.',
+        ]);
+
+        try {
+            // Vérifier le solde disponible en temps réel
+            $balance = $elgiopay->getBalance();
+            $availableBalance = (int) ($balance['available_balance'] ?? 0);
+
+            if ($request->amount > $availableBalance) {
+                return back()->withErrors([
+                    'amount' => 'Solde disponible insuffisant sur le compte Elgiopay (' . number_format($availableBalance, 0, ',', ' ') . ' FCFA disponibles).'
+                ]);
+            }
+
+            $phone = '237' . ltrim($request->phone, '0');
+            $reference = 'ADMIN-WITHDRAWAL-' . auth()->id() . '-' . Str::uuid();
+            $recipientName = $request->recipient_name ?: auth()->user()->name;
+
+            $elgiopay->disburse(
+                phone: $phone,
+                grossAmount: $request->amount,
+                reference: $reference,
+                description: "Retrait plateforme Ali-Kamer — Admin " . auth()->user()->name,
+                operator: $request->operator,
+                recipientName: $recipientName
+            );
+
+            AdminLog::record(
+                auth()->user(),
+                'admin.withdrawal',
+                'platform',
+                null,
+                "Retrait de " . number_format($request->amount, 0, ',', ' ') . " FCFA vers {$request->operator} {$phone} ({$recipientName})"
+            );
+
+            return back()->with('success', 'Retrait de ' . number_format($request->amount, 0, ',', ' ') . ' FCFA effectué avec succès vers votre compte Mobile Money.');
+        } catch (\Exception $e) {
+            \Log::error('Admin withdrawal failed', ['error' => $e->getMessage()]);
+            return back()->withErrors([
+                'amount' => 'Échec du retrait : ' . $e->getMessage(),
+            ]);
+        }
     }
 }
