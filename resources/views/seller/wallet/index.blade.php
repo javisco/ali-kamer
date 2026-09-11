@@ -39,40 +39,48 @@
             <!-- 3. SOLDES (EN ATTENTE / DISPONIBLE) -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
 
-                {{-- Solde en attente --}}
-                <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-xs">
-                    <p class="text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1">
+                {{-- Solde en attente — ambre : argent réel, verrouillé, pas "mort" --}}
+                <div class="bg-white rounded-2xl border-2 border-[#F9A01B]/30 p-5 shadow-xs">
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-[#F9A01B] mb-1 flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
                         En Attente (Séquestre)
                     </p>
-                    <p class="text-2xl sm:text-3xl font-black text-gray-400">
+                    <p class="text-2xl sm:text-3xl font-black text-[#F9A01B]">
                         {{ number_format($user->wallet_pending, 0, ',', ' ') }}
-                        <span class="text-xs font-bold text-gray-400">FCFA</span>
+                        <span class="text-xs font-bold text-[#F9A01B]">FCFA</span>
                     </p>
-                    <p class="text-xs text-gray-400 font-medium mt-1.5 flex items-center gap-1">
-                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
-                        Libérés après confirmation de livraison
+                    <p class="text-xs text-[#F9A01B]/80 font-medium mt-1.5">
+                        Argent réel, verrouillé jusqu'à confirmation de livraison
                     </p>
                 </div>
 
                 {{-- Solde disponible --}}
-                <div class="bg-white rounded-2xl border border-[#016837]/30 p-5 shadow-xs">
-                    <p class="text-[11px] font-bold uppercase tracking-wider text-[#016837] mb-1">
+                <div class="bg-white rounded-2xl border-2 border-[#016837]/30 p-5 shadow-xs">
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-[#016837] mb-1 flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
                         Solde Disponible
                     </p>
                     <p class="text-2xl sm:text-3xl font-black text-[#016837]">
                         {{ number_format($user->wallet_available, 0, ',', ' ') }}
                         <span class="text-xs font-bold text-[#016837]">FCFA</span>
                     </p>
-                    <p class="text-xs text-[#016837]/80 font-medium mt-1.5 flex items-center gap-1">
-                        <svg class="w-3.5 h-3.5 shrink-0 text-[#016837]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+                    <p class="text-xs text-[#016837]/80 font-medium mt-1.5">
                         Retirable vers Mobile Money (min. 1 000 FCFA)
                     </p>
                 </div>
 
+            </div>
+
+            <!-- Repère visuel entre les deux soldes -->
+            <div class="flex items-center gap-2 text-[11px] text-gray-400 font-medium px-1">
+                <svg class="w-3.5 h-3.5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+                Le séquestre devient automatiquement disponible dès que la livraison est confirmée.
             </div>
 
             <!-- 4. BOUTON D'ACTION (RETRAIT) -->
@@ -106,23 +114,29 @@
                 @else
                     <div class="divide-y divide-gray-100">
                         @foreach ($transactions as $tx)
+                            @php($meta = $tx->displayMeta())
                             <div class="flex items-center justify-between px-5 py-3.5 hover:bg-[#F7F7F2]/40 transition">
                                 <div class="flex-1 min-w-0 pr-4">
-                                    <p class="text-xs sm:text-sm font-bold text-[#0a1b12]">
-                                        {{ $tx->typeLabel() }}
-                                    </p>
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded-lg flex items-center justify-center shrink-0 text-[10px] font-black {{ $meta['bg'] }} {{ $meta['text'] }}">
+                                            {{ $meta['sign'] === '→' ? '→' : ($meta['sign'] === '+' ? '↑' : '↓') }}
+                                        </span>
+                                        <p class="text-xs sm:text-sm font-bold text-[#0a1b12]">
+                                            {{ $tx->typeLabel() }}
+                                        </p>
+                                    </div>
                                     @if ($tx->note)
-                                        <p class="text-[11px] text-gray-400 mt-0.5 truncate">{{ $tx->note }}</p>
+                                        <p class="text-[11px] text-gray-400 mt-0.5 ml-8 truncate">{{ $tx->note }}</p>
                                     @endif
-                                    <p class="text-[10px] text-gray-400 mt-0.5 font-medium">
+                                    <p class="text-[10px] text-gray-400 mt-0.5 ml-8 font-medium">
                                         {{ $tx->created_at->format('d/m/Y à H:i') }}
                                     </p>
                                 </div>
 
-                                {{-- Montant (Crédit / Débit) --}}
+                                {{-- Montant --}}
                                 <div class="text-right shrink-0">
-                                    <p class="font-black text-xs sm:text-sm {{ $tx->isCredit() ? 'text-[#016837]' : 'text-[#E30613]' }}">
-                                        {{ $tx->isCredit() ? '+' : '-' }}
+                                    <p class="font-black text-xs sm:text-sm {{ $meta['text'] }}">
+                                        {{ $meta['sign'] }}
                                         {{ number_format($tx->amount, 0, ',', ' ') }} FCFA
                                     </p>
                                     <p class="text-[10px] text-gray-400 mt-0.5 font-medium">

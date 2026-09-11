@@ -193,6 +193,7 @@ class WalletService
     public function history(User $user, int $perPage = 20)
     {
         return WalletTransaction::where('user_id', $user->id)
+            ->where('type', '!=', WalletTransaction::TYPE_DEBIT_ESCROW)
             ->latest()
             ->paginate($perPage);
     }

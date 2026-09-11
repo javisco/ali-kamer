@@ -24,6 +24,7 @@ use App\Http\Controllers\Buyer\WalletController as BuyerWalletcontroller;
 use App\Http\Controllers\Admin\AgencyController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\FinancialEngineController;
+use App\Http\Controllers\Admin\TreasuryController;
 use App\Http\Controllers\Admin\TutorialController as AdminTutorialController;
 use App\Http\Controllers\TutorialController;
 use App\Http\Controllers\Buyer\CartController;
@@ -41,7 +42,7 @@ require 'auth.php';
 
 
 // Vendeur — KYC
-Route::middleware(['auth','check.status', 'verified', 'role:seller'])->prefix('seller')->group(function () {
+Route::middleware(['auth', 'check.status', 'verified', 'role:seller'])->prefix('seller')->group(function () {
         Route::get('/kyc', [KycSellerController::class, 'create'])->name('seller.kyc.create');
         Route::post('/kyc', [KycSellercontroller::class, 'store'])->name('seller.kyc.store');
         Route::get('/kyc/attente', [KycSellerController::class, 'pending'])->name('seller.kyc.pending');
@@ -49,7 +50,7 @@ Route::middleware(['auth','check.status', 'verified', 'role:seller'])->prefix('s
 });
 
 // Admin — KYC
-Route::middleware(['auth', 'verified', 'role:admin','check.status'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'verified', 'role:admin', 'check.status'])->prefix('admin')->group(function () {
         Route::get('/kyc/file', [KycAdminController::class, 'serveFile'])->name('admin.kyc.file');
         Route::get('/kyc', [KycAdminController::class, 'index'])->name('admin.kyc.index');
         Route::get('/kyc/{kyc}', [KycAdminController::class, 'show'])->name('admin.kyc.show');
@@ -58,7 +59,7 @@ Route::middleware(['auth', 'verified', 'role:admin','check.status'])->prefix('ad
 });
 
 //boutique -  vendeur
-Route::middleware(['auth', 'verified', 'role:seller','check.status'])->prefix('vendeur')->group(function () {
+Route::middleware(['auth', 'verified', 'role:seller', 'check.status'])->prefix('vendeur')->group(function () {
         Route::get('/boutique/creer', [ShopController::class, 'create'])->name('seller.shop.create');
         Route::post('/boutique', [ShopController::class, 'store'])->name('seller.shop.store');
 
@@ -71,7 +72,7 @@ Route::middleware(['auth', 'verified', 'role:seller','check.status'])->prefix('v
 
 
 
-Route::middleware(['auth', 'verified', 'role:buyer','check.status'])->prefix('acheteur')->group(function () {
+Route::middleware(['auth', 'verified', 'role:buyer', 'check.status'])->prefix('acheteur')->group(function () {
         Route::get('/dashboard', [BuyerDashboardController::class, 'index'])->name('buyer.dashboard');
 });
 
@@ -83,7 +84,7 @@ Route::get('/boutique/{shop}', [CatalogController::class, 'shop'])->name('shop.s
 // ── Produits vendeur ──────────────────────────────────────────────
 // Route::middleware(['auth', 'role:seller'])->prefix('vendeur')->group(function () {});
 
-Route::middleware(['auth', 'verified', 'role:seller', 'shop.active','check.status'])->prefix('vendeur')->group(function () {
+Route::middleware(['auth', 'verified', 'role:seller', 'shop.active', 'check.status'])->prefix('vendeur')->group(function () {
         Route::get('/dasboard', [ProductController::class, 'dashboard'])->name('seller.dashboard');
         Route::get('/produits', [ProductController::class, 'index'])
                 ->name('seller.products.index');
@@ -110,7 +111,7 @@ Route::middleware(['auth', 'verified', 'role:seller', 'shop.active','check.statu
 
 
 // ── Commandes vendeur ─────────────────────────────────────────────
-Route::middleware(['auth', 'verified', 'role:seller', 'shop.active','check.status'])->prefix('vendeur')->group(function () {
+Route::middleware(['auth', 'verified', 'role:seller', 'shop.active', 'check.status'])->prefix('vendeur')->group(function () {
         Route::get('/commandes', [SellerOrderController::class, 'index'])->name('seller.orders.index');
         Route::get('/commandes/{order}', [SellerOrderController::class, 'show'])->name('seller.orders.show');
         // Route::post('/commandes/{order}/preparer', [SellerOrderController::class, 'markPreparing'])->name('seller.orders.preparing');
@@ -120,7 +121,7 @@ Route::middleware(['auth', 'verified', 'role:seller', 'shop.active','check.statu
 
 
 // ── Commandes acheteur ────────────────────────────────────────────
-Route::middleware(['auth', 'verified', 'role:buyer','check.status'])->prefix('commandes')->group(function () {
+Route::middleware(['auth', 'verified', 'role:buyer', 'check.status'])->prefix('commandes')->group(function () {
         Route::get('/', [BuyerOrderController::class, 'index'])->name('buyer.orders.index');
         Route::get('/passer/{product}', [BuyerOrderController::class, 'create'])->name('buyer.orders.create');
         Route::post('/', [BuyerOrderController::class, 'store'])->name('buyer.orders.store');
@@ -137,7 +138,7 @@ Route::post('/webhooks/elgiopay', [WebhookController::class, 'elgiopay'])
         ->name('payment.webhook.elgiopay');
 
 // Pages paiement acheteur
-Route::middleware(['auth', 'verified', 'role:buyer','check.status'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:buyer', 'check.status'])->group(function () {
 
         Route::get('/paiement/{order}/initier', [PaymentController::class, 'initiate'])
                 ->name('buyer.payment.initiate');
@@ -149,18 +150,18 @@ Route::middleware(['auth', 'verified', 'role:buyer','check.status'])->group(func
 // Pages paiement acheteur groupper
 Route::middleware(['auth', 'verified', 'role:buyer', 'check.status'])->group(function () {
 
-    Route::get('/paiement/groupe/{group}/initier', [PaymentController::class, 'initiateGroup'])
-        ->name('buyer.payment.group.initiate');
-    Route::get('/paiement/groupe/{group}/attente', [PaymentController::class, 'waitingGroup'])
-        ->name('buyer.payment.group.waiting');
-    Route::get('/achats/{group}/statut', [PaymentController::class, 'statusGroup'])
-        ->name('buyer.payment.group.status');
-    Route::get('/achats/{group}', [BuyerOrderController::class, 'showGroup'])
-        ->name('buyer.orders.group.show');
+        Route::get('/paiement/groupe/{group}/initier', [PaymentController::class, 'initiateGroup'])
+                ->name('buyer.payment.group.initiate');
+        Route::get('/paiement/groupe/{group}/attente', [PaymentController::class, 'waitingGroup'])
+                ->name('buyer.payment.group.waiting');
+        Route::get('/achats/{group}/statut', [PaymentController::class, 'statusGroup'])
+                ->name('buyer.payment.group.status');
+        Route::get('/achats/{group}', [BuyerOrderController::class, 'showGroup'])
+                ->name('buyer.orders.group.show');
 });
 
 // Paiement frais transport acheteur
-Route::middleware(['auth', 'role:buyer', 'verified','check.status'])->group(function () {
+Route::middleware(['auth', 'role:buyer', 'verified', 'check.status'])->group(function () {
 
         Route::get('/commandes/{order}/transport', [BuyerOrderController::class, 'transportPayment'])
                 ->name('buyer.orders.transport');
@@ -180,7 +181,7 @@ Route::middleware(['auth', 'role:buyer', 'verified','check.status'])->group(func
 
 
 //messagerie
-Route::middleware(['auth', 'verified','check.status'])->group(function () {
+Route::middleware(['auth', 'verified', 'check.status'])->group(function () {
 
         // Liste des conversations
         Route::get('/messages', [MessagingController::class, 'index'])
@@ -211,7 +212,7 @@ Route::middleware(['auth', 'verified','check.status'])->group(function () {
 
 
 // Portefeuille vendeur
-Route::middleware(['auth', 'verified', 'role:seller', 'shop.active','check.status'])->prefix('vendeur')->group(function () {
+Route::middleware(['auth', 'verified', 'role:seller', 'shop.active', 'check.status'])->prefix('vendeur')->group(function () {
         Route::get('/portefeuille', [WalletController::class, 'index'])
                 ->name('seller.wallet.index');
         Route::get('/portefeuille/retrait', [WalletController::class, 'withdrawForm'])
@@ -221,7 +222,7 @@ Route::middleware(['auth', 'verified', 'role:seller', 'shop.active','check.statu
 });
 
 
-Route::middleware(['auth', 'role:secretary','check.status'])
+Route::middleware(['auth', 'role:secretary', 'check.status'])
         ->prefix('agence')
         ->group(function () {
 
@@ -276,7 +277,7 @@ Route::middleware(['auth', 'role:secretary','check.status'])
 
 
 // ── Litiges acheteur ──────────────────────────────────────────────
-Route::middleware(['auth', 'role:buyer', 'verified','check.status'])->group(function () {
+Route::middleware(['auth', 'role:buyer', 'verified', 'check.status'])->group(function () {
         // Liste des litiges de l'acheteur
         Route::get('/litiges', [BuyerDisputeController::class, 'index'])
                 ->name('buyer.disputes.index');
@@ -291,7 +292,7 @@ Route::middleware(['auth', 'role:buyer', 'verified','check.status'])->group(func
 });
 
 // ── Litiges vendeur ───────────────────────────────────────────────
-Route::middleware(['auth', 'role:seller', 'shop.active','check.status'])->prefix('vendeur')->group(function () {
+Route::middleware(['auth', 'role:seller', 'shop.active', 'check.status'])->prefix('vendeur')->group(function () {
         Route::get('/litiges', [SellerDisputeController::class, 'index'])
                 ->name('seller.disputes.index');
         Route::get('/litiges/{dispute}', [SellerDisputeController::class, 'show'])
@@ -304,7 +305,7 @@ Route::middleware(['auth', 'role:seller', 'shop.active','check.status'])->prefix
 
 
 // ── Litiges admin ─────────────────────────────────────────────────
-Route::middleware(['auth', 'role:admin','check.status'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'role:admin', 'check.status'])->prefix('admin')->group(function () {
         Route::get('/litiges', [AdminDisputeController::class, 'index'])
                 ->name('admin.disputes.index');
         Route::get('/litiges/{dispute}', [AdminDisputeController::class, 'show'])
@@ -314,7 +315,7 @@ Route::middleware(['auth', 'role:admin','check.status'])->prefix('admin')->group
 });
 
 // Avis acheteur
-Route::middleware(['auth', 'verified', 'role:buyer','check.status'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:buyer', 'check.status'])->group(function () {
         Route::get('/commandes/{order}/noter', [BuyerReviewController::class, 'create'])
                 ->name('buyer.reviews.create');
         Route::post('/commandes/{order}/noter', [BuyerReviewController::class, 'store'])
@@ -324,7 +325,7 @@ Route::middleware(['auth', 'verified', 'role:buyer','check.status'])->group(func
 });
 
 // Avis vendeur sur acheteur
-Route::middleware(['auth', 'verified', 'role:seller', 'shop.active','check.status'])->prefix('vendeur')->group(function () {
+Route::middleware(['auth', 'verified', 'role:seller', 'shop.active', 'check.status'])->prefix('vendeur')->group(function () {
         Route::get('/commandes/{order}/noter-acheteur', [SellerReviewController::class, 'create'])
                 ->name('seller.reviews.create');
         Route::post('/commandes/{order}/noter-acheteur', [SellerReviewController::class, 'store'])
@@ -333,7 +334,7 @@ Route::middleware(['auth', 'verified', 'role:seller', 'shop.active','check.statu
 
 
 
-Route::middleware(['auth', 'verified', 'role:admin','check.status'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'verified', 'role:admin', 'check.status'])->prefix('admin')->group(function () {
 
         // Dashboard
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])
@@ -370,11 +371,14 @@ Route::middleware(['auth', 'verified', 'role:admin','check.status'])->prefix('ad
                 ->name('admin.financial-engine.index');
         Route::post('/moteur-financier', [FinancialEngineController::class, 'update'])
                 ->name('admin.financial-engine.update');
+
+        Route::get('/tresorerie', [TreasuryController::class, 'index'])->name('admin.treasury.index');
+        Route::post('/tresorerie/retrait', [TreasuryController::class, 'withdraw'])->name('admin.treasury.withdraw');
 });
 
 
 
-Route::middleware(['auth', 'role:admin','check.status'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'role:admin', 'check.status'])->prefix('admin')->group(function () {
 
         // Agences
         Route::get('/agences', [AgencyController::class, 'index'])
@@ -426,7 +430,7 @@ Route::middleware(['auth', 'role:admin','check.status'])->prefix('admin')->group
 
 
 // Tutoriels publics (acheteurs et vendeurs connectés)
-Route::middleware('auth','check.status')->group(function () {
+Route::middleware('auth', 'check.status')->group(function () {
         Route::get('/tutoriels', [TutorialController::class, 'index'])
                 ->name('tutorials.index');
         Route::get('/tutoriels/{tutorial}', [TutorialController::class, 'show'])
@@ -435,7 +439,7 @@ Route::middleware('auth','check.status')->group(function () {
 
 
 // Admin — gestion tutoriels
-Route::middleware(['auth', 'role:admin','check.status'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'role:admin', 'check.status'])->prefix('admin')->group(function () {
         Route::get('/tutoriels', [AdminTutorialController::class, 'index'])
                 ->name('admin.tutorials.index');
         Route::get('/tutoriels/creer', [AdminTutorialController::class, 'create'])
@@ -462,7 +466,7 @@ Route::view('/aide', 'pages.help')->name('help');
 Route::view('/a-propos', 'pages.about')->name('about');
 
 
-Route::middleware(['auth', 'role:buyer', 'verified','check.status'])->group(function () {
+Route::middleware(['auth', 'role:buyer', 'verified', 'check.status'])->group(function () {
 
         // ── Panier ────────────────────────────────────────────────────────
         Route::get('/panier', [CartController::class, 'index'])
@@ -498,7 +502,7 @@ Route::middleware(['auth', 'role:buyer', 'verified','check.status'])->group(func
 
 
 
-Route::middleware(['auth', 'role:agency_manager','check.status'])
+Route::middleware(['auth', 'role:agency_manager', 'check.status'])
         ->prefix('agence-manager')
         ->group(function () {
 
@@ -529,7 +533,7 @@ Route::middleware(['auth', 'role:agency_manager','check.status'])
 
 
 
-Route::middleware(['auth','check.status'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'check.status'])->prefix('admin')->name('admin.')->group(function () {
         Route::resource('categories', CategoryController::class)->except(['create', 'show', 'edit']);
         Route::patch('categories/{category}/toggle-status', [CategoryController::class, 'toggleStatus'])->name('categories.toggle-status');
 });
@@ -541,12 +545,10 @@ use App\Services\ElgiopayService;
 
 // Accessible à tout utilisateur connecté (acheteur, vendeur, admin) —
 // pas de middleware 'role:' spécifique puisque la cloche est commune.
-Route::middleware('auth','check.status')->prefix('notifications')->name('notifications.')->group(function () {
+Route::middleware('auth', 'check.status')->prefix('notifications')->name('notifications.')->group(function () {
 
         Route::get('/', [NotificationController::class, 'index'])->name('index');
         Route::get('/unread-count', [NotificationController::class, 'unreadCount'])->name('unread-count');
         Route::post('/{id}/read', [NotificationController::class, 'markAsRead'])->name('read');
         Route::post('/read-all', [NotificationController::class, 'markAllAsRead'])->name('read-all');
 });
-
-

@@ -346,16 +346,11 @@ class AgencyManagerService
         $transactions = \App\Models\AgencyWalletTransaction::where('agency_id', $agency->id);
 
         return [
-            'total_earned'     => $transactions->clone()
-                ->where('type', 'credit_commission')
-                ->sum('amount'),
-            'total_withdrawn'  => $transactions->clone()
-                ->where('type', 'debit_withdrawal')
-                ->sum('amount'),
+            'total_earned'     => $transactions->clone()->where('type', 'credit_commission')->sum('amount'),
+            'total_withdrawn'  => $transactions->clone()->where('type', 'debit_withdrawal')->sum('amount'),
             'wallet_available' => $agency->wallet_available,
-            'colis_count'      => $transactions->clone()
-                ->where('type', 'credit_commission')
-                ->count(),
+            'wallet_pending'   => $agency->wallet_pending,   // ← nouveau
+            'colis_count'      => $transactions->clone()->where('type', 'credit_commission')->count(),
         ];
     }
 }

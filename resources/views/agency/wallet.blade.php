@@ -43,8 +43,9 @@
             </div>
         @endif
 
-        {{-- Encart des Soldes --}}
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        {{-- Encart des Soldes — 3 colonnes : Gains totaux / En attente / Retirable --}}
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+
             <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 flex flex-col justify-between">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Gains Totaux</span>
@@ -55,15 +56,34 @@
                     </span>
                 </div>
                 <div class="mt-4">
-                    <p class="text-3xl font-black text-slate-900">
+                    <p class="text-2xl sm:text-3xl font-black text-slate-900">
                         {{ number_format($stats['total_earned'], 0, ',', ' ') }} <span class="text-sm font-bold text-slate-500">FCFA</span>
                     </p>
+                    <p class="text-[11px] text-slate-400 font-medium mt-1">Commissions libérées, cumul historique</p>
+                </div>
+            </div>
+
+            {{-- En attente — même code couleur ambre que côté vendeur --}}
+            <div class="bg-white rounded-2xl border-2 border-[#F9A01B]/30 shadow-xs p-6 flex flex-col justify-between">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-[#F9A01B] uppercase tracking-wider">En attente</span>
+                    <span class="p-2.5 rounded-xl bg-amber-50 text-[#F9A01B]">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                    </span>
+                </div>
+                <div class="mt-4">
+                    <p class="text-2xl sm:text-3xl font-black text-[#F9A01B]">
+                        {{ number_format($stats['wallet_pending'], 0, ',', ' ') }} <span class="text-sm font-bold text-slate-500">FCFA</span>
+                    </p>
+                    <p class="text-[11px] text-slate-400 font-medium mt-1">Colis déposés, pas encore livrés</p>
                 </div>
             </div>
 
             <div class="bg-white rounded-2xl border-2 border-[#00843D]/30 shadow-xs p-6 flex flex-col justify-between relative overflow-hidden">
                 <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-[#00843D]/5 rounded-full blur-xl pointer-events-none"></div>
-                
+
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-bold text-[#00843D] uppercase tracking-wider">Solde Retirable</span>
                     <span class="p-2.5 rounded-xl bg-emerald-50 text-[#00843D]">
@@ -73,11 +93,18 @@
                     </span>
                 </div>
                 <div class="mt-4">
-                    <p class="text-3xl font-black text-[#00843D]">
+                    <p class="text-2xl sm:text-3xl font-black text-[#00843D]">
                         {{ number_format($stats['wallet_available'], 0, ',', ' ') }} <span class="text-sm font-bold text-slate-500">FCFA</span>
                     </p>
                 </div>
             </div>
+        </div>
+
+        <div class="flex items-center gap-2 text-[11px] text-slate-400 font-medium px-1 mb-6">
+            <svg class="w-3.5 h-3.5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+            Le montant « en attente » devient automatiquement retirable dès que le colis est livré.
         </div>
 
         {{-- Formulaire de Retrait --}}
@@ -142,11 +169,11 @@
             @else
                 <div class="divide-y divide-slate-100">
                     @foreach($history as $tx)
+                        @php($meta = $tx->displayMeta())
                         <div class="flex items-center justify-between px-6 py-4 hover:bg-slate-50/50 transition">
                             <div class="flex items-center gap-3.5 min-w-0 pr-4">
-                                <div class="h-10 w-10 rounded-xl flex items-center justify-center font-bold text-sm shrink-0
-                                    {{ $tx->isCredit() ? 'bg-emerald-50 text-[#00843D]' : 'bg-red-50 text-[#CE1126]' }}">
-                                    {{ $tx->isCredit() ? '↙' : '↗' }}
+                                <div class="h-10 w-10 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 {{ $meta['bg'] }} {{ $meta['text'] }}">
+                                    {{ $meta['sign'] === '→' ? '→' : ($meta['sign'] === '+' ? '↙' : '↗') }}
                                 </div>
                                 <div class="min-w-0">
                                     <p class="text-xs font-extrabold text-slate-900 truncate">
@@ -167,8 +194,8 @@
                             </div>
 
                             <div class="text-right shrink-0">
-                                <p class="font-extrabold text-sm {{ $tx->isCredit() ? 'text-[#00843D]' : 'text-[#CE1126]' }}">
-                                    {{ $tx->isCredit() ? '+' : '-' }} {{ number_format($tx->amount, 0, ',', ' ') }} FCFA
+                                <p class="font-extrabold text-sm {{ $meta['text'] }}">
+                                    {{ $meta['sign'] }} {{ number_format($tx->amount, 0, ',', ' ') }} FCFA
                                 </p>
                                 <p class="text-[11px] font-medium text-slate-400 mt-0.5">
                                     Solde : <span class="font-semibold text-slate-600">{{ number_format($tx->balance_after, 0, ',', ' ') }} FCFA</span>
