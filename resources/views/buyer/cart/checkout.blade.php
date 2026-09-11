@@ -113,6 +113,7 @@
                     </div>
                 @endif
             </div>
+
             <form method="POST" action="{{ route('buyer.cart.order') }}" class="space-y-5">
                 @csrf
 
@@ -139,10 +140,10 @@
                     <div class="grid grid-cols-2 gap-3">
                         <label
                             class="flex items-center gap-3 border-2 rounded-xl p-3 cursor-pointer transition
-                                  {{ old('payer_operator') === 'mtn' ? 'border-[#F9A01B] bg-[#F9A01B]/10' : 'border-gray-100 hover:border-gray-200' }}">
+                                  {{ old('payer_operator', 'mtn') === 'mtn' ? 'border-[#F9A01B] bg-[#F9A01B]/10' : 'border-gray-100 hover:border-gray-200' }}">
                             <input type="radio" name="payer_operator" value="mtn"
                                 class="text-[#F9A01B] focus:ring-[#F9A01B]"
-                                {{ old('payer_operator') === 'mtn' ? 'checked' : '' }} required>
+                                {{ old('payer_operator', 'mtn') === 'mtn' ? 'checked' : '' }} required>
                             <span class="font-bold text-[#0a1b12] text-sm">MTN MoMo</span>
                         </label>
 
@@ -165,40 +166,40 @@
                                 class="inline-flex items-center px-4 border border-r-0 border-gray-200 rounded-l-xl bg-[#F7F7F2] text-gray-600 font-bold text-sm">
                                 +237
                             </span>
-                            <input type="tel" name="payer_phone" value="{{ old('payer_phone') }}" required
+                            <input type="tel" name="payer_phone" value="{{ old('payer_phone', auth()->user()->phone_momo) }}" required
                                 placeholder="655123456"
                                 class="flex-1 border border-gray-200 rounded-r-xl px-4 py-3 text-sm text-[#0a1b12] font-medium bg-[#F7F7F2]/50 focus:bg-white focus:outline-none focus:border-[#016837] focus:ring-1 focus:ring-[#016837] transition">
                         </div>
                     </div>
                 </div>
 
-                {{-- Récapitulatif Total (Style Vert/Jaune) --}}
+                {{-- Récapitulatif Total Dynamique --}}
                 <div class="bg-[#016837]/5 border border-[#016837]/15 rounded-2xl p-5 space-y-2.5">
                     <div class="flex justify-between text-sm text-gray-600 font-medium">
                         <span>Sous-total</span>
-                        <span class="font-bold text-[#0a1b12]">{{ number_format($cart->total(), 0, ',', ' ') }} FCFA</span>
+                        <span class="font-bold text-[#0a1b12]" id="s-subtotal">—</span>
                     </div>
                     <div class="flex justify-between text-sm text-gray-600 font-medium">
-                        <span class="flex items-center gap-1">
-                            Protection + frais MoMo
-                            <span class="text-[10px] bg-[#F9A01B] text-[#0a1b12] font-black px-1.5 py-0.5 rounded">4%</span>
-                        </span>
-                        <span class="font-bold text-[#0a1b12]">{{ number_format($cart->total() * 0.04, 0, ',', ' ') }}
-                            FCFA</span>
+                        <span>Frais de protection ({{ \App\Models\PlatformSetting::getValue('protection_rate') }}%)</span>
+                        <span class="font-bold text-[#0a1b12]" id="s-protection">—</span>
+                    </div>
+                    <div class="flex justify-between text-sm text-gray-600 font-medium">
+                        <span>Frais Mobile Money ({{ \App\Models\PlatformSetting::getValue('gateway_collect_rate') }}%)</span>
+                        <span class="font-bold text-[#0a1b12]" id="s-elgiopay">—</span>
                     </div>
 
                     <div
                         class="flex justify-between items-center font-extrabold text-[#0a1b12] border-t border-[#016837]/10 pt-3 mt-1">
                         <span class="text-base">Total à payer</span>
-                        <span class="text-[#016837] text-xl font-black">
-                            {{ number_format($cart->total() * 1.04, 0, ',', ' ') }} <span class="text-xs">FCFA</span>
+                        <span class="text-[#016837] text-xl font-black" id="s-total">
+                            — FCFA
                         </span>
                     </div>
                 </div>
 
-                {{-- Bouton de validation (Vert principal avec accentuation Jaune) --}}
+                {{-- Bouton de validation --}}
                 <button type="submit"
-                    class="w-full bg-[#016837] hover:bg-[#0a542d] text-white font-extrabold py-4 rounded-2xl transition shadow-md hover:shadow-lg flex items-center justify-center gap-2 text-base">
+                    class="w-full bg-[#016837] hover:bg-[#0a542d] text-white font-extrabold py-4 rounded-2xl transition shadow-md hover:shadow-lg flex items-center justify-center gap-2 text-base cursor-pointer">
                     <span>Confirmer et payer</span>
                     <span class="text-[#F9A01B] font-black">→</span>
                 </button>
@@ -206,5 +207,39 @@
 
         </div>
     </div>
+
+    @push('scripts')
+        <script>
+            const cartTotal = {{ $cart->total() }};
+            const protRate = {{ \App\Models\PlatformSetting::getRate('protection_rate') }};
+            const collectRate = {{ \App\Models\PlatformSetting::getRate('gateway_collect_rate') }};
+            const fixedFee = {{ (int) \App\Models\PlatformSetting::getValue('gateway_fixed_fee', 0) }};
+
+            function fmt(n) {
+                return new Intl.NumberFormat('fr-FR').format(Math.round(n)) + ' FCFA';
+            }
+
+            function updateCartSummary() {
+                const subtotal = cartTotal;
+                const protection = Math.ceil(subtotal * protRate);
+                const wantNet = subtotal + protection;
+
+                // Gross-Up collect
+                const total = collectRate > 0 && collectRate < 1 ?
+                    Math.ceil((wantNet + fixedFee) / (1 - collectRate)) :
+                    wantNet + fixedFee;
+
+                const elgiopay = total - wantNet;
+
+                document.getElementById('s-subtotal').textContent = fmt(subtotal);
+                document.getElementById('s-protection').textContent = fmt(protection);
+                document.getElementById('s-elgiopay').textContent = fmt(elgiopay);
+                document.getElementById('s-total').textContent = fmt(total);
+            }
+
+            document.addEventListener('DOMContentLoaded', updateCartSummary);
+            updateCartSummary();
+        </script>
+    @endpush
 
 @endsection

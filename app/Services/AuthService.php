@@ -53,26 +53,26 @@ class AuthService
             phoneMomo: $data['phone_momo'] ?? null,
             email: $data['email'] ?? null
         );
-        // Dans registerBuyer() — après la validation, avant User::create()
-        $resolution = app(IdentityResolver::class)->resolveIdentity(
-            email: $data['email'],
-            phone: $data['phone'] ?? null,
-            ip: request()->ip()
-        );
+        // // Dans registerBuyer() — après la validation, avant User::create()
+        // $resolution = app(IdentityResolver::class)->resolveIdentity(
+        //     email: $data['email'],
+        //     phone: $data['phone'] ?? null,
+        //     ip: request()->ip()
+        // );
 
-        if ($resolution->isBlocked()) {
-            throw ValidationException::withMessages([
-                'email' => 'Impossible de créer un compte avec ces informations.',
-            ]);
-        }
+        // if ($resolution->isBlocked()) {
+        //     throw ValidationException::withMessages([
+        //         'email' => 'Impossible de créer un compte avec ces informations.',
+        //     ]);
+        // }
 
-        // Logger la tentative dans velocity_logs
-        app(IdentityResolver::class)->logVelocity(
-            'register',
-            request()->ip(),
-            null,
-            ['email' => $data['email']]
-        );
+        // // Logger la tentative dans velocity_logs
+        // app(IdentityResolver::class)->logVelocity(
+        //     'register',
+        //     request()->ip(),
+        //     null,
+        //     ['email' => $data['email']]
+        // );
 
         // ... reste du code existant inchangé
         return User::create([
@@ -101,18 +101,18 @@ class AuthService
             email: $data['email']     ?? null
         );
         // Dans registerSeller() — même chose + phone_momo
-        $resolution = app(IdentityResolver::class)->resolveIdentity(
-            email: $data['email'],
-            phone: $data['phone'] ?? null,
-            phoneMomo: $data['phone_momo'],
-            ip: request()->ip()
-        );
+        // $resolution = app(IdentityResolver::class)->resolveIdentity(
+        //     email: $data['email'],
+        //     phone: $data['phone'] ?? null,
+        //     phoneMomo: $data['phone_momo'],
+        //     ip: request()->ip()
+        // );
 
-        if ($resolution->isBlocked()) {
-            throw ValidationException::withMessages([
-                'phone_momo' => 'Impossible de créer un compte avec ces informations.',
-            ]);
-        }
+        // if ($resolution->isBlocked()) {
+        //     throw ValidationException::withMessages([
+        //         'phone_momo' => 'Impossible de créer un compte avec ces informations.',
+        //     ]);
+        // }
         return \DB::transaction(function () use ($data) {
 
             $user = User::create([

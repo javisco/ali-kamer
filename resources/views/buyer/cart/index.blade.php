@@ -148,7 +148,7 @@
                     @endforeach
                 </div>
 
-                {{-- Résumé de la Commande --}}
+                {{-- Résumé Dynamique de la Commande --}}
                 <div>
                     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sticky top-4">
                         <h2 class="font-extrabold text-[#0a1b12] mb-4 flex items-center justify-between border-b border-gray-100 pb-3">
@@ -161,36 +161,34 @@
                         <div class="space-y-2.5 text-sm mb-5">
                             <div class="flex justify-between text-gray-600 font-medium">
                                 <span>Sous-total</span>
-                                <span class="font-bold text-[#0a1b12]">{{ number_format($cart->total(), 0, ',', ' ') }} FCFA</span>
+                                <span class="font-bold text-[#0a1b12]" id="s-subtotal">—</span>
                             </div>
 
                             <div class="flex justify-between text-gray-500 text-xs">
                                 <span class="flex items-center gap-1">
-                                    Protection
-                                    <span class="bg-[#F9A01B]/20 text-[#0a1b12] font-black px-1 rounded">2%</span>
+                                    Frais de protection ({{ \App\Models\PlatformSetting::getValue('protection_rate') }}%)
                                 </span>
-                                <span class="font-semibold">+ {{ number_format($cart->total() * 0.02, 0, ',', ' ') }} FCFA</span>
+                                <span class="font-bold text-[#0a1b12]" id="s-protection">—</span>
                             </div>
 
                             <div class="flex justify-between text-gray-500 text-xs">
                                 <span class="flex items-center gap-1">
-                                    Frais MoMo
-                                    <span class="bg-[#F9A01B]/20 text-[#0a1b12] font-black px-1 rounded">2%</span>
+                                    Frais MoMo ({{ \App\Models\PlatformSetting::getValue('gateway_collect_rate') }}%)
                                 </span>
-                                <span class="font-semibold">+ {{ number_format($cart->total() * 0.02, 0, ',', ' ') }} FCFA</span>
+                                <span class="font-bold text-[#0a1b12]" id="s-elgiopay">—</span>
                             </div>
 
                             <div class="border-t border-gray-100 pt-3 mt-3 flex justify-between items-center font-black text-[#0a1b12]">
                                 <span class="text-sm">Total estimé</span>
-                                <span class="text-[#016837] text-lg">
-                                    {{ number_format($cart->total() * 1.04, 0, ',', ' ') }} <span class="text-xs">FCFA</span>
+                                <span class="text-[#016837] text-lg font-black" id="s-total">
+                                    — FCFA
                                 </span>
                             </div>
                         </div>
 
                         {{-- Bouton d'action Vert avec flèche Jaune --}}
                         <a href="{{ route('buyer.cart.checkout') }}"
-                           class="w-full bg-[#016837] hover:bg-[#0a542d] text-white font-extrabold py-3.5 rounded-xl text-center transition flex items-center justify-center gap-2 text-sm shadow-md hover:shadow-lg">
+                           class="w-full bg-[#016837] hover:bg-[#0a542d] text-white font-extrabold py-3.5 rounded-xl text-center transition flex items-center justify-center gap-2 text-sm shadow-md hover:shadow-lg cursor-pointer">
                             <span>Passer la commande</span>
                             <span class="text-[#F9A01B]">→</span>
                         </a>
@@ -208,5 +206,46 @@
 
     </div>
 </div>
+
+@push('scripts')
+    <script>
+        const cartTotal = {{ $cart->total() }};
+        const protRate = {{ \App\Models\PlatformSetting::getRate('protection_rate') }};
+        const collectRate = {{ \App\Models\PlatformSetting::getRate('gateway_collect_rate') }};
+        const fixedFee = {{ (int) \App\Models\PlatformSetting::getValue('gateway_fixed_fee', 0) }};
+
+        function fmt(n) {
+            return new Intl.NumberFormat('fr-FR').format(Math.round(n)) + ' FCFA';
+        }
+
+        function updateCartSummary() {
+            if (cartTotal <= 0) return;
+
+            const subtotal = cartTotal;
+            const protection = Math.ceil(subtotal * protRate);
+            const wantNet = subtotal + protection;
+
+            // Gross-Up collect
+            const total = collectRate > 0 && collectRate < 1 ?
+                Math.ceil((wantNet + fixedFee) / (1 - collectRate)) :
+                wantNet + fixedFee;
+
+            const elgiopay = total - wantNet;
+
+            const subtotalEl = document.getElementById('s-subtotal');
+            const protEl = document.getElementById('s-protection');
+            const elgiopayEl = document.getElementById('s-elgiopay');
+            const totalEl = document.getElementById('s-total');
+
+            if (subtotalEl) subtotalEl.textContent = fmt(subtotal);
+            if (protEl) protEl.textContent = fmt(protection);
+            if (elgiopayEl) elgiopayEl.textContent = fmt(elgiopay);
+            if (totalEl) totalEl.textContent = fmt(total);
+        }
+
+        document.addEventListener('DOMContentLoaded', updateCartSummary);
+        updateCartSummary();
+    </script>
+@endpush
 
 @endsection

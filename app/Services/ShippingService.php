@@ -284,15 +284,15 @@ class ShippingService
                 'otp_used_at'  => now(),
                 'completed_at' => now(),
             ]);
-            // Dans validateOtp() — après STATUS_COMPLETED
-            app(TrustService::class)->record(
-                user: $order->buyer,
-                type: 'order_completed',
-                roleContext: 'buyer',
-                reason: "Colis retiré — commande {$order->reference}",
-                referenceType: 'Order',
-                referenceId: $order->id
-            );
+            // // Dans validateOtp() — après STATUS_COMPLETED
+            // app(TrustService::class)->record(
+            //     user: $order->buyer,
+            //     type: 'order_completed',
+            //     roleContext: 'buyer',
+            //     reason: "Colis retiré — commande {$order->reference}",
+            //     referenceType: 'Order',
+            //     referenceId: $order->id
+            // );
             // Libérer les fonds du vendeur
             app(WalletService::class)->releaseEscrow($order->shop->user, $order->net_amount, $order);
         });

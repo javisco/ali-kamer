@@ -469,7 +469,7 @@ Route::middleware(['auth', 'role:buyer', 'verified','check.status'])->group(func
                 ->name('buyer.cart.index');
         Route::post('/panier/{product}/ajouter', [CartController::class, 'add'])
                 ->name('buyer.cart.add');
-        Route::patch('/panier/item/{item}', [CartController::class, 'update'])
+        Route::patch('/panier/item/{item}/', [CartController::class, 'update'])
                 ->name('buyer.cart.update');
         Route::delete('/panier/item/{item}', [CartController::class, 'remove'])
                 ->name('buyer.cart.remove');

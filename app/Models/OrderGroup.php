@@ -15,9 +15,17 @@ class OrderGroup extends Model
     const STATUS_CANCELLED        = 'cancelled';
 
     protected $fillable = [
-        'reference', 'buyer_id', 'status',
-        'subtotal', 'protection_fee', 'gateway_fee', 'total_amount',
-        'financial_snapshot', 'paid_at', 'cancelled_at',
+        'reference',
+        'buyer_id',
+        'status',
+        'subtotal',
+        'protection_fee',
+        'gateway_fee',
+        'total_amount',
+        'financial_snapshot',
+        'paid_at',
+        'cancelled_at',
+        'created_at',
     ];
 
     protected function casts(): array

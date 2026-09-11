@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('blacklist_identifiers', function (Blueprint $table) {
     $table->id();
-    $table->foreignId('blacklist_id')->constrained()->cascadeOnDelete();
+    $table->foreignId('blacklist_id')->constrained('blacklist')->cascadeOnDelete();
 
     // Type d'identifiant — du plus fort au plus faible
     $table->enum('type', [

@@ -209,7 +209,7 @@ class OrderService
         $agencyRate     = PlatformSetting::getRate('agency_commission_rate');
         $protectionRate = PlatformSetting::getRate('protection_rate');
 
-        $platformCommission = (int) round($subtotal * $commissionRate);
+        $platformCommission = (int) ceil($subtotal * $commissionRate);
         $netSeller           = $subtotal - $platformCommission;
         $payoutGrossUp       = $this->elgiopay->grossUpPayout($netSeller);
 
@@ -431,16 +431,21 @@ class OrderService
     // ── ANNULER ───────────────────────────────────────────────────────
     public function cancel(Order $order, string $reason): void
     {
+
+
+        abort_unless($order->status === Order::STATUS_AWAITING_PAYMENT || Order::STATUS_PENDING, 403, "le colis est deja en preparation vous ne pouvez plus annuler");
         DB::transaction(function () use ($order, $reason) {
             foreach ($order->items as $item) {
                 $item->product_variant_id
                     ? $item->variant?->decrement('stock_reserved', $item->quantity)
                     : $item->product?->decrement('stock_reserved', $item->quantity);
             }
+
             $order->update([
                 'status'              => Order::STATUS_CANCELLED,
                 'cancelled_at'        => now(),
                 'cancellation_reason' => $reason,
+
             ]);
         });
     }

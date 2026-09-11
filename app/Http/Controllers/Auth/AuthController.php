@@ -152,27 +152,27 @@ class AuthController extends Controller
         $user = Auth::user();
 
         // ── Vérifier que le compte n'est pas banni ────────────────────
-        if ($user->isBanned()) {
-            Auth::logout();
-            $request->session()->invalidate();
-            // Dans AuthController::login() — après Auth::attempt() réussi
-            $resolution = app(IdentityResolver::class)->resolveIdentity(
-                email: $user->email,
-                phone: $user->phone,
-                phoneMomo: $user->phone_momo,
-                ip: request()->ip(),
-                userId: $user->id
-            );
+        // if ($user->isBanned()) {
+        //     Auth::logout();
+        //     $request->session()->invalidate();
+        //     // Dans AuthController::login() — après Auth::attempt() réussi
+        //     $resolution = app(IdentityResolver::class)->resolveIdentity(
+        //         email: $user->email,
+        //         phone: $user->phone,
+        //         phoneMomo: $user->phone_momo,
+        //         ip: request()->ip(),
+        //         userId: $user->id
+        //     );
 
-            if ($resolution->isBlocked()) {
-                Auth::logout();
-                return back()->with('fail', 'Accès refusé. Contactez le support.');
-            }
+        //     if ($resolution->isBlocked()) {
+        //         Auth::logout();
+        //         return back()->with('fail', 'Accès refusé. Contactez le support.');
+        //     }
 
-            // Mettre à jour last_ip
-            $user->update(['last_ip' => request()->ip()]);
-            return back()->with('fail', 'Votre compte a été suspendu. Contactez le support.');
-        }
+        //     // Mettre à jour last_ip
+        //     $user->update(['last_ip' => request()->ip()]);
+        //     return back()->with('fail', 'Votre compte a été suspendu. Contactez le support.');
+        // }
 
         // ── Vérification blacklist à la connexion ─────────────────────
         // Si le numéro a été blacklisté après l'inscription
@@ -183,6 +183,7 @@ class AuthController extends Controller
             );
         } catch (\Exception $e) {
             Auth::logout();
+            dd($e);
             $request->session()->invalidate();
 
             return back()->with('fail', 'Accès refusé. Contactez le support.');

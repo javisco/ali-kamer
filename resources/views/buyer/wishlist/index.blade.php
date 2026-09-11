@@ -139,7 +139,7 @@
                                     <span class="text-[#F9A01B]">→</span>
                                 </a>
                             @else
-                                <form method="POST" action="{{ route('cart.add', $item->product_id) }}">
+                                <form method="POST" action="{{ route('buyer.cart.add', $item->product_id) }}">
                                     @csrf
                                     <button type="submit"
                                             class="w-full bg-[#016837] hover:bg-[#0a542d] text-white font-bold py-2 px-3 rounded-xl text-xs text-center transition flex items-center justify-center gap-1.5 shadow-sm">

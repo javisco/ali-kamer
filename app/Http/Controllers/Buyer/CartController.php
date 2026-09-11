@@ -33,8 +33,9 @@ class CartController extends Controller
     // Ajouter au panier
     public function add(Request $request, Product $product)
     {
+        $quantity = 1;
         $request->validate([
-            'quantity'   => ['required', 'integer', 'min:1'],
+            'quantity'   => ['nullable', 'integer', 'min:1'],
             'variant_id' => ['nullable', 'exists:product_variants,id'],
         ]);
 
@@ -48,7 +49,7 @@ class CartController extends Controller
         $this->cartService->addItem(
             Auth::user(),
             $product,
-            $request->quantity,
+            $request->quantity ?? $quantity,
             $variant
         );
 
