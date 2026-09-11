@@ -62,11 +62,11 @@ class DisputeService
             }
 
             $order->update(['status' => Order::STATUS_DISPUTED]);
-          //  $order->shop->user->notify(new DisputeOpenedNotification($dispute));
-          //  NotificationFacade::send(                                    // ← AJOUT
-          //      User::where('role', 'admin')->get(),                     // ← AJOUT
-          //      new AdminDisputeOpenedNotification($dispute)              // ← AJOUT
-          //  );
+            //  $order->shop->user->notify(new DisputeOpenedNotification($dispute));
+            //  NotificationFacade::send(                                    // ← AJOUT
+            //      User::where('role', 'admin')->get(),                     // ← AJOUT
+            //      new AdminDisputeOpenedNotification($dispute)              // ← AJOUT
+            //  );
 
             return $dispute;
         });
@@ -126,8 +126,8 @@ class DisputeService
             ]);
 
             $this->applyResolution($dispute);
-          //  $dispute->order->buyer->notify(new DisputeResolvedNotification($dispute, 'buyer'));   // ← AJOUT
-         //   $dispute->order->shop->user->notify(new DisputeResolvedNotification($dispute, 'seller')); // ← AJOUT
+            //  $dispute->order->buyer->notify(new DisputeResolvedNotification($dispute, 'buyer'));   // ← AJOUT
+            //   $dispute->order->shop->user->notify(new DisputeResolvedNotification($dispute, 'seller')); // ← AJOUT
 
             $dispute->order->update([
                 'status'       => Order::STATUS_COMPLETED,
@@ -156,6 +156,38 @@ class DisputeService
                 'resolution' => $dispute->resolution
             ]),
         };
+        // Dans applyResolution() — après le paiement
+        // Acheteur avait tort
+        if (in_array($dispute->resolution, ['pay_seller', 'buyer_bad_faith'])) {
+            app(TrustService::class)->record(
+                user: $order->buyer,
+                type: 'dispute_lost',
+                roleContext: 'buyer',
+                reason: "Litige perdu — commande {$order->reference}",
+                referenceType: 'Order',
+                referenceId: $order->id
+            );
+            app(TrustService::class)->record(
+                user: $order->shop->user,
+                type: 'dispute_won',
+                roleContext: 'seller',
+                reason: "Litige gagné — commande {$order->reference}",
+                referenceType: 'Order',
+                referenceId: $order->id
+            );
+        }
+
+        // Vendeur avait tort
+        if ($dispute->resolution === 'refund_buyer') {
+            app(TrustService::class)->record(
+                user: $order->shop->user,
+                type: 'dispute_lost',
+                roleContext: 'seller',
+                reason: "Litige perdu — commande {$order->reference}",
+                referenceType: 'Order',
+                referenceId: $order->id
+            );
+        }
     }
 
     // ── REMBOURSEMENT ACHETEUR (virement Elgiopay direct) ──────────────

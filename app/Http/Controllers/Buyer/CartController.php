@@ -90,27 +90,18 @@ class CartController extends Controller
                 ->with('error', 'Votre panier est vide.');
         }
 
-        // Vérifier que tous les articles sont du même vendeur
-        // MVP : une commande = une boutique
-        $shops = $cart->items->pluck('product.shop_id')->unique();
-        if ($shops->count() > 1) {
-            return redirect()->route('buyer.cart.index')
-                ->with(
-                    'error',
-                    'Votre panier contient des articles de plusieurs boutiques. ' .
-                        'Passez une commande séparée pour chaque boutique.'
-                );
-        }
+        // Regrouper les articles par boutique pour l'affichage du récapitulatif
+        $itemsByShop = $cart->items->groupBy(fn($item) => $item->product->shop_id);
 
         $cities = $this->agencyService->getActiveCities();
 
-        return view('buyer.cart.checkout', compact('cart', 'cities'));
+        return view('buyer.cart.checkout', compact('cart', 'itemsByShop', 'cities'));
     }
 
     // Confirmer la commande depuis le panier
     public function confirmOrder(Request $request)
     {
-        $validated =  $request->validate([
+        $validated = $request->validate([
             'destination_city' => ['required', 'string'],
             'payer_phone'      => ['required', 'string', 'regex:/^6[0-9]{8}$/'],
             'payer_operator'   => ['required', 'in:mtn,orange'],
@@ -123,16 +114,12 @@ class CartController extends Controller
             return redirect()->route('buyer.cart.index');
         }
 
-        // Créer la commande depuis le panier
-        $order = $this->orderService->createFromCart(
-            Auth::user(),
-            $cart,
-            $validated
-        );
+        $result = $this->orderService->createFromCart(Auth::user(), $cart, $validated);
 
-        // Vider le panier après commande
         $this->cartService->clear(Auth::user());
 
-        return redirect()->route('buyer.payment.initiate', $order);
+        return $result instanceof \App\Models\OrderGroup
+            ? redirect()->route('buyer.payment.group.initiate', $result)
+            : redirect()->route('buyer.payment.initiate', $result);
     }
 }

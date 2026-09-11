@@ -49,11 +49,32 @@ class AuthService
     {
         // Vérification blacklist avant création
         $this->checkBlacklist(
-            phone:     $data['phone'] ?? null,
-            phoneMomo:$data['phone_momo']?? null,
-            email:     $data['email'] ?? null
+            phone: $data['phone'] ?? null,
+            phoneMomo: $data['phone_momo'] ?? null,
+            email: $data['email'] ?? null
+        );
+        // Dans registerBuyer() — après la validation, avant User::create()
+        $resolution = app(IdentityResolver::class)->resolveIdentity(
+            email: $data['email'],
+            phone: $data['phone'] ?? null,
+            ip: request()->ip()
         );
 
+        if ($resolution->isBlocked()) {
+            throw ValidationException::withMessages([
+                'email' => 'Impossible de créer un compte avec ces informations.',
+            ]);
+        }
+
+        // Logger la tentative dans velocity_logs
+        app(IdentityResolver::class)->logVelocity(
+            'register',
+            request()->ip(),
+            null,
+            ['email' => $data['email']]
+        );
+
+        // ... reste du code existant inchangé
         return User::create([
             'name'     => $data['name'],
             'phone_momo'    => $data['phone_momo'],
@@ -75,11 +96,23 @@ class AuthService
     {
         // Vérification blacklist sur phone ET phone_momo
         $this->checkBlacklist(
-            phone:     $data['phone']     ?? null,
+            phone: $data['phone']     ?? null,
             phoneMomo: $data['phone_momo'],
-            email:     $data['email']     ?? null
+            email: $data['email']     ?? null
+        );
+        // Dans registerSeller() — même chose + phone_momo
+        $resolution = app(IdentityResolver::class)->resolveIdentity(
+            email: $data['email'],
+            phone: $data['phone'] ?? null,
+            phoneMomo: $data['phone_momo'],
+            ip: request()->ip()
         );
 
+        if ($resolution->isBlocked()) {
+            throw ValidationException::withMessages([
+                'phone_momo' => 'Impossible de créer un compte avec ces informations.',
+            ]);
+        }
         return \DB::transaction(function () use ($data) {
 
             $user = User::create([
@@ -99,7 +132,7 @@ class AuthService
             // La boutique est suspendue jusqu'à approbation KYC
             Shop::create([
                 'user_id'     => $user->id,
-                'phone'=>$user->phone,
+                'phone' => $user->phone,
                 'name'        => $data['shop_name'],
                 'slug'        => \Str::slug($data['shop_name']) . '-' . $user->id,
                 'city'        => $data['city'],

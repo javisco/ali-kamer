@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\ElgiopayWebhookEvent;
 use App\Models\Order;
+use App\Models\OrderGroupPayment;
 use App\Models\OrderPayment;
 use App\Models\OrderShipment;
 use App\Models\PlatformSetting;
@@ -90,6 +91,19 @@ class PaymentService
                 'payment.completed' => $this->confirmPayment($payment->order, $payment, $data),
                 'payment.failed'    => $this->failPayment($payment->order, $payment),
                 default             => Log::info('Webhook event produit non géré', ['event' => $eventType]),
+            };
+            return;
+        }
+
+
+        // ── 1bis. Paiement d'un achat groupé multi-vendeur ────────────
+        $groupPayment = OrderGroupPayment::where('provider_reference', $transactionId)->first();
+
+        if ($groupPayment) {
+            match ($eventType) {
+                'payment.completed' => $this->confirmGroupPayment($groupPayment->orderGroup, $groupPayment, $data),
+                'payment.failed'    => $this->failGroupPayment($groupPayment->orderGroup, $groupPayment),
+                default             => Log::info('Webhook event groupe non géré', ['event' => $eventType]),
             };
             return;
         }
@@ -389,5 +403,146 @@ class PaymentService
         }
 
         return false;
+    }
+    // ── INITIER LE PAIEMENT D'UN ACHAT GROUPÉ ─────────────────────────
+    public function initiateGroup(OrderGroup $group): void
+    {
+        $payment = $group->payment;
+
+        if ($payment->status === 'processing') {
+            throw new \Exception('Un paiement est déjà en cours.');
+        }
+
+        $payment->update(['status' => 'processing']);
+
+        try {
+            $phone = '237' . ltrim($payment->payer_phone, '0');
+
+            $result = $this->elgiopay->collect(
+                phone: $phone,
+                amount: $group->total_amount,
+                name: $group->buyer->name,
+                reference: $payment->idempotency_key,
+                description: "Achat Ali-Kamer {$group->reference}",
+                operator: $payment->payer_operator
+            );
+
+            $payment->update([
+                'provider_reference' => $result['transaction_id'] ?? null,
+                'provider_response'  => $result,
+            ]);
+        } catch (\Exception $e) {
+            $payment->update(['status' => 'pending']);
+            throw $e;
+        }
+    }
+
+    // ── SYNCHRONISER LE PAIEMENT GROUPÉ (fallback polling) ────────────
+    public function synchronizeGroup(OrderGroup $group): string
+    {
+        $payment = $group->payment;
+
+        if (! $payment->provider_reference) {
+            return $group->status;
+        }
+
+        if (in_array($group->status, [
+            OrderGroup::STATUS_PAID,
+            OrderGroup::STATUS_CANCELLED,
+            OrderGroup::STATUS_FAILED,
+        ])) {
+            return $group->status;
+        }
+
+        try {
+            $transaction = $this->elgiopay->getTransaction($payment->provider_reference);
+            $status      = strtolower($transaction['status'] ?? '');
+
+            match ($status) {
+                'completed' => $this->confirmGroupPayment($group, $payment, $transaction),
+                'failed'    => $this->failGroupPayment($group, $payment),
+                default     => null,
+            };
+        } catch (\Throwable $e) {
+            Log::warning('Synchronisation groupe Elgiopay échouée', [
+                'group' => $group->reference,
+                'error' => $e->getMessage(),
+            ]);
+        }
+
+        $group->refresh();
+
+        return $group->status;
+    }
+
+    // ── CONFIRMER LE PAIEMENT D'UN GROUPE ─────────────────────────────
+    // Fait passer le groupe ET chaque commande qui le compose en "payée",
+    // et crédite le séquestre de CHAQUE vendeur concerné — indépendamment.
+    private function confirmGroupPayment(OrderGroup $group, OrderGroupPayment $payment, array $data): void
+    {
+        if ($payment->status === 'succeeded') {
+            Log::info('Webhook groupe doublon ignoré', ['group' => $group->reference]);
+            return;
+        }
+
+        DB::transaction(function () use ($group, $payment, $data) {
+
+            $payment->update([
+                'status'             => 'succeeded',
+                'provider_reference' => $data['transaction_id'] ?? $payment->provider_reference,
+                'paid_at'            => now(),
+            ]);
+
+            $group->update([
+                'status'  => OrderGroup::STATUS_PAID,
+                'paid_at' => now(),
+            ]);
+
+            WalletTransaction::create([
+                'user_id'       => $group->buyer_id,
+                'type'          => WalletTransaction::TYPE_CREDIT_BUY,
+                'amount'        => $group->total_amount,
+                'balance_after' => 0,
+                'ref_type'      => 'order_group',
+                'ref_id'        => $group->id,
+                'note'          => "paiement de l'achat groupé {$group->reference} — virement MoMo {$payment->payer_phone}",
+            ]);
+
+            foreach ($group->orders as $order) {
+                $order->update([
+                    'status'  => Order::STATUS_PAID,
+                    'paid_at' => now(),
+                ]);
+
+                $this->wallet->creditEscrow(
+                    $order->shop->user,
+                    $order->net_amount,
+                    $order
+                );
+            }
+        });
+
+        Log::info('Paiement groupe confirmé', ['group' => $group->reference]);
+    }
+
+    // ── ÉCHEC DU PAIEMENT D'UN GROUPE ─────────────────────────────────
+    private function failGroupPayment(OrderGroup $group, OrderGroupPayment $payment): void
+    {
+        DB::transaction(function () use ($group, $payment) {
+            $payment->update(['status' => 'failed']);
+            $group->update(['status' => OrderGroup::STATUS_FAILED]);
+
+            foreach ($group->orders as $order) {
+                $order->update(['status' => Order::STATUS_FAILED]);
+
+                foreach ($order->items as $item) {
+                    $item->product_variant_id
+                        ? $item->variant?->decrement('stock_reserved', $item->quantity)
+                        : $item->product?->decrement('stock_reserved', $item->quantity);
+                }
+            }
+        });
+
+        Log::info('Paiement groupe échoué', ['group' => $group->reference]);
     }
 }

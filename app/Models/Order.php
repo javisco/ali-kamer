@@ -27,6 +27,7 @@ class Order extends Model
         'reference',
         'buyer_id',
         'shop_id',
+        'order_group_id',   // ← nouveau
         'status',
         'subtotal',
         'shipping_fee',
@@ -99,6 +100,10 @@ class Order extends Model
         return $this->hasOne(Dispute::class);
     }
 
+    public function orderGroup(): BelongsTo
+    {
+        return $this->belongsTo(OrderGroup::class);
+    }
     // ── Helpers ──────────────────────────────────────────────────────
 
     public function isPaid(): bool

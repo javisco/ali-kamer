@@ -155,7 +155,22 @@ class AuthController extends Controller
         if ($user->isBanned()) {
             Auth::logout();
             $request->session()->invalidate();
+            // Dans AuthController::login() — après Auth::attempt() réussi
+            $resolution = app(IdentityResolver::class)->resolveIdentity(
+                email: $user->email,
+                phone: $user->phone,
+                phoneMomo: $user->phone_momo,
+                ip: request()->ip(),
+                userId: $user->id
+            );
 
+            if ($resolution->isBlocked()) {
+                Auth::logout();
+                return back()->with('fail', 'Accès refusé. Contactez le support.');
+            }
+
+            // Mettre à jour last_ip
+            $user->update(['last_ip' => request()->ip()]);
             return back()->with('fail', 'Votre compte a été suspendu. Contactez le support.');
         }
 
@@ -163,7 +178,7 @@ class AuthController extends Controller
         // Si le numéro a été blacklisté après l'inscription
         try {
             $this->authService->checkBlacklist(
-                phone:     $user->phone,
+                phone: $user->phone,
                 phoneMomo: $user->phone_momo
             );
         } catch (\Exception $e) {

@@ -1,7 +1,5 @@
 <?php
 
-
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Seller\KycSellerController;
 use App\Http\Controllers\Admin\KycAdminController;
@@ -52,11 +50,11 @@ Route::middleware(['auth','check.status', 'verified', 'role:seller'])->prefix('s
 
 // Admin — KYC
 Route::middleware(['auth', 'verified', 'role:admin','check.status'])->prefix('admin')->group(function () {
-        Route::get('/kyc/file', [KycAdmincontroller::class, 'serveFile'])->name('admin.kyc.file');
-        Route::get('/kyc', [KycAdmincontroller::class, 'index'])->name('admin.kyc.index');
-        Route::get('/kyc/{kyc}', [KycAdmincontroller::class, 'show'])->name('admin.kyc.show');
-        Route::post('/kyc/{kyc}/approuver', [KycAdmincontroller::class, 'approve'])->name('admin.kyc.approve');
-        Route::post('/kyc/{kyc}/rejeter', [KycAdmincontroller::class, 'reject'])->name('admin.kyc.reject');
+        Route::get('/kyc/file', [KycAdminController::class, 'serveFile'])->name('admin.kyc.file');
+        Route::get('/kyc', [KycAdminController::class, 'index'])->name('admin.kyc.index');
+        Route::get('/kyc/{kyc}', [KycAdminController::class, 'show'])->name('admin.kyc.show');
+        Route::post('/kyc/{kyc}/approuver', [KycAdminController::class, 'approve'])->name('admin.kyc.approve');
+        Route::post('/kyc/{kyc}/rejeter', [KycAdminController::class, 'reject'])->name('admin.kyc.reject');
 });
 
 //boutique -  vendeur
@@ -147,6 +145,18 @@ Route::middleware(['auth', 'verified', 'role:buyer','check.status'])->group(func
                 ->name('buyer.payment.waiting');
         Route::get('/commandes/{order}/statut', [PaymentController::class, 'status'])
                 ->name('buyer.orders.status');
+});
+// Pages paiement acheteur groupper
+Route::middleware(['auth', 'verified', 'role:buyer', 'check.status'])->group(function () {
+
+    Route::get('/paiement/groupe/{group}/initier', [PaymentController::class, 'initiateGroup'])
+        ->name('buyer.payment.group.initiate');
+    Route::get('/paiement/groupe/{group}/attente', [PaymentController::class, 'waitingGroup'])
+        ->name('buyer.payment.group.waiting');
+    Route::get('/achats/{group}/statut', [PaymentController::class, 'statusGroup'])
+        ->name('buyer.payment.group.status');
+    Route::get('/achats/{group}', [BuyerOrderController::class, 'showGroup'])
+        ->name('buyer.orders.group.show');
 });
 
 // Paiement frais transport acheteur
@@ -450,9 +460,6 @@ Route::middleware(['auth', 'role:admin','check.status'])->prefix('admin')->group
 
 Route::view('/aide', 'pages.help')->name('help');
 Route::view('/a-propos', 'pages.about')->name('about');
-Route::view('/toto', 'layouts.admin')->name('admin');
-
-
 
 
 Route::middleware(['auth', 'role:buyer', 'verified','check.status'])->group(function () {
@@ -543,42 +550,3 @@ Route::middleware('auth','check.status')->prefix('notifications')->name('notific
 });
 
 
-
-
-// // ── Paiement frais transport acheteur ─────────────────────────────────
-// // INCHANGÉ — seuls les controllers/services injectés dedans changent en interne.
-// Route::middleware(['auth', 'role:buyer', 'verified'])->group(function () {
-
-//         Route::get('/commandes/{order}/transport', [BuyerOrderController::class, 'transportPayment'])
-//                 ->name('buyer.orders.transport');
-
-//         Route::post('/commandes/{order}/transport/payer', [BuyerOrderController::class, 'payTransport'])
-//                 ->name('buyer.orders.transport.pay');
-
-//         Route::get('/commandes/{order}/transport/attente', [BuyerOrderController::class, 'transportWaiting'])
-//                 ->name('buyer.orders.transport.waiting');
-
-//         Route::get('/commandes/{order}/transport/statut', [BuyerOrderController::class, 'transportStatus'])
-//                 ->name('buyer.orders.transport.status');
-// });
-
-// // ── Webhook Elgiopay — pas de middleware auth (appelé par Elgiopay) ───
-// // AVANT : Route::post('/webhooks/campay', [WebhookController::class, 'campay'])
-// //         ->name('payment.webhook.campay');
-// // Protection assurée par la vérification de signature HMAC dans le controller,
-// // pas par un middleware Laravel — c'est Elgiopay qui appelle cette route, pas
-// // un utilisateur connecté.
-// Route::post('/webhooks/elgiopay', [WebhookController::class, 'elgiopay'])
-//         ->name('payment.webhook.elgiopay');
-
-// // ── Pages paiement acheteur ────────────────────────────────────────────
-// // INCHANGÉ.
-// Route::middleware(['auth', 'verified', 'role:buyer'])->group(function () {
-
-//         Route::get('/paiement/{order}/initier', [PaymentController::class, 'initiate'])
-//                 ->name('buyer.payment.initiate');
-//         Route::get('/paiement/{order}/attente', [PaymentController::class, 'waiting'])
-//                 ->name('buyer.payment.waiting');
-//         Route::get('/commandes/{order}/statut', [PaymentController::class, 'status'])
-//                 ->name('buyer.orders.status');
-// });
