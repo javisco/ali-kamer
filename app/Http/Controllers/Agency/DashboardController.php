@@ -68,6 +68,7 @@ class DashboardController extends Controller
     public function storeSecretary(Request $request, AgencyCounter $counter)
     {
         $agency = auth()->user()->managedAgency;
+        abort_unless($agency, 403, 'Aucune agence assignée.');
 
         $request->validate([
             'name'     => ['required', 'string'],
@@ -84,11 +85,32 @@ class DashboardController extends Controller
 
         return back()->with('success', 'Secrétaire créé et affecté.');
     }
+    // Modifier un secrétaire
+    public function updateSecretary(Request $request, User $secretary)
+    {
+        $agency = auth()->user()->managedAgency;
+        abort_unless($agency, 403, 'Aucune agence assignée.');
 
+        $request->validate([
+            'name'     => ['required', 'string'],
+            'phone'    => ['required', 'string', 'regex:/^6[0-9]{8}$/', 'unique:users,phone,' . $secretary->id],
+            'email'    => ['nullable', 'email', 'unique:users,email,' . $secretary->id],
+            'password' => ['nullable', 'string', 'min:8'],
+        ]);
+
+        try {
+            $this->managerService->updateSecretary($agency, $secretary, $request->all());
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => $e->getMessage()]);
+        }
+
+        return back()->with('success', 'Secrétaire mis à jour.');
+    }
     // Activer/désactiver un secrétaire
     public function toggleSecretary(User $secretary)
     {
         $agency = auth()->user()->managedAgency;
+        abort_unless($agency, 403, 'Aucune agence assignée.');
 
         try {
             $this->managerService->toggleSecretary($agency, $secretary);
@@ -103,6 +125,7 @@ class DashboardController extends Controller
     public function deleteSecretary(User $secretary)
     {
         $agency = auth()->user()->managedAgency;
+        abort_unless($agency, 403, 'Aucune agence assignée.');
 
         try {
             $this->managerService->deleteSecretary($agency, $secretary);

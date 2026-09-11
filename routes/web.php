@@ -519,6 +519,8 @@ Route::middleware(['auth', 'role:agency_manager', 'check.status'])
                 // Secrétaires
                 Route::post('/comptoirs/{counter}/secretaire', [AgencyDashboard::class, 'storeSecretary'])
                         ->name('agency.secretary.store');
+                Route::put('/secretaires/{secretary}', [AgencyDashboard::class, 'updateSecretary'])
+                        ->name('agency.secretary.update');
                 Route::post('/secretaires/{secretary}/toggle', [AgencyDashboard::class, 'toggleSecretary'])
                         ->name('agency.secretary.toggle');
                 Route::delete('/secretaires/{secretary}', [AgencyDashboard::class, 'deleteSecretary'])
