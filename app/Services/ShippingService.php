@@ -9,6 +9,9 @@ use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Notifications\Shippings\BuyerArrivalWithOtpNotification;
+use App\Notifications\Payments\BuyerTransportFeeNotification;
+use App\Notifications\Shippings\PackageRegisteredNotification;
 
 class ShippingService
 {
@@ -104,6 +107,9 @@ class ShippingService
                 $counter->agency,
                 $order
             );
+            // $order->buyer->notify(
+            //  new PackageRegisteredNotification($order)
+            //);
             // app(NotificationService::class)->notifyPackageRegistered($order);
         });
     }
@@ -217,13 +223,17 @@ class ShippingService
                 // Transport inclus ou déjà payé → envoyer OTP directement
                 $order->update([
                     'otp_code'       => $otp,
-                    'otp_expires_at' => now()->addHours(120),
+                    'otp_expires_at' => now()->addDays(10),
                 ]);
-                // app(NotificationService::class)->notifyBuyerArrivalWithOtp($order, $otp);
+                //       $order->buyer?->notify(
+                //        new BuyerArrivalWithOtpNotification($order, $otp)
+                //     );
             } else {
                 // Transport non payé → informer l'acheteur de payer d'abord
                 // L'OTP sera généré après le paiement du transport
-                // app(NotificationService::class)->notifyBuyerTransportFee($order);
+                //  $order->buyer?->notify(
+                //      new BuyerTransportFeeNotification($order)
+                //  );
             }
         });
     }

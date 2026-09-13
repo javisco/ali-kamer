@@ -754,7 +754,7 @@
                                         <div class="min-w-0">
 
                                             <h3 class="text-sm font-extrabold text-[#0a1b12] truncate">
-                                                {{ $item->product->title ?? 'Produit supprimé' }}
+                                                {{ $item->purchasedLabel() }}
                                             </h3>
 
                                             @if ($item->product)

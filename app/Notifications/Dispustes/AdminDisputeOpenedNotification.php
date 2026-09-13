@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications;
+namespace App\Notifications\Shipping;
 
 use App\Models\Dispute;
 use App\Notifications\Concerns\HasDatabasePayload;

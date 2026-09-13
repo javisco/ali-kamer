@@ -9,8 +9,8 @@ use App\Models\Shop;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use App\Notifications\KycApprovedNotification;
-use App\Notifications\KycRejectedNotification;
+use App\Notifications\Kyc\KycApprovedNotification;
+use App\Notifications\Kyc\KycRejectedNotification;
 
 class KycService
 {

@@ -11,9 +11,9 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use App\Notifications\DisputeOpenedNotification;
-use App\Notifications\DisputeResolvedNotification;
-use App\Notifications\AdminDisputeOpenedNotification;
+use App\Notifications\Disputes\DisputeOpenedNotification;
+use App\Notifications\Disputes\DisputeResolvedNotification;
+use App\Notifications\Disputes\AdminDisputeOpenedNotification;
 use Illuminate\Support\Facades\Notification as NotificationFacade;
 
 class DisputeService

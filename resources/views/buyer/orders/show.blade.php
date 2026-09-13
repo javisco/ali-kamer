@@ -433,7 +433,7 @@
                         <div class="flex-1 min-w-0">
 
                             <p class="font-semibold text-gray-900 text-sm line-clamp-2">
-                                {{ $item->product_title }}
+                                {{ $item->purchasedLabel() }}
                             </p>
 
                             <p class="text-xs text-gray-400 mt-0.5">

@@ -103,7 +103,7 @@
                     <div class="flex justify-between text-sm py-1">
 
                         <span class="text-gray-700">
-                            {{ $item->product_title }}
+                            {{ $item->purchasedLabel() }}
                         </span>
 
                         <span class="text-gray-500 font-medium">

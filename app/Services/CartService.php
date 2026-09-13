@@ -30,6 +30,18 @@ class CartService
         ?ProductVariant $variant = null
     ): CartItem {
 
+        if ($product->hasVariants() && ! $variant) {
+            throw ValidationException::withMessages([
+                'variant' => 'Veuillez choisir une variante.',
+            ]);
+        }
+
+        if ($variant && ($variant->product_id !== $product->id || ! $variant->is_active)) {
+            throw ValidationException::withMessages([
+                'variant' => 'Cette variante n\'est plus disponible.',
+            ]);
+        }
+
         // Vérifier que le produit est visible
         if (! $product->isVisible()) {
             throw ValidationException::withMessages([
@@ -70,9 +82,17 @@ class CartService
                 ->first();
 
             if ($existing) {
+                $newQuantity = $existing->quantity + $quantity;
+
+                if ($newQuantity > $availableStock) {
+                    throw ValidationException::withMessages([
+                        'quantity' => "Stock insuffisant. Disponible : {$availableStock}.",
+                    ]);
+                }
+
                 $existing->update([
-                    'quantity'   => $existing->quantity + $quantity,
-                    'unit_price' => $price, // Mettre à jour le prix
+                    'quantity'   => $newQuantity,
+                    'unit_price' => $price,
                 ]);
                 return $existing->fresh();
             }

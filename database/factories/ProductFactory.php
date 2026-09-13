@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Shop;
+use App\Services\ProductVariantService;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ProductFactory extends Factory
@@ -50,5 +51,67 @@ class ProductFactory extends Factory
     public function soldOut(): static
     {
         return $this->state(fn () => ['status' => 'sold_out', 'stock' => 0]);
+    }
+
+    public function withColorAndSize(): static
+    {
+        return $this->afterCreating(function (Product $product) {
+            $this->syncVariants($product, [
+                ['name' => 'Couleur', 'values' => ['Noir', 'Blanc', 'Rouge']],
+                ['name' => 'Taille', 'values' => ['S', 'M', 'L']],
+            ]);
+        });
+    }
+
+    public function withStorage(): static
+    {
+        return $this->afterCreating(function (Product $product) {
+            $this->syncVariants($product, [
+                ['name' => 'Couleur', 'values' => ['Noir', 'Bleu']],
+                ['name' => 'Stockage', 'values' => ['128 Go', '256 Go']],
+            ]);
+        });
+    }
+
+    public function withSizeOnly(): static
+    {
+        return $this->afterCreating(function (Product $product) {
+            $this->syncVariants($product, [
+                ['name' => 'Pointure', 'values' => ['39', '40', '41', '42', '43']],
+            ]);
+        });
+    }
+
+    /**
+     * @param  list<array{name: string, values: list<string>}>  $attributes
+     */
+    private function syncVariants(Product $product, array $attributes): void
+    {
+        $variants = [];
+        $combos = [[]];
+
+        foreach ($attributes as $attribute) {
+            $next = [];
+            foreach ($combos as $prefix) {
+                foreach ($attribute['values'] as $value) {
+                    $next[] = [...$prefix, $value];
+                }
+            }
+            $combos = $next;
+        }
+
+        foreach ($combos as $index => $values) {
+            $price = max(100, (int) $product->price + ($index * 500));
+            $variants[] = [
+                'values'    => $values,
+                'price'     => $price,
+                'old_price' => $product->old_price && $product->old_price > $price ? $product->old_price : null,
+                'stock'     => $index === 1 ? 0 : fake()->numberBetween(2, 12),
+                'sku'       => strtoupper(substr($product->title, 0, 3)) . '-' . implode('-', $values),
+                'is_active' => $index !== count($combos) - 1,
+            ];
+        }
+
+        app(ProductVariantService::class)->sync($product, $attributes, $variants);
     }
 }

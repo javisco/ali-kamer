@@ -3,7 +3,7 @@
 @section('title', 'Ajouter un produit - ALI-KAMER')
 
 @section('content')
-    <div class="min-h-screen bg-[#F7F7F2] py-6 sm:py-8">
+    <div class="min-h-screen bg-[#F7F7F2] py-6 sm:py-8" x-data="productForm(@js($variantBuilder))">
         <div class="w-full max-w-4xl mx-auto px-4 sm:px-6">
 
             {{-- Carte Principale --}}
@@ -96,13 +96,17 @@
                                 class="w-full bg-[#F7F7F2]/60 border border-gray-200 rounded-xl px-4 py-3 text-sm text-[#0a1b12] font-medium focus:bg-white focus:border-[#016837] focus:ring-1 focus:ring-[#016837] transition outline-none">
                         </div>
 
-                        <div>
+                        <div x-show="!hasVariants">
                             <label class="block text-sm font-bold text-[#0a1b12] mb-1.5">
                                 Stock disponible <span class="text-[#E30613]">*</span>
                             </label>
-                            <input type="number" name="stock" value="{{ old('stock', 1) }}" required min="0"
+                            <input type="number" name="stock" value="{{ old('stock', 1) }}" min="0"
+                                :required="!hasVariants"
                                 class="w-full bg-[#F7F7F2]/60 border border-gray-200 rounded-xl px-4 py-3 text-sm text-[#0a1b12] font-medium focus:bg-white focus:border-[#016837] focus:ring-1 focus:ring-[#016837] transition outline-none">
                         </div>
+                        <p x-show="hasVariants" x-cloak class="text-xs text-gray-500 sm:col-span-2">
+                            Le stock se saisit ensuite par variante dans le tableau ci-dessous. Le prix ci-dessus sert de prix par défaut.
+                        </p>
 
                         <div>
                             <label class="block text-sm font-bold text-[#0a1b12] mb-1.5">
@@ -164,6 +168,8 @@
                             placeholder="Décrivez votre produit en détail (matériaux, taille, état...)"
                             class="w-full bg-[#F7F7F2]/60 border border-gray-200 rounded-xl px-4 py-3 text-sm text-[#0a1b12] font-medium focus:bg-white focus:border-[#016837] focus:ring-1 focus:ring-[#016837] transition outline-none">{{ old('description') }}</textarea>
                     </div>
+
+                    @include('seller.products._variants')
 
                     {{-- 5. Upload Photos --}}
                     <div>
