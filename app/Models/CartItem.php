@@ -41,8 +41,13 @@ class CartItem extends Model
     }
 
     // Label de la variante si applicable
-    public function variantLabel(): string
+    public function variantLabel(string $separator = ' / '): string
     {
-        return $this->variant?->label() ?? '';
+        return $this->variant?->label($separator) ?? '';
+    }
+
+    public function variantBulletLabel(): string
+    {
+        return $this->variant?->bulletLabel() ?? '';
     }
 }

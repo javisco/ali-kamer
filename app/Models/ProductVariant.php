@@ -47,13 +47,18 @@ class ProductVariant extends Model
     }
 
     // Label lisible de la variante
-    // Ex: "Core i5 / 8GB"
-    public function label(): string
+    // Ex: "Core i5 / 8GB" ou "Noir • Sans fil"
+    public function label(string $separator = ' / '): string
     {
         return $this->attributeValues
             ->sortBy('attribute.sort_order')
             ->pluck('value')
-            ->join(' / ');
+            ->join($separator);
+    }
+
+    public function bulletLabel(): string
+    {
+        return $this->label(' • ');
     }
 
     public function hasDiscount(): bool

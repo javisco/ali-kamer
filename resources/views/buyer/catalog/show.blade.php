@@ -4,73 +4,81 @@
 
 @section('content')
 
+<script>
+    function productShow() {
+        return {
+            lightboxOpen: false,
+            lightboxImg: @json($product->images->first() ? Storage::url($product->images->first()->url) : ''),
+            defaultImg: @json($product->images->first() ? Storage::url($product->images->first()->url) : ''),
+            quantity: {{ (int) ($product->min_quantity ?? 1) }},
+            minQty: {{ (int) ($product->min_quantity ?? 1) }},
+            maxStock: {{ (int) $product->availableStock() }},
+            copied: false,
+            variants: @json($variantsData ?? []),
+            selectedValues: {},
+            selectedVariant: null,
+
+            shareUrl() {
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(window.location.href);
+                    this.copied = true;
+                    setTimeout(() => {
+                        this.copied = false;
+                    }, 2000);
+                }
+            },
+
+            selectValue(attrId, valueId, imageUrl) {
+                if (!this.isValueAvailable(attrId, valueId)) return;
+                this.selectedValues[attrId] = valueId;
+                if (imageUrl) {
+                    this.lightboxImg = imageUrl;
+                }
+                this.updateVariant();
+            },
+
+            isValueAvailable(attrId, valueId) {
+                const trial = { ...this.selectedValues, [attrId]: valueId };
+                const selected = Object.values(trial).map(Number);
+                return this.variants.some(v =>
+                    selected.every(id => v.value_ids.map(Number).includes(id)) && v.stock > 0
+                );
+            },
+
+            updateVariant() {
+                const selected = Object.values(this.selectedValues).map(Number).sort((a, b) => a - b);
+                const attrCount = Object.keys(this.selectedValues).length;
+                const needed = {{ (int) $product->attributes->count() }};
+
+                this.selectedVariant = (attrCount === needed)
+                    ? this.variants.find(v => {
+                        const ids = [...v.value_ids].map(Number).sort((a, b) => a - b);
+                        return JSON.stringify(ids) === JSON.stringify(selected);
+                    }) ?? null
+                    : null;
+
+                if (this.selectedVariant) {
+                    this.maxStock = this.selectedVariant.stock;
+                    if (this.quantity > this.maxStock) {
+                        this.quantity = Math.max(this.minQty, this.maxStock);
+                    }
+                    if (this.selectedVariant.images && this.selectedVariant.images.length) {
+                        this.lightboxImg = this.selectedVariant.images[0];
+                    }
+                }
+            },
+
+            formatPrice(price) {
+                if (price === null || price === undefined || isNaN(price)) return '';
+                return new Intl.NumberFormat('fr-FR').format(price);
+            }
+        };
+    }
+</script>
+
 <div
     class="min-h-screen bg-[#F7F9F7] py-5 sm:py-7 pb-24 lg:pb-8"
-    x-data="{
-        lightboxOpen: false,
-        lightboxImg: '{{ $product->images->first() ? Storage::url($product->images->first()->url) : '' }}',
-        defaultImg: '{{ $product->images->first() ? Storage::url($product->images->first()->url) : '' }}',
-        quantity: {{ $product->min_quantity ?? 1 }},
-        minQty: {{ $product->min_quantity ?? 1 }},
-        maxStock: {{ $product->availableStock() }},
-        copied: false,
-        variants: @json($variantsData),
-        selectedValues: {},
-        selectedVariant: null,
-
-        shareUrl() {
-            navigator.clipboard.writeText(window.location.href);
-            this.copied = true;
-
-            setTimeout(() => {
-                this.copied = false;
-            }, 2000);
-        },
-
-        selectValue(attrId, valueId, imageUrl) {
-            if (!this.isValueAvailable(attrId, valueId)) return;
-            this.selectedValues[attrId] = valueId;
-            if (imageUrl) {
-                this.lightboxImg = imageUrl;
-            }
-            this.updateVariant();
-        },
-
-        isValueAvailable(attrId, valueId) {
-            const trial = { ...this.selectedValues, [attrId]: valueId };
-            const selected = Object.values(trial).map(Number);
-            return this.variants.some(v =>
-                selected.every(id => v.value_ids.map(Number).includes(id)) && v.stock > 0
-            );
-        },
-
-        updateVariant() {
-            const selected = Object.values(this.selectedValues).map(Number).sort((a, b) => a - b);
-            const attrCount = Object.keys(this.selectedValues).length;
-            const needed = {{ $product->attributes->count() }};
-
-            this.selectedVariant = (attrCount === needed)
-                ? this.variants.find(v => {
-                    const ids = [...v.value_ids].map(Number).sort((a, b) => a - b);
-                    return JSON.stringify(ids) === JSON.stringify(selected);
-                }) ?? null
-                : null;
-
-            if (this.selectedVariant) {
-                this.maxStock = this.selectedVariant.stock;
-                if (this.quantity > this.maxStock) {
-                    this.quantity = Math.max(this.minQty, this.maxStock);
-                }
-                if (this.selectedVariant.images && this.selectedVariant.images.length) {
-                    this.lightboxImg = this.selectedVariant.images[0];
-                }
-            }
-        },
-
-        formatPrice(price) {
-            return new Intl.NumberFormat('fr-FR').format(price);
-        }
-    }"
+    x-data="productShow()"
 >
 
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -389,7 +397,7 @@
                         <div class="flex flex-wrap items-baseline gap-2">
 
                             <span class="text-2xl font-black text-[#016837]">
-                                <span x-text="formatPrice(selectedVariant ? selectedVariant.price : {{ $product->minPrice() }})"></span>
+                                <span x-text="formatPrice(selectedVariant ? selectedVariant.price : {{ $product->minPrice() ?: $product->price }})">{{ number_format($product->minPrice() ?: $product->price, 0, ',', ' ') }}</span>
                                 <span class="text-[10px] font-extrabold">
                                     FCFA
                                 </span>
@@ -463,7 +471,7 @@
                     ================================================== --}}
                     @if ($product->hasVariants())
 
-                        <div class="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+                        <div id="variants-section" class="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
 
                             @foreach ($product->attributes as $attribute)
 
@@ -479,7 +487,7 @@
 
                                             <button
                                                 type="button"
-                                                @click="selectValue({{ $attribute->id }}, {{ $value->id }}, {{ json_encode($value->image_path ? \Illuminate\Support\Facades\Storage::url($value->image_path) : null) }})"
+                                                @click="selectValue({{ $attribute->id }}, {{ $value->id }}, '{{ $value->image_path ? \Illuminate\Support\Facades\Storage::url($value->image_path) : '' }}')"
                                                 :disabled="!isValueAvailable({{ $attribute->id }}, {{ $value->id }})"
                                                 :class="selectedValues[{{ $attribute->id }}] === {{ $value->id }}
                                                     ? 'border-[#016837] bg-[#016837]/10 text-[#016837] font-bold'
@@ -731,26 +739,44 @@
 
                             @if ($product->availableStock() > 0)
 
-                                <a
-                                    href="{{ route('buyer.orders.create', $product->id) }}"
-                                    class="flex items-center justify-center gap-1.5 rounded-xl
-                                           bg-[#E30613] px-3 py-2.5 text-[10px] font-extrabold
-                                           text-white shadow-sm shadow-[#E30613]/15 transition
-                                           hover:bg-[#c90511] active:scale-[0.98]"
-                                >
-
-                                    Commander
-
-                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M14 5l7 7m0 0l-7 7m7-7H3"
-                                        />
-                                    </svg>
-
-                                </a>
+                                @if ($product->hasVariants())
+                                    <a
+                                        :href="selectedVariant ? '{{ route('buyer.orders.create', $product->id) }}?variant_id=' + selectedVariant.id : '#variants-section'"
+                                        @click="if(!selectedVariant) { $event.preventDefault(); document.getElementById('variants-section')?.scrollIntoView({behavior: 'smooth'}); alert('Veuillez sélectionner les options du produit avant de commander.'); }"
+                                        :class="selectedVariant ? 'bg-[#E30613] hover:bg-[#c90511]' : 'bg-slate-300 cursor-pointer'"
+                                        class="flex items-center justify-center gap-1.5 rounded-xl
+                                               px-3 py-2.5 text-[10px] font-extrabold
+                                               text-white shadow-sm transition active:scale-[0.98]"
+                                    >
+                                        <span x-text="selectedVariant ? 'Commander' : 'Choisir une option'">Commander</span>
+                                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M14 5l7 7m0 0l-7 7m7-7H3"
+                                            />
+                                        </svg>
+                                    </a>
+                                @else
+                                    <a
+                                        href="{{ route('buyer.orders.create', $product->id) }}"
+                                        class="flex items-center justify-center gap-1.5 rounded-xl
+                                               bg-[#E30613] px-3 py-2.5 text-[10px] font-extrabold
+                                               text-white shadow-sm shadow-[#E30613]/15 transition
+                                               hover:bg-[#c90511] active:scale-[0.98]"
+                                    >
+                                        Commander
+                                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M14 5l7 7m0 0l-7 7m7-7H3"
+                                            />
+                                        </svg>
+                                    </a>
+                                @endif
 
                             @else
 
@@ -1482,9 +1508,22 @@
 
             @if ($product->availableStock() > 0)
                 @if ($product->hasVariants())
-                    <span class="rounded-xl bg-[#016837] px-4 py-2.5 text-[10px] font-extrabold text-white">
-                        Choisir une option
-                    </span>
+                    <a
+                        :href="selectedVariant ? '{{ route('buyer.orders.create', $product->id) }}?variant_id=' + selectedVariant.id : '#variants-section'"
+                        @click="if(!selectedVariant) { $event.preventDefault(); document.getElementById('variants-section')?.scrollIntoView({behavior: 'smooth'}); }"
+                        :class="selectedVariant ? 'bg-[#E30613] text-white shadow-sm' : 'bg-[#016837] text-white'"
+                        class="flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-[10px] font-extrabold transition active:scale-95 cursor-pointer"
+                    >
+                        <span x-text="selectedVariant ? 'Commander' : 'Choisir une option'">Choisir une option</span>
+                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M14 5l7 7m0 0l-7 7m7-7H3"
+                            />
+                        </svg>
+                    </a>
                 @else
                 <a
                     href="{{ route('buyer.orders.create', $product->id) }}"
@@ -1492,9 +1531,7 @@
                            px-4 py-2.5 text-[10px] font-extrabold text-white shadow-sm
                            transition active:scale-95"
                 >
-
                     Commander
-
                     <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
                             stroke-linecap="round"
@@ -1503,7 +1540,6 @@
                             d="M14 5l7 7m0 0l-7 7m7-7H3"
                         />
                     </svg>
-
                 </a>
                 @endif
 

@@ -12,12 +12,15 @@ use App\Models\WalletTransaction;
 use App\Services\CampayService;
 use App\Services\ElgiopayService;
 use App\Services\KycService;
+use App\Services\TreasuryService;
 use App\Services\WalletService;
 use Illuminate\Http\Request;
 
 
 class AdminDashboardController extends Controller
 {
+    public function __construct(private TreasuryService $treasury) {}
+
     public function index()
     {
         // ── KPIs du jour ──────────────────────────────────────────────
@@ -68,20 +71,23 @@ class AdminDashboardController extends Controller
             ->limit(10)
             ->get();
 
-        // Solde Campay en temps réel
-        $elgiopayBalance = null;
+        // Solde Elgiopay et instantané trésorerie
+        $treasurySnapshot = null;
         try {
-            $elgiopayBalance = app(ElgiopayService::class)->getBalance();
-        } catch (\Exception $e) {
-            \Log::warning('Campay balance unavailable', ['error' => $e->getMessage()]);
+            $treasurySnapshot = $this->treasury->getSnapshot();
+        } catch (\Throwable $e) {
+            \Log::warning('Treasury snapshot unavailable', ['error' => $e->getMessage()]);
         }
+
+        $elgiopayBalance = $treasurySnapshot ? ['balance' => $treasurySnapshot['live_balance']] : null;
 
         return view('admin.dashboard', compact(
             'kpis',
             'pendingKyc',
             'openDisputes',
             'recentOrders',
-            'elgiopayBalance'
+            'elgiopayBalance',
+            'treasurySnapshot'
         ));
     }
 

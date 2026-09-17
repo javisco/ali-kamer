@@ -724,13 +724,18 @@
                             <div class="p-4 flex gap-3">
 
                                 {{-- IMAGE --}}
+                                @php
+                                    $sellerItemImage = ($item->variant && $item->variant->images?->isNotEmpty())
+                                        ? $item->variant->images->first()->url
+                                        : $item->product?->images->first()?->url;
+                                @endphp
                                 <div
                                     class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
 
-                                    @if ($item->product && $item->product->images->first())
+                                    @if ($sellerItemImage)
 
-                                        <img src="{{ Storage::url($item->product->images->first()->url) }}"
-                                            alt="{{ $item->product->title }}"
+                                        <img src="{{ Storage::url($sellerItemImage) }}"
+                                            alt="{{ $item->product_title }}"
                                             class="w-full h-full object-cover">
 
                                     @else
@@ -754,12 +759,34 @@
                                         <div class="min-w-0">
 
                                             <h3 class="text-sm font-extrabold text-[#0a1b12] truncate">
-                                                {{ $item->purchasedLabel() }}
+                                                {{ $item->product_title }}
                                             </h3>
+
+                                            {{-- Spécifications exactes de la variante --}}
+                                            @if (!empty($item->variant_snapshot['attributes']))
+                                                <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
+                                                    @foreach ($item->variant_snapshot['attributes'] as $attr)
+                                                        <span class="inline-flex items-center text-[11px] font-semibold text-slate-700 bg-slate-100 border border-slate-200/80 px-2 py-0.5 rounded-md">
+                                                            <span class="text-slate-400 font-medium mr-1">{{ $attr['name'] }}:</span> {{ $attr['value'] }}
+                                                        </span>
+                                                    @endforeach
+                                                    @if (!empty($item->variant_snapshot['sku']))
+                                                        <span class="inline-flex items-center text-[10px] font-mono text-emerald-800 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">
+                                                            SKU: {{ $item->variant_snapshot['sku'] }}
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            @elseif ($item->variant_label)
+                                                <div class="flex items-center gap-1.5 mt-1.5">
+                                                    <span class="inline-flex items-center text-[11px] font-semibold text-slate-700 bg-slate-100 border border-slate-200/80 px-2 py-0.5 rounded-md">
+                                                        {{ str_replace(' / ', ' • ', $item->variant_label) }}
+                                                    </span>
+                                                </div>
+                                            @endif
 
                                             @if ($item->product)
 
-                                                <p class="text-[10px] text-slate-400 mt-0.5">
+                                                <p class="text-[10px] text-slate-400 mt-1">
                                                     Produit #{{ $item->product->id }}
                                                 </p>
 

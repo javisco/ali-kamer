@@ -103,7 +103,7 @@ class ProductSeeder extends Seeder
             $price = round($price / 500) * 500;
             $hasDiscount = (bool) rand(0, 1);
 
-            Product::create([
+            $product = Product::create([
                 'shop_id' => $shop1->id,
                 'category_id' => $techCategory->id,
                 'title' => $title,
@@ -121,6 +121,10 @@ class ProductSeeder extends Seeder
                 'views_count' => rand(10, 500),
                 'orders_count' => rand(0, 30),
             ]);
+
+            if ($i % 3 === 0) {
+                ProductVariantSeeder::seedVariantsForProduct($product, rand(2, 4));
+            }
         }
 
         // --- CATALOGUE BOUTIQUE 2 : MODE & VÊTEMENTS (250 Produits) ---
@@ -186,7 +190,7 @@ class ProductSeeder extends Seeder
             $price = round($price / 500) * 500;
             $hasDiscount = (bool) rand(0, 1);
 
-            Product::create([
+            $product = Product::create([
                 'shop_id' => $shop2->id,
                 'category_id' => $fashionCategory->id,
                 'title' => $title,
@@ -204,6 +208,10 @@ class ProductSeeder extends Seeder
                 'views_count' => rand(15, 300),
                 'orders_count' => rand(0, 20),
             ]);
+
+            if ($i % 3 === 0) {
+                ProductVariantSeeder::seedVariantsForProduct($product, rand(2, 5));
+            }
         }
 
 

@@ -9,7 +9,7 @@
         Design : Vert / Rouge / Jaune — Plus Jakarta Sans
     ========================================================== --}}
 
-    <div class="min-h-screen bg-[#FAF9F6] font-['Plus_Jakarta_Sans']">
+    <div class="min-h-screen bg-[#FAF9F6] font-['Plus_Jakarta_Sans']" x-data="{ withdrawModalOpen: {{ $errors->has('password') || $errors->has('amount') ? 'true' : 'false' }} }">
 
         <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6">
 
@@ -21,6 +21,24 @@
                 <div class="w-1/3 bg-[#FCD116]"></div>
                 <div class="w-1/3 bg-[#CE1126]"></div>
             </div>
+
+            @if(session('success'))
+                <div class="mb-5 flex items-center gap-3 bg-[#00843D]/10 border border-[#00843D]/20 text-[#00843D] px-5 py-3.5 rounded-2xl text-xs font-bold shadow-xs">
+                    <span class="w-2 h-2 rounded-full bg-[#00843D]"></span>
+                    <span>{{ session('success') }}</span>
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="mb-5 bg-red-50 border border-red-200 text-[#CE1126] px-5 py-3.5 rounded-2xl text-xs font-bold shadow-xs">
+                    <p class="font-black mb-1">Attention :</p>
+                    <ul class="list-disc list-inside space-y-1 font-semibold">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
 
             {{-- =========================================================
@@ -62,6 +80,28 @@
                         </div>
 
                         <div class="flex flex-wrap items-center gap-3">
+
+                            @if(isset($treasurySnapshot) && $treasurySnapshot['withdrawable'] !== null)
+                                <div class="inline-flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white/10 border border-white/15 backdrop-blur-sm text-white">
+                                    <div>
+                                        <p class="text-[10px] text-green-100/70 uppercase tracking-wider font-bold">
+                                            Solde Retirable
+                                        </p>
+                                        <p class="text-sm font-black mt-0.5 text-[#FCD116]">
+                                            {{ number_format($treasurySnapshot['withdrawable'], 0, ',', ' ') }} <span class="text-[10px] text-white">FCFA</span>
+                                        </p>
+                                    </div>
+                                    <button
+                                        @click="withdrawModalOpen = true"
+                                        type="button"
+                                        class="cursor-pointer ml-1 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FCD116] hover:bg-[#e2bc13] text-[#004D2A] text-xs font-black shadow-sm transition">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+                                        </svg>
+                                        <span>Retrait</span>
+                                    </button>
+                                </div>
+                            @endif
 
                             <div
                                 class="inline-flex items-center gap-3 px-4 py-3 rounded-2xl
@@ -1303,6 +1343,171 @@
                     Données mises à jour selon l’activité actuelle.
                 </p>
 
+            {{-- =========================================================
+                MODAL DE RETRAIT ADMINISTRATEUR (AVEC MOT DE PASSE)
+            ========================================================== --}}
+            <div
+                x-show="withdrawModalOpen"
+                x-cloak
+                class="fixed inset-0 z-50 overflow-y-auto"
+                style="display: none;"
+            >
+                {{-- Backdrop --}}
+                <div
+                    x-show="withdrawModalOpen"
+                    x-transition:enter="ease-out duration-300"
+                    x-transition:enter-start="opacity-0"
+                    x-transition:enter-end="opacity-100"
+                    x-transition:leave="ease-in duration-200"
+                    x-transition:leave-start="opacity-100"
+                    x-transition:leave-end="opacity-0"
+                    class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs"
+                    @click="withdrawModalOpen = false"
+                ></div>
+
+                {{-- Modal Dialog --}}
+                <div class="flex min-h-full items-center justify-center p-4">
+                    <div
+                        x-show="withdrawModalOpen"
+                        x-transition:enter="ease-out duration-300"
+                        x-transition:enter-start="opacity-0 scale-95"
+                        x-transition:enter-end="opacity-100 scale-100"
+                        x-transition:leave="ease-in duration-200"
+                        x-transition:leave-start="opacity-100 scale-100"
+                        x-transition:leave-end="opacity-0 scale-95"
+                        class="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200 p-6 sm:p-8 overflow-hidden"
+                    >
+                        {{-- Header modal --}}
+                        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-2xl bg-[#00843D]/10 text-[#00843D] flex items-center justify-center font-bold">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-black text-slate-900">Effectuer un retrait trésorerie</h3>
+                                    <p class="text-xs text-slate-400">Paiement Mobile Money sécurisé par mot de passe</p>
+                                </div>
+                            </div>
+                            <button
+                                @click="withdrawModalOpen = false"
+                                class="text-slate-400 hover:text-slate-600 p-1.5 rounded-xl hover:bg-slate-100 transition cursor-pointer"
+                            >
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+
+                        {{-- Solde retirable info --}}
+                        @if(isset($treasurySnapshot))
+                            <div class="mt-4 p-3.5 bg-emerald-50 border border-emerald-200/80 rounded-2xl flex items-center justify-between text-xs">
+                                <span class="font-bold text-emerald-900">Montant maximal retirable :</span>
+                                <span class="font-black text-emerald-700 text-sm">
+                                    {{ number_format($treasurySnapshot['withdrawable'] ?? 0, 0, ',', ' ') }} FCFA
+                                </span>
+                            </div>
+                        @endif
+
+                        <form method="POST" action="{{ route('admin.treasury.withdraw') }}" class="mt-5 space-y-4">
+                            @csrf
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                    Montant (FCFA) <span class="text-[#CE1126]">*</span>
+                                </label>
+                                <input
+                                    type="number"
+                                    name="amount"
+                                    min="1000"
+                                    max="{{ $treasurySnapshot['withdrawable'] ?? 10000000 }}"
+                                    value="{{ old('amount') }}"
+                                    placeholder="Ex: 50000"
+                                    required
+                                    class="w-full border border-slate-300 focus:border-[#00843D] focus:ring-1 focus:ring-[#00843D] rounded-xl px-4 py-2.5 text-sm font-bold text-slate-900 outline-none transition"
+                                >
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                    Numéro MoMo <span class="text-[#CE1126]">*</span>
+                                </label>
+                                <div class="flex">
+                                    <span class="inline-flex items-center px-3.5 border border-r-0 border-slate-300 rounded-l-xl bg-slate-100 text-slate-600 text-xs font-bold">+237</span>
+                                    <input
+                                        type="tel"
+                                        name="phone"
+                                        placeholder="655123456"
+                                        value="{{ old('phone') }}"
+                                        required
+                                        class="flex-1 border border-slate-300 focus:border-[#00843D] focus:ring-1 focus:ring-[#00843D] rounded-r-xl px-4 py-2.5 text-sm font-bold text-slate-900 outline-none transition"
+                                    >
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                    Opérateur <span class="text-[#CE1126]">*</span>
+                                </label>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <label class="flex items-center gap-2.5 border border-slate-200 rounded-xl p-3 cursor-pointer hover:bg-yellow-50/50 has-[:checked]:border-[#F9A01B] has-[:checked]:bg-yellow-50/80">
+                                        <input type="radio" name="operator" value="mtn" class="text-[#F9A01B] focus:ring-[#F9A01B]" checked>
+                                        <span class="text-xs font-extrabold text-slate-800">MTN Mobile Money</span>
+                                    </label>
+                                    <label class="flex items-center gap-2.5 border border-slate-200 rounded-xl p-3 cursor-pointer hover:bg-orange-50/50 has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50/80">
+                                        <input type="radio" name="operator" value="orange" class="text-orange-500 focus:ring-orange-500">
+                                        <span class="text-xs font-extrabold text-slate-800">Orange Money</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                    Note / Motif <span class="text-slate-400 font-normal">(optionnel)</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    name="note"
+                                    value="{{ old('note') }}"
+                                    placeholder="Ex: Virement commissions plateforme"
+                                    class="w-full border border-slate-300 focus:border-[#00843D] focus:ring-1 focus:ring-[#00843D] rounded-xl px-4 py-2 text-xs text-slate-800 outline-none transition"
+                                >
+                            </div>
+
+                            {{-- CONFIRMATION MOT DE PASSE OBLIGATOIRE --}}
+                            <div class="border-t border-slate-100 pt-4 bg-red-50/50 -mx-6 sm:-mx-8 px-6 sm:px-8 py-3.5 border-b">
+                                <label class="block text-xs font-bold text-[#CE1126] uppercase tracking-wider mb-1.5">
+                                    Confirmer votre mot de passe administrateur <span class="text-[#CE1126]">*</span>
+                                </label>
+                                <input
+                                    type="password"
+                                    name="password"
+                                    required
+                                    placeholder="Mot de passe actuel"
+                                    class="w-full border border-red-200 focus:border-[#CE1126] focus:ring-1 focus:ring-[#CE1126] rounded-xl px-4 py-2.5 text-sm bg-white outline-none transition"
+                                >
+                                <p class="text-[11px] text-slate-400 mt-1">Nécessaire pour sécuriser tout décaissement de trésorerie.</p>
+                            </div>
+
+                            <div class="flex items-center justify-end gap-3 pt-3">
+                                <button
+                                    @click="withdrawModalOpen = false"
+                                    type="button"
+                                    class="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition cursor-pointer"
+                                >
+                                    Annuler
+                                </button>
+                                <button
+                                    type="submit"
+                                    class="px-5 py-2.5 rounded-xl bg-[#00843D] hover:bg-[#006e33] text-white text-xs font-black uppercase tracking-wider shadow-md shadow-[#00843D]/20 transition cursor-pointer"
+                                >
+                                    Valider le retrait
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
 
         </div>

@@ -29,7 +29,7 @@ class TreasuryController extends Controller
         $request->validate([
             'amount'   => ['required', 'integer', 'min:1000'],
             'phone'    => ['required', 'string', 'regex:/^6[0-9]{8}$/'],
-            'operator' => ['required', 'in:mtn,orange'],
+            'operator' => ['required', 'in:mtn,orange,MTN,ORANGE'],
             'password' => ['required', 'string'],
             'note'     => ['nullable', 'string', 'max:255'],
         ]);
@@ -43,14 +43,13 @@ class TreasuryController extends Controller
                 Auth::user(),
                 (int) $request->amount,
                 $request->phone,
-                $request->operator,
+                strtolower($request->operator),
                 $request->note
             );
         } catch (\Exception $e) {
             return back()->withErrors(['amount' => $e->getMessage()])->withInput();
         }
 
-        return redirect()->route('admin.treasury.index')
-            ->with('success', 'Retrait de ' . number_format($request->amount, 0, ',', ' ') . ' FCFA effectué avec succès.');
+        return back()->with('success', 'Retrait de ' . number_format($request->amount, 0, ',', ' ') . ' FCFA effectué avec succès.');
     }
 }

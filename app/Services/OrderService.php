@@ -352,6 +352,7 @@ class OrderService
     // ── PANIER MULTI-VENDEUR : un OrderGroup + un Order par boutique ──
     private function createMultiShopOrderGroup(User $buyer, $itemsByShop, array $data): OrderGroup
     {
+
         $totalSubtotal    = 0;
         $totalProtection  = 0;
         $shopCalculations = [];
@@ -441,7 +442,7 @@ class OrderService
             'payer_phone'     => $data['payer_phone'],
             'payer_operator'  => $data['payer_operator'],
         ]);
-
+   
         return $group;
     }
 

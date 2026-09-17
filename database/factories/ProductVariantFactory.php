@@ -25,6 +25,71 @@ class ProductVariantFactory extends Factory
         ];
     }
 
+    public function configure(): static
+    {
+        return $this->afterCreating(function (ProductVariant $variant) {
+            if ($variant->attributeValues()->count() === 0) {
+                $product = $variant->product;
+                if ($product) {
+                    $attribute = \App\Models\ProductAttribute::firstOrCreate(
+                        ['product_id' => $product->id, 'name' => 'Option'],
+                        ['sort_order' => 0]
+                    );
+                    $value = \App\Models\ProductAttributeValue::firstOrCreate(
+                        ['product_attribute_id' => $attribute->id, 'value' => 'Standard #' . $variant->id],
+                        ['sort_order' => 0]
+                    );
+                    $variant->attributeValues()->syncWithoutDetaching([$value->id]);
+                }
+            }
+        });
+    }
+
+    public function withAttributes(array $attributes): static
+    {
+        return $this->afterCreating(function (ProductVariant $variant) use ($attributes) {
+            $product = $variant->product;
+            if (! $product) {
+                return;
+            }
+
+            $valueIds = [];
+            $order = 0;
+            foreach ($attributes as $attrName => $valName) {
+                $attribute = \App\Models\ProductAttribute::firstOrCreate(
+                    ['product_id' => $product->id, 'name' => $attrName],
+                    ['sort_order' => $order++]
+                );
+                $value = \App\Models\ProductAttributeValue::firstOrCreate(
+                    ['product_attribute_id' => $attribute->id, 'value' => $valName],
+                    ['sort_order' => 0]
+                );
+                $valueIds[] = $value->id;
+            }
+
+            $variant->attributeValues()->sync($valueIds);
+        });
+    }
+
+    public function inStock(int $stock = 15): static
+    {
+        return $this->state(fn () => [
+            'stock' => max(1, $stock),
+            'stock_reserved' => 0,
+            'is_active' => true,
+        ]);
+    }
+
+    public function discounted(?int $oldPrice = null): static
+    {
+        return $this->state(function (array $attributes) use ($oldPrice) {
+            $price = $attributes['price'] ?? 5000;
+            return [
+                'old_price' => $oldPrice && $oldPrice > $price ? $oldPrice : (int) ($price * 1.25),
+            ];
+        });
+    }
+
     public function inactive(): static
     {
         return $this->state(fn () => ['is_active' => false]);

@@ -37,15 +37,24 @@ class OrderController extends Controller
     }
 
     // Formulaire de commande
-    public function create(Product $product)
+    public function create(Product $product, Request $request)
     {
         abort_unless($product->isVisible(), 404);
-        abort_unless($product->availableStock() > 0, 404);
+
+        $variant = null;
+        if ($request->filled('variant_id')) {
+            $variant = $product->variants()
+                ->where('is_active', true)
+                ->find($request->variant_id);
+        }
+
+        $stock = $variant ? $variant->availableStock() : $product->availableStock();
+        abort_unless($stock > 0, 404);
 
         // Récupérer les villes actives desservies par au moins une agence active
         $cities = $this->agencyService->getActiveCities();
 
-        return view('buyer.orders.create', compact('product', 'cities'));
+        return view('buyer.orders.create', compact('product', 'cities', 'variant'));
     }
 
     // Passer la commande
@@ -69,7 +78,7 @@ class OrderController extends Controller
     public function show(Order $order)
     {
         abort_unless($order->buyer_id === Auth::user()->id, 403);
-        $order->load(['items.product', 'payment', 'shipment', 'shop']);
+        $order->load(['items.product.images', 'items.variant.attributeValues.attribute', 'payment', 'shipment', 'shop']);
         return view('buyer.orders.show', compact('order'));
     }
 
