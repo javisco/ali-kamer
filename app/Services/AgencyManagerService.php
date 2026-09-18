@@ -77,6 +77,24 @@ class AgencyManagerService
         });
     }
 
+    // ── MODIFIER UN SECRÉTAIRE ─────────────────────────────────────────
+    public function updateSecretary(Agency $agency, User $secretary, array $data): void
+    {
+        $this->assertManagesSecretary($agency, $secretary);
+
+        $updates = [
+            'name'  => $data['name'],
+            'phone' => $data['phone'],
+            'email' => $data['email'] ?: null,
+        ];
+
+        // Le mot de passe n'est changé que si le manager en a saisi un nouveau
+        if (! empty($data['password'])) {
+            $updates['password'] = bcrypt($data['password']);
+        }
+
+        $secretary->update($updates);
+    }
     // ── ACTIVER / DÉSACTIVER UN COMPTOIR ─────────────────────────────
 
     public function toggleCounter(Agency $agency, AgencyCounter $counter): void
@@ -89,8 +107,7 @@ class AgencyManagerService
 
     public function toggleSecretary(Agency $agency, User $secretary): void
     {
-        // Vérifier que le secrétaire appartient à cette agence
-        abort_unless($secretary->agency_id === $agency->id, 403);
+        $this->assertManagesSecretary($agency, $secretary);
 
         $newStatus = $secretary->isActive()
             ? User::STATUS_SUSPENDED
@@ -104,7 +121,7 @@ class AgencyManagerService
     // Uniquement si aucun colis en cours de traitement
     public function deleteSecretary(Agency $agency, User $secretary): void
     {
-        abort_unless($secretary->agency_id === $agency->id, 403);
+        $this->assertManagesSecretary($agency, $secretary);
 
         // Vérifier qu'aucune commande n'est en cours avec ce secrétaire
         $hasActiveShipments = \App\Models\OrderShipment::where(function ($q) use ($secretary) {
@@ -124,41 +141,24 @@ class AgencyManagerService
             );
         }
 
-        $secretary->agencyCounters()->detach();
+        $secretary->assignedCounters()->detach();
         $secretary->delete();
     }
 
+    // Un secrétaire appartient à l'agence s'il est affecté à l'un de ses comptoirs.
+    // agency_id sur users n'est pas toujours renseigné (création admin).
+    private function assertManagesSecretary(Agency $agency, User $secretary): void
+    {
+        abort_unless($secretary->isSecretary(), 403);
+
+        $assignedToAgency = $secretary->assignedCounters()
+            ->where('agency_counters.agency_id', $agency->id)
+            ->exists();
+
+        abort_unless($assignedToAgency, 403);
+    }
+
     // ── CRÉDITER LA COMMISSION D'UNE AGENCE ──────────────────────────
-
-    // // Appelé depuis ShippingService quand un colis est traité
-    // // L'agence gagne 1% de la valeur de chaque colis (agency_commission)
-    // public function creditCommission(Agency $agency, Order $order): void
-    // {
-    //     DB::transaction(function () use ($agency, $order) {
-
-    //         $amount = $order->agency_commission;
-
-    //         if ($amount <= 0) return;
-
-    //         // Créditer le wallet de l'agence
-    //         $agency->increment('wallet_available', $amount);
-    //         $agency->refresh();
-
-    //         // Tracer la transaction
-    //         \App\Models\AgencyWalletTransaction::create([
-    //             'agency_id'    => $agency->id,
-    //             'type'         => 'credit_commission',
-    //             'amount'       => $amount,
-    //             'balance_after' => $agency->wallet_available,
-    //             'order_id'     => $order->id,
-    //             'note'         => "Commission 1% colis {$order->reference}",
-    //         ]);
-    //     });
-    // }
-
-
-
-
 
     // ── CRÉDITER LA COMMISSION AU DÉPÔT (pending) ───────────────────
 
@@ -346,16 +346,11 @@ class AgencyManagerService
         $transactions = \App\Models\AgencyWalletTransaction::where('agency_id', $agency->id);
 
         return [
-            'total_earned'     => $transactions->clone()
-                ->where('type', 'credit_commission')
-                ->sum('amount'),
-            'total_withdrawn'  => $transactions->clone()
-                ->where('type', 'debit_withdrawal')
-                ->sum('amount'),
+            'total_earned'     => $transactions->clone()->where('type', 'credit_commission')->sum('amount'),
+            'total_withdrawn'  => $transactions->clone()->where('type', 'debit_withdrawal')->sum('amount'),
             'wallet_available' => $agency->wallet_available,
-            'colis_count'      => $transactions->clone()
-                ->where('type', 'credit_commission')
-                ->count(),
+            'wallet_pending'   => $agency->wallet_pending,   // ← nouveau
+            'colis_count'      => $transactions->clone()->where('type', 'credit_commission')->count(),
         ];
     }
 }

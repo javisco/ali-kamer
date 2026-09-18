@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Buyer;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OrderRequest;
 use App\Models\Order;
+use App\Models\OrderGroup;
 use App\Models\Product;
 use App\Services\AgencyService;
 use App\Services\OrderService;
@@ -26,6 +27,14 @@ class OrderController extends Controller
         return view('buyer.orders.index', compact('orders'));
     }
 
+    public function showGroup(OrderGroup $group)
+    {
+        abort_unless($group->buyer_id === Auth::id(), 403);
+
+        $group->load('orders.items.product', 'orders.shop', 'orders.shipment');
+
+        return view('buyer.orders.group-show', compact('group'));
+    }
 
     // Formulaire de commande
     public function create(Product $product)

@@ -23,7 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\CheckAccountStatus::class,
         ]);
         $middleware->validateCsrfTokens(except: [
-            'webhooks/campay',
+            'webhooks/elgiopay',
             'api/*',
         ]);
     })->withMiddleware(function (Middleware $middleware) {

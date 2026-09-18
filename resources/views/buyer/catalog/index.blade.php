@@ -1,219 +1,227 @@
 @extends('base')
 
-@section('title', 'Ali-Kamer — Acheter et vendez sans stress')
+@section('title', 'Ali-Kamer — Marketplace Sécurisée au Cameroun & en Afrique')
 
 @section('content')
 
     {{-- =========================================================
-     PAGE D'ACCUEIL
-     La navbar et le footer restent entièrement gérés par base.blade.php.
-     Cette page contient uniquement le contenu propre à l'accueil.
+     PAGE D'ACCUEIL ALI-KAMER
+     Marketplace e-commerce optimisée :
+     - Hero E-Commerce avec proposition de valeur claire (Séquestre Mobile Money & Agences)
+     - Barre de réassurance / Confiance e-commerce
+     - Navigation rapide par rayons & catégories
+     - Grille produits compacte et optimisée (taille réduite sans perte d'information)
+     - Workflow d'achat sécurisé (Comment ça marche)
+     - Appel à l'action Vendeurs & Réseau d'agences
 ========================================================= --}}
     <div class="bg-[#FAF9F6] text-slate-800 font-sans">
 
         {{-- =========================================================
-        1. HERO SECTION — ALIGNÉ SUR LA MAQUETTE
-    ========================================================== --}}
-        <style>
-            #hero-ali-kamer {
-                transform-origin: top center;
-                will-change: opacity, transform, max-height, padding;
-            }
+         1. BANDEAU D'ANNONCE EXPRESS (TOP TICKER)
+        ========================================================== --}}
+        <div class="bg-gradient-to-r from-[#004D2A] via-[#006B32] to-[#004D2A] text-white text-[11px] font-bold py-1.5 px-4 shadow-xs">
+            <div class="max-w-[1440px] mx-auto flex items-center justify-between gap-4">
+                <div class="flex items-center gap-2 truncate">
+                    <span class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-[#FCD116] text-[#004D2A] text-[9px] font-black">✓</span>
+                    <span class="truncate">Plateforme 100% sécurisée au Cameroun : argent sous séquestre jusqu'à la vérification de votre colis au guichet.</span>
+                </div>
+                <div class="hidden md:flex items-center gap-4 shrink-0 text-[10px] text-emerald-100">
+                    <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-[#FCD116]"></span> MTN MoMo & Orange Money</span>
+                    <span>•</span>
+                    <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-white"></span> Retrait en agences agréées</span>
+                </div>
+            </div>
+        </div>
 
-            #hero-ali-kamer.ak-hero-hiding {
-                opacity: 0;
-                transform: translateY(-35px);
-                max-height: 0 !important;
-                padding-top: 0 !important;
-                padding-bottom: 0 !important;
-                border-bottom-width: 0 !important;
-            }
-        </style>
-        <section id="hero-ali-kamer"
-            class="relative overflow-hidden bg-gradient-to-r from-[#F3FBF6] via-white to-[#FFFDF3] border-b border-slate-100">
+        {{-- =========================================================
+         2. HERO SECTION — HUB E-COMMERCE & PROMOTIONNEL
+        ========================================================== --}}
+        <section class="relative overflow-hidden bg-gradient-to-b from-[#F3FBF6] via-white to-[#FAF9F6] border-b border-slate-200/70">
+            <div class="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
+                
+                {{-- Grille principale du Hero : 2 colonnes (Bannière Principale + Promos/Vendeur) --}}
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
 
-            <div class="relative max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
-                {{-- Grille fluide à 3 colonnes sur grand écran --}}
-                <div
-                    class="min-h-[300px] lg:min-h-[320px] grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr_0.9fr] items-center gap-8 lg:gap-6">
+                    {{-- Colonne Principale (8 cols sur grand écran) --}}
+                    <div class="lg:col-span-8 bg-gradient-to-br from-white via-[#F0FDF4] to-[#FFFBEB] rounded-3xl p-6 sm:p-8 lg:p-10 border border-emerald-100 shadow-sm relative overflow-hidden">
+                        
+                        {{-- Éléments décoratifs en arrière-plan --}}
+                        <div class="absolute -right-12 -bottom-12 w-64 h-64 rounded-full bg-emerald-500/5 pointer-events-none"></div>
+                        <div class="absolute right-1/4 top-0 w-48 h-48 rounded-full bg-yellow-500/5 pointer-events-none"></div>
 
-                    {{-- Colonne 1 : Titre & Actions principal --}}
-                    <div class="relative z-10">
-                        <h1
-                            class="text-[42px] sm:text-[52px] lg:text-[58px] leading-[0.98] font-black tracking-tight text-slate-950">
-                            <span class="text-[#00843D]">Ali</span><span class="text-[#CE1126]">-</span><span
-                                class="text-slate-950">Kamer</span>
-                        </h1>
-
-                        <h2 class="mt-1 text-[24px] sm:text-[28px] lg:text-[32px] leading-tight font-black text-slate-950">
-                            Construit au Cameroun
-                            <span class="block text-[#00843D]">pour l'Afrique</span>
-                        </h2>
-
-                        <p class="mt-3 max-w-[440px] text-sm sm:text-[15px] leading-relaxed text-slate-700">
-                            La marketplace qui vous connecte aux meilleures
-                            <br class="hidden sm:block">
-                            opportunités, en toute confiance.
-                        </p>
-
-                        <a href="#produits"
-                            class="mt-4 inline-flex items-center gap-2 rounded-full bg-[#00843D] hover:bg-[#006B32]
-                      px-5 py-2.5 text-sm font-black text-white shadow-md shadow-emerald-900/15
-                      transition hover:-translate-y-0.5">
-                            Découvrir nos produits
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                    d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                            </svg>
-                        </a>
-
-                        <div
-                            class="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2.5 text-[11px] font-bold text-slate-700">
-                            <div class="flex items-center gap-2">
-                                <span
-                                    class="flex h-7 w-7 items-center justify-center rounded-full bg-[#00843D] text-white">✓</span>
-                                Achat sécurisé
+                        <div class="relative z-10 max-w-2xl">
+                            
+                            {{-- Badge de réassurance --}}
+                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00843D]/10 text-[#006B32] border border-[#00843D]/20 text-xs font-black tracking-wide mb-3">
+                                <span class="flex h-2 w-2 rounded-full bg-[#00843D] animate-pulse"></span>
+                                🇨🇲 Marketplace n°1 avec Séquestre Bilatéral
                             </div>
-                            <div class="flex items-center gap-2">
-                                <span
-                                    class="flex h-7 w-7 items-center justify-center rounded-full bg-[#00843D] text-white">▣</span>
-                                Paiement Mobile Money
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span
-                                    class="flex h-7 w-7 items-center justify-center rounded-full bg-[#00843D] text-white">↗</span>
-                                Livraison interurbaine
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span
-                                    class="flex h-7 w-7 items-center justify-center rounded-full bg-[#00843D] text-white">★</span>
-                                Satisfaction garantie
-                            </div>
-                        </div>
-                    </div>
 
-                    {{-- Colonne 2 : Carte de l'Afrique (Isolée au centre) --}}
-                    <div class="relative flex flex-col items-center justify-center">
-                        {{-- Halo continental --}}
-                        <div
-                            class="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_center,rgba(0,132,61,.12),transparent_70%)] pointer-events-none">
-                        </div>
-
-                        <div class="relative z-10 w-full max-w-[240px] sm:max-w-[270px]">
-                            <svg viewBox="0 0 360 390" class="w-full h-auto drop-shadow-md"
-                                aria-label="Afrique avec le Cameroun mis en évidence">
-                                <defs>
-                                    <linearGradient id="akAfricaGreen" x1="0" y1="0" x2="1"
-                                        y2="1">
-                                        <stop offset="0%" stop-color="#006B32" />
-                                        <stop offset="55%" stop-color="#00843D" />
-                                        <stop offset="100%" stop-color="#0A9B4E" />
-                                    </linearGradient>
-                                    <linearGradient id="akCameroon" x1="0" y1="0" x2="1"
-                                        y2="1">
-                                        <stop offset="0%" stop-color="#CE1126" />
-                                        <stop offset="50%" stop-color="#FCD116" />
-                                        <stop offset="100%" stop-color="#00843D" />
-                                    </linearGradient>
-                                    <filter id="akGlow" x="-60%" y="-60%" width="220%" height="220%">
-                                        <feGaussianBlur stdDeviation="7" result="blur" />
-                                        <feMerge>
-                                            <feMergeNode in="blur" />
-                                            <feMergeNode in="SourceGraphic" />
-                                        </feMerge>
-                                    </filter>
-                                </defs>
-
-                                <path
-                                    d="M164 17c31-10 66 0 79 25 12 23 8 39 31 53 20 13 34 38 27 58-6 17-22 26-21 44 2 25 29 43 20 67-9 26-39 33-52 51-13 18-14 47-33 55-18 8-39-11-56-27-17-16-36-24-46-44-10-19-7-41-18-58-13-19-38-30-46-53-9-23 4-47 21-64 17-17 33-29 41-51 7-23 17-55 53-56z"
-                                    fill="url(#akAfricaGreen)" stroke="#006B32" stroke-width="4" />
-
-                                <path d="M91 106c38 12 75 14 113 5 34-8 61-5 88 10" fill="none" stroke="#FCD116"
-                                    stroke-width="3" opacity=".65" />
-                                <path d="M78 207c40-9 76-3 112 12 36 15 68 17 99 7" fill="none" stroke="#FFFFFF"
-                                    stroke-width="2.5" opacity=".32" />
-                                <path d="M104 286c34-14 70-13 106 2 31 13 52 13 75 4" fill="none" stroke="#CE1126"
-                                    stroke-width="3" opacity=".55" />
-
-                                <g filter="url(#akGlow)">
-                                    <circle cx="139" cy="178" r="27" fill="#CE1126" opacity=".24" />
-                                    <circle cx="139" cy="178" r="18" fill="url(#akCameroon)" stroke="#FFFFFF"
-                                        stroke-width="4" />
-                                    <circle cx="139" cy="178" r="7" fill="#FCD116" />
-                                </g>
-
-                                <path d="M139 165l3.7 9 9.7.8-7.4 6.2 2.3 9.4-8.3-5-8.3 5 2.3-9.4-7.4-6.2 9.7-.8z"
-                                    fill="#FCD116" stroke="#FFFFFF" stroke-width="1.5" />
-
-                                <path d="M151 178 C174 168, 190 165, 211 166" fill="none" stroke="#CE1126"
-                                    stroke-width="3" />
-                                <circle cx="214" cy="166" r="4" fill="#FCD116" stroke="#CE1126"
-                                    stroke-width="2" />
-
-                                <g>
-                                    <rect x="207" y="139" width="110" height="48" rx="12" fill="white"
-                                        stroke="#CE1126" stroke-width="2" />
-                                    <text x="218" y="158" font-family="Arial, sans-serif" font-size="10"
-                                        font-weight="800" fill="#CE1126">🇨🇲 CAMEROUN</text>
-                                    <text x="218" y="174" font-family="Arial, sans-serif" font-size="8.5"
-                                        font-weight="700" fill="#334155">Notre point de départ</text>
-                                </g>
-                            </svg>
-
-                            {{-- Badge sous la carte --}}
-                            <div class="mt-3 text-center">
-                                <span
-                                    class="inline-block whitespace-nowrap rounded-full border border-[#FCD116]/70 bg-white px-3.5 py-1 text-[11px] font-black text-[#006B32] shadow-xs">
-                                    🇨🇲 Né au Cameroun · Pensé pour l'Afrique
+                            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-950 tracking-tight leading-[1.15]">
+                                Achetez et vendez sans stress,
+                                <span class="block text-transparent bg-clip-text bg-gradient-to-r from-[#00843D] via-[#0A9B4E] to-[#006B32]">
+                                    du Cameroun pour l'Afrique.
                                 </span>
+                            </h1>
+
+                            <p class="mt-3 text-xs sm:text-sm lg:text-[15px] text-slate-600 leading-relaxed max-w-xl">
+                                Commandez vos produits auprès de marchands certifiés à <strong>Douala, Yaoundé</strong> et partout au pays. 
+                                Votre argent est <span class="text-[#00843D] font-bold">gardé en sécurité</span> et n'est versé au vendeur que lorsque vous validez votre colis avec votre <span class="text-slate-900 font-bold">code secret OTP</span>.
+                            </p>
+
+                            {{-- Actions principales --}}
+                            <div class="mt-6 flex flex-wrap items-center gap-3">
+                                <a href="#produits"
+                                   class="inline-flex items-center gap-2 rounded-xl bg-[#00843D] hover:bg-[#006B32] px-6 py-3 text-xs sm:text-sm font-black text-white shadow-md shadow-emerald-900/15 transition hover:-translate-y-0.5">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                    </svg>
+                                    Explorer les offres
+                                </a>
+
+                                @if (Route::has('register.seller'))
+                                    <a href="{{ route('register.seller') }}"
+                                       class="inline-flex items-center gap-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 px-5 py-3 text-xs sm:text-sm font-black text-slate-800 transition hover:border-[#00843D] hover:text-[#00843D]">
+                                        <svg class="w-4 h-4 text-[#F9A01B]" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                                        </svg>
+                                        Ouvrir ma boutique
+                                    </a>
+                                @endif
                             </div>
+
+                            {{-- Micro-garanties sous les boutons --}}
+                            <div class="mt-6 pt-5 border-t border-emerald-100/80 flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] font-bold text-slate-600">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-4 h-4 rounded-full bg-emerald-100 text-[#00843D] flex items-center justify-center text-[9px] font-black">✓</span>
+                                    <span>Paiement MoMo & OM</span>
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-4 h-4 rounded-full bg-emerald-100 text-[#00843D] flex items-center justify-center text-[9px] font-black">✓</span>
+                                    <span>Retrait agences partenaires</span>
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-4 h-4 rounded-full bg-emerald-100 text-[#00843D] flex items-center justify-center text-[9px] font-black">✓</span>
+                                    <span>Garantie 0% arnaque</span>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 
-                    {{-- Colonne 3 : Signature de marque & Garanties (Placées proprement à droite) --}}
-                    <div
-                        class="relative z-10 flex flex-col justify-center gap-6 border-t lg:border-t-0 lg:border-l border-slate-200/60 pt-6 lg:pt-0 lg:pl-8">
-
-                        {{-- Signature --}}
-                        <div>
-                            <p class="font-serif text-[26px] sm:text-[30px] italic leading-[1] text-slate-900">
-                                Acheter<br>
-                                et vendez<br>
-                                <span class="text-[#00843D]">sans stress</span>
-                            </p>
-                            <div class="mt-2 h-1.5 w-24 rotate-[-5deg] rounded-full bg-[#FCD116]"></div>
-                            <p class="mt-2 text-[10px] font-black uppercase tracking-wide text-[#CE1126]">
-                                Du Cameroun pour l'Afrique
-                            </p>
+                    {{-- Colonne Droite : 2 mini-bannières promotionnelles (4 cols sur grand écran) --}}
+                    <div class="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-4">
+                        
+                        {{-- Mini-bannière 1 : Bonnes Affaires & Ventes Flash --}}
+                        <div class="flex-1 bg-gradient-to-br from-amber-500/10 via-white to-red-500/10 border border-amber-200/80 rounded-2xl p-4 sm:p-5 relative overflow-hidden hover:shadow-md transition">
+                            <div class="flex items-start justify-between gap-3">
+                                <div>
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#CE1126] text-white text-[10px] font-black uppercase tracking-wider">
+                                        ⚡ Ventes Flash
+                                    </span>
+                                    <h3 class="mt-2 text-sm sm:text-base font-black text-slate-900 leading-snug">
+                                        Jusqu'à -40% sur les nouveautés
+                                    </h3>
+                                    <p class="mt-1 text-[11px] text-slate-500 leading-relaxed">
+                                        Offres promotionnelles sur l'électronique, la mode et les produits du terroir.
+                                    </p>
+                                </div>
+                                <div class="w-12 h-12 rounded-xl bg-amber-100 text-2xl flex items-center justify-center shrink-0">
+                                    🎁
+                                </div>
+                            </div>
+                            <a href="#produits" class="mt-3 inline-flex items-center gap-1.5 text-xs font-black text-[#CE1126] hover:text-red-700 transition">
+                                Voir les promotions
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </a>
                         </div>
 
-                        {{-- Liste des garanties --}}
-                        <div class="flex flex-col gap-3">
-                            <div class="flex items-center gap-3">
-                                <span
-                                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#00843D] text-sm text-white shadow-xs">🔒</span>
-                                <span class="text-xs font-bold leading-tight text-slate-700">Des
-                                    transactions<br>sécurisées</span>
+                        {{-- Mini-bannière 2 : Espace Vendeur Pro --}}
+                        <div class="flex-1 bg-gradient-to-br from-emerald-500/10 via-white to-slate-50 border border-emerald-200/80 rounded-2xl p-4 sm:p-5 relative overflow-hidden hover:shadow-md transition">
+                            <div class="flex items-start justify-between gap-3">
+                                <div>
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#00843D] text-white text-[10px] font-black uppercase tracking-wider">
+                                        💼 Espace Vendeur
+                                    </span>
+                                    <h3 class="mt-2 text-sm sm:text-base font-black text-slate-900 leading-snug">
+                                        Vendez partout au Cameroun
+                                    </h3>
+                                    <p class="mt-1 text-[11px] text-slate-500 leading-relaxed">
+                                        Touchez des milliers d'acheteurs. Encaissez vos gains directement sur MTN MoMo & Orange Money.
+                                    </p>
+                                </div>
+                                <div class="w-12 h-12 rounded-xl bg-emerald-100 text-2xl flex items-center justify-center shrink-0">
+                                    🏪
+                                </div>
                             </div>
-                            <div class="flex items-center gap-3">
-                                <span
-                                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#00843D] text-sm text-white shadow-xs">🚚</span>
-                                <span class="text-xs font-bold leading-tight text-slate-700">Un réseau
-                                    d'agences<br>fiable</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span
-                                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#00843D] text-sm text-white shadow-xs">📱</span>
-                                <span class="text-xs font-bold leading-tight text-slate-700">MTN MoMo / Orange Money</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span
-                                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#00843D] text-sm text-white shadow-xs">👥</span>
-                                <span class="text-xs font-bold leading-tight text-slate-700">Une plateforme<br>100%
-                                    africaine</span>
-                            </div>
+                            @if (Route::has('register.seller'))
+                                <a href="{{ route('register.seller') }}" class="mt-3 inline-flex items-center gap-1.5 text-xs font-black text-[#00843D] hover:text-[#006B32] transition">
+                                    Créer ma boutique gratuitement
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </a>
+                            @endif
                         </div>
 
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        {{-- =========================================================
+         3. BARRE DE RÉASSURANCE E-COMMERCE (4 PILIERS DE CONFIANCE)
+        ========================================================== --}}
+        <section class="bg-white border-b border-slate-200/60 shadow-2xs">
+            <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-5">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+                    
+                    {{-- Pilier 1 : Séquestre --}}
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-[#00843D] flex items-center justify-center text-lg shrink-0 border border-emerald-100">
+                            🛡️
+                        </div>
+                        <div class="min-w-0">
+                            <h4 class="text-xs sm:text-sm font-black text-slate-900 leading-tight truncate">Séquestre Sécurisé</h4>
+                            <p class="text-[11px] text-slate-500 leading-tight mt-0.5 truncate">Argent protégé jusqu'au retrait</p>
+                        </div>
+                    </div>
+
+                    {{-- Pilier 2 : Agences Partenaires --}}
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg shrink-0 border border-blue-100">
+                            🚚
+                        </div>
+                        <div class="min-w-0">
+                            <h4 class="text-xs sm:text-sm font-black text-slate-900 leading-tight truncate">Réseau d'Agences</h4>
+                            <p class="text-[11px] text-slate-500 leading-tight mt-0.5 truncate">General Express, Finexs & plus</p>
+                        </div>
+                    </div>
+
+                    {{-- Pilier 3 : Mobile Money --}}
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg shrink-0 border border-amber-100">
+                            📱
+                        </div>
+                        <div class="min-w-0">
+                            <h4 class="text-xs sm:text-sm font-black text-slate-900 leading-tight truncate">MoMo & Orange Money</h4>
+                            <p class="text-[11px] text-slate-500 leading-tight mt-0.5 truncate">Paiements locaux en FCFA</p>
+                        </div>
+                    </div>
+
+                    {{-- Pilier 4 : Code OTP --}}
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg shrink-0 border border-purple-100">
+                            🔑
+                        </div>
+                        <div class="min-w-0">
+                            <h4 class="text-xs sm:text-sm font-black text-slate-900 leading-tight truncate">Code Secret OTP</h4>
+                            <p class="text-[11px] text-slate-500 leading-tight mt-0.5 truncate">Preuve irréfutable au guichet</p>
+                        </div>
                     </div>
 
                 </div>
@@ -221,31 +229,33 @@
         </section>
 
         {{-- =========================================================
-         2. CATÉGORIES
-    ========================================================== --}}
-        <section class="bg-[#FAF9F6]">
-            <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+         4. RAYONS & CATÉGORIES (EXPLOREZ PAR RAYON)
+        ========================================================== --}}
+        <section class="bg-[#FAF9F6] py-7 sm:py-9">
+            <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
 
-                <div class="flex items-end justify-between gap-4 mb-5">
+                <div class="flex items-center justify-between gap-4 mb-4">
                     <div>
-                        <p class="text-[11px] font-black uppercase tracking-wider text-[#00843D]">
-                            Explorez
+                        <p class="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-[#00843D]">
+                            Rayons Populaires
                         </p>
-                        <h2 class="mt-1 text-xl sm:text-2xl font-black tracking-tight text-slate-900">
-                            Nos catégories
+                        <h2 class="text-lg sm:text-xl font-black tracking-tight text-slate-900">
+                            Explorez nos catégories
                         </h2>
                     </div>
 
                     <a href="{{ route('buyer.home') }}"
-                        class="text-xs font-extrabold text-[#00843D] hover:text-[#006B32]">
-                        Voir toutes
-                        <span aria-hidden="true">→</span>
+                       class="inline-flex items-center gap-1 text-xs font-black text-[#00843D] hover:text-[#006B32] transition">
+                        <span>Voir tout</span>
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                        </svg>
                     </a>
                 </div>
 
                 @php
                     $categoriesList = [
-                        ['name' => 'Produits agricoles', 'slug' => 'agriculture', 'icon' => '🍃', 'tone' => 'green'],
+                        ['name' => 'Agriculture', 'slug' => 'agriculture', 'icon' => '🍃', 'tone' => 'green'],
                         ['name' => 'Élevage', 'slug' => 'elevage', 'icon' => '🐄', 'tone' => 'yellow'],
                         ['name' => 'Alimentation', 'slug' => 'alimentation', 'icon' => '🧺', 'tone' => 'red'],
                         ['name' => 'Téléphonie', 'slug' => 'telephonie', 'icon' => '📱', 'tone' => 'green'],
@@ -253,39 +263,30 @@
                         ['name' => 'Maison & Bureau', 'slug' => 'maison', 'icon' => '🏠', 'tone' => 'green'],
                         ['name' => 'Mode & Beauté', 'slug' => 'mode', 'icon' => '👕', 'tone' => 'red'],
                         ['name' => 'Équipements', 'slug' => 'equipements', 'icon' => '⚙️', 'tone' => 'yellow'],
-                        ['name' => 'Livres & Formation', 'slug' => 'livres', 'icon' => '📖', 'tone' => 'green'],
+                        ['name' => 'Livres & Formations', 'slug' => 'livres', 'icon' => '📖', 'tone' => 'green'],
                         ['name' => 'Autres', 'slug' => 'autres', 'icon' => '•••', 'tone' => 'red'],
                     ];
                 @endphp
 
-                <div class="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-2.5 sm:gap-3">
+                <div class="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-2 sm:gap-2.5">
                     @foreach ($categoriesList as $cat)
                         @php
+                            $isActive = request('category') === $cat['slug'];
                             $toneClasses = match ($cat['tone']) {
                                 'red' => 'bg-red-50 text-[#CE1126] group-hover:bg-red-100',
-                                'yellow' => 'bg-yellow-50 text-[#8A7000] group-hover:bg-yellow-100',
+                                'yellow' => 'bg-amber-50 text-[#8A7000] group-hover:bg-amber-100',
                                 default => 'bg-emerald-50 text-[#00843D] group-hover:bg-emerald-100',
                             };
                         @endphp
 
                         <a href="{{ route('buyer.home', ['category' => $cat['slug']]) }}"
-                            class="group min-w-0 flex flex-col items-center text-center
-                              p-3 sm:p-3.5 rounded-2xl bg-white
-                              border {{ request('category') === $cat['slug'] ? 'border-[#00843D] ring-2 ring-emerald-100' : 'border-slate-200' }}
-                              hover:border-[#00843D] hover:-translate-y-0.5 hover:shadow-md
-                              transition-all duration-200">
+                           class="group min-w-0 flex flex-col items-center text-center p-2.5 rounded-2xl bg-white border {{ $isActive ? 'border-[#00843D] ring-2 ring-emerald-200 shadow-sm' : 'border-slate-200/80' }} hover:border-[#00843D] hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
 
-                            <span
-                                class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl
-                                     flex items-center justify-center text-2xl
-                                     {{ $toneClasses }} transition">
+                            <span class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center text-xl sm:text-2xl {{ $toneClasses }} transition">
                                 {{ $cat['icon'] }}
                             </span>
 
-                            <span
-                                class="mt-2 text-[10px] sm:text-xs font-extrabold
-                                     text-slate-800 group-hover:text-[#00843D]
-                                     leading-tight">
+                            <span class="mt-2 text-[10px] sm:text-[11px] font-bold text-slate-700 group-hover:text-[#00843D] leading-tight line-clamp-1 truncate w-full px-1">
                                 {{ $cat['name'] }}
                             </span>
                         </a>
@@ -294,91 +295,95 @@
             </div>
         </section>
 
-
         {{-- =========================================================
-         3. PRODUITS
-    ========================================================== --}}
-        <section id="produits" class="bg-white border-y border-slate-100 scroll-mt-24">
-            <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-9 sm:py-11">
+         5. CATALOGUE PRODUITS (GRILLE COMPACTE & FILTRES E-COMMERCE)
+        ========================================================== --}}
+        <section id="produits" class="bg-white border-y border-slate-200/70 scroll-mt-20 py-8 sm:py-10">
+            <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
 
-                <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-6">
+                {{-- En-tête du catalogue avec titre dynamique et filtres --}}
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-100">
+                    
                     <div>
-                        <p class="text-[11px] font-black uppercase tracking-wider text-[#00843D]">
-                            La sélection Ali-Kamer
-                        </p>
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-[#00843D]"></span>
+                            <p class="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-[#00843D]">
+                                La sélection Ali-Kamer
+                            </p>
+                        </div>
 
-                        <h2 class="mt-1 text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+                        <h2 class="mt-1 text-lg sm:text-2xl font-black tracking-tight text-slate-900">
                             @if (request('q'))
-                                Résultats pour
-                                <span class="text-[#00843D]">"{{ request('q') }}"</span>
+                                Résultats pour <span class="text-[#00843D]">"{{ request('q') }}"</span>
                             @elseif(request('category'))
-                                Produits :
-                                <span class="text-[#00843D]">{{ request('category') }}</span>
+                                Rayon : <span class="text-[#00843D]">{{ ucfirst(request('category')) }}</span>
                             @else
-                                Produits populaires
+                                Produits disponibles
                             @endif
                         </h2>
 
-                        <p class="mt-1 text-xs sm:text-sm text-slate-500 font-medium">
-                            {{ $products->total() }}
-                            {{ $products->total() > 1 ? 'produits disponibles' : 'produit disponible' }}
+                        <p class="mt-0.5 text-xs text-slate-500 font-medium">
+                            {{ $products->total() }} {{ $products->total() > 1 ? 'produits prêts pour expédition' : 'produit prêt pour expédition' }}
                         </p>
                     </div>
 
-                    {{-- FILTRES --}}
-                    <div class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-                        <a href="{{ route('buyer.home') }}"
-                            class="shrink-0 px-4 py-2 rounded-full text-xs font-extrabold transition
-                              {{ !request('category')
-                                  ? 'bg-[#00843D] text-white shadow-sm'
-                                  : 'bg-[#FAF9F6] border border-slate-200 text-slate-600 hover:border-[#00843D] hover:text-[#00843D]' }}">
-                            Tous
-                        </a>
+                    {{-- FILTRES & TRIS E-COMMERCE --}}
+                    <div class="flex flex-wrap items-center gap-2">
+                        
+                        {{-- Filtres Catégories Rapides --}}
+                        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none max-w-full">
+                            <a href="{{ route('buyer.home') }}#produits"
+                               class="shrink-0 px-3 py-1.5 rounded-full text-xs font-extrabold transition {{ !request('category') ? 'bg-[#00843D] text-white shadow-xs' : 'bg-slate-50 border border-slate-200 text-slate-600 hover:border-[#00843D] hover:text-[#00843D]' }}">
+                                Tous
+                            </a>
 
-                        <a href="{{ route('buyer.home', ['category' => 'agriculture']) }}"
-                            class="shrink-0 px-4 py-2 rounded-full text-xs font-extrabold transition
-                              {{ request('category') === 'agriculture'
-                                  ? 'bg-[#00843D] text-white'
-                                  : 'bg-[#FAF9F6] border border-slate-200 text-slate-600 hover:border-[#00843D]' }}">
-                            Agriculture
-                        </a>
+                            <a href="{{ route('buyer.home', array_merge(request()->except('category', 'page'), ['category' => 'agriculture'])) }}#produits"
+                               class="shrink-0 px-3 py-1.5 rounded-full text-xs font-extrabold transition {{ request('category') === 'agriculture' ? 'bg-[#00843D] text-white' : 'bg-slate-50 border border-slate-200 text-slate-600 hover:border-[#00843D]' }}">
+                                🍃 Agriculture
+                            </a>
 
-                        <a href="{{ route('buyer.home', ['category' => 'elevage']) }}"
-                            class="shrink-0 px-4 py-2 rounded-full text-xs font-extrabold transition
-                              {{ request('category') === 'elevage'
-                                  ? 'bg-[#00843D] text-white'
-                                  : 'bg-[#FAF9F6] border border-slate-200 text-slate-600 hover:border-[#00843D]' }}">
-                            Élevage
-                        </a>
+                            <a href="{{ route('buyer.home', array_merge(request()->except('category', 'page'), ['category' => 'elevage'])) }}#produits"
+                               class="shrink-0 px-3 py-1.5 rounded-full text-xs font-extrabold transition {{ request('category') === 'elevage' ? 'bg-[#00843D] text-white' : 'bg-slate-50 border border-slate-200 text-slate-600 hover:border-[#00843D]' }}">
+                                🐄 Élevage
+                            </a>
 
-                        <a href="{{ route('buyer.home', ['category' => 'electronique']) }}"
-                            class="shrink-0 px-4 py-2 rounded-full text-xs font-extrabold transition
-                              {{ request('category') === 'electronique'
-                                  ? 'bg-[#00843D] text-white'
-                                  : 'bg-[#FAF9F6] border border-slate-200 text-slate-600 hover:border-[#00843D]' }}">
-                            Électronique
-                        </a>
+                            <a href="{{ route('buyer.home', array_merge(request()->except('category', 'page'), ['category' => 'informatique'])) }}#produits"
+                               class="shrink-0 px-3 py-1.5 rounded-full text-xs font-extrabold transition {{ request('category') === 'informatique' ? 'bg-[#00843D] text-white' : 'bg-slate-50 border border-slate-200 text-slate-600 hover:border-[#00843D]' }}">
+                                💻 Tech
+                            </a>
 
-                        <a href="{{ route('buyer.home', ['category' => 'mode']) }}"
-                            class="shrink-0 px-4 py-2 rounded-full text-xs font-extrabold transition
-                              {{ request('category') === 'mode'
-                                  ? 'bg-[#00843D] text-white'
-                                  : 'bg-[#FAF9F6] border border-slate-200 text-slate-600 hover:border-[#00843D]' }}">
-                            Mode
-                        </a>
+                            <a href="{{ route('buyer.home', array_merge(request()->except('category', 'page'), ['category' => 'mode'])) }}#produits"
+                               class="shrink-0 px-3 py-1.5 rounded-full text-xs font-extrabold transition {{ request('category') === 'mode' ? 'bg-[#00843D] text-white' : 'bg-slate-50 border border-slate-200 text-slate-600 hover:border-[#00843D]' }}">
+                                👕 Mode
+                            </a>
+                        </div>
 
-                        <a href="{{ route('buyer.home', ['category' => 'maison']) }}"
-                            class="shrink-0 px-4 py-2 rounded-full text-xs font-extrabold transition
-                              {{ request('category') === 'maison'
-                                  ? 'bg-[#00843D] text-white'
-                                  : 'bg-[#FAF9F6] border border-slate-200 text-slate-600 hover:border-[#00843D]' }}">
-                            Maison
-                        </a>
+                        {{-- Sélecteur de Tri E-Commerce --}}
+                        <div class="flex items-center gap-1.5 ml-auto">
+                            <span class="text-[11px] font-bold text-slate-400 hidden sm:inline">Trier :</span>
+                            <form method="GET" action="{{ route('buyer.home') }}" class="inline-block">
+                                @if (request('q')) <input type="hidden" name="q" value="{{ request('q') }}"> @endif
+                                @if (request('category')) <input type="hidden" name="category" value="{{ request('category') }}"> @endif
+                                @if (request('city')) <input type="hidden" name="city" value="{{ request('city') }}"> @endif
+                                @if (request('shipping')) <input type="hidden" name="shipping" value="{{ request('shipping') }}"> @endif
+
+                                <select name="sort" onchange="this.form.submit()"
+                                        class="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-lg px-2.5 py-1.5 outline-none focus:border-[#00843D] transition cursor-pointer">
+                                    <option value="recent" {{ request('sort', 'recent') === 'recent' ? 'selected' : '' }}>Nouveautés</option>
+                                    <option value="popular" {{ request('sort') === 'popular' ? 'selected' : '' }}>Plus populaires</option>
+                                    <option value="price_asc" {{ request('sort') === 'price_asc' ? 'selected' : '' }}>Prix croissant</option>
+                                    <option value="price_desc" {{ request('sort') === 'price_desc' ? 'selected' : '' }}>Prix décroissant</option>
+                                </select>
+                            </form>
+                        </div>
+
                     </div>
                 </div>
 
-
-                {{-- GRILLE PRODUITS --}}
+                {{-- =========================================================
+                 GRILLE PRODUITS — COMPACTE & HAUTE DENSITÉ D'INFORMATION
+                 Taille maîtrisée, zéro perte d'information !
+                ========================================================== --}}
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 sm:gap-3">
 
                     @forelse($products as $product)
@@ -412,9 +417,9 @@
                                 } elseif ($months >= 1) {
                                     $sellerAge = $months . ' mois';
                                 } elseif ($days >= 1) {
-                                    $sellerAge = $days . ' ' . ($days > 1 ? 'jours' : 'jour');
+                                    $sellerAge = $days . ' ' . ($days > 1 ? 'j' : 'j');
                                 } else {
-                                    $sellerAge = "moins d'un jour";
+                                    $sellerAge = "récent";
                                 }
                             }
 
@@ -429,148 +434,124 @@
                                 ->sum('quantity');
                         @endphp
 
-
-                        {{-- CARTE PRODUIT --}}
+                        {{-- CARTE PRODUIT COMPACTE --}}
                         <a href="{{ route('product.show', $product) }}"
-                            class="group min-w-0 bg-white border border-slate-200 rounded-2xl
-                              overflow-hidden hover:border-[#00843D]
-                              hover:shadow-lg hover:-translate-y-0.5
-                              transition-all duration-200 flex flex-col">
+                           class="group min-w-0 bg-white border border-slate-200/90 rounded-xl sm:rounded-2xl overflow-hidden hover:border-[#00843D] hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
 
-                            {{-- IMAGE --}}
-                            <div class="relative aspect-[1.12/1] bg-slate-100 overflow-hidden">
+                            {{-- 1. IMAGE PRODUIT COMPACTE (FORMAT 1:1 CARRÉ) --}}
+                            <div class="relative aspect-square bg-slate-50 overflow-hidden">
 
                                 @if ($product->images && $product->images->first())
                                     <img src="{{ Storage::url($product->images->first()->url) }}"
-                                        alt="{{ $product->title }}" loading="lazy"
-                                        class="w-full h-full object-cover
-                                            group-hover:scale-105 transition-transform duration-300">
+                                         alt="{{ $product->title }}" loading="lazy"
+                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                 @else
-                                    <div
-                                        class="w-full h-full flex items-center justify-center
-                                            bg-[#FAF9F6] text-slate-300">
-                                        <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <div class="w-full h-full flex items-center justify-center bg-[#FAF9F6] text-slate-300">
+                                        <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M14 6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2v12a2 2 0 002 2z" />
+                                                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M14 6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2v12a2 2 0 002 2z" />
                                         </svg>
                                     </div>
                                 @endif
 
-                                ```blade
-                                {{-- INFORMATIONS TRANSPORT --}}
+                                {{-- BADGE TRANSPORT COMPACT --}}
                                 @if ($product->shipping_included)
-                                    <span
-                                        class="absolute top-2 left-2 inline-flex items-center gap-1
-                 px-2 py-1 rounded-md
-                 bg-[#00843D] text-white
-                 text-[9px] font-black shadow-md
-                 border border-white/20">
-                                        <span class="text-[10px]">🚚</span>
-                                        Transport inclus
+                                    <span class="absolute top-1.5 left-1.5 inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-[#00843D] text-white text-[8.5px] font-bold shadow-xs">
+                                        🚚 Inclus
                                     </span>
                                 @else
-                                    <span
-                                        class="absolute top-2 left-2 inline-flex items-center gap-1
-                 px-2 py-1 rounded-md
-                 bg-[#F9A01B] text-slate-950
-                 text-[9px] font-black shadow-md
-                 border border-white/30">
-                                        <span class="text-[10px]">🚚</span>
-                                        Transport non inclus
+                                    <span class="absolute top-1.5 left-1.5 inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-amber-500 text-slate-950 text-[8.5px] font-bold shadow-xs">
+                                        🚚 Non inclus
                                     </span>
                                 @endif
-                                ```
 
-
+                                {{-- BADGE REMISE COMPACT --}}
                                 @if ($hasDiscount && $discountPercent > 0)
-                                    <span
-                                        class="absolute top-2 right-2 px-2 py-1 rounded-md
-                                             bg-[#CE1126] text-white text-[10px] font-black shadow-md">
+                                    <span class="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded-md bg-[#CE1126] text-white text-[9px] font-black shadow-xs">
                                         -{{ $discountPercent }}%
                                     </span>
                                 @endif
 
+                                {{-- BADGE STOCK COMPACT --}}
                                 @if ($availableStock <= 0 || $product->status === 'sold_out')
-                                    <span
-                                        class="absolute bottom-2 right-2 px-2 py-1 rounded-md
-                                             bg-slate-900/90 text-white text-[9px] font-bold">
+                                    <span class="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-slate-900/85 text-white text-[8.5px] font-bold backdrop-blur-2xs">
                                         Épuisé
                                     </span>
                                 @elseif ($availableStock <= 5)
-                                    <span
-                                        class="absolute bottom-2 right-2 px-2 py-1 rounded-md
-                                             bg-[#FCD116] text-slate-900 text-[9px] font-black">
+                                    <span class="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-[#FCD116] text-slate-950 text-[8.5px] font-black shadow-xs">
                                         {{ $availableStock }} restant(s)
                                     </span>
                                 @endif
                             </div>
 
+                            {{-- 2. INFORMATIONS PRODUIT (ESPACEMENT OPTIMISÉ) --}}
+                            <div class="p-2 sm:p-2.5 flex flex-col flex-1 justify-between">
 
-                            {{-- INFORMATIONS --}}
-                            <div class="p-2.5 sm:p-3 flex flex-col flex-1">
+                                <div>
+                                    {{-- LIGNE BOUTIQUE & VILLE & ANCIENNETÉ --}}
+                                    @if ($product->shop)
+                                        <div class="flex items-center justify-between gap-1 text-[10px] text-slate-500 leading-none">
+                                            <div class="flex items-center gap-0.5 min-w-0 truncate">
+                                                <span class="font-extrabold text-slate-700 truncate group-hover:text-[#00843D] transition">
+                                                    {{ $product->shop->name }}
+                                                </span>
+                                                @if ($product->shop->verified_at)
+                                                    <svg class="w-3 h-3 text-[#00843D] shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414 0L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l5-5a1 1 0 000-1.414z" clip-rule="evenodd" />
+                                                    </svg>
+                                                @endif
+                                            </div>
 
-                                @if ($product->shop)
-                                    <div class="flex items-center gap-1 min-w-0">
-                                        <span class="text-[11px] font-extrabold text-slate-600 truncate">
-                                            {{ $product->shop->name }}
-                                        </span>
-
-                                        @if ($product->shop->verified_at)
-                                            <svg class="w-3.5 h-3.5 text-[#00843D] shrink-0" fill="currentColor"
-                                                viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd"
-                                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414 0L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l5-5a1 1 0 000-1.414z"
-                                                    clip-rule="evenodd" />
-                                            </svg>
-                                        @endif
-                                    </div>
-
-                                    <div class="flex items-center gap-1 text-[10px] text-slate-500 mt-0.5">
-                                        <span class="truncate">
-                                            📍 {{ $product->city ?? ($product->shop->city ?? 'Cameroun') }}
-                                        </span>
+                                            <span class="text-[9px] text-slate-400 shrink-0 truncate">
+                                                📍 {{ $product->city ?? ($product->shop->city ?? 'Cameroun') }}
+                                            </span>
+                                        </div>
 
                                         @if ($sellerAge)
-                                            <span>·</span>
-                                            <span class="shrink-0">{{ $sellerAge }}</span>
+                                            <div class="text-[9px] text-slate-400 font-medium truncate mt-0.5">
+                                                Vendeur depuis {{ $sellerAge }}
+                                            </div>
                                         @endif
+                                    @endif
+
+                                    {{-- TITRE PRODUIT (2 LIGNES COMPACTES) --}}
+                                    <h3 class="mt-1 text-[11.5px] sm:text-[12.5px] font-bold text-slate-900 leading-tight line-clamp-2 group-hover:text-[#00843D] transition min-h-[2.4em]">
+                                        {{ $product->title }}
+                                    </h3>
+
+                                    {{-- VENTES & COMMANDE MINIMALE --}}
+                                    <div class="mt-1 flex items-center justify-between text-[10px] text-slate-500 gap-1">
+                                        <span class="truncate">
+                                            <strong class="font-bold text-slate-700">{{ number_format($salesCount, 0, ',', ' ') }}</strong>
+                                            {{ $salesCount > 1 ? 'ventes' : 'vente' }}
+                                        </span>
+                                        <span class="shrink-0 inline-flex items-center rounded bg-emerald-50 px-1 py-0.2 text-[8.5px] font-bold text-[#00843D]">
+                                            Min. {{ $minQuantity }}
+                                        </span>
                                     </div>
-                                @endif
-
-                                <h3
-                                    class="mt-1.5 text-xs sm:text-sm font-bold text-slate-900
-                                       leading-snug line-clamp-2
-                                       group-hover:text-[#00843D] transition">
-                                    {{ $product->title }}
-                                </h3>
-
-                                <div class="mt-1 flex items-center gap-1.5 text-[10px] text-slate-500">
-                                    <span class="font-bold text-slate-700">
-                                        {{ number_format($salesCount, 0, ',', ' ') }}
-                                    </span>
-                                    {{ $salesCount > 1 ? 'ventes' : 'vente' }}
-                                    <span class="text-slate-300">•</span>
-                                    <span
-                                        class="inline-flex items-center rounded-md bg-emerald-50 px-1.5 py-0.5
-                                             text-[9px] font-black text-[#006B32]">
-                                        Min. {{ $minQuantity }}
-                                    </span>
                                 </div>
 
-                                <div class="mt-auto pt-2.5 flex items-end justify-between gap-1">
+                                {{-- PRIX ACTUEL + ANCIEN PRIX BARRÉ + BOUTON D'ACTION RAPIDE --}}
+                                <div class="mt-2 pt-1.5 border-t border-slate-100 flex items-center justify-between gap-1">
                                     <div class="min-w-0">
-
-                                        <p class="text-base sm:text-[17px] font-black text-[#00843D] leading-none">
+                                        <p class="text-[13px] sm:text-[14.5px] font-black text-[#00843D] leading-none">
                                             {{ number_format($product->price, 0, ',', ' ') }}
-                                            <span class="text-[10px] font-bold">FCFA</span>
+                                            <span class="text-[8.5px] font-bold text-slate-600">FCFA</span>
                                         </p>
 
                                         @if ($hasDiscount)
-                                            <p class="text-[10px] text-[#CE1126] line-through mt-1 font-semibold">
+                                            <p class="text-[9.5px] text-[#CE1126] line-through font-semibold leading-tight mt-0.5">
                                                 {{ number_format($product->old_price, 0, ',', ' ') }} FCFA
                                             </p>
                                         @endif
                                     </div>
+
+                                    {{-- Bouton action compact --}}
+                                    <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-emerald-50 text-[#00843D] group-hover:bg-[#00843D] group-hover:text-white flex items-center justify-center transition shrink-0 shadow-2xs">
+                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </span>
                                 </div>
 
                             </div>
@@ -578,19 +559,13 @@
 
                     @empty
 
-                        <div class="col-span-full">
-                            <div
-                                class="bg-[#FAF9F6] border border-dashed border-slate-300
-                                    rounded-3xl p-10 sm:p-12 text-center max-w-md mx-auto">
-
-                                <div
-                                    class="w-14 h-14 bg-white rounded-2xl flex items-center
-                                        justify-center mx-auto text-2xl text-slate-400 mb-3
-                                        border border-slate-200">
+                        <div class="col-span-full py-6">
+                            <div class="bg-[#FAF9F6] border border-dashed border-slate-300 rounded-3xl p-8 sm:p-10 text-center max-w-md mx-auto">
+                                <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center mx-auto text-xl text-slate-400 mb-3 border border-slate-200">
                                     🔍
                                 </div>
 
-                                <h3 class="text-base font-black text-slate-900">
+                                <h3 class="text-sm font-black text-slate-900">
                                     Aucun produit trouvé
                                 </h3>
 
@@ -598,11 +573,9 @@
                                     Essayez de modifier votre recherche ou de réinitialiser vos filtres.
                                 </p>
 
-                                @if (request('q') || request('category'))
+                                @if (request('q') || request('category') || request('sort'))
                                     <a href="{{ route('buyer.home') }}"
-                                        class="inline-flex items-center mt-4 px-4 py-2 rounded-xl
-                                          bg-[#00843D] text-white text-xs font-bold
-                                          hover:bg-[#006B32] transition">
+                                       class="inline-flex items-center mt-3 px-4 py-2 rounded-xl bg-[#00843D] text-white text-xs font-bold hover:bg-[#006B32] transition">
                                         Voir tous les produits
                                     </a>
                                 @endif
@@ -611,6 +584,7 @@
                     @endforelse
                 </div>
 
+                {{-- PAGINATION --}}
                 @if ($products->hasPages())
                     <div class="mt-8 flex justify-center">
                         {{ $products->links() }}
@@ -620,278 +594,142 @@
             </div>
         </section>
 
-
         {{-- =========================================================
-         4. COMMENT ÇA MARCHE
-    ========================================================== --}}
-        <section class="bg-[#FAF9F6]">
-            <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+         6. PROCESSUS D'ACHAT SÉCURISÉ (COMMENT ÇA MARCHE)
+        ========================================================== --}}
+        <section class="bg-[#FAF9F6] py-10 sm:py-12">
+            <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
 
-                <div
-                    class="bg-white border border-slate-200 rounded-[2rem]
-                        overflow-hidden shadow-sm">
-
+                <div class="bg-white border border-slate-200/90 rounded-3xl overflow-hidden shadow-xs">
                     <div class="p-6 sm:p-8 lg:p-10">
 
                         <div class="max-w-2xl">
-                            <p class="text-[11px] font-black uppercase tracking-wider text-[#00843D]">
-                                Simple, rapide et sécurisé
-                            </p>
-
-                            <h2 class="mt-1 text-xl sm:text-2xl lg:text-3xl font-black text-slate-900">
-                                Comment ça marche ?
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-[#00843D] text-[10px] font-black uppercase tracking-wider">
+                                Sécurité Maximale
+                            </span>
+                            <h2 class="mt-2 text-xl sm:text-2xl lg:text-3xl font-black text-slate-900">
+                                Comment fonctionne le séquestre Ali-Kamer ?
                             </h2>
-
-                            <p class="mt-2 text-sm text-slate-500">
-                                De la recherche jusqu'au retrait de votre colis,
-                                Ali-Kamer simplifie chaque étape.
+                            <p class="mt-1.5 text-xs sm:text-sm text-slate-500 leading-relaxed">
+                                Finis les risques d'arnaque en ligne. Vos fonds sont sécurisés du premier clic jusqu'à la remise en main propre.
                             </p>
                         </div>
 
-                        <div class="mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {{-- 4 ÉTAPES CLAIRES --}}
+                        <div class="mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
 
-                            <div class="relative">
-                                <div class="flex items-start gap-3">
-                                    <span
-                                        class="w-10 h-10 rounded-2xl bg-[#00843D]
-                                             text-white flex items-center justify-center
-                                             font-black shrink-0">
-                                        1
-                                    </span>
-                                    <div>
-                                        <h3 class="text-sm font-black text-slate-900">
-                                            Trouvez
-                                        </h3>
-                                        <p class="mt-1 text-xs leading-relaxed text-slate-500">
-                                            Recherchez et choisissez le produit qui vous convient.
-                                        </p>
-                                    </div>
-                                </div>
+                            <div class="bg-slate-50/70 border border-slate-200/60 rounded-2xl p-4 sm:p-5 relative">
+                                <span class="w-8 h-8 rounded-xl bg-[#00843D] text-white flex items-center justify-center font-black text-sm mb-3">
+                                    1
+                                </span>
+                                <h3 class="text-sm font-black text-slate-900">Choisissez votre article</h3>
+                                <p class="mt-1 text-xs text-slate-500 leading-relaxed">
+                                    Parcourez les produits de marchands certifiés et sélectionnez votre agence de livraison préférée.
+                                </p>
                             </div>
 
-                            <div class="relative">
-                                <div class="flex items-start gap-3">
-                                    <span
-                                        class="w-10 h-10 rounded-2xl bg-[#FCD116]
-                                             text-slate-900 flex items-center justify-center
-                                             font-black shrink-0">
-                                        2
-                                    </span>
-                                    <div>
-                                        <h3 class="text-sm font-black text-slate-900">
-                                            Commandez
-                                        </h3>
-                                        <p class="mt-1 text-xs leading-relaxed text-slate-500">
-                                            Passez votre commande avec les informations nécessaires.
-                                        </p>
-                                    </div>
-                                </div>
+                            <div class="bg-slate-50/70 border border-slate-200/60 rounded-2xl p-4 sm:p-5 relative">
+                                <span class="w-8 h-8 rounded-xl bg-[#F9A01B] text-slate-950 flex items-center justify-center font-black text-sm mb-3">
+                                    2
+                                </span>
+                                <h3 class="text-sm font-black text-slate-900">Payez sous séquestre</h3>
+                                <p class="mt-1 text-xs text-slate-500 leading-relaxed">
+                                    Réglez via MTN MoMo ou Orange Money. Vos fonds restent bloqués chez Ali-Kamer sans toucher le vendeur.
+                                </p>
                             </div>
 
-                            <div class="relative">
-                                <div class="flex items-start gap-3">
-                                    <span
-                                        class="w-10 h-10 rounded-2xl bg-[#CE1126]
-                                             text-white flex items-center justify-center
-                                             font-black shrink-0">
-                                        3
-                                    </span>
-                                    <div>
-                                        <h3 class="text-sm font-black text-slate-900">
-                                            Payez
-                                        </h3>
-                                        <p class="mt-1 text-xs leading-relaxed text-slate-500">
-                                            Utilisez vos moyens de paiement locaux disponibles.
-                                        </p>
-                                    </div>
-                                </div>
+                            <div class="bg-slate-50/70 border border-slate-200/60 rounded-2xl p-4 sm:p-5 relative">
+                                <span class="w-8 h-8 rounded-xl bg-[#CE1126] text-white flex items-center justify-center font-black text-sm mb-3">
+                                    3
+                                </span>
+                                <h3 class="text-sm font-black text-slate-900">Expédition en agence</h3>
+                                <p class="mt-1 text-xs text-slate-500 leading-relaxed">
+                                    Le vendeur dépose le colis au guichet de l'agence partenaire (General Express, Finexs, etc.) avec bordereau.
+                                </p>
                             </div>
 
-                            <div class="relative">
-                                <div class="flex items-start gap-3">
-                                    <span
-                                        class="w-10 h-10 rounded-2xl bg-[#00843D]
-                                             text-white flex items-center justify-center
-                                             font-black shrink-0">
-                                        4
-                                    </span>
-                                    <div>
-                                        <h3 class="text-sm font-black text-slate-900">
-                                            Recevez
-                                        </h3>
-                                        <p class="mt-1 text-xs leading-relaxed text-slate-500">
-                                            Retirez votre colis dans l'agence prévue.
-                                        </p>
-                                    </div>
-                                </div>
+                            <div class="bg-slate-50/70 border border-slate-200/60 rounded-2xl p-4 sm:p-5 relative">
+                                <span class="w-8 h-8 rounded-xl bg-[#00843D] text-white flex items-center justify-center font-black text-sm mb-3">
+                                    4
+                                </span>
+                                <h3 class="text-sm font-black text-slate-900">Vérification & OTP</h3>
+                                <p class="mt-1 text-xs text-slate-500 leading-relaxed">
+                                    Inspectez votre colis au guichet. Donnez votre code OTP verbal pour valider le retrait et payer le vendeur.
+                                </p>
                             </div>
 
                         </div>
                     </div>
 
-                    {{-- CTA --}}
-                    <div class="border-t border-slate-100 bg-gradient-to-r from-emerald-50 via-white to-yellow-50">
-                        <div
-                            class="p-5 sm:p-6 flex flex-col sm:flex-row
-                                items-start sm:items-center justify-between gap-5">
-
-                            <div class="flex items-center gap-3">
-                                <span
-                                    class="w-11 h-11 rounded-2xl bg-[#FCD116]
-                                         flex items-center justify-center text-xl">
-                                    🤝
-                                </span>
-
-                                <div>
-                                    <h3 class="text-sm font-black text-slate-900">
-                                        Ali-Kamer, plus qu'une marketplace.
-                                    </h3>
-                                    <p class="text-xs text-slate-500 mt-0.5">
-                                        Une plateforme construite au Cameroun pour l'Afrique.
-                                    </p>
-                                </div>
+                    {{-- BANDEAU CTA BAS --}}
+                    <div class="border-t border-slate-100 bg-gradient-to-r from-emerald-50 via-white to-amber-50 p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <span class="w-10 h-10 rounded-xl bg-[#FCD116] flex items-center justify-center text-xl shrink-0">
+                                🤝
+                            </span>
+                            <div>
+                                <h3 class="text-xs sm:text-sm font-black text-slate-900">
+                                    Ali-Kamer — Le commerce de proximité, la sécurité en plus.
+                                </h3>
+                                <p class="text-[11px] text-slate-500">
+                                    Une plateforme construite au Cameroun pour dynamiser l'économie locale.
+                                </p>
                             </div>
+                        </div>
 
+                        <div class="flex items-center gap-2">
+                            <a href="{{ route('tutorials.index') }}"
+                               class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold transition">
+                                Guide d'utilisation
+                            </a>
                             <a href="{{ route('about') }}"
-                                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl
-                                  bg-[#CE1126] hover:bg-red-700 text-white
-                                  text-xs font-extrabold transition shrink-0">
-                                Découvrir Ali-Kamer
-                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M13 5l7 7-7 7M20 12H4" />
-                                </svg>
+                               class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#00843D] hover:bg-[#006B32] text-white text-xs font-extrabold transition">
+                                En savoir plus
                             </a>
                         </div>
                     </div>
 
                 </div>
+
             </div>
         </section>
 
-
         {{-- =========================================================
-         5. CHIFFRES / PROMESSE DE MARQUE
-         Valeurs présentées comme éléments marketing de la maquette.
-    ========================================================== --}}
-        <section class="bg-white border-t border-slate-100">
-            <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+         7. CHIFFRES CLÉS & RÉSEAU DE CONFIANCE
+        ========================================================== --}}
+        <section class="bg-white border-t border-slate-200/70 py-7 sm:py-9">
+            <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
 
-                <div
-                    class="grid grid-cols-2 md:grid-cols-4 gap-0
-                        divide-y sm:divide-y-0 sm:divide-x divide-slate-200">
-
-                    <div class="px-4 py-4 sm:px-6 text-center">
-                        <p class="text-2xl sm:text-3xl font-black text-[#00843D]">
-                            100%
-                        </p>
-                        <p class="mt-1 text-xs font-bold text-slate-500">
-                            Pensé pour le Cameroun
-                        </p>
+                    <div class="px-3 py-2">
+                        <p class="text-2xl sm:text-3xl font-black text-[#00843D]">100%</p>
+                        <p class="mt-1 text-xs font-bold text-slate-600">Paiements sous séquestre</p>
+                        <p class="text-[10px] text-slate-400">Protection totale acheteur & vendeur</p>
                     </div>
 
-                    <div class="px-4 py-4 sm:px-6 text-center">
-                        <p class="text-2xl sm:text-3xl font-black text-[#CE1126]">
-                            24/7
-                        </p>
-                        <p class="mt-1 text-xs font-bold text-slate-500">
-                            Marketplace accessible
-                        </p>
+                    <div class="px-3 py-2">
+                        <p class="text-2xl sm:text-3xl font-black text-[#CE1126]">10 Régions</p>
+                        <p class="mt-1 text-xs font-bold text-slate-600">Couverture nationale</p>
+                        <p class="text-[10px] text-slate-400">Expéditions interurbaines quotidiennes</p>
                     </div>
 
-                    <div class="px-4 py-4 sm:px-6 text-center">
-                        <p class="text-2xl sm:text-3xl font-black text-[#8A7000]">
-                            XAF
-                        </p>
-                        <p class="mt-1 text-xs font-bold text-slate-500">
-                            Paiement en FCFA
-                        </p>
+                    <div class="px-3 py-2">
+                        <p class="text-2xl sm:text-3xl font-black text-amber-600">+30 Agences</p>
+                        <p class="mt-1 text-xs font-bold text-slate-600">Points relais agréés</p>
+                        <p class="text-[10px] text-slate-400">General Express, Finexs, Touristique...</p>
                     </div>
 
-                    <div class="px-4 py-4 sm:px-6 text-center">
-                        <p class="text-2xl sm:text-3xl font-black text-[#00843D]">
-                            🇨🇲 → 🌍
-                        </p>
-                        <p class="mt-1 text-xs font-bold text-slate-500">
-                            Construit au Cameroun pour l'Afrique
-                        </p>
+                    <div class="px-3 py-2">
+                        <p class="text-2xl sm:text-3xl font-black text-[#00843D]">0 FCFA</p>
+                        <p class="mt-1 text-xs font-bold text-slate-600">Risque d'arnaque</p>
+                        <p class="text-[10px] text-slate-400">Validation physique par code secret OTP</p>
                     </div>
 
                 </div>
+
             </div>
         </section>
 
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-
-            const hero = document.getElementById('hero-ali-kamer');
-
-            if (!hero) return;
-
-            let heroHidden = false;
-
-            function hideHero() {
-
-                if (heroHidden) return;
-
-                heroHidden = true;
-
-                /*
-                 * Petit délai pour garantir que le navigateur
-                 * ait bien rendu le Hero avant l'animation.
-                 */
-                requestAnimationFrame(() => {
-
-                    requestAnimationFrame(() => {
-                        hero.classList.add('ak-hero-hiding');
-                    });
-
-                });
-            }
-
-            /*
-             * ---------------------------------------------------------
-             * DISPARITION AUTOMATIQUE APRÈS 30 SECONDES
-             * ---------------------------------------------------------
-             */
-            const autoHideTimer = setTimeout(() => {
-                hideHero();
-            }, 10000);
-
-
-            /*
-             * ---------------------------------------------------------
-             * SI L'UTILISATEUR COMMENCE À DESCENDRE
-             * ---------------------------------------------------------
-             *
-             * On ne le fait pas disparaître immédiatement.
-             * On attend une petite distance afin d'éviter
-             * un déclenchement accidentel.
-             */
-            let scrollTriggered = false;
-
-            window.addEventListener('scroll', function() {
-
-                if (scrollTriggered || heroHidden) return;
-
-                if (window.scrollY > 180) {
-
-                    scrollTriggered = true;
-
-                    clearTimeout(autoHideTimer);
-
-                    // Petite temporisation pour rendre
-                    // le comportement plus naturel.
-                    setTimeout(() => {
-                        hideHero();
-                    }, 350);
-                }
-
-            }, {
-                passive: true
-            });
-
-        });
-    </script>
 @endsection

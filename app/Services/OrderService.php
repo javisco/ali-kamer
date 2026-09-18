@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\Order;
+use App\Models\OrderGroup;
+use App\Models\OrderGroupPayment;
 use App\Models\OrderItem;
 use App\Models\OrderPayment;
 use App\Models\OrderShipment;
@@ -198,39 +200,192 @@ class OrderService
         });
     }
 
+
+    // Calcule la part vendeur/agence pour une boutique, SANS le gross-up
+    // collecte (celui-ci se calcule une seule fois au niveau du groupe).
+    public function calculatePayoutSplits(int $subtotal): array
+    {
+        $commissionRate = PlatformSetting::getRate('platform_commission_rate');
+        $agencyRate     = PlatformSetting::getRate('agency_commission_rate');
+        $protectionRate = PlatformSetting::getRate('protection_rate');
+
+        $platformCommission = (int) ceil($subtotal * $commissionRate);
+        $netSeller           = $subtotal - $platformCommission;
+        $payoutGrossUp       = $this->elgiopay->grossUpPayout($netSeller);
+
+        $agencyCommission = (int) round($subtotal * $agencyRate);
+        $agencyGrossUp    = $this->elgiopay->grossUpPayout($agencyCommission);
+
+        $protectionFee = (int) ceil($subtotal * $protectionRate);
+
+        return [
+            'subtotal'            => $subtotal,
+            'protection_fee'      => $protectionFee,
+            'platform_commission' => $platformCommission,
+            'net_seller'          => $netSeller,
+            'gross_seller'        => $payoutGrossUp['gross'],
+            'gateway_payout_fee'  => $payoutGrossUp['fee'],
+            'agency_commission'   => $agencyCommission,
+            'net_agency'          => $agencyCommission,
+            'gross_agency'        => $agencyGrossUp['gross'],
+            'gateway_agency_fee'  => $agencyGrossUp['fee'],
+        ];
+    }
+
+
     // ── CRÉER DEPUIS LE PANIER ────────────────────────────────────────
-    public function createFromCart(User $buyer, $cart, array $data): Order
+    // ── CRÉER DEPUIS LE PANIER ────────────────────────────────────────
+    // Détecte automatiquement mono ou multi-vendeur.
+    public function createFromCart(User $buyer, $cart, array $data): Order|OrderGroup
     {
         return DB::transaction(function () use ($buyer, $cart, $data) {
 
-            $items    = $cart->items->load('product', 'variant');
-            $subtotal = $items->sum(fn($item) => $item->unit_price * $item->quantity);
-            $shopId   = $items->first()->product->shop_id;
+            $items       = $cart->items->load('product.shop', 'variant');
+            $itemsByShop = $items->groupBy(fn($item) => $item->product->shop_id);
 
-            $fin = $this->calculateFinancials($subtotal);
+            if ($itemsByShop->count() === 1) {
+                // Comportement inchangé : un seul vendeur.
+                return $this->createSingleShopOrder($buyer, $items, $data);
+            }
+
+            return $this->createMultiShopOrderGroup($buyer, $itemsByShop, $data);
+        });
+    }
+
+    // ── PANIER MONO-VENDEUR (logique identique à l'ancienne version) ──
+    private function createSingleShopOrder(User $buyer, $items, array $data): Order
+    {
+        $subtotal = $items->sum(fn($item) => $item->unit_price * $item->quantity);
+        $shopId   = $items->first()->product->shop_id;
+
+        $fin = $this->calculateFinancials($subtotal);
+
+        $order = Order::create([
+            'reference'           => Order::generateReference(),
+            'buyer_id'            => $buyer->id,
+            'shop_id'             => $shopId,
+            'status'              => Order::STATUS_AWAITING_PAYMENT,
+            'subtotal'            => $fin['subtotal'],
+            'protection_fee'      => $fin['protection_fee'],
+            'shipping_fee'        => 0,
+            'gateway_fee'         => $fin['gateway_collect_fee'],
+            'total_amount'        => $fin['total_amount'],
+            'platform_commission' => $fin['platform_commission'],
+            'agency_commission'   => $fin['agency_commission'],
+            'gateway_payout_fee'  => $fin['gateway_payout_fee'],
+            'net_amount'          => $fin['net_seller'],
+            'gross_seller_amount' => $fin['gross_seller'],
+            'net_agency_amount'   => $fin['net_agency'],
+            'gross_agency_amount' => $fin['gross_agency'],
+            'deposit_code'        => strtoupper(Str::random(8)),
+            'financial_snapshot'  => $fin,
+        ]);
+
+        foreach ($items as $item) {
+            OrderItem::create([
+                'order_id'           => $order->id,
+                'product_id'         => $item->product_id,
+                'product_variant_id' => $item->product_variant_id,
+                'product_title'      => $item->product->title
+                    . ($item->variantLabel() ? ' — ' . $item->variantLabel() : ''),
+                'quantity'           => $item->quantity,
+                'unit_price'         => $item->unit_price,
+                'subtotal'           => $item->subtotal(),
+            ]);
+
+            $item->variant
+                ? $item->variant->increment('stock_reserved', $item->quantity)
+                : $item->product->increment('stock_reserved', $item->quantity);
+
+            $this->checkStockAndNotify($item->variant ?? $item->product, $item->product);
+        }
+
+        $allShippingIncluded = $items->every(fn($item) => (bool) $item->product->shipping_included);
+
+        OrderShipment::create([
+            'order_id'          => $order->id,
+            'type'              => 'interurban',
+            'shipping_included' => $allShippingIncluded,
+            'recipient_name'    => $buyer->name,
+            'recipient_phone'   => $buyer->phone,
+            'destination_city'  => $data['destination_city'],
+        ]);
+
+        OrderPayment::create([
+            'order_id'        => $order->id,
+            'method'          => 'elgiopay',
+            'status'          => 'pending',
+            'idempotency_key' => OrderPayment::generateIdempotencyKey(),
+            'payer_phone'     => $data['payer_phone'],
+            'payer_operator'  => $data['payer_operator'],
+        ]);
+
+        return $order;
+    }
+
+    // ── PANIER MULTI-VENDEUR : un OrderGroup + un Order par boutique ──
+    private function createMultiShopOrderGroup(User $buyer, $itemsByShop, array $data): OrderGroup
+    {
+        $totalSubtotal    = 0;
+        $totalProtection  = 0;
+        $shopCalculations = [];
+
+        foreach ($itemsByShop as $shopId => $shopItems) {
+            $shopSubtotal = $shopItems->sum(fn($item) => $item->unit_price * $item->quantity);
+            $calc         = $this->calculatePayoutSplits($shopSubtotal);
+
+            $shopCalculations[$shopId] = $calc;
+            $totalSubtotal   += $shopSubtotal;
+            $totalProtection += $calc['protection_fee'];
+        }
+
+        // Gross-up UNIQUE pour tout le panier — un seul débit MoMo,
+        // un seul frais fixe, peu importe le nombre de boutiques.
+        $collectGrossUp = $this->elgiopay->grossUpCollect($totalSubtotal + $totalProtection);
+
+        $group = OrderGroup::create([
+            'reference'          => OrderGroup::generateReference(),
+            'buyer_id'           => $buyer->id,
+            'status'             => OrderGroup::STATUS_AWAITING_PAYMENT,
+            'subtotal'           => $totalSubtotal,
+            'protection_fee'     => $totalProtection,
+            'gateway_fee'        => $collectGrossUp['fee'],
+            'total_amount'       => $collectGrossUp['gross'],
+            'financial_snapshot' => [
+                'shops'             => $shopCalculations,
+                'collect_gross_up'  => $collectGrossUp,
+                'calculated_at'     => now()->toISOString(),
+            ],
+        ]);
+
+        foreach ($itemsByShop as $shopId => $shopItems) {
+            $calc = $shopCalculations[$shopId];
 
             $order = Order::create([
                 'reference'           => Order::generateReference(),
                 'buyer_id'            => $buyer->id,
                 'shop_id'             => $shopId,
+                'order_group_id'      => $group->id,
                 'status'              => Order::STATUS_AWAITING_PAYMENT,
-                'subtotal'            => $fin['subtotal'],
-                'protection_fee'      => $fin['protection_fee'],
+                'subtotal'            => $calc['subtotal'],
+                'protection_fee'      => $calc['protection_fee'],
                 'shipping_fee'        => 0,
-                'gateway_fee'         => $fin['gateway_collect_fee'],
-                'total_amount'        => $fin['total_amount'],
-                'platform_commission' => $fin['platform_commission'],
-                'agency_commission'   => $fin['agency_commission'],
-                'gateway_payout_fee'  => $fin['gateway_payout_fee'],
-                'net_amount'          => $fin['net_seller'],
-                'gross_seller_amount' => $fin['gross_seller'],
-                'net_agency_amount'   => $fin['net_agency'],
-                'gross_agency_amount' => $fin['gross_agency'],
+                // Le frais gateway "collecte" est porté par le groupe, pas par chaque commande.
+                'gateway_fee'         => 0,
+                // Part nette de cette boutique (hors gross-up, qui n'existe qu'au niveau du groupe).
+                'total_amount'        => $calc['subtotal'] + $calc['protection_fee'],
+                'platform_commission' => $calc['platform_commission'],
+                'agency_commission'   => $calc['agency_commission'],
+                'gateway_payout_fee'  => $calc['gateway_payout_fee'],
+                'net_amount'          => $calc['net_seller'],
+                'gross_seller_amount' => $calc['gross_seller'],
+                'net_agency_amount'   => $calc['net_agency'],
+                'gross_agency_amount' => $calc['gross_agency'],
                 'deposit_code'        => strtoupper(Str::random(8)),
-                'financial_snapshot'  => $fin,
+                'financial_snapshot'  => $calc,
             ]);
 
-            foreach ($items as $item) {
+            foreach ($shopItems as $item) {
                 OrderItem::create([
                     'order_id'           => $order->id,
                     'product_id'         => $item->product_id,
@@ -245,10 +400,11 @@ class OrderService
                 $item->variant
                     ? $item->variant->increment('stock_reserved', $item->quantity)
                     : $item->product->increment('stock_reserved', $item->quantity);
+
+                $this->checkStockAndNotify($item->variant ?? $item->product, $item->product);
             }
 
-            $this->checkStockAndNotify($item->variant ?? $item->product, $item->product);
-            $allShippingIncluded = $items->every(fn($item) => (bool) $item->product->shipping_included);
+            $allShippingIncluded = $shopItems->every(fn($item) => (bool) $item->product->shipping_included);
 
             OrderShipment::create([
                 'order_id'          => $order->id,
@@ -258,33 +414,38 @@ class OrderService
                 'recipient_phone'   => $buyer->phone,
                 'destination_city'  => $data['destination_city'],
             ]);
+        }
 
-            OrderPayment::create([
-                'order_id'        => $order->id,
-                'method'          => 'elgiopay',
-                'status'          => 'pending',
-                'idempotency_key' => OrderPayment::generateIdempotencyKey(),
-                'payer_phone'     => $data['payer_phone'],
-                'payer_operator'  => $data['payer_operator'],
-            ]);
+        OrderGroupPayment::create([
+            'order_group_id'  => $group->id,
+            'method'          => 'elgiopay',
+            'status'          => 'pending',
+            'idempotency_key' => OrderGroupPayment::generateIdempotencyKey(),
+            'payer_phone'     => $data['payer_phone'],
+            'payer_operator'  => $data['payer_operator'],
+        ]);
 
-            return $order;
-        });
+        return $group;
     }
 
     // ── ANNULER ───────────────────────────────────────────────────────
     public function cancel(Order $order, string $reason): void
     {
+
+
+        abort_unless($order->status === Order::STATUS_AWAITING_PAYMENT || Order::STATUS_PENDING, 403, "le colis est deja en preparation vous ne pouvez plus annuler");
         DB::transaction(function () use ($order, $reason) {
             foreach ($order->items as $item) {
                 $item->product_variant_id
                     ? $item->variant?->decrement('stock_reserved', $item->quantity)
                     : $item->product?->decrement('stock_reserved', $item->quantity);
             }
+
             $order->update([
                 'status'              => Order::STATUS_CANCELLED,
                 'cancelled_at'        => now(),
                 'cancellation_reason' => $reason,
+
             ]);
         });
     }

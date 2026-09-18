@@ -156,35 +156,35 @@
 
                     {{-- Utilisateurs --}}
 
-                   {{-- Lien Utilisateurs (Exclusion stricte des mauvaises notes) --}}
-<a href="{{ route('admin.users.index') }}" @click="sidebarOpen = false"
-    class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
+                    {{-- Lien Utilisateurs (Exclusion stricte des mauvaises notes) --}}
+                    <a href="{{ route('admin.users.index') }}" @click="sidebarOpen = false"
+                        class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
     {{ request()->routeIs('admin.users.index', 'admin.users.show', 'admin.users.edit', 'admin.users.history')
         ? 'bg-[#016837] text-white shadow-lg shadow-[#016837]/40'
         : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
 
-    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-    </svg>
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
 
-    <span>Utilisateurs</span>
-</a>
+                        <span>Utilisateurs</span>
+                    </a>
 
-{{-- Lien Mauvais Scores --}}
-<a href="{{ route('admin.users.low-scores') }}" @click="sidebarOpen = false"
-    class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
+                    {{-- Lien Mauvais Scores --}}
+                    <a href="{{ route('admin.users.low-scores') }}" @click="sidebarOpen = false"
+                        class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
     {{ request()->routeIs('admin.users.low*')
         ? 'bg-[#016837] text-white shadow-lg shadow-[#016837]/40'
         : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
 
-    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
 
-    <span>Mauvais scores</span>
-</a>
+                        <span>Mauvais scores</span>
+                    </a>
 
                     {{-- KYC --}}
 
@@ -283,7 +283,20 @@
                         <span>Moteur financier</span>
 
                     </a>
+                    {{-- Trésorerie --}}
+                    <a href="{{ route('admin.treasury.index') }}" @click="sidebarOpen = false"
+                        class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
+{{ request()->routeIs('admin.treasury.*')
+    ? 'bg-[#016837] text-white shadow-lg shadow-[#016837]/40'
+    : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
 
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                                d="M9 7h6m-9 4h12M4 7v10a2 2 0 002 2h12a2 2 0 002-2V7M4 7l1.5-3h13L20 7" />
+                        </svg>
+
+                        <span>Trésorerie</span>
+                    </a>
 
                     {{-- =================================================
                      MODÉRATION & SUPPORT

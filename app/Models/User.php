@@ -58,6 +58,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'prepayment_required',
         'purchase_restricted',
         'referral_code',
+        'agency_id',
     ];
 
     protected $hidden = ['password', 'remember_token'];

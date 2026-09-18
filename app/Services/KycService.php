@@ -68,14 +68,22 @@ class KycService
             ]);
 
             // Activer le compte vendeur
-      //      $kyc->user->update(['status' => User::STATUS_ACTIVE]);
+            //      $kyc->user->update(['status' => User::STATUS_ACTIVE]);
 
             // Activer la boutique
             $kyc->user->shop?->update([
                 'status'      => 'active',
                 'verified_at' => now(),
             ]);
-          //  $kyc->user->notify(new KycApprovedNotification());
+            //  $kyc->user->notify(new KycApprovedNotification());
+            // Dans approve() — après l'activation de la boutique
+            app(TrustService::class)->record(
+                user: $kyc->user,
+                type: 'kyc_approved',
+                roleContext: 'seller',
+                reason: 'KYC validé par l\'admin',
+                createdBy: $admin
+            );
             AdminLog::record(
                 $admin,
                 'kyc.approved',
@@ -101,7 +109,7 @@ class KycService
                 'rejection_reason' => $reason,
                 'reviewed_at'      => now(),
             ]);
-           // $kyc->user->notify(new KycRejectedNotification($reason));
+            // $kyc->user->notify(new KycRejectedNotification($reason));
             AdminLog::record(
                 $admin,
                 'kyc.rejected',
@@ -151,14 +159,30 @@ class KycService
 
             // 6. Inscrire en blacklist permanente
             // On stocke phone, phone_momo et IP pour bloquer toute réinscription
-            Blacklist::create([
-                'phone_number' => $seller->phone,
-                'phone_momo'   => $seller->phone_momo,
-                'ip_address'   => request()->ip(),
-                'reason'       => $reason,
-                'created_by'   => $admin->id,
-            ]);
+            // Blacklist::create([
+            //     'phone_number' => $seller->phone,
+            //     'phone_momo'   => $seller->phone_momo,
+            //     'ip_address'   => request()->ip(),
+            //     'reason'       => $reason,
+            //     'created_by'   => $admin->id,
+            // ]);
+            // Dans blacklist() — remplacer Blacklist::create() par TrustService
+            $blacklistEntry = app(TrustService::class)->blacklist(
+                user: $seller,
+                reasonCode: 'admin_blacklist',
+                severity: 'permanent',
+                reason: $reason,
+                triggerType: 'admin',
+                createdBy: $admin
+            );
 
+            // Si KYC disponible, ajouter la CNI hashée
+            if ($seller->kycDocument?->cni_hash) {
+                app(TrustService::class)->storeCniIdentifier(
+                    $blacklistEntry,
+                    $seller->kycDocument->cni_hash
+                );
+            }
             // 7. Logger l'action admin pour audit
             AdminLog::record(
                 $admin,
