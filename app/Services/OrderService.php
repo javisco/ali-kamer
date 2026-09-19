@@ -415,7 +415,6 @@ class OrderService
                 'destination_city'  => $data['destination_city'],
             ]);
         }
-
         OrderGroupPayment::create([
             'order_group_id'  => $group->id,
             'method'          => 'elgiopay',

@@ -82,14 +82,14 @@
                         <label class="flex items-center gap-2.5 border border-slate-200 rounded-2xl p-3 cursor-pointer transition hover:bg-yellow-50/50 has-[:checked]:border-[#F9A01B] has-[:checked]:bg-yellow-50/80">
                             <input type="radio" name="transport_operator" value="mtn"
                                 class="w-4 h-4 text-[#F9A01B] focus:ring-[#F9A01B]"
-                                {{ old('transport_operator', $order->payment->payer_operator) === 'mtn' ? 'checked' : '' }} required>
+                                {{ old('transport_operator', $order->payment->payer_operator ?? $order->orderGroup->payment->payer_operator  ) === 'mtn' ? 'checked' : '' }} required>
                             <span class="font-extrabold text-slate-800 text-xs">MTN MoMo</span>
                         </label>
 
                         <label class="flex items-center gap-2.5 border border-slate-200 rounded-2xl p-3 cursor-pointer transition hover:bg-orange-50/50 has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50/80">
                             <input type="radio" name="transport_operator" value="orange"
                                 class="w-4 h-4 text-orange-600 focus:ring-orange-500"
-                                {{ old('transport_operator', $order->payment->payer_operator) === 'orange' ? 'checked' : '' }}>
+                                {{ old('transport_operator', $order->payment->payer_operator ?? $order->orderGroup->payment->payer_operator ) === 'orange' ? 'checked' : '' }}>
                             <span class="font-extrabold text-slate-800 text-xs">Orange Money</span>
                         </label>
                     </div>
@@ -106,7 +106,7 @@
                     <div class="flex">
                         <span class="inline-flex items-center px-3.5 border border-r-0 border-slate-300 rounded-l-xl bg-slate-100 text-slate-600 text-xs font-bold">+237</span>
                         <input type="tel" name="transport_phone"
-                            value="{{ old('transport_phone', $order->payment->payer_phone) }}" required
+                            value="{{ old('transport_phone', $order->payment->payer_phone ?? $order->orderGroup->payment->payer_phone ) }}" required
                             placeholder="655123456"
                             class="flex-1 border border-slate-300 focus:border-[#016837] focus:ring-1 focus:ring-[#016837] rounded-r-xl px-4 py-2.5 text-sm font-bold text-slate-900 transition outline-none">
                     </div>

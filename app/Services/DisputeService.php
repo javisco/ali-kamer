@@ -147,10 +147,10 @@ class DisputeService
         $seller = $order->shop->user;
 
         match ($dispute->resolution) {
-            'refund_buyer'     => $this->refundBuyer($buyer, $order->total_amount, $order),
+            'refund_buyer'     => $this->refundBuyer($buyer, $order->subtotal, $order),
             'pay_seller'       => $this->creditSellerWallet($seller, $order->net_amount, $order),
             'partial_refund'   => $this->applyPartialRefund($dispute),
-            'return_required'  => $this->refundBuyer($buyer, $order->total_amount, $order),
+            'return_required'  => $this->refundBuyer($buyer, $order->subtotal, $order),
             'buyer_bad_faith'  => $this->creditSellerWallet($seller, $order->net_amount, $order),
             default            => Log::warning('Résolution inconnue', [
                 'resolution' => $dispute->resolution
@@ -158,36 +158,36 @@ class DisputeService
         };
         // Dans applyResolution() — après le paiement
         // Acheteur avait tort
-        if (in_array($dispute->resolution, ['pay_seller', 'buyer_bad_faith'])) {
-            app(TrustService::class)->record(
-                user: $order->buyer,
-                type: 'dispute_lost',
-                roleContext: 'buyer',
-                reason: "Litige perdu — commande {$order->reference}",
-                referenceType: 'Order',
-                referenceId: $order->id
-            );
-            app(TrustService::class)->record(
-                user: $order->shop->user,
-                type: 'dispute_won',
-                roleContext: 'seller',
-                reason: "Litige gagné — commande {$order->reference}",
-                referenceType: 'Order',
-                referenceId: $order->id
-            );
-        }
+        // if (in_array($dispute->resolution, ['pay_seller', 'buyer_bad_faith'])) {
+        //     app(TrustService::class)->record(
+        //         user: $order->buyer,
+        //         type: 'dispute_lost',
+        //         roleContext: 'buyer',
+        //         reason: "Litige perdu — commande {$order->reference}",
+        //         referenceType: 'Order',
+        //         referenceId: $order->id
+        //     );
+        //     app(TrustService::class)->record(
+        //         user: $order->shop->user,
+        //         type: 'dispute_won',
+        //         roleContext: 'seller',
+        //         reason: "Litige gagné — commande {$order->reference}",
+        //         referenceType: 'Order',
+        //         referenceId: $order->id
+        //     );
+        // }
 
-        // Vendeur avait tort
-        if ($dispute->resolution === 'refund_buyer') {
-            app(TrustService::class)->record(
-                user: $order->shop->user,
-                type: 'dispute_lost',
-                roleContext: 'seller',
-                reason: "Litige perdu — commande {$order->reference}",
-                referenceType: 'Order',
-                referenceId: $order->id
-            );
-        }
+        // // Vendeur avait tort
+        // if ($dispute->resolution === 'refund_buyer') {
+        //     app(TrustService::class)->record(
+        //         user: $order->shop->user,
+        //         type: 'dispute_lost',
+        //         roleContext: 'seller',
+        //         reason: "Litige perdu — commande {$order->reference}",
+        //         referenceType: 'Order',
+        //         referenceId: $order->id
+        //     );
+        // }
     }
 
     // ── REMBOURSEMENT ACHETEUR (virement Elgiopay direct) ──────────────
@@ -198,7 +198,7 @@ class DisputeService
     // wallet ni de profil "opérateur MoMo" dédié comme le vendeur.
     private function refundBuyer(User $buyer, int $netAmount, Order $order): void
     {
-        $phone = '237' . ltrim($order->payment->payer_phone, '0');
+        $phone = '237' . ltrim($order->payment->payer_phone ?? $order->orderGroup->payment->payer_phone, '0');
 
         $grossUp     = $this->elgiopay->grossUpPayout($netAmount);
         $grossAmount = $grossUp['gross'];
@@ -210,7 +210,7 @@ class DisputeService
                 grossAmount: $grossAmount,
                 reference: 'REFUND-' . $order->reference . '-' . Str::uuid(),
                 description: "Remboursement litige {$order->reference}",
-                operator: $order->payment->payer_operator ?? 'mtn',
+                operator: $order->payment->payer_operator ?? $order->orderGroup->payment->payer_operator  ?? 'mtn',
                 recipientName: $buyer->name
             );
 
@@ -231,7 +231,7 @@ class DisputeService
             ]);
 
             $seller = $order->shop->user;
-            $seller->decrement('wallet_pending', $order->net_amount);
+            $seller->decrement('wallet_pending',$netAmount);
         } catch (\Exception $e) {
             Log::error('Buyer refund failed', ['error' => $e->getMessage()]);
             throw $e;
