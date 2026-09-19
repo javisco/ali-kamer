@@ -42,8 +42,8 @@
                 <!-- Messages d'Alerte -->
                 @if (session('fail'))
                     <div
-                        class="mb-3 rounded-2xl border border-red-200 bg-red-50/90 p-3 text-xs sm:text-sm text-red-700 shadow-sm flex items-center gap-3">
-                        <svg class="h-5 w-5 shrink-0 text-red-500" fill="none" viewBox="0 0 24 24"
+                        class="mb-3 rounded-2xl border border-danger-200 bg-danger-50/90 p-3 text-xs sm:text-sm text-danger-700 shadow-sm flex items-center gap-3">
+                        <svg class="h-5 w-5 shrink-0 text-danger" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -53,9 +53,9 @@
                 @endif
 
                 @if ($errors->any())
-                    <div class="mb-3 rounded-2xl border border-red-200 bg-red-50/90 p-3 text-xs text-red-700 shadow-sm">
-                        <p class="font-bold text-xs text-red-800 mb-0.5">Veuillez corriger les erreurs suivantes :</p>
-                        <ul class="list-disc list-inside text-xs text-red-600 space-y-0.5">
+                    <div class="mb-3 rounded-2xl border border-danger-200 bg-danger-50/90 p-3 text-xs text-danger-700 shadow-sm">
+                        <p class="font-bold text-xs text-danger-800 mb-0.5">Veuillez corriger les erreurs suivantes :</p>
+                        <ul class="list-disc list-inside text-xs text-danger space-y-0.5">
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
                             @endforeach
@@ -111,23 +111,23 @@
                     <div>
                         <label for="name"
                             class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                            Nom complet <span class="text-red-500">*</span>
+                            Nom complet <span class="text-danger">*</span>
                         </label>
                         <input id="name" type="text" name="name" value="{{ old('name') }}" required
                             placeholder="Jean Dupont"
                             class="w-full rounded-2xl border px-4 py-2.5 text-sm transition bg-slate-50/50 hover:bg-white focus:bg-white
-                            @error('name') border-red-500 focus:ring-2 focus:ring-red-500/10 @else border-slate-200 focus:border-[#006837] focus:ring-4 focus:ring-[#006837]/10 @enderror focus:outline-none">
+                            @error('name') border-danger focus:ring-2 focus:ring-danger/10 @else border-slate-200 focus:border-primary-600 focus:ring-4 focus:ring-primary-500/10 @enderror focus:outline-none">
                     </div>
 
                     <!-- Téléphone OM / MoMo -->
                     <div>
                         <label for="phone_momo"
                             class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                            Numéro OM / MoMo <span class="text-red-500">*</span>
+                            Numéro OM / MoMo <span class="text-danger">*</span>
                         </label>
                         <div
                             class="flex rounded-2xl border overflow-hidden transition bg-slate-50/50 hover:bg-white focus-within:bg-white
-                            @error('phone_momo') border-red-500 @else border-slate-200 focus-within:border-[#006837] focus-within:ring-4 focus-within:ring-[#006837]/10 @enderror">
+                            @error('phone_momo') border-danger @else border-slate-200 focus-within:border-primary-600 focus-within:ring-4 focus-within:ring-primary-600/10 @enderror">
                             <div
                                 class="px-3.5 flex items-center bg-slate-100 text-slate-600 text-xs font-bold border-r border-slate-200 shrink-0">
                                 🇨🇲 +237
@@ -142,12 +142,12 @@
                     <div>
                         <label for="email"
                             class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                            Adresse e-mail <span class="text-red-500">*</span>
+                            Adresse e-mail <span class="text-danger">*</span>
                         </label>
                         <input id="email" type="email" name="email" value="{{ old('email') }}" required
                             placeholder="vous@exemple.cm"
                             class="w-full rounded-2xl border px-4 py-2.5 text-sm transition bg-slate-50/50 hover:bg-white focus:bg-white
-                            @error('email') border-red-500 focus:ring-2 focus:ring-red-500/10 @else border-slate-200 focus:border-[#006837] focus:ring-4 focus:ring-[#006837]/10 @enderror focus:outline-none">
+                            @error('email') border-danger focus:ring-2 focus:ring-danger/10 @else border-slate-200 focus:border-primary-600 focus:ring-4 focus:ring-primary-500/10 @enderror focus:outline-none">
                     </div>
 
                     <!-- Mot de passe + Confirmation (Grid 2 Colonnes) -->
@@ -155,14 +155,14 @@
                         <div>
                             <label for="password"
                                 class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                                Mot de passe <span class="text-red-500">*</span>
+                                Mot de passe <span class="text-danger">*</span>
                             </label>
                             <div class="relative">
                                 <input id="password" type="password" name="password" placeholder="Min. 8 car." required
                                     class="w-full rounded-2xl border px-3.5 py-2.5 text-sm transition bg-slate-50/50 hover:bg-white focus:bg-white pr-9
-                                    @error('password') border-red-500 focus:ring-2 focus:ring-red-500/10 @else border-slate-200 focus:border-[#006837] focus:ring-4 focus:ring-[#006837]/10 @enderror focus:outline-none">
+                                    @error('password') border-danger focus:ring-2 focus:ring-danger/10 @else border-slate-200 focus:border-primary-600 focus:ring-4 focus:ring-primary-500/10 @enderror focus:outline-none">
                                 <button type="button" id="togglePassword"
-                                    class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#006837] text-xs p-1">
+                                    class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary-600 text-xs p-1">
                                     👁
                                 </button>
                             </div>
@@ -171,14 +171,14 @@
                         <div>
                             <label for="password_confirmation"
                                 class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                                Confirmer <span class="text-red-500">*</span>
+                                Confirmer <span class="text-danger">*</span>
                             </label>
                             <div class="relative">
                                 <input id="password_confirmation" type="password" name="password_confirmation"
                                     placeholder="Répéter" required
-                                    class="w-full rounded-2xl border border-slate-200 px-3.5 py-2.5 text-sm transition bg-slate-50/50 hover:bg-white focus:bg-white pr-9 focus:border-[#006837] focus:ring-4 focus:ring-[#006837]/10 focus:outline-none">
+                                    class="w-full rounded-2xl border border-slate-200 px-3.5 py-2.5 text-sm transition bg-slate-50/50 hover:bg-white focus:bg-white pr-9 focus:border-primary-600 focus:ring-4 focus:ring-primary-500/10 focus:outline-none">
                                 <button type="button" id="togglePasswordConfirmation"
-                                    class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#006837] text-xs p-1">
+                                    class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary-600 text-xs p-1">
                                     👁
                                 </button>
                             </div>
@@ -188,13 +188,13 @@
                     <!-- Conditions -->
                     <p class="text-[11px] text-slate-500 leading-tight pt-0.5">
                         En créant un compte, vous acceptez nos <a href="#"
-                            class="text-[#006837] underline font-bold">conditions</a> et notre <a href="#"
-                            class="text-[#006837] underline font-bold">politique de confidentialité</a>.
+                            class="text-primary-600 underline font-bold">conditions</a> et notre <a href="#"
+                            class="text-primary-600 underline font-bold">politique de confidentialité</a>.
                     </p>
 
                     <!-- Bouton Submit -->
                     <button type="submit"
-                        class="w-full rounded-2xl bg-[#006837] py-3 text-sm font-bold text-white shadow-lg shadow-[#006837]/25 transition-all hover:bg-[#00522b] active:scale-[0.99] flex items-center justify-center gap-2 group mt-2">
+                        class="w-full rounded-2xl bg-primary-600 py-3 text-sm font-bold text-white shadow-lg shadow-primary-600/25 transition-all hover:bg-primary-700 active:scale-[0.99] flex items-center justify-center gap-2 group mt-2">
                         <span>Créer mon compte</span>
                         <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none"
                             stroke="currentColor" viewBox="0 0 24 24">
@@ -207,7 +207,7 @@
                 <!-- Lien Se Connecter -->
                 <p class="mt-4 text-center text-xs sm:text-sm text-slate-500 font-medium">
                     Déjà un compte ?
-                    <a href="{{ route('login.show') }}" class="font-bold text-[#006837] hover:underline">Se
+                    <a href="{{ route('login.show') }}" class="font-bold text-primary-600 hover:underline">Se
                         connecter</a>
                 </p>
             </div>
@@ -216,7 +216,7 @@
             <div
                 class="shrink-0 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400 mt-1">
                 <a href="{{ route('buyer.home') }}"
-                    class="inline-flex items-center gap-1.5 font-bold text-slate-500 hover:text-[#006837] transition-colors">
+                    class="inline-flex items-center gap-1.5 font-bold text-slate-500 hover:text-primary-600 transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -229,13 +229,13 @@
 
         <!-- ================= COLONNE DROITE : BANNIÈRE AVEC LOGO INTEGRÉ ================= -->
         <div
-            class="hidden lg:flex w-1/2 h-full bg-[#004d28] text-white p-10 xl:p-14 flex-col justify-between relative overflow-hidden shrink-0">
+            class="hidden lg:flex w-1/2 h-full bg-primary-800 text-white p-10 xl:p-14 flex-col justify-between relative overflow-hidden shrink-0">
 
             <!-- Cercles décoratifs d'arrière-plan -->
             <div class="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-white/5 blur-3xl pointer-events-none">
             </div>
             <div
-                class="absolute -bottom-20 -left-20 w-96 h-96 rounded-full bg-[#FFC20E]/10 blur-3xl pointer-events-none">
+                class="absolute -bottom-20 -left-20 w-96 h-96 rounded-full bg-warning/10 blur-3xl pointer-events-none">
             </div>
 
             <!-- Logo Ali-Kamer géant en arrière-plan (Filigrane) -->
@@ -247,7 +247,7 @@
                 <!-- Badge & Grand Logo Ali-Kamer en surbrillance -->
                 <div class="flex items-center justify-between">
                     <span
-                        class="inline-block text-xs font-bold tracking-widest uppercase text-[#FFC20E] bg-white/10 px-3.5 py-1.5 rounded-full backdrop-blur-md">
+                        class="inline-block text-xs font-bold tracking-widest uppercase text-warning bg-white/10 px-3.5 py-1.5 rounded-full backdrop-blur-md">
                         Marketplace N°1 au Cameroun
                     </span>
                     <div class="p-2.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 shadow-xl">
@@ -257,9 +257,9 @@
                 </div>
 
                 <h2 class="text-3xl xl:text-4xl font-black mt-6 leading-tight tracking-tight">
-                    Achetez en toute sérénité <br><span class="text-[#FFC20E]">sans stress.</span>
+                    Achetez en toute sérénité <br><span class="text-warning">sans stress.</span>
                 </h2>
-                <p class="text-sm text-emerald-100/90 mt-3 leading-relaxed max-w-md font-normal">
+                <p class="text-sm text-success-100/90 mt-3 leading-relaxed max-w-md font-normal">
                     Accédez aux meilleurs produits des vendeurs de tout le Cameroun avec des garanties de paiement et de
                     livraison.
                 </p>
@@ -274,7 +274,7 @@
                     </div>
                     <div>
                         <h3 class="font-bold text-sm text-white">Paiements sécurisés (MoMo / OM)</h3>
-                        <p class="text-xs text-emerald-100/80 mt-1 leading-snug">Vos fonds sont protégés et ne sont
+                        <p class="text-xs text-success-100/80 mt-1 leading-snug">Vos fonds sont protégés et ne sont
                             libérés qu'après réception de votre commande.</p>
                     </div>
                 </div>
@@ -286,7 +286,7 @@
                     </div>
                     <div>
                         <h3 class="font-bold text-sm text-white">Livraison interurbaine garantie</h3>
-                        <p class="text-xs text-emerald-100/80 mt-1 leading-snug">Suivez votre colis depuis le départ du
+                        <p class="text-xs text-success-100/80 mt-1 leading-snug">Suivez votre colis depuis le départ du
                             vendeur jusqu'à l'agence de retrait.</p>
                     </div>
                 </div>
@@ -298,7 +298,7 @@
                     </div>
                     <div>
                         <h3 class="font-bold text-sm text-white">Boutiques certifiées & avis vérifiés</h3>
-                        <p class="text-xs text-emerald-100/80 mt-1 leading-snug">Consultez les notes des autres
+                        <p class="text-xs text-success-100/80 mt-1 leading-snug">Consultez les notes des autres
                             acheteurs avant de passer commande.</p>
                     </div>
                 </div>
@@ -306,10 +306,10 @@
 
             <!-- Citation -->
             <div class="relative z-10 pt-5 border-t border-white/10">
-                <p class="text-xs sm:text-sm text-emerald-100/90 italic leading-relaxed">
+                <p class="text-xs sm:text-sm text-success-100/90 italic leading-relaxed">
                     « Une plateforme fiable pour commander à Douala, Yaoundé ou Bafoussam sans se déplacer. »
                 </p>
-                <p class="text-xs font-bold text-[#FFC20E] mt-2">— Acheteur vérifié sur Ali-Kamer</p>
+                <p class="text-xs font-bold text-warning mt-2">— Acheteur vérifié sur Ali-Kamer</p>
             </div>
 
         </div>

@@ -4,26 +4,26 @@
 
 @section('content')
 
-<div class="min-h-screen bg-[#F7F7F2] py-6 sm:py-8">
+<div class="min-h-screen bg-slate-50 py-6 sm:py-8">
     <div class="max-w-lg mx-auto px-4">
 
         {{-- En-tête --}}
         <div class="mb-6">
             <div class="flex items-center gap-2 mb-1">
-                <span class="w-2 h-2 rounded-full bg-[#F9A01B]"></span>
-                <span class="text-[11px] font-extrabold uppercase tracking-wider text-[#F9A01B]">
+                <span class="w-2 h-2 rounded-full bg-accent-500"></span>
+                <span class="text-[11px] font-extrabold uppercase tracking-wider text-accent-500">
                     Votre expérience
                 </span>
             </div>
 
-            <h1 class="text-2xl font-extrabold text-[#0a1b12]">
+            <h1 class="text-2xl font-extrabold text-slate-900">
                 Votre avis
             </h1>
 
             <div class="flex items-center gap-2 mt-2">
-                <span class="text-xs text-gray-400">Commande</span>
+                <span class="text-xs text-slate-400">Commande</span>
                 <span class="inline-flex items-center px-2 py-1 rounded-lg
-                             bg-[#016837]/10 text-[#016837]
+                             bg-primary-600/10 text-primary-600
                              text-xs font-bold">
                     {{ $order->reference }}
                 </span>
@@ -39,23 +39,23 @@
             {{-- =====================================================
                  NOTE PRODUIT
             ====================================================== --}}
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
 
                 <div class="flex items-start justify-between gap-3 mb-4">
                     <div>
-                        <label class="block text-sm font-bold text-[#0a1b12]">
+                        <label class="block text-sm font-bold text-slate-900">
                             Note du produit
-                            <span class="text-[#E30613]">*</span>
+                            <span class="text-danger">*</span>
                         </label>
 
-                        <p class="text-[11px] text-gray-400 mt-0.5">
+                        <p class="text-[11px] text-slate-400 mt-0.5">
                             Quelle est votre satisfaction ?
                         </p>
                     </div>
 
-                    <div class="w-8 h-8 rounded-lg bg-[#F9A01B]/10
+                    <div class="w-8 h-8 rounded-lg bg-accent-500/10
                                 flex items-center justify-center">
-                        <svg class="w-4 h-4 text-[#F9A01B]" fill="currentColor"
+                        <svg class="w-4 h-4 text-accent-500" fill="currentColor"
                              viewBox="0 0 20 20">
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07
                                      3.292a1 1 0 00.95.69h3.462c.969 0
@@ -76,8 +76,8 @@
                         <button type="button"
                                 onclick="setRating('product', {{ $i }})"
                                 class="w-10 h-10 rounded-xl flex items-center justify-center
-                                       text-3xl text-gray-300
-                                       hover:text-[#F9A01B] hover:bg-[#F9A01B]/10
+                                       text-3xl text-slate-300
+                                       hover:text-accent-500 hover:bg-accent-500/10
                                        transition star-product"
                                 data-value="{{ $i }}">
                             ★
@@ -91,7 +91,7 @@
                        required>
 
                 @error('product_rating')
-                    <p class="flex items-center gap-1 text-[#E30613] text-xs mt-2">
+                    <p class="flex items-center gap-1 text-danger text-xs mt-2">
                         <span>⚠</span>
                         {{ $message }}
                     </p>
@@ -103,16 +103,16 @@
             {{-- =====================================================
                  NOTE BOUTIQUE
             ====================================================== --}}
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
 
                 <div class="mb-4">
-                    <label class="block text-sm font-bold text-[#0a1b12]">
+                    <label class="block text-sm font-bold text-slate-900">
                         Note de la boutique
-                        <span class="text-[#E30613]">*</span>
+                        <span class="text-danger">*</span>
                     </label>
 
                     <div class="flex items-center gap-2 mt-1">
-                        <span class="w-5 h-5 rounded-md bg-[#016837]
+                        <span class="w-5 h-5 rounded-md bg-primary-600
                                      text-white flex items-center justify-center">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor"
                                  viewBox="0 0 24 24">
@@ -125,7 +125,7 @@
                             </svg>
                         </span>
 
-                        <strong class="text-xs text-[#016837]">
+                        <strong class="text-xs text-primary-600">
                             {{ $order->shop->name }}
                         </strong>
                     </div>
@@ -136,8 +136,8 @@
                         <button type="button"
                                 onclick="setRating('shop', {{ $i }})"
                                 class="w-10 h-10 rounded-xl flex items-center justify-center
-                                       text-3xl text-gray-300
-                                       hover:text-[#F9A01B] hover:bg-[#F9A01B]/10
+                                       text-3xl text-slate-300
+                                       hover:text-accent-500 hover:bg-accent-500/10
                                        transition star-shop"
                                 data-value="{{ $i }}">
                             ★
@@ -151,7 +151,7 @@
                        required>
 
                 @error('shop_rating')
-                    <p class="flex items-center gap-1 text-[#E30613] text-xs mt-2">
+                    <p class="flex items-center gap-1 text-danger text-xs mt-2">
                         <span>⚠</span>
                         {{ $message }}
                     </p>
@@ -163,14 +163,14 @@
             {{-- =====================================================
                  COMMENTAIRE
             ====================================================== --}}
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
 
                 <div class="flex items-center justify-between mb-2">
-                    <label class="block text-sm font-bold text-[#0a1b12]">
+                    <label class="block text-sm font-bold text-slate-900">
                         Commentaire
                     </label>
 
-                    <span class="text-[10px] font-medium text-gray-400">
+                    <span class="text-[10px] font-medium text-slate-400">
                         Optionnel
                     </span>
                 </div>
@@ -178,16 +178,16 @@
                 <textarea name="body"
                           rows="4"
                           maxlength="500"
-                          class="w-full border border-gray-200 rounded-xl px-4 py-3
-                                 text-sm text-[#0a1b12] bg-[#FAFAF7]
-                                 placeholder-gray-400
-                                 focus:border-[#016837]
-                                 focus:ring-2 focus:ring-[#016837]/15
+                          class="w-full border border-slate-200 rounded-xl px-4 py-3
+                                 text-sm text-slate-900 bg-slate-50
+                                 placeholder-slate-400
+                                 focus:border-primary-600
+                                 focus:ring-2 focus:ring-primary-500/15
                                  outline-none transition resize-none"
                           placeholder="Partagez votre expérience...">{{ old('body') }}</textarea>
 
                 <div class="flex justify-end mt-1">
-                    <span class="text-[10px] text-gray-300">
+                    <span class="text-[10px] text-slate-300">
                         500 caractères maximum
                     </span>
                 </div>
@@ -199,7 +199,7 @@
                  BOUTON
             ====================================================== --}}
             <button type="submit"
-                    class="w-full bg-[#016837] hover:bg-[#0a542d]
+                    class="w-full bg-primary-600 hover:bg-primary-700
                            text-white font-extrabold
                            py-3.5 rounded-2xl transition
                            shadow-sm hover:shadow-md
@@ -230,17 +230,17 @@
 
         document.querySelectorAll('.star-' + type).forEach(star => {
             star.classList.toggle(
-                'text-[#F9A01B]',
+                'text-accent-500',
                 parseInt(star.dataset.value) <= value
             );
 
             star.classList.toggle(
-                'text-gray-300',
+                'text-slate-300',
                 parseInt(star.dataset.value) > value
             );
 
             star.classList.toggle(
-                'bg-[#F9A01B]/10',
+                'bg-accent-500/10',
                 parseInt(star.dataset.value) <= value
             );
         });

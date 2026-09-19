@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <div class="min-h-screen bg-[#FAF9F6] py-8 sm:py-10">
+    <div class="min-h-screen bg-slate-50 py-8 sm:py-10">
 
         <div class="max-w-xl mx-auto px-4 sm:px-6">
 
@@ -14,7 +14,7 @@
             <div class="mb-7">
 
                 <div class="flex items-center gap-2 mb-3">
-                    <span class="w-8 h-1 rounded-full bg-[#00843D]"></span>
+                    <span class="w-8 h-1 rounded-full bg-primary-600"></span>
                     <span class="w-4 h-1 rounded-full bg-[#FCD116]"></span>
                     <span class="w-3 h-1 rounded-full bg-[#CE1126]"></span>
                 </div>
@@ -35,7 +35,7 @@
             ====================================================== --}}
             @if ($errors->any())
 
-                <div class="mb-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3.5 shadow-sm">
+                <div class="mb-5 rounded-2xl border border-danger-200 bg-danger-50 px-4 py-3.5 shadow-sm">
 
                     <div class="flex items-start gap-3">
 
@@ -52,11 +52,11 @@
                         </div>
 
                         <div class="min-w-0">
-                            <p class="text-sm font-extrabold text-red-800 mb-1">
+                            <p class="text-sm font-extrabold text-danger-800 mb-1">
                                 Impossible de créer l'agence
                             </p>
 
-                            <div class="space-y-0.5 text-xs font-medium text-red-700">
+                            <div class="space-y-0.5 text-xs font-medium text-danger-700">
                                 @foreach ($errors->all() as $error)
                                     <p>{{ $error }}</p>
                                 @endforeach
@@ -80,7 +80,7 @@
                 @csrf
 
                 {{-- Bandeau supérieur --}}
-                <div class="h-1.5 bg-gradient-to-r from-[#00843D] via-[#FCD116] to-[#CE1126]"></div>
+                <div class="h-1.5 bg-gradient-to-r from-primary-600 via-[#FCD116] to-[#CE1126]"></div>
 
                 <div class="p-5 sm:p-7 space-y-6">
 
@@ -115,11 +115,11 @@
                                 value="{{ old('name') }}"
                                 required
                                 placeholder="Ex : General Express"
-                                class="w-full h-11 border border-slate-200 bg-[#FAF9F6] rounded-xl
+                                class="w-full h-11 border border-slate-200 bg-slate-50 rounded-xl
                                        pl-10 pr-4 text-sm font-medium text-slate-800
                                        placeholder:text-slate-400 outline-none
-                                       focus:bg-white focus:border-[#00843D]
-                                       focus:ring-4 focus:ring-emerald-500/10 transition">
+                                       focus:bg-white focus:border-primary-600
+                                       focus:ring-4 focus:ring-success/10 transition">
 
                         </div>
 
@@ -165,11 +165,11 @@
                                 name="contact_phone"
                                 value="{{ old('contact_phone') }}"
                                 placeholder="Ex : 699000000"
-                                class="w-full h-11 border border-slate-200 bg-[#FAF9F6] rounded-xl
+                                class="w-full h-11 border border-slate-200 bg-slate-50 rounded-xl
                                        pl-10 pr-4 text-sm font-medium text-slate-800
                                        placeholder:text-slate-400 outline-none
-                                       focus:bg-white focus:border-[#00843D]
-                                       focus:ring-4 focus:ring-emerald-500/10 transition">
+                                       focus:bg-white focus:border-primary-600
+                                       focus:ring-4 focus:ring-success/10 transition">
 
                         </div>
 
@@ -207,11 +207,11 @@
                                 name="contact_email"
                                 value="{{ old('contact_email') }}"
                                 placeholder="Ex : contact@general.cm"
-                                class="w-full h-11 border border-slate-200 bg-[#FAF9F6] rounded-xl
+                                class="w-full h-11 border border-slate-200 bg-slate-50 rounded-xl
                                        pl-10 pr-4 text-sm font-medium text-slate-800
                                        placeholder:text-slate-400 outline-none
-                                       focus:bg-white focus:border-[#00843D]
-                                       focus:ring-4 focus:ring-emerald-500/10 transition">
+                                       focus:bg-white focus:border-primary-600
+                                       focus:ring-4 focus:ring-success/10 transition">
 
                         </div>
 
@@ -224,10 +224,10 @@
                     <div class="pt-2 border-t border-slate-100">
 
                         <button type="submit"
-                            class="w-full h-11 rounded-xl bg-[#00843D] hover:bg-[#006B32]
+                            class="w-full h-11 rounded-xl bg-primary-600 hover:bg-primary-700
                                    text-white text-sm font-extrabold
                                    flex items-center justify-center gap-2
-                                   shadow-sm shadow-emerald-900/10
+                                   shadow-sm shadow-success-800/10
                                    hover:-translate-y-0.5
                                    transition-all duration-200">
 
@@ -246,7 +246,7 @@
                             class="mt-3 w-full h-10 rounded-xl
                                    flex items-center justify-center
                                    text-xs font-bold text-slate-500
-                                   hover:text-[#00843D] hover:bg-emerald-50
+                                   hover:text-primary-600 hover:bg-success-50
                                    transition">
 
                             ← Annuler et revenir aux agences

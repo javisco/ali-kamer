@@ -7,21 +7,21 @@
         <div class="max-w-4xl w-full bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden">
 
             {{-- En-tête principal --}}
-            <div class="bg-[#0a1b12] px-6 sm:px-8 py-5 text-white flex justify-between items-center border-b border-emerald-900/50">
+            <div class="bg-slate-900 px-6 sm:px-8 py-5 text-white flex justify-between items-center border-b border-success-800/50">
                 <div class="flex items-center gap-3">
-                    <div class="w-3 h-3 rounded-full bg-[#F9A01B] animate-pulse"></div>
+                    <div class="w-3 h-3 rounded-full bg-accent-500 animate-pulse"></div>
                     <div>
                         <h1 class="text-xl sm:text-2xl font-black text-white tracking-tight uppercase">Passer une commande</h1>
-                        <p class="text-xs text-emerald-400 mt-0.5">Vérifiez les détails de votre achat avant la confirmation</p>
+                        <p class="text-xs text-success mt-0.5">Vérifiez les détails de votre achat avant la confirmation</p>
                     </div>
                 </div>
-                <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-[#F9A01B]/20 text-[#F9A01B] px-3.5 py-1.5 rounded-xl border border-[#F9A01B]/30">
+                <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-accent-500/20 text-accent-500 px-3.5 py-1.5 rounded-xl border border-accent-500/30">
                     Paiement Sécurisé
                 </span>
             </div>
 
             @if ($errors->any())
-                <div class="mx-6 sm:mx-8 mt-6 bg-red-50 border border-red-200 text-[#E30613] px-5 py-3.5 rounded-2xl text-xs font-semibold">
+                <div class="mx-6 sm:mx-8 mt-6 bg-danger-50 border border-danger-200 text-danger px-5 py-3.5 rounded-2xl text-xs font-semibold">
                     <ul class="list-disc list-inside space-y-1">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
@@ -60,13 +60,13 @@
                             <div class="flex-1 min-w-0">
                                 <h2 class="font-bold text-slate-900 text-sm sm:text-base line-clamp-1">{{ $product->title }}</h2>
                                 @if (isset($variant) && $variant)
-                                    <div class="mt-1 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                                    <div class="mt-1 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-success-50 text-success-800 border border-success-200">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-success"></span>
                                         {{ $variant->label() }}
                                     </div>
                                 @endif
                                 <p class="text-xs text-slate-500 font-medium mt-0.5">{{ $product->shop->name }} · {{ $product->shop->city }}</p>
-                                <p class="text-[#016837] font-black text-lg mt-1">
+                                <p class="text-primary-600 font-black text-lg mt-1">
                                     {{ number_format(isset($variant) && $variant ? $variant->price : $product->price, 0, ',', ' ') }} <span class="text-xs font-bold">FCFA</span>
                                     <span class="text-[11px] text-slate-400 font-normal">/ unité</span>
                                 </p>
@@ -77,21 +77,21 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label for="quantity" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                                    Quantité <span class="text-[#E30613]">*</span>
+                                    Quantité <span class="text-danger">*</span>
                                 </label>
                                 <input type="number" id="quantity" name="quantity"
                                     value="{{ old('quantity', $product->min_quantity) }}" min="{{ $product->min_quantity }}"
                                     max="{{ isset($variant) && $variant ? $variant->availableStock() : $product->availableStock() }}"
-                                    class="w-full border border-slate-300 focus:border-[#016837] focus:ring-1 focus:ring-[#016837] rounded-xl px-4 py-3 text-sm font-bold text-slate-900 transition outline-none">
+                                    class="w-full border border-slate-300 focus:border-primary-600 focus:ring-1 focus:ring-primary-500 rounded-xl px-4 py-3 text-sm font-bold text-slate-900 transition outline-none">
                                 <p class="text-[11px] text-slate-400 font-medium mt-1">Min : {{ $product->min_quantity }} | Stock : {{ isset($variant) && $variant ? $variant->availableStock() : $product->availableStock() }}</p>
                             </div>
 
                             <div>
                                 <label for="destination_city" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                                    Ville de destination <span class="text-[#E30613]">*</span>
+                                    Ville de destination <span class="text-danger">*</span>
                                 </label>
                                 <select id="destination_city" name="destination_city" required
-                                    class="w-full border border-slate-300 focus:border-[#016837] focus:ring-1 focus:ring-[#016837] rounded-xl px-4 py-3 text-xs font-semibold text-slate-900 transition outline-none">
+                                    class="w-full border border-slate-300 focus:border-primary-600 focus:ring-1 focus:ring-primary-500 rounded-xl px-4 py-3 text-xs font-semibold text-slate-900 transition outline-none">
                                     <option value="">-- Choisir une ville --</option>
                                     @forelse ($cities as $city)
                                         <option value="{{ $city }}" {{ old('destination_city') === $city ? 'selected' : '' }}>
@@ -107,20 +107,20 @@
                         {{-- Opérateur & Numéro --}}
                         <div class="border-t border-slate-200 pt-5">
                             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">
-                                Mode de paiement Mobile <span class="text-[#E30613]">*</span>
+                                Mode de paiement Mobile <span class="text-danger">*</span>
                             </label>
 
                             <div class="grid grid-cols-2 gap-3 mb-4">
-                                <label class="flex items-center gap-3 border border-slate-200 rounded-xl p-3 cursor-pointer transition hover:bg-yellow-50/50 has-[:checked]:border-[#F9A01B] has-[:checked]:bg-yellow-50/80">
+                                <label class="flex items-center gap-3 border border-slate-200 rounded-xl p-3 cursor-pointer transition hover:bg-warning-50/50 has-[:checked]:border-accent-500 has-[:checked]:bg-warning-50/80">
                                     <input type="radio" name="payer_operator" value="mtn"
-                                        class="w-4 h-4 text-[#F9A01B] focus:ring-[#F9A01B]"
+                                        class="w-4 h-4 text-accent-500 focus:ring-accent-500"
                                         {{ old('payer_operator', 'mtn') === 'mtn' ? 'checked' : '' }} required>
                                     <span class="font-extrabold text-slate-800 text-xs">MTN Mobile Money</span>
                                 </label>
 
-                                <label class="flex items-center gap-3 border border-slate-200 rounded-xl p-3 cursor-pointer transition hover:bg-orange-50/50 has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50/80">
+                                <label class="flex items-center gap-3 border border-slate-200 rounded-xl p-3 cursor-pointer transition hover:bg-accent-50/50 has-[:checked]:border-accent-500 has-[:checked]:bg-accent-50/80">
                                     <input type="radio" name="payer_operator" value="orange"
-                                        class="w-4 h-4 text-orange-600 focus:ring-orange-500"
+                                        class="w-4 h-4 text-accent-600 focus:ring-accent-500"
                                         {{ old('payer_operator') === 'orange' ? 'checked' : '' }}>
                                     <span class="font-extrabold text-slate-800 text-xs">Orange Money</span>
                                 </label>
@@ -131,7 +131,7 @@
                                 <input type="tel" name="payer_phone"
                                     value="{{ old('payer_phone', auth()->user()->phone_momo) }}" required
                                     placeholder="655123456"
-                                    class="flex-1 border border-slate-300 focus:border-[#016837] focus:ring-1 focus:ring-[#016837] rounded-r-xl px-4 py-2.5 text-sm font-bold text-slate-900 transition outline-none">
+                                    class="flex-1 border border-slate-300 focus:border-primary-600 focus:ring-1 focus:ring-primary-500 rounded-r-xl px-4 py-2.5 text-sm font-bold text-slate-900 transition outline-none">
                             </div>
                         </div>
 
@@ -142,16 +142,16 @@
                             </label>
                             <input type="text" id="note" name="note" value="{{ old('note') }}"
                                 placeholder="Ex: Précision sur la couleur, la livraison..."
-                                class="w-full border border-slate-300 focus:border-[#016837] focus:ring-1 focus:ring-[#016837] rounded-xl px-4 py-2.5 text-xs font-medium text-slate-900 transition outline-none">
+                                class="w-full border border-slate-300 focus:border-primary-600 focus:ring-1 focus:ring-primary-500 rounded-xl px-4 py-2.5 text-xs font-medium text-slate-900 transition outline-none">
                         </div>
 
                     </div>
 
                     {{-- COLONNE DROITE (5/12) : Récapitulatif Financier --}}
-                    <div class="lg:col-span-5 flex flex-col justify-between bg-emerald-50/50 rounded-2xl p-6 border border-emerald-100">
+                    <div class="lg:col-span-5 flex flex-col justify-between bg-success-50/50 rounded-2xl p-6 border border-success-100">
 
                         <div>
-                            <h2 class="font-black text-slate-800 text-sm uppercase tracking-wider mb-4 border-b border-emerald-100 pb-2">Récapitulatif de la commande</h2>
+                            <h2 class="font-black text-slate-800 text-sm uppercase tracking-wider mb-4 border-b border-success-100 pb-2">Récapitulatif de la commande</h2>
 
                             <div class="space-y-3 text-xs" id="summary">
                                 <div class="flex justify-between items-center text-slate-600">
@@ -170,18 +170,18 @@
                         </div>
 
                         {{-- Total final & Bouton de validation --}}
-                        <div class="mt-8 pt-4 border-t border-emerald-200/80">
+                        <div class="mt-8 pt-4 border-t border-success-200/80">
                             <div class="flex justify-between items-baseline mb-6">
                                 <span class="text-xs uppercase font-black text-slate-700 tracking-wider">Total à payer</span>
-                                <div class="text-2xl sm:text-3xl font-black text-[#016837] tracking-tight" id="s-total">
+                                <div class="text-2xl sm:text-3xl font-black text-primary-600 tracking-tight" id="s-total">
                                     — FCFA
                                 </div>
                             </div>
 
                             <button type="submit"
-                                class="w-full bg-[#016837] hover:bg-[#01522b] active:bg-[#013d20] text-white font-extrabold py-3.5 px-4 rounded-xl transition-all shadow-md shadow-[#016837]/20 text-sm flex items-center justify-center gap-2 group cursor-pointer">
+                                class="w-full bg-primary-600 hover:bg-primary-700 active:bg-primary-800 text-white font-extrabold py-3.5 px-4 rounded-xl transition-all shadow-md shadow-primary-600/20 text-sm flex items-center justify-center gap-2 group cursor-pointer">
                                 <span>Confirmer la commande</span>
-                                <svg class="w-4 h-4 text-[#F9A01B] group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 text-accent-500 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                                 </svg>
                             </button>

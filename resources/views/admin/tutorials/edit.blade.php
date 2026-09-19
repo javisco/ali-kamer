@@ -3,17 +3,17 @@
 @section('title', 'Modifier le tutoriel - Ali-Kamer')
 
 @section('content')
-<div class="min-h-screen bg-[#F7F7F2] py-6 px-3 sm:px-6">
+<div class="min-h-screen bg-slate-50 py-6 px-3 sm:px-6">
     <div class="max-w-2xl mx-auto space-y-6">
 
         <!-- 1. BANNIÈRE EN-TÊTE ALI-KAMER -->
-        <div class="bg-[#016837] text-white rounded-2xl p-5 sm:p-6 shadow-xs relative overflow-hidden">
+        <div class="bg-primary-600 text-white rounded-2xl p-5 sm:p-6 shadow-xs relative overflow-hidden">
             <div class="absolute -right-8 -bottom-8 w-40 h-40 bg-white/5 rounded-full pointer-events-none"></div>
 
             <div class="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                     <div class="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-xs px-3 py-1 rounded-full text-xs font-semibold text-white mb-2 border border-white/15">
-                        <span class="w-2 h-2 rounded-full bg-[#F9A01B]"></span>
+                        <span class="w-2 h-2 rounded-full bg-accent-500"></span>
                         Centre d'Aide & Formations
                     </div>
                     <h1 class="text-xl sm:text-2xl font-black uppercase tracking-wider text-white">
@@ -38,7 +38,7 @@
 
         <!-- 2. MESSAGES D'ERREURS -->
         @if($errors->any())
-            <div class="bg-[#E30613]/10 border border-[#E30613]/20 text-[#E30613] rounded-xl p-4 text-xs font-bold space-y-1 shadow-xs">
+            <div class="bg-danger/10 border border-danger/20 text-danger rounded-xl p-4 text-xs font-bold space-y-1 shadow-xs">
                 @foreach($errors->all() as $error)
                     <p class="flex items-center gap-1.5">
                         <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -52,7 +52,7 @@
 
         <!-- 3. FORMULAIRE -->
         <form method="POST" action="{{ route('admin.tutorials.update', $tutorial) }}"
-              class="bg-white rounded-2xl border border-gray-200 shadow-xs p-5 sm:p-6 space-y-5">
+              class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-6 space-y-5">
             @csrf
             @method('PUT')
 
@@ -60,11 +60,11 @@
 
                 {{-- Type --}}
                 <div>
-                    <label class="block text-xs font-bold text-[#0a1b12] uppercase tracking-wider mb-1.5">
-                        Type <span class="text-[#E30613]">*</span>
+                    <label class="block text-xs font-bold text-slate-900 uppercase tracking-wider mb-1.5">
+                        Type <span class="text-danger">*</span>
                     </label>
                     <select name="type" required
-                            class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#0a1b12] focus:outline-none focus:border-[#016837] focus:ring-2 focus:ring-[#016837]/20 shadow-xs bg-white">
+                            class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-900 focus:outline-none focus:border-primary-600 focus:ring-2 focus:ring-primary-500/20 shadow-xs bg-white">
                         <option value="video" {{ old('type', $tutorial->type) === 'video' ? 'selected' : '' }}>
                             🎬 Vidéo
                         </option>
@@ -76,11 +76,11 @@
 
                 {{-- Pour qui --}}
                 <div>
-                    <label class="block text-xs font-bold text-[#0a1b12] uppercase tracking-wider mb-1.5">
-                        Destiné à <span class="text-[#E30613]">*</span>
+                    <label class="block text-xs font-bold text-slate-900 uppercase tracking-wider mb-1.5">
+                        Destiné à <span class="text-danger">*</span>
                     </label>
                     <select name="role_target" required
-                            class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#0a1b12] focus:outline-none focus:border-[#016837] focus:ring-2 focus:ring-[#016837]/20 shadow-xs bg-white">
+                            class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-900 focus:outline-none focus:border-primary-600 focus:ring-2 focus:ring-primary-500/20 shadow-xs bg-white">
                         <option value="buyer"  {{ old('role_target', $tutorial->role_target) === 'buyer'  ? 'selected' : '' }}>
                             Acheteurs
                         </option>
@@ -96,11 +96,11 @@
 
             {{-- Catégorie --}}
             <div>
-                <label class="block text-xs font-bold text-[#0a1b12] uppercase tracking-wider mb-1.5">
-                    Catégorie <span class="text-[#E30613]">*</span>
+                <label class="block text-xs font-bold text-slate-900 uppercase tracking-wider mb-1.5">
+                    Catégorie <span class="text-danger">*</span>
                 </label>
                 <select name="category" required
-                        class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#0a1b12] focus:outline-none focus:border-[#016837] focus:ring-2 focus:ring-[#016837]/20 shadow-xs bg-white">
+                        class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-900 focus:outline-none focus:border-primary-600 focus:ring-2 focus:ring-primary-500/20 shadow-xs bg-white">
                     <option value="">-- Choisir une catégorie --</option>
                     @foreach($categories as $value => $label)
                         <option value="{{ $value }}" {{ old('category', $tutorial->category) === $value ? 'selected' : '' }}>
@@ -112,86 +112,86 @@
 
             {{-- Titre --}}
             <div>
-                <label class="block text-xs font-bold text-[#0a1b12] uppercase tracking-wider mb-1.5">
-                    Titre <span class="text-[#E30613]">*</span>
+                <label class="block text-xs font-bold text-slate-900 uppercase tracking-wider mb-1.5">
+                    Titre <span class="text-danger">*</span>
                 </label>
                 <input type="text" name="title" value="{{ old('title', $tutorial->title) }}" required
                        placeholder="Ex: Comment passer sa première commande"
-                       class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#0a1b12] focus:outline-none focus:border-[#016837] focus:ring-2 focus:ring-[#016837]/20 shadow-xs">
+                       class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-900 focus:outline-none focus:border-primary-600 focus:ring-2 focus:ring-primary-500/20 shadow-xs">
             </div>
 
             {{-- URL Vidéo --}}
             <div>
-                <label class="block text-xs font-bold text-[#0a1b12] uppercase tracking-wider mb-1">
+                <label class="block text-xs font-bold text-slate-900 uppercase tracking-wider mb-1">
                     URL de la vidéo
-                    <span class="text-gray-400 font-normal lowercase">(YouTube ou autre)</span>
+                    <span class="text-slate-400 font-normal lowercase">(YouTube ou autre)</span>
                 </label>
                 <input type="url" name="video_url" value="{{ old('video_url', $tutorial->video_url) }}"
                        placeholder="https://www.youtube.com/watch?v=..."
-                       class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#0a1b12] focus:outline-none focus:border-[#016837] focus:ring-2 focus:ring-[#016837]/20 shadow-xs">
-                <p class="text-[11px] text-gray-400 font-medium mt-1">
+                       class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-900 focus:outline-none focus:border-primary-600 focus:ring-2 focus:ring-primary-500/20 shadow-xs">
+                <p class="text-[11px] text-slate-400 font-medium mt-1">
                     Collez simplement l'URL YouTube — le lecteur est généré automatiquement.
                 </p>
             </div>
 
             {{-- Thumbnail --}}
             <div>
-                <label class="block text-xs font-bold text-[#0a1b12] uppercase tracking-wider mb-1">
+                <label class="block text-xs font-bold text-slate-900 uppercase tracking-wider mb-1">
                     URL de la miniature
-                    <span class="text-gray-400 font-normal lowercase">(optionnel)</span>
+                    <span class="text-slate-400 font-normal lowercase">(optionnel)</span>
                 </label>
                 <input type="url" name="thumbnail_url" value="{{ old('thumbnail_url', $tutorial->thumbnail_url) }}"
                        placeholder="https://..."
-                       class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#0a1b12] focus:outline-none focus:border-[#016837] focus:ring-2 focus:ring-[#016837]/20 shadow-xs">
+                       class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-900 focus:outline-none focus:border-primary-600 focus:ring-2 focus:ring-primary-500/20 shadow-xs">
             </div>
 
             {{-- Durée & Ordre --}}
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-bold text-[#0a1b12] uppercase tracking-wider mb-1">
-                        Durée <span class="text-gray-400 font-normal lowercase">(minutes)</span>
+                    <label class="block text-xs font-bold text-slate-900 uppercase tracking-wider mb-1">
+                        Durée <span class="text-slate-400 font-normal lowercase">(minutes)</span>
                     </label>
                     <input type="number" name="duration_minutes" value="{{ old('duration_minutes', $tutorial->duration_minutes) }}"
                            min="1" placeholder="Ex: 5"
-                           class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#0a1b12] focus:outline-none focus:border-[#016837] focus:ring-2 focus:ring-[#016837]/20 shadow-xs">
+                           class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-900 focus:outline-none focus:border-primary-600 focus:ring-2 focus:ring-primary-500/20 shadow-xs">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-[#0a1b12] uppercase tracking-wider mb-1">
+                    <label class="block text-xs font-bold text-slate-900 uppercase tracking-wider mb-1">
                         Ordre d'affichage
                     </label>
                     <input type="number" name="sort_order" value="{{ old('sort_order', $tutorial->sort_order) }}"
                            min="0"
-                           class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-[#0a1b12] focus:outline-none focus:border-[#016837] focus:ring-2 focus:ring-[#016837]/20 shadow-xs">
-                    <p class="text-[11px] text-gray-400 font-medium mt-1">0 = affiché en premier</p>
+                           class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-900 focus:outline-none focus:border-primary-600 focus:ring-2 focus:ring-primary-500/20 shadow-xs">
+                    <p class="text-[11px] text-slate-400 font-medium mt-1">0 = affiché en premier</p>
                 </div>
             </div>
 
             {{-- Contenu texte --}}
             <div>
-                <label class="block text-xs font-bold text-[#0a1b12] uppercase tracking-wider mb-1">
+                <label class="block text-xs font-bold text-slate-900 uppercase tracking-wider mb-1">
                     Contenu texte
-                    <span class="text-gray-400 font-normal lowercase">(optionnel — complément)</span>
+                    <span class="text-slate-400 font-normal lowercase">(optionnel — complément)</span>
                 </label>
                 <textarea name="content" rows="5"
-                          class="w-full border border-gray-200 rounded-xl p-3.5 text-xs font-medium text-[#0a1b12] focus:outline-none focus:border-[#016837] focus:ring-2 focus:ring-[#016837]/20 shadow-xs"
+                          class="w-full border border-slate-200 rounded-xl p-3.5 text-xs font-medium text-slate-900 focus:outline-none focus:border-primary-600 focus:ring-2 focus:ring-primary-500/20 shadow-xs"
                           placeholder="Description, étapes détaillées, conseils pratiques...">{{ old('content', $tutorial->content) }}</textarea>
             </div>
 
             <!-- BOUTONS D'ACTION -->
             <div class="flex flex-col sm:flex-row gap-3 pt-3">
                 <button type="submit" name="publish" value="0"
-                        class="flex-1 bg-white hover:bg-gray-50 text-[#0a1b12] font-black py-3 rounded-xl border border-gray-300 transition text-xs shadow-xs uppercase tracking-wider">
+                        class="flex-1 bg-white hover:bg-slate-50 text-slate-900 font-black py-3 rounded-xl border border-slate-300 transition text-xs shadow-xs uppercase tracking-wider">
                     Enregistrer en brouillon
                 </button>
                 <button type="submit" name="publish" value="1"
-                        class="flex-1 bg-[#F9A01B] hover:bg-[#e08e14] active:scale-98 text-[#0a1b12] font-black py-3 rounded-xl transition text-xs shadow-xs uppercase tracking-wider">
+                        class="flex-1 bg-accent-500 hover:bg-accent-600 active:scale-98 text-slate-900 font-black py-3 rounded-xl transition text-xs shadow-xs uppercase tracking-wider">
                     Mettre à jour et publier
                 </button>
             </div>
 
             <a href="{{ route('admin.tutorials.index') }}"
-               class="block text-center text-xs font-bold text-gray-400 hover:text-[#0a1b12] transition">
+               class="block text-center text-xs font-bold text-slate-400 hover:text-slate-900 transition">
                 Annuler
             </a>
         </form>

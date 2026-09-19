@@ -32,8 +32,8 @@
                 
                 <!-- Titre & Sous-titre -->
                 <div class="mb-5">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#006837]/10 text-[#006837] text-xs font-bold mb-2.5">
-                        <span class="w-2 h-2 rounded-full bg-[#006837]"></span>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-600/10 text-primary-600 text-xs font-bold mb-2.5">
+                        <span class="w-2 h-2 rounded-full bg-primary-600"></span>
                         Inscription vendeur
                     </div>
                     <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Créez votre boutique</h1>
@@ -48,7 +48,7 @@
                         @if(!empty($socialPending['avatar']))
                             <img src="{{ $socialPending['avatar'] }}" alt="Profil Google" class="w-10 h-10 rounded-full object-cover border border-slate-200 shrink-0">
                         @else
-                            <div class="w-10 h-10 rounded-full bg-[#006837] flex items-center justify-center text-white font-black text-sm shrink-0">
+                            <div class="w-10 h-10 rounded-full bg-primary-600 flex items-center justify-center text-white font-black text-sm shrink-0">
                                 {{ strtoupper(substr($socialPending['name'] ?? 'A', 0, 1)) }}
                             </div>
                         @endif
@@ -65,16 +65,16 @@
                         </div>
                     </div>
 
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-100 text-emerald-800 text-xs font-extrabold shrink-0 border border-emerald-200">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-success-100 text-success-800 text-xs font-extrabold shrink-0 border border-success-200">
                         ✓ Google
                     </span>
                 </div>
 
                 <!-- ERREURS -->
                 @if($errors->any())
-                    <div class="mb-5 rounded-xl border border-red-200 bg-red-50 p-3.5 text-sm text-red-700 shadow-sm">
-                        <p class="font-bold text-xs text-red-800 mb-1">Vérifiez les informations suivantes :</p>
-                        <ul class="list-disc list-inside text-xs text-red-600 space-y-1">
+                    <div class="mb-5 rounded-xl border border-danger-200 bg-danger-50 p-3.5 text-sm text-danger-700 shadow-sm">
+                        <p class="font-bold text-xs text-danger-800 mb-1">Vérifiez les informations suivantes :</p>
+                        <ul class="list-disc list-inside text-xs text-danger space-y-1">
                             @foreach($errors->all() as $error)
                                 <li>{{ $error }}</li>
                             @endforeach
@@ -88,34 +88,34 @@
                     <!-- PAIEMENTS MOBILE MONEY -->
                     <div class="space-y-3.5">
                         <div class="flex items-center gap-2 border-b border-slate-200 pb-1.5">
-                            <span class="flex h-5 w-5 items-center justify-center rounded-full bg-[#006837]/10 text-xs font-extrabold text-[#006837]">1</span>
+                            <span class="flex h-5 w-5 items-center justify-center rounded-full bg-primary-600/10 text-xs font-extrabold text-primary-600">1</span>
                             <h2 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider">Paiements Mobile Money</h2>
                         </div>
 
                         <div>
                             <div class="flex items-center justify-between mb-1.5">
                                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-800">
-                                    Numéro Mobile Money <span class="text-red-500">*</span>
+                                    Numéro Mobile Money <span class="text-danger">*</span>
                                 </label>
-                                <span class="text-[#006837] font-semibold text-xs">(retraits)</span>
+                                <span class="text-primary-600 font-semibold text-xs">(retraits)</span>
                             </div>
 
                             <div class="grid grid-cols-2 gap-2.5 mb-2.5">
                                 <label class="flex items-center gap-2 border rounded-xl p-3 cursor-pointer transition-all
-                                    {{ old('momo_operator') === 'mtn' ? 'border-yellow-400 bg-yellow-50/60 ring-2 ring-yellow-400/20' : 'border-slate-200 hover:border-slate-300' }}">
-                                    <input type="radio" name="momo_operator" value="mtn" {{ old('momo_operator') === 'mtn' ? 'checked' : '' }} required class="accent-[#006837] w-4 h-4">
-                                    <span class="text-xs font-bold text-yellow-800">MTN MoMo</span>
+                                    {{ old('momo_operator') === 'mtn' ? 'border-warning bg-warning-50/60 ring-2 ring-warning/20' : 'border-slate-200 hover:border-slate-300' }}">
+                                    <input type="radio" name="momo_operator" value="mtn" {{ old('momo_operator') === 'mtn' ? 'checked' : '' }} required class="accent-primary-600 w-4 h-4">
+                                    <span class="text-xs font-bold text-warning-800">MTN MoMo</span>
                                 </label>
 
                                 <label class="flex items-center gap-2 border rounded-xl p-3 cursor-pointer transition-all
-                                    {{ old('momo_operator') === 'orange' ? 'border-orange-400 bg-orange-50/60 ring-2 ring-orange-400/20' : 'border-slate-200 hover:border-slate-300' }}">
-                                    <input type="radio" name="momo_operator" value="orange" {{ old('momo_operator') === 'orange' ? 'checked' : '' }} class="accent-[#006837] w-4 h-4">
-                                    <span class="text-xs font-bold text-orange-700">Orange Money</span>
+                                    {{ old('momo_operator') === 'orange' ? 'border-accent-500 bg-accent-50/60 ring-2 ring-accent-500/20' : 'border-slate-200 hover:border-slate-300' }}">
+                                    <input type="radio" name="momo_operator" value="orange" {{ old('momo_operator') === 'orange' ? 'checked' : '' }} class="accent-primary-600 w-4 h-4">
+                                    <span class="text-xs font-bold text-accent-700">Orange Money</span>
                                 </label>
                             </div>
 
                             <div class="flex rounded-xl border overflow-hidden transition bg-slate-50 hover:bg-white focus-within:bg-white
-                                @error('phone_momo') border-red-500 @else border-slate-200 focus-within:border-[#006837] focus-within:ring-2 focus-within:ring-[#006837]/20 @enderror">
+                                @error('phone_momo') border-danger @else border-slate-200 focus-within:border-primary-600 focus-within:ring-2 focus-within:ring-primary-600/20 @enderror">
                                 <div class="px-3.5 flex items-center bg-slate-100 text-slate-700 text-xs font-bold border-r border-slate-200 shrink-0">
                                     🇨🇲 +237
                                 </div>
@@ -129,7 +129,7 @@
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">
                                 Téléphone d'appel <span class="text-slate-400 font-normal">(optionnel)</span>
                             </label>
-                            <div class="flex rounded-xl border overflow-hidden transition bg-slate-50 hover:bg-white focus-within:bg-white border-slate-200 focus-within:border-[#006837] focus-within:ring-2 focus-within:ring-[#006837]/20">
+                            <div class="flex rounded-xl border overflow-hidden transition bg-slate-50 hover:bg-white focus-within:bg-white border-slate-200 focus-within:border-primary-600 focus-within:ring-2 focus-within:ring-primary-600/20">
                                 <div class="px-3.5 flex items-center bg-slate-100 text-slate-700 text-xs font-bold border-r border-slate-200 shrink-0">
                                     +237
                                 </div>
@@ -142,36 +142,36 @@
                     <!-- INFORMATION BOUTIQUE -->
                     <div class="space-y-3.5 pt-2">
                         <div class="flex items-center gap-2 border-b border-slate-200 pb-1.5">
-                            <span class="flex h-5 w-5 items-center justify-center rounded-full bg-[#006837]/10 text-xs font-extrabold text-[#006837]">2</span>
+                            <span class="flex h-5 w-5 items-center justify-center rounded-full bg-primary-600/10 text-xs font-extrabold text-primary-600">2</span>
                             <h2 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider">Votre Boutique</h2>
                         </div>
 
                         <!-- Nom de la boutique -->
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">
-                                Nom de la boutique <span class="text-red-500">*</span>
+                                Nom de la boutique <span class="text-danger">*</span>
                             </label>
                             <input type="text" name="shop_name" value="{{ old('shop_name') }}" required placeholder="Ex : Ma Boutique"
                                 class="w-full rounded-xl border px-3.5 py-2.5 text-sm text-slate-900 transition bg-slate-50 hover:bg-white focus:bg-white
-                                @error('shop_name') border-red-500 @else border-slate-200 focus:border-[#006837] focus:ring-2 focus:ring-[#006837]/20 @enderror focus:outline-none font-medium">
+                                @error('shop_name') border-danger @else border-slate-200 focus:border-primary-600 focus:ring-2 focus:ring-primary-500/20 @enderror focus:outline-none font-medium">
                         </div>
 
                         <!-- Ville + Catégorie -->
                         <div class="grid sm:grid-cols-2 gap-3.5">
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">
-                                    Ville <span class="text-red-500">*</span>
+                                    Ville <span class="text-danger">*</span>
                                 </label>
                                 <input type="text" name="city" value="{{ old('city') }}" required placeholder="Ex : Yaoundé"
-                                    class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 transition bg-slate-50 hover:bg-white focus:bg-white focus:border-[#006837] focus:ring-2 focus:ring-[#006837]/20 focus:outline-none font-medium">
+                                    class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 transition bg-slate-50 hover:bg-white focus:bg-white focus:border-primary-600 focus:ring-2 focus:ring-primary-500/20 focus:outline-none font-medium">
                             </div>
 
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1.5">
-                                    Catégorie <span class="text-red-500">*</span>
+                                    Catégorie <span class="text-danger">*</span>
                                 </label>
                                 <input type="text" name="category" value="{{ old('category') }}" required placeholder="Ex : Électronique"
-                                    class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 transition bg-slate-50 hover:bg-white focus:bg-white focus:border-[#006837] focus:ring-2 focus:ring-[#006837]/20 focus:outline-none font-medium">
+                                    class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 transition bg-slate-50 hover:bg-white focus:bg-white focus:border-primary-600 focus:ring-2 focus:ring-primary-500/20 focus:outline-none font-medium">
                             </div>
                         </div>
 
@@ -181,13 +181,13 @@
                                 Description <span class="text-slate-400 font-normal">(optionnelle)</span>
                             </label>
                             <textarea name="description" rows="3" placeholder="Présentez brièvement votre boutique..."
-                                class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 bg-slate-50 hover:bg-white focus:bg-white focus:border-[#006837] focus:ring-2 focus:ring-[#006837]/20 focus:outline-none font-medium resize-none">{{ old('description') }}</textarea>
+                                class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 bg-slate-50 hover:bg-white focus:bg-white focus:border-primary-600 focus:ring-2 focus:ring-primary-500/20 focus:outline-none font-medium resize-none">{{ old('description') }}</textarea>
                         </div>
                     </div>
 
                     <!-- Bouton Submit -->
                     <button type="submit"
-                        class="w-full rounded-xl bg-[#006837] py-3.5 text-sm font-bold text-white shadow-lg shadow-[#006837]/25 transition-all hover:bg-[#004d28] active:scale-[0.99] flex items-center justify-center gap-2 group mt-2">
+                        class="w-full rounded-xl bg-primary-600 py-3.5 text-sm font-bold text-white shadow-lg shadow-primary-600/25 transition-all hover:bg-primary-800 active:scale-[0.99] flex items-center justify-center gap-2 group mt-2">
                         <span>Créer ma boutique</span>
                         <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
@@ -212,10 +212,10 @@
         <!-- =====================================================
              PANNEAU DROIT : MARKETING & PRESENTATION
         ====================================================== -->
-        <div class="hidden lg:flex w-1/2 min-h-full bg-gradient-to-br from-[#004d28] via-[#006837] to-[#00381d] text-white p-8 xl:p-12 flex-col justify-between relative overflow-hidden shrink-0">
+        <div class="hidden lg:flex w-1/2 min-h-full bg-gradient-to-br from-primary-800 via-primary-600 to-[#00381d] text-white p-8 xl:p-12 flex-col justify-between relative overflow-hidden shrink-0">
 
             <!-- Cercles décoratifs d'arrière-plan -->
-            <div class="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-[#FFC20E]/15 blur-3xl pointer-events-none"></div>
+            <div class="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-warning/15 blur-3xl pointer-events-none"></div>
             <div class="absolute -bottom-20 -left-20 w-96 h-96 rounded-full bg-[#CE1126]/15 blur-3xl pointer-events-none"></div>
 
             <!-- Filigrane Logo Afrique -->
@@ -226,15 +226,15 @@
             <div class="relative z-10">
                 <!-- En-tête Droite : SUBTIMÉ AVEC GLASSMORPHISM & HALO -->
                 <div class="flex items-center justify-between">
-                    <span class="inline-flex items-center gap-2 text-xs font-black tracking-widest uppercase text-emerald-100 bg-white/10 border border-white/20 px-3.5 py-1.5 rounded-full backdrop-blur-md shadow-sm">
-                        <span class="w-2 h-2 rounded-full bg-[#FFC20E] animate-pulse"></span>
+                    <span class="inline-flex items-center gap-2 text-xs font-black tracking-widest uppercase text-success-100 bg-white/10 border border-white/20 px-3.5 py-1.5 rounded-full backdrop-blur-md shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-warning animate-pulse"></span>
                         Marketplace Cameroun
                     </span>
 
                     <!-- CARTE DU LOGO SUBTIMÉE -->
                     <div class="relative group">
                         <!-- Halo doré en arrière plan -->
-                        <div class="absolute -inset-1 bg-gradient-to-r from-[#FFC20E]/30 to-[#CE1126]/20 rounded-2xl blur-md opacity-70 group-hover:opacity-100 transition duration-500"></div>
+                        <div class="absolute -inset-1 bg-gradient-to-r from-warning/30 to-[#CE1126]/20 rounded-2xl blur-md opacity-70 group-hover:opacity-100 transition duration-500"></div>
 
                         <!-- Card Principale -->
                         <div class="relative px-3.5 py-2 rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-white/20 shadow-2xl flex items-center gap-3">
@@ -243,9 +243,9 @@
                             </div>
                             <div class="flex flex-col pr-1">
                                 <span class="font-black text-base text-white tracking-wider leading-none">
-                                    ALI<span class="text-[#FFC20E]">-KAMER</span>
+                                    ALI<span class="text-warning">-KAMER</span>
                                 </span>
-                                <span class="text-[9px] font-bold text-emerald-200/80 tracking-widest uppercase mt-0.5">Plateforme Vendeurs</span>
+                                <span class="text-[9px] font-bold text-success-200/80 tracking-widest uppercase mt-0.5">Plateforme Vendeurs</span>
                             </div>
                         </div>
                     </div>
@@ -253,10 +253,10 @@
 
                 <h2 class="text-2xl xl:text-3xl font-black mt-10 leading-tight tracking-tight">
                     Vendez au Cameroun. <br>
-                    <span class="text-[#FFC20E]">Développez votre activité.</span>
+                    <span class="text-warning">Développez votre activité.</span>
                 </h2>
 
-                <p class="text-sm text-emerald-100/90 mt-3 leading-relaxed max-w-md font-medium">
+                <p class="text-sm text-success-100/90 mt-3 leading-relaxed max-w-md font-medium">
                     Créez votre boutique et présentez vos produits aux acheteurs partout au Cameroun.
                 </p>
             </div>
@@ -266,7 +266,7 @@
 
                 <!-- Étape 1 -->
                 <div class="flex items-start gap-4 p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-colors">
-                    <div class="w-10 h-10 rounded-xl bg-[#FFC20E] text-slate-900 flex items-center justify-center font-black text-base shrink-0 shadow-md">
+                    <div class="w-10 h-10 rounded-xl bg-warning text-slate-900 flex items-center justify-center font-black text-base shrink-0 shadow-md">
                         1
                     </div>
                     <div>
@@ -288,7 +288,7 @@
 
                 <!-- Étape 3 -->
                 <div class="flex items-start gap-4 p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-colors">
-                    <div class="w-10 h-10 rounded-xl bg-[#FFC20E] text-slate-900 flex items-center justify-center font-black text-base shrink-0 shadow-md">
+                    <div class="w-10 h-10 rounded-xl bg-warning text-slate-900 flex items-center justify-center font-black text-base shrink-0 shadow-md">
                         3
                     </div>
                     <div>
@@ -300,7 +300,7 @@
                 <!-- Message Bas -->
                 <div class="rounded-2xl bg-white/10 border border-white/15 p-4 backdrop-blur-sm">
                     <div class="flex items-center gap-3.5">
-                        <div class="w-9 h-9 rounded-xl bg-[#FFC20E] text-slate-900 flex items-center justify-center font-black shrink-0 text-base shadow">
+                        <div class="w-9 h-9 rounded-xl bg-warning text-slate-900 flex items-center justify-center font-black shrink-0 text-base shadow">
                             ✓
                         </div>
                         <div>
@@ -315,8 +315,8 @@
             <!-- Couleurs du Drapeau -->
             <div class="relative z-10 pt-4 border-t border-white/15 flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                    <span class="h-2 w-12 rounded-full bg-[#006837]"></span>
-                    <span class="h-2 w-12 rounded-full bg-[#FFC20E]"></span>
+                    <span class="h-2 w-12 rounded-full bg-primary-600"></span>
+                    <span class="h-2 w-12 rounded-full bg-warning"></span>
                     <span class="h-2 w-12 rounded-full bg-[#CE1126]"></span>
                 </div>
                 <span class="text-xs text-white/60 font-semibold">Ali-Kamer Marketplace</span>

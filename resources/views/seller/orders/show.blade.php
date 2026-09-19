@@ -5,7 +5,7 @@
 @section('content')
 
 ```
-<div class="min-h-screen bg-[#F7F7F2] py-5 sm:py-6">
+<div class="min-h-screen bg-slate-50 py-5 sm:py-6">
 
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -14,7 +14,7 @@
     ============================================================= --}}
         <div class="mb-4">
             <a href="{{ route('seller.orders.index') }}"
-                class="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-[#016837] transition-colors">
+                class="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-primary-600 transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M15 19l-7-7 7-7" />
@@ -33,7 +33,7 @@
 
                 <div class="flex flex-wrap items-center gap-2.5 mb-1.5">
 
-                    <h1 class="text-xl sm:text-2xl font-extrabold text-[#0a1b12]">
+                    <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900">
                         Commande #{{ $order->reference }}
                     </h1>
 
@@ -55,17 +55,17 @@
                         ];
 
                         $statusClasses = [
-                            'paid' => 'bg-[#016837]/10 text-[#016837] border-[#016837]/20',
-                            'preparing' => 'bg-[#F9A01B]/10 text-[#9A6100] border-[#F9A01B]/25',
-                            'registered_origin' => 'bg-[#016837]/10 text-[#016837] border-[#016837]/20',
-                            'in_transit' => 'bg-[#F9A01B]/10 text-[#9A6100] border-[#F9A01B]/25',
-                            'arrived_destination' => 'bg-[#016837]/10 text-[#016837] border-[#016837]/20',
-                            'awaiting_buyer_confirmation' => 'bg-[#F9A01B]/10 text-[#9A6100] border-[#F9A01B]/25',
-                            'completed' => 'bg-[#016837]/10 text-[#016837] border-[#016837]/20',
-                            'auto_completed' => 'bg-[#016837]/10 text-[#016837] border-[#016837]/20',
-                            'disputed' => 'bg-[#E30613]/10 text-[#E30613] border-[#E30613]/20',
-                            'cancelled' => 'bg-[#E30613]/10 text-[#E30613] border-[#E30613]/20',
-                            'failed' => 'bg-[#E30613]/10 text-[#E30613] border-[#E30613]/20',
+                            'paid' => 'bg-primary-600/10 text-primary-600 border-primary-600/20',
+                            'preparing' => 'bg-accent-500/10 text-[#9A6100] border-accent-500/25',
+                            'registered_origin' => 'bg-primary-600/10 text-primary-600 border-primary-600/20',
+                            'in_transit' => 'bg-accent-500/10 text-[#9A6100] border-accent-500/25',
+                            'arrived_destination' => 'bg-primary-600/10 text-primary-600 border-primary-600/20',
+                            'awaiting_buyer_confirmation' => 'bg-accent-500/10 text-[#9A6100] border-accent-500/25',
+                            'completed' => 'bg-primary-600/10 text-primary-600 border-primary-600/20',
+                            'auto_completed' => 'bg-primary-600/10 text-primary-600 border-primary-600/20',
+                            'disputed' => 'bg-danger/10 text-danger border-danger/20',
+                            'cancelled' => 'bg-danger/10 text-danger border-danger/20',
+                            'failed' => 'bg-danger/10 text-danger border-danger/20',
                         ];
 
                         $statusLabel =
@@ -100,9 +100,9 @@
                     Total commande
                 </p>
 
-                <p class="text-xl font-extrabold text-[#0a1b12] mt-0.5">
+                <p class="text-xl font-extrabold text-slate-900 mt-0.5">
                     {{ number_format($order->subtotal, 0, ',', ' ') }}
-                    <span class="text-xs font-bold text-[#016837]">FCFA</span>
+                    <span class="text-xs font-bold text-primary-600">FCFA</span>
                 </p>
 
             </div>
@@ -115,10 +115,10 @@
     ============================================================= --}}
         @if (session('success'))
             <div
-                class="mb-4 flex items-start gap-3 bg-[#016837]/5 border border-[#016837]/20 text-[#016837] rounded-xl px-4 py-3">
+                class="mb-4 flex items-start gap-3 bg-primary-600/5 border border-primary-600/20 text-primary-600 rounded-xl px-4 py-3">
 
                 <div
-                    class="w-7 h-7 rounded-lg bg-[#016837]/10 flex items-center justify-center shrink-0">
+                    class="w-7 h-7 rounded-lg bg-primary-600/10 flex items-center justify-center shrink-0">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M5 13l4 4L19 7" />
@@ -138,21 +138,21 @@
     ============================================================= --}}
         @if ($errors->any())
 
-            <div class="mb-4 bg-[#E30613]/5 border border-[#E30613]/20 rounded-xl px-4 py-3">
+            <div class="mb-4 bg-danger/5 border border-danger/20 rounded-xl px-4 py-3">
 
                 <div class="flex items-start gap-3">
 
                     <div
-                        class="w-7 h-7 rounded-lg bg-[#E30613]/10 text-[#E30613] flex items-center justify-center shrink-0">
+                        class="w-7 h-7 rounded-lg bg-danger/10 text-danger flex items-center justify-center shrink-0">
                         !
                     </div>
 
                     <div>
-                        <p class="text-sm font-bold text-[#E30613] mb-1">
+                        <p class="text-sm font-bold text-danger mb-1">
                             Impossible de préparer l'expédition :
                         </p>
 
-                        <ul class="list-disc list-inside text-xs text-red-700 space-y-0.5">
+                        <ul class="list-disc list-inside text-xs text-danger-700 space-y-0.5">
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
                             @endforeach
@@ -174,12 +174,12 @@
             <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden mb-5">
 
                 {{-- EN-TÊTE --}}
-                <div class="bg-[#016837]/5 px-5 sm:px-6 py-4 border-b border-[#016837]/15">
+                <div class="bg-primary-600/5 px-5 sm:px-6 py-4 border-b border-primary-600/15">
 
                     <div class="flex items-start gap-3">
 
                         <div
-                            class="w-10 h-10 rounded-xl bg-[#016837] text-white flex items-center justify-center shrink-0 shadow-sm">
+                            class="w-10 h-10 rounded-xl bg-primary-600 text-white flex items-center justify-center shrink-0 shadow-sm">
 
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -190,7 +190,7 @@
 
                         <div class="min-w-0">
 
-                            <h2 class="text-base font-extrabold text-[#0a1b12]">
+                            <h2 class="text-base font-extrabold text-slate-900">
                                 Préparer l'expédition
                             </h2>
 
@@ -206,14 +206,14 @@
                     {{-- Destination --}}
                     <div class="mt-3 flex flex-wrap items-center gap-2">
 
-                        <span class="text-xs font-bold text-[#016837]">
+                        <span class="text-xs font-bold text-primary-600">
                             Destination :
                         </span>
 
                         <span
-                            class="inline-flex items-center gap-1.5 bg-white border border-[#016837]/20 text-[#0a1b12] px-2.5 py-1 rounded-lg text-xs font-bold">
+                            class="inline-flex items-center gap-1.5 bg-white border border-primary-600/20 text-slate-900 px-2.5 py-1 rounded-lg text-xs font-bold">
 
-                            <svg class="w-3.5 h-3.5 text-[#016837]" fill="none" stroke="currentColor"
+                            <svg class="w-3.5 h-3.5 text-primary-600" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" />
@@ -247,7 +247,7 @@
                             </label>
 
                             <select name="agency_id" id="agency_id" required
-                                class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-medium text-slate-800 focus:outline-none focus:ring-4 focus:ring-[#016837]/10 focus:border-[#016837] transition">
+                                class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-medium text-slate-800 focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-600 transition">
 
                                 <option value="">
                                     Sélectionnez une agence
@@ -299,7 +299,7 @@
                             </label>
 
                             <select name="counter_id" id="counter_id" required disabled
-                                class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-medium text-slate-800 focus:outline-none focus:ring-4 focus:ring-[#016837]/10 focus:border-[#016837] disabled:cursor-not-allowed disabled:text-slate-400 transition">
+                                class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-medium text-slate-800 focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-600 disabled:cursor-not-allowed disabled:text-slate-400 transition">
 
                                 <option value="">
                                     Sélectionnez d'abord une agence
@@ -318,12 +318,12 @@
 
                     {{-- RÉSUMÉ DU CHOIX --}}
                     <div id="selectionSummary"
-                        class="hidden mt-4 bg-[#016837]/5 border border-[#016837]/15 rounded-xl p-3">
+                        class="hidden mt-4 bg-primary-600/5 border border-primary-600/15 rounded-xl p-3">
 
                         <div class="flex items-center gap-3">
 
                             <div
-                                class="w-8 h-8 bg-[#016837]/10 text-[#016837] rounded-lg flex items-center justify-center shrink-0">
+                                class="w-8 h-8 bg-primary-600/10 text-primary-600 rounded-lg flex items-center justify-center shrink-0">
 
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
@@ -340,7 +340,7 @@
                                 </p>
 
                                 <p id="selectedCounterName"
-                                    class="text-sm font-extrabold text-[#0a1b12] mt-0.5 truncate"></p>
+                                    class="text-sm font-extrabold text-slate-900 mt-0.5 truncate"></p>
 
                             </div>
 
@@ -357,7 +357,7 @@
                         <div class="flex items-center justify-between mb-3">
 
                             <div>
-                                <h2 class="text-sm font-extrabold text-[#0a1b12]">
+                                <h2 class="text-sm font-extrabold text-slate-900">
                                     Profil acheteur
                                 </h2>
 
@@ -367,7 +367,7 @@
                             </div>
 
                             <div
-                                class="w-8 h-8 rounded-lg bg-[#F9A01B]/10 text-[#F9A01B] flex items-center justify-center">
+                                class="w-8 h-8 rounded-lg bg-accent-500/10 text-accent-500 flex items-center justify-center">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -399,10 +399,10 @@
                                 <span
                                     class="font-extrabold
                                     {{ $order->buyer->trust_score >= 70
-                                        ? 'text-[#016837]'
+                                        ? 'text-primary-600'
                                         : ($order->buyer->trust_score >= 40
                                             ? 'text-[#D88900]'
-                                            : 'text-[#E30613]') }}">
+                                            : 'text-danger') }}">
 
                                     {{ $order->buyer->trust_score }}/100
 
@@ -427,7 +427,7 @@
                             <div class="flex justify-between gap-3 sm:col-span-2">
                                 <span class="text-slate-500">Litiges</span>
                                 <span
-                                    class="font-bold {{ $order->buyer->dispute_count > 2 ? 'text-[#E30613]' : 'text-slate-800' }}">
+                                    class="font-bold {{ $order->buyer->dispute_count > 2 ? 'text-danger' : 'text-slate-800' }}">
                                     {{ $order->buyer->dispute_count }}
                                 </span>
                             </div>
@@ -438,12 +438,12 @@
 
 
                     {{-- INFORMATION --}}
-                    <div class="mt-4 bg-[#F9A01B]/10 border border-[#F9A01B]/20 rounded-xl p-3.5">
+                    <div class="mt-4 bg-accent-500/10 border border-accent-500/20 rounded-xl p-3.5">
 
                         <div class="flex items-start gap-3">
 
                             <div
-                                class="w-7 h-7 rounded-lg bg-[#F9A01B]/15 text-[#D88900] flex items-center justify-center shrink-0 font-bold">
+                                class="w-7 h-7 rounded-lg bg-accent-500/15 text-[#D88900] flex items-center justify-center shrink-0 font-bold">
                                 i
                             </div>
 
@@ -471,7 +471,7 @@
                     <div class="mt-4 flex justify-end">
 
                         <button type="submit" id="prepareButton" disabled
-                            class="inline-flex items-center justify-center gap-2 bg-[#016837] hover:bg-[#0a542d] disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-bold text-sm px-5 py-2.5 rounded-xl shadow-sm hover:shadow-md transition-all">
+                            class="inline-flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-bold text-sm px-5 py-2.5 rounded-xl shadow-sm hover:shadow-md transition-all">
 
                             <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -497,18 +497,18 @@
     ============================================================= --}}
         @if ($order->status === \App\Models\Order::STATUS_PREPARING && $order->deposit_code)
 
-            <div class="mb-5 bg-[#016837]/5 border border-[#016837]/20 rounded-2xl p-4 sm:p-5">
+            <div class="mb-5 bg-primary-600/5 border border-primary-600/20 rounded-2xl p-4 sm:p-5">
 
                 <div class="flex items-start gap-3">
 
                     <div
-                        class="w-10 h-10 rounded-xl bg-[#016837] text-white flex items-center justify-center shrink-0 font-bold shadow-sm">
+                        class="w-10 h-10 rounded-xl bg-primary-600 text-white flex items-center justify-center shrink-0 font-bold shadow-sm">
                         ✓
                     </div>
 
                     <div class="flex-1 min-w-0">
 
-                        <h3 class="text-base font-extrabold text-[#0a1b12]">
+                        <h3 class="text-base font-extrabold text-slate-900">
                             Colis prêt à être déposé
                         </h3>
 
@@ -517,13 +517,13 @@
                             ce code au secrétaire.
                         </p>
 
-                        <div class="mt-3 bg-white border border-[#016837]/20 rounded-xl p-3 text-center">
+                        <div class="mt-3 bg-white border border-primary-600/20 rounded-xl p-3 text-center">
 
                             <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                                 Code de dépôt
                             </p>
 
-                            <p class="mt-1.5 text-2xl sm:text-3xl font-black tracking-[0.25em] text-[#0a1b12]">
+                            <p class="mt-1.5 text-2xl sm:text-3xl font-black tracking-[0.25em] text-slate-900">
                                 {{ $order->deposit_code }}
                             </p>
 
@@ -569,12 +569,12 @@
                     <div class="flex items-center gap-3 mb-3">
 
                         <div
-                            class="w-9 h-9 rounded-xl bg-[#F9A01B]/15 text-[#D88900] flex items-center justify-center">
+                            class="w-9 h-9 rounded-xl bg-accent-500/15 text-[#D88900] flex items-center justify-center">
                             ★
                         </div>
 
                         <div>
-                            <h2 class="text-sm font-extrabold text-[#0a1b12]">
+                            <h2 class="text-sm font-extrabold text-slate-900">
                                 Noter l'acheteur
                             </h2>
 
@@ -594,7 +594,7 @@
                         <div>
 
                             <label class="block text-xs font-bold text-slate-700 mb-1.5">
-                                Note <span class="text-[#E30613]">*</span>
+                                Note <span class="text-danger">*</span>
                             </label>
 
                             <div class="flex gap-1.5" id="buyerStars">
@@ -603,7 +603,7 @@
 
                                     <button type="button"
                                         onclick="setBuyerRating({{ $i }})"
-                                        class="text-2xl text-slate-300 hover:text-[#F9A01B] transition star-buyer"
+                                        class="text-2xl text-slate-300 hover:text-accent-500 transition star-buyer"
                                         data-value="{{ $i }}">
                                         ★
                                     </button>
@@ -615,7 +615,7 @@
                             <input type="hidden" name="rating" id="buyer_rating" required>
 
                             @error('rating')
-                                <p class="text-[#E30613] text-[11px] mt-1">
+                                <p class="text-danger text-[11px] mt-1">
                                     {{ $message }}
                                 </p>
                             @enderror
@@ -631,13 +631,13 @@
                             </label>
 
                             <textarea name="body" rows="3" maxlength="500"
-                                class="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-4 focus:ring-[#016837]/10 focus:border-[#016837]"
+                                class="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-600"
                                 placeholder="Décrivez votre expérience avec cet acheteur..."></textarea>
 
                         </div>
 
                         <button type="submit"
-                            class="w-full bg-[#F9A01B] hover:bg-[#E89A0A] text-[#0a1b12] font-extrabold py-2.5 rounded-xl transition text-sm shadow-sm">
+                            class="w-full bg-accent-500 hover:bg-[#E89A0A] text-slate-900 font-extrabold py-2.5 rounded-xl transition text-sm shadow-sm">
                             ★ Noter l'acheteur
                         </button>
 
@@ -651,7 +651,7 @@
                                 document.querySelectorAll('.star-buyer').forEach(star => {
                                     const v = parseInt(star.dataset.value);
 
-                                    star.classList.toggle('text-[#F9A01B]', v <= value);
+                                    star.classList.toggle('text-accent-500', v <= value);
                                     star.classList.toggle('text-slate-300', v > value);
                                 });
                             }
@@ -663,7 +663,7 @@
             @else
 
                 <div
-                    class="bg-[#016837]/5 border border-[#016837]/15 rounded-xl p-3.5 mb-5 text-sm font-semibold text-[#016837]">
+                    class="bg-primary-600/5 border border-primary-600/15 rounded-xl p-3.5 mb-5 text-sm font-semibold text-primary-600">
                     ✓ Vous avez déjà noté cet acheteur.
                 </div>
 
@@ -691,7 +691,7 @@
 
                             <div>
 
-                                <h2 class="text-base font-extrabold text-[#0a1b12]">
+                                <h2 class="text-base font-extrabold text-slate-900">
                                     Articles commandés
                                 </h2>
 
@@ -703,7 +703,7 @@
                             </div>
 
                             <div
-                                class="w-8 h-8 rounded-lg bg-[#016837]/10 text-[#016837] flex items-center justify-center">
+                                class="w-8 h-8 rounded-lg bg-primary-600/10 text-primary-600 flex items-center justify-center">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -758,7 +758,7 @@
 
                                         <div class="min-w-0">
 
-                                            <h3 class="text-sm font-extrabold text-[#0a1b12] truncate">
+                                            <h3 class="text-sm font-extrabold text-slate-900 truncate">
                                                 {{ $item->product_title }}
                                             </h3>
 
@@ -771,7 +771,7 @@
                                                         </span>
                                                     @endforeach
                                                     @if (!empty($item->variant_snapshot['sku']))
-                                                        <span class="inline-flex items-center text-[10px] font-mono text-emerald-800 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">
+                                                        <span class="inline-flex items-center text-[10px] font-mono text-success-800 bg-success-50 border border-success-200 px-1.5 py-0.5 rounded">
                                                             SKU: {{ $item->variant_snapshot['sku'] }}
                                                         </span>
                                                     @endif
@@ -795,7 +795,7 @@
                                         </div>
 
 
-                                        <p class="text-sm font-extrabold text-[#016837] whitespace-nowrap">
+                                        <p class="text-sm font-extrabold text-primary-600 whitespace-nowrap">
 
                                             {{ number_format($item->subtotal ?? $item->unit_price * $item->quantity, 0, ',', ' ') }}
 
@@ -871,11 +871,11 @@
                                 Total de la commande
                             </span>
 
-                            <span class="text-lg font-extrabold text-[#0a1b12]">
+                            <span class="text-lg font-extrabold text-slate-900">
 
                                 {{ number_format($order->subtotal, 0, ',', ' ') }}
 
-                                <span class="text-xs text-[#016837]">
+                                <span class="text-xs text-primary-600">
                                     FCFA
                                 </span>
 
@@ -899,7 +899,7 @@
 
                     <div class="px-5 py-4 border-b border-slate-200">
 
-                        <h2 class="text-base font-extrabold text-[#0a1b12]">
+                        <h2 class="text-base font-extrabold text-slate-900">
                             Suivi de la commande
                         </h2>
 
@@ -986,7 +986,7 @@
                                         <div
                                             class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-xs font-bold
                                             {{ $isCompleted
-                                                ? 'bg-[#016837] text-white'
+                                                ? 'bg-primary-600 text-white'
                                                 : 'bg-slate-100 text-slate-400 border border-slate-200' }}">
 
                                             @if ($isCompleted)
@@ -1011,7 +1011,7 @@
                                             <div
                                                 class="w-px h-10
                                                 {{ $currentStep > $stepNumber
-                                                    ? 'bg-[#016837]/60'
+                                                    ? 'bg-primary-600/60'
                                                     : 'bg-slate-200' }}">
                                             </div>
 
@@ -1026,7 +1026,7 @@
                                         <p
                                             class="text-xs font-extrabold
                                             {{ $isCurrent
-                                                ? 'text-[#016837]'
+                                                ? 'text-primary-600'
                                                 : ($isCompleted
                                                     ? 'text-slate-800'
                                                     : 'text-slate-400') }}">
@@ -1062,7 +1062,7 @@
                             <div class="flex items-center gap-2">
 
                                 <div
-                                    class="w-7 h-7 rounded-lg bg-[#F9A01B]/10 text-[#D88900] flex items-center justify-center">
+                                    class="w-7 h-7 rounded-lg bg-accent-500/10 text-[#D88900] flex items-center justify-center">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -1070,7 +1070,7 @@
                                     </svg>
                                 </div>
 
-                                <h3 class="text-sm font-extrabold text-[#0a1b12]">
+                                <h3 class="text-sm font-extrabold text-slate-900">
                                     Informations d'expédition
                                 </h3>
 

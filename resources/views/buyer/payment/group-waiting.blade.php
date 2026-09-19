@@ -8,7 +8,7 @@
         <div class="w-full max-w-4xl space-y-4">
 
             <nav class="flex items-center text-xs font-bold text-slate-400 uppercase tracking-wider">
-                <a href="{{ route('buyer.orders.index') }}" class="hover:text-[#016837] transition-colors">
+                <a href="{{ route('buyer.orders.index') }}" class="hover:text-primary-600 transition-colors">
                     Mes commandes
                 </a>
                 <svg class="w-3 h-3 mx-2 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -19,23 +19,23 @@
 
             <div class="bg-white rounded-3xl shadow-xs border border-slate-200 overflow-hidden">
 
-                <div class="bg-[#016837] px-6 py-5 text-white relative overflow-hidden">
-                    <div class="absolute -right-8 -bottom-8 w-32 h-32 rounded-full bg-[#F9A01B]/10 blur-xl"></div>
+                <div class="bg-primary-600 px-6 py-5 text-white relative overflow-hidden">
+                    <div class="absolute -right-8 -bottom-8 w-32 h-32 rounded-full bg-accent-500/10 blur-xl"></div>
 
                     <div class="flex flex-wrap items-center justify-between gap-4 relative z-10">
                         <div class="flex items-center gap-3.5">
                             <div class="w-10 h-10 rounded-2xl bg-white/10 border border-white/20 backdrop-blur-md flex items-center justify-center shrink-0">
-                                <svg class="w-5 h-5 text-[#F9A01B] animate-spin" style="animation-duration:2s" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 text-accent-500 animate-spin" style="animation-duration:2s" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6V3m0 18v-3m6-6h3M3 12h3m9.364-6.364l2.121-2.121M4.515 19.485l2.121-2.121m0-10.728L4.515 4.515m14.97 14.97l-2.121-2.121" />
                                 </svg>
                             </div>
                             <div>
                                 <h1 class="text-lg sm:text-xl font-black uppercase tracking-tight">Confirmation du paiement</h1>
-                                <p class="text-emerald-100/80 text-xs font-medium mt-0.5">Achat groupé — {{ $group->reference }}</p>
+                                <p class="text-success-100/80 text-xs font-medium mt-0.5">Achat groupé — {{ $group->reference }}</p>
                             </div>
                         </div>
 
-                        <span id="paymentBadge" class="px-3.5 py-1 rounded-xl bg-[#F9A01B]/20 backdrop-blur-md text-[#F9A01B] text-xs font-black uppercase tracking-wider border border-[#F9A01B]/30">
+                        <span id="paymentBadge" class="px-3.5 py-1 rounded-xl bg-accent-500/20 backdrop-blur-md text-accent-500 text-xs font-black uppercase tracking-wider border border-accent-500/30">
                             En attente
                         </span>
                     </div>
@@ -43,7 +43,7 @@
 
                 <div class="p-6 sm:p-8 space-y-6">
 
-                    <div id="successBox" class="hidden rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-xs font-bold text-[#016837]">
+                    <div id="successBox" class="hidden rounded-2xl border border-success-200 bg-success-50 p-4 text-xs font-bold text-primary-600">
                         <div class="flex items-center gap-2">
                             <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
@@ -55,7 +55,7 @@
                         </div>
                     </div>
 
-                    <div id="failedBox" class="hidden rounded-2xl border border-red-200 bg-red-50 p-4 text-xs font-bold text-[#E30613]">
+                    <div id="failedBox" class="hidden rounded-2xl border border-danger-200 bg-danger-50 p-4 text-xs font-bold text-danger">
                         <div class="flex items-center gap-2">
                             <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
@@ -67,8 +67,8 @@
                         </div>
                     </div>
 
-                    <div class="bg-amber-50/60 border border-amber-200/80 rounded-2xl p-4 sm:p-5 flex items-center gap-3.5">
-                        <div class="w-10 h-10 rounded-xl bg-[#F9A01B] text-slate-900 flex items-center justify-center shrink-0 shadow-xs font-black">
+                    <div class="bg-warning-50/60 border border-warning-200/80 rounded-2xl p-4 sm:p-5 flex items-center gap-3.5">
+                        <div class="w-10 h-10 rounded-xl bg-accent-500 text-slate-900 flex items-center justify-center shrink-0 shadow-xs font-black">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 18h.01M12 6a1 1 0 110 2 1 1 0 010-2zm0 4v4" />
                             </svg>
@@ -108,9 +108,9 @@
                                     <span class="font-bold text-slate-800">{{ number_format($group->protection_fee + $group->gateway_fee, 0, ',', ' ') }} FCFA</span>
                                 </div>
                             </div>
-                            <div class="flex justify-between items-center pt-2.5 border-t border-slate-200 font-black text-sm bg-emerald-50/80 -mx-4 -mb-4 p-4 rounded-b-2xl border-t-emerald-100">
+                            <div class="flex justify-between items-center pt-2.5 border-t border-slate-200 font-black text-sm bg-success-50/80 -mx-4 -mb-4 p-4 rounded-b-2xl border-t-success-100">
                                 <span class="text-slate-800 uppercase text-xs tracking-wider">Total payé:</span>
-                                <span class="text-base text-[#016837]">{{ number_format($group->total_amount, 0, ',', ' ') }} FCFA</span>
+                                <span class="text-base text-primary-600">{{ number_format($group->total_amount, 0, ',', ' ') }} FCFA</span>
                             </div>
                         </div>
                     </div>
@@ -120,7 +120,7 @@
                     </p>
 
                     <div class="flex flex-col sm:flex-row gap-3 pt-2">
-                        <button id="refreshButton" class="flex-1 bg-[#016837] hover:bg-[#01522b] active:bg-[#013d20] transition-all text-white rounded-xl py-3 px-4 font-extrabold text-xs shadow-md shadow-[#016837]/20 uppercase tracking-wider cursor-pointer">
+                        <button id="refreshButton" class="flex-1 bg-primary-600 hover:bg-primary-700 active:bg-primary-800 transition-all text-white rounded-xl py-3 px-4 font-extrabold text-xs shadow-md shadow-primary-600/20 uppercase tracking-wider cursor-pointer">
                             Actualiser le statut
                         </button>
                         <a href="{{ route('buyer.orders.index') }}" class="flex-1 text-center border border-slate-300 rounded-xl py-3 px-4 font-extrabold text-xs text-slate-700 hover:bg-slate-100 transition-colors uppercase tracking-wider">
@@ -158,13 +158,13 @@
         function handleStatus(status) {
             if (status === "paid") {
                 badge.innerHTML = "Payé";
-                badge.className = "px-3.5 py-1 rounded-xl bg-emerald-500/20 text-emerald-200 text-xs font-black uppercase tracking-wider border border-emerald-400/30";
+                badge.className = "px-3.5 py-1 rounded-xl bg-success/20 text-success-200 text-xs font-black uppercase tracking-wider border border-success/30";
                 successBox.classList.remove("hidden");
                 clearInterval(polling);
                 setTimeout(() => window.location.href = successRedirect, 3000);
             } else if (status === "failed") {
                 badge.innerHTML = "Échec";
-                badge.className = "px-3.5 py-1 rounded-xl bg-[#E30613]/20 text-red-200 text-xs font-black uppercase tracking-wider border border-[#E30613]/30";
+                badge.className = "px-3.5 py-1 rounded-xl bg-danger/20 text-danger-200 text-xs font-black uppercase tracking-wider border border-danger/30";
                 failedBox.classList.remove("hidden");
                 clearInterval(polling);
             }

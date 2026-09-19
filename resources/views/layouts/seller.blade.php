@@ -43,7 +43,7 @@
 
 
 <body
-    class="h-full font-sans antialiased text-slate-800 bg-slate-50"
+    class="h-full font-sans antialiased text-slate-900 bg-slate-50"
     x-data="{ sidebarOpen: false }"
     @keydown.escape.window="sidebarOpen = false"
 >
@@ -74,7 +74,7 @@
 
     <aside
         :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-        class="fixed inset-y-0 left-0 z-50 w-64 bg-[#0a1b12] text-white flex flex-col transition-transform duration-300 ease-in-out md:static md:translate-x-0 border-r border-slate-800 shrink-0"
+        class="fixed inset-y-0 left-0 z-50 w-64 bg-primary-800 text-white flex flex-col transition-transform duration-300 ease-in-out md:static md:translate-x-0 border-r border-primary-900 shrink-0"
     >
 
         <div class="flex flex-col h-full min-h-0">
@@ -107,7 +107,7 @@
                         </h2>
 
                         <span
-                            class="inline-block mt-1 text-[9px] font-bold text-[#F9A01B] bg-[#F9A01B]/10 px-2 py-0.5 rounded border border-[#F9A01B]/30"
+                            class="inline-block mt-1 text-[9px] font-bold text-accent-500 bg-accent-500/10 px-2 py-0.5 rounded border border-accent-500/30"
                         >
                             Espace vendeur
                         </span>
@@ -157,7 +157,7 @@
                      VUE GLOBALE
                 ============================================== --}}
 
-                <div class="px-3 pt-1 pb-1 text-[9px] font-black uppercase tracking-wider text-emerald-500/80">
+                <div class="px-3 pt-1 pb-1 text-[9px] font-black uppercase tracking-wider text-success/80">
                     Vue globale
                 </div>
 
@@ -169,12 +169,12 @@
                     @click="sidebarOpen = false"
                     class="flex items-center gap-3 px-3 py-2 rounded-xl font-bold transition-all
                     {{ request()->routeIs('seller.dashboard')
-                        ? 'bg-[#016837] text-white shadow-lg shadow-[#016837]/40 ring-1 ring-emerald-400/30'
+                        ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/40 ring-1 ring-success/30'
                         : 'text-slate-400 hover:bg-white/5 hover:text-white' }}"
                 >
 
                     <svg
-                        class="w-4 h-4 shrink-0 text-[#F9A01B]"
+                        class="w-4 h-4 shrink-0 text-accent-500"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -196,7 +196,7 @@
                      COMMERCE
                 ============================================== --}}
 
-                <div class="px-3 pt-3 pb-1 text-[9px] font-black uppercase tracking-wider text-emerald-500/80">
+                <div class="px-3 pt-3 pb-1 text-[9px] font-black uppercase tracking-wider text-success/80">
                     Commerce
                 </div>
 
@@ -208,7 +208,7 @@
                     @click="sidebarOpen = false"
                     class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
                     {{ request()->routeIs('seller.products.index')
-                        ? 'bg-[#016837] text-white shadow-lg shadow-[#016837]/40'
+                        ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/40'
                         : 'text-slate-400 hover:bg-white/5 hover:text-white' }}"
                 >
 
@@ -238,12 +238,12 @@
                     @click="sidebarOpen = false"
                     class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
                     {{ request()->routeIs('seller.products.create')
-                        ? 'bg-[#016837] text-white shadow-lg shadow-[#016837]/40'
+                        ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/40'
                         : 'text-slate-400 hover:bg-white/5 hover:text-white' }}"
                 >
 
                     <svg
-                        class="w-4 h-4 shrink-0 text-[#F9A01B]"
+                        class="w-4 h-4 shrink-0 text-accent-500"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -268,7 +268,7 @@
                     @click="sidebarOpen = false"
                     class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
                     {{ request()->routeIs('seller.orders.*')
-                        ? 'bg-[#016837] text-white shadow-lg shadow-[#016837]/40'
+                        ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/40'
                         : 'text-slate-400 hover:bg-white/5 hover:text-white' }}"
                 >
 
@@ -295,7 +295,7 @@
                      FINANCES
                 ============================================== --}}
 
-                <div class="px-3 pt-3 pb-1 text-[9px] font-black uppercase tracking-wider text-emerald-500/80">
+                <div class="px-3 pt-3 pb-1 text-[9px] font-black uppercase tracking-wider text-success/80">
                     Finances
                 </div>
 
@@ -307,7 +307,7 @@
                     @click="sidebarOpen = false"
                     class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
                     {{ request()->routeIs('seller.wallet.index')
-                        ? 'bg-[#016837] text-white shadow-lg shadow-[#016837]/40'
+                        ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/40'
                         : 'text-slate-400 hover:bg-white/5 hover:text-white' }}"
                 >
 
@@ -337,12 +337,12 @@
                     @click="sidebarOpen = false"
                     class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
                     {{ request()->routeIs('seller.wallet.withdraw')
-                        ? 'bg-[#016837] text-white shadow-lg shadow-[#016837]/40'
+                        ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/40'
                         : 'text-slate-400 hover:bg-white/5 hover:text-white' }}"
                 >
 
                     <svg
-                        class="w-4 h-4 shrink-0 text-[#F9A01B]"
+                        class="w-4 h-4 shrink-0 text-accent-500"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -367,7 +367,7 @@
                     @click="sidebarOpen = false"
                     class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
                     {{ request()->routeIs('seller.wallet.history')
-                        ? 'bg-[#016837] text-white shadow-lg shadow-[#016837]/40'
+                        ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/40'
                         : 'text-slate-400 hover:bg-white/5 hover:text-white' }}"
                 >
 
@@ -394,7 +394,7 @@
                      MA BOUTIQUE
                 ============================================== --}}
 
-                <div class="px-3 pt-3 pb-1 text-[9px] font-black uppercase tracking-wider text-emerald-500/80">
+                <div class="px-3 pt-3 pb-1 text-[9px] font-black uppercase tracking-wider text-success/80">
                     Ma boutique
                 </div>
 
@@ -406,7 +406,7 @@
                     @click="sidebarOpen = false"
                     class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
                     {{ request()->routeIs('seller.shop.edit')
-                        ? 'bg-[#016837] text-white shadow-lg shadow-[#016837]/40'
+                        ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/40'
                         : 'text-slate-400 hover:bg-white/5 hover:text-white' }}"
                 >
 
@@ -433,7 +433,7 @@
                      RELATION CLIENT
                 ============================================== --}}
 
-                <div class="px-3 pt-3 pb-1 text-[9px] font-black uppercase tracking-wider text-emerald-500/80">
+                <div class="px-3 pt-3 pb-1 text-[9px] font-black uppercase tracking-wider text-success/80">
                     Relation client
                 </div>
 
@@ -445,7 +445,7 @@
                     @click="sidebarOpen = false"
                     class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
                     {{ request()->routeIs('messaging.*')
-                        ? 'bg-[#016837] text-white shadow-lg shadow-[#016837]/40'
+                        ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/40'
                         : 'text-slate-400 hover:bg-white/5 hover:text-white' }}"
                 >
 
@@ -475,7 +475,7 @@
                     @click="sidebarOpen = false"
                     class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
                     {{ request()->routeIs('seller.disputes.*')
-                        ? 'bg-[#E30613] text-white shadow-lg shadow-red-600/30'
+                        ? 'bg-danger text-white shadow-lg shadow-danger/30'
                         : 'text-slate-400 hover:bg-white/5 hover:text-white' }}"
                 >
 
@@ -502,7 +502,7 @@
                      RESSOURCES
                 ============================================== --}}
 
-                <div class="px-3 pt-3 pb-1 text-[9px] font-black uppercase tracking-wider text-emerald-500/80">
+                <div class="px-3 pt-3 pb-1 text-[9px] font-black uppercase tracking-wider text-success/80">
                     Ressources
                 </div>
 
@@ -514,7 +514,7 @@
                     @click="sidebarOpen = false"
                     class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
                     {{ request()->routeIs('tutorials.*')
-                        ? 'bg-[#016837] text-white shadow-lg shadow-[#016837]/40'
+                        ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/40'
                         : 'text-slate-400 hover:bg-white/5 hover:text-white' }}"
                 >
 
@@ -544,7 +544,7 @@
                     @click="sidebarOpen = false"
                     class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
                     {{ request()->routeIs('help')
-                        ? 'bg-[#016837] text-white shadow-lg shadow-[#016837]/40'
+                        ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/40'
                         : 'text-slate-400 hover:bg-white/5 hover:text-white' }}"
                 >
 
@@ -585,7 +585,7 @@
                 >
 
                     <svg
-                        class="w-4 h-4 text-[#F9A01B] group-hover:-translate-x-1 transition-transform"
+                        class="w-4 h-4 text-accent-500 group-hover:-translate-x-1 transition-transform"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -614,7 +614,7 @@
 
                     <button
                         type="submit"
-                        class="flex items-center justify-center gap-2 w-full px-3 py-2 rounded-xl text-red-300 hover:text-white hover:bg-[#E30613] transition-all text-xs font-bold"
+                        class="flex items-center justify-center gap-2 w-full px-3 py-2 rounded-xl text-danger-200 hover:text-white hover:bg-danger transition-all text-xs font-bold"
                     >
 
                         <svg
@@ -690,7 +690,7 @@
                 <div class="flex items-center gap-2">
 
                     <span
-                        class="w-2.5 h-2.5 rounded-full bg-[#016837] animate-pulse"
+                        class="w-2.5 h-2.5 rounded-full bg-primary-600 animate-pulse"
                     ></span>
 
                     <span
@@ -711,7 +711,7 @@
                 <div class="flex items-center gap-3 pl-3 border-l border-slate-200">
 
                     <div
-                        class="w-9 h-9 rounded-xl bg-[#016837] text-[#F9A01B] flex items-center justify-center font-black text-xs shadow-md"
+                        class="w-9 h-9 rounded-xl bg-primary-600 text-accent-500 flex items-center justify-center font-black text-xs shadow-md"
                     >
                         {{ strtoupper(substr(auth()->user()->name ?? 'V', 0, 1)) }}
                     </div>
@@ -744,7 +744,7 @@
                     <button
                         type="submit"
                         title="Déconnexion"
-                        class="p-2 rounded-xl text-red-400 hover:text-[#E30613] hover:bg-red-50 transition"
+                        class="p-2 rounded-xl text-danger hover:text-danger hover:bg-danger-50 transition"
                     >
 
                         <svg
@@ -781,7 +781,7 @@
             @if(session('success'))
 
                 <div
-                    class="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700"
+                    class="mb-4 rounded-xl border border-success-200 bg-success-50 px-4 py-3 text-sm text-success-700"
                 >
                     {{ session('success') }}
                 </div>
@@ -792,7 +792,7 @@
             @if(session('error'))
 
                 <div
-                    class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+                    class="mb-4 rounded-xl border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700"
                 >
                     {{ session('error') }}
                 </div>

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="fr" class="h-full bg-[#FAF9F6]">
+<html lang="fr" class="h-full bg-slate-50">
 
 <head>
     <meta charset="UTF-8">
@@ -24,16 +24,16 @@
 
     <style>
         :root {
-            --ak-green: #00843D;
-            --ak-green-dark: #006B32;
-            --ak-green-deep: #004D2A;
-            --ak-red: #CE1126;
-            --ak-yellow: #FCD116;
-            --ak-cream: #FAF9F6;
+            --ak-teal: #0D9488;
+            --ak-teal-dark: #0F766E;
+            --ak-teal-deep: #134E4A;
+            --ak-accent: #EA580C;
+            --ak-accent-light: #F97316;
+            --ak-bg: #F8FAFC;
         }
 
         html {
-            background: var(--ak-cream);
+            background: var(--ak-bg);
             scroll-behavior: smooth;
         }
 
@@ -95,20 +95,20 @@
             display: flex;
             align-items: center;
             background: rgba(255, 255, 255, .97);
-            border: 1px solid #d9ebe2;
+            border: 1px solid #E2E8F0;
             border-radius: 999px;
             box-shadow:
-                0 8px 25px rgba(0, 77, 42, .12),
+                0 8px 25px rgba(13, 148, 136, .10),
                 0 2px 8px rgba(0, 0, 0, .05);
             backdrop-filter: blur(16px);
             overflow: hidden;
         }
 
         .ak-scroll-search-box:focus-within {
-            border-color: var(--ak-green);
+            border-color: var(--ak-teal);
             box-shadow:
-                0 8px 25px rgba(0, 132, 61, .15),
-                0 0 0 3px rgba(0, 132, 61, .08);
+                0 8px 25px rgba(13, 148, 136, .15),
+                0 0 0 3px rgba(13, 148, 136, .12);
         }
 
         .ak-scroll-search input {
@@ -121,7 +121,7 @@
             outline: 0;
             font-size: 12px;
             font-weight: 600;
-            color: #1e293b;
+            color: #0F172A;
         }
 
         .ak-scroll-search input::placeholder {
@@ -136,7 +136,7 @@
             flex-shrink: 0;
             border: 0;
             border-radius: 999px;
-            background: var(--ak-green);
+            background: var(--ak-teal);
             color: white;
             display: flex;
             align-items: center;
@@ -145,7 +145,7 @@
         }
 
         .ak-scroll-search button:hover {
-            background: var(--ak-green-dark);
+            background: var(--ak-teal-dark);
             transform: scale(1.04);
         }
 
@@ -163,9 +163,8 @@
             transform: translateX(-50%);
             border-radius: 999px;
             background: linear-gradient(90deg,
-                    var(--ak-green) 0 33%,
-                    var(--ak-red) 33% 66%,
-                    var(--ak-yellow) 66% 100%);
+                    var(--ak-teal) 0 60%,
+                    var(--ak-accent) 60% 100%);
             opacity: .8;
         }
 
@@ -178,16 +177,16 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: #f1f5f3;
+            background: #f1f5f9;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: #b9d9c8;
+            background: #99f6e4;
             border-radius: 999px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--ak-green);
+            background: var(--ak-teal);
         }
 
         /* =========================================================
@@ -227,7 +226,7 @@
 
 </head>
 
-<body class="min-h-screen flex flex-col bg-[#FAF9F6] text-slate-800 antialiased">
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-900 antialiased">
 
 
     {{-- =========================================================
@@ -261,7 +260,7 @@
         mobileMenuOpen: false,
         categoriesOpen: false
     }"
-        class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-200 shadow-sm">
+        class="fixed top-0 left-0 right-0 z-50 bg-primary-600 backdrop-blur-xl border-b border-primary-700 shadow-sm">
 
         <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -274,16 +273,16 @@
                 {{-- LOGO --}}
                 <a href="{{ route('buyer.home') }}" class="flex items-center shrink-0">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 120" class="h-10 sm:h-12 w-auto">
-                        <!-- Icone : Carte / Marqueur vert et orange avec caddie -->
+                        <!-- Icone : Carte / Marqueur teal et orange avec caddie -->
                         <g transform="translate(10, 10)">
-                            <!-- Cercle vert -->
-                            <path d="M 15 50 A 35 35 0 0 1 75 25" fill="none" stroke="#00843D" stroke-width="8"
+                            <!-- Cercle teal -->
+                            <path d="M 15 50 A 35 35 0 0 1 75 25" fill="none" stroke="#0D9488" stroke-width="8"
                                 stroke-linecap="round" />
-                            <!-- Cercle rouge/orange -->
+                            <!-- Cercle orange accent -->
                             <path d="M 75 25 A 35 35 0 0 1 65 85" fill="none" stroke="#EA580C" stroke-width="8"
                                 stroke-linecap="round" />
                             <!-- Forme A stylisee -->
-                            <path d="M 25 75 L 45 20 L 65 75" fill="none" stroke="#00843D" stroke-width="10"
+                            <path d="M 25 75 L 45 20 L 65 75" fill="none" stroke="#0D9488" stroke-width="10"
                                 stroke-linejoin="round" stroke-linecap="round" />
                             <path d="M 33 55 L 57 55" stroke="#EA580C" stroke-width="8" stroke-linecap="round" />
                             <!-- Caddie minimaliste -->
@@ -294,22 +293,22 @@
                         <text x="105" y="65" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900"
                             font-size="46" fill="#EA580C">Ali-</text>
                         <text x="185" y="65" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900"
-                            font-size="46" fill="#004D2A">Kamer</text>
+                            font-size="46" fill="#FFFFFF">Kamer</text>
 
                         <!-- Slogan sous le logo -->
                         <text x="106" y="85" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700"
-                            font-size="12" fill="#00843D">Acheter et vendez sans strees</text>
+                            font-size="12" fill="#CCFBF1">Achetez et vendez sans stress</text>
 
                         <!-- Tagline Cameroun -->
                         <g transform="translate(290, 20)">
-                            <rect x="0" y="0" width="115" height="24" rx="12" fill="#F0FDF4"
-                                stroke="#DCFCE7" stroke-width="1" />
+                            <rect x="0" y="0" width="115" height="24" rx="12" fill="#F0FDFA"
+                                stroke="#CCFBF1" stroke-width="1" />
                             <text x="10" y="16" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700"
-                                font-size="9" fill="#00843D">Construit au Cameroun</text>
+                                font-size="9" fill="#0D9488">Construit au Cameroun</text>
                             <!-- Drapeau discret -->
-                            <rect x="95" y="7" width="3" height="10" fill="#00843D" />
-                            <rect x="98" y="7" width="3" height="10" fill="#CE1126" />
-                            <rect x="101" y="7" width="3" height="10" fill="#FCD116" />
+                            <rect x="95" y="7" width="3" height="10" fill="#0D9488" />
+                            <rect x="98" y="7" width="3" height="10" fill="#EF4444" />
+                            <rect x="101" y="7" width="3" height="10" fill="#F59E0B" />
                         </g>
                     </svg>
                 </a>
@@ -322,21 +321,21 @@
                 <form action="{{ $searchAction }}" method="GET" class="hidden sm:flex flex-1 max-w-lg mx-auto">
 
                     <div
-                        class="relative w-full h-9 bg-[#F8FAF9] border border-emerald-100 rounded-full overflow-hidden
-                            focus-within:border-[#00843D]
+                        class="relative w-full h-9 bg-white border border-white/80 rounded-full overflow-hidden
+                            focus-within:border-white
                             focus-within:ring-4
-                            focus-within:ring-emerald-500/10
+                            focus-within:ring-white/25
                             transition">
 
                         <input type="text" name="q" value="{{ request('q') }}"
                             placeholder="{{ $searchPlaceholder }}" autocomplete="off"
                             class="w-full h-full bg-transparent border-0 outline-none
-                               pl-4 pr-12 text-xs text-slate-800
+                               pl-4 pr-12 text-xs text-slate-900
                                placeholder:text-slate-400">
 
                         <button type="submit" aria-label="Rechercher"
                             class="absolute right-1 top-1 w-7 h-7 rounded-full
-                               bg-[#00843D] hover:bg-[#006B32]
+                               bg-primary-600 hover:bg-primary-700
                                text-white flex items-center justify-center transition">
 
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -365,7 +364,7 @@
                             {{-- FAVORIS --}}
                             <a href="{{ route('buyer.wishlist.index') }}" title="Mes favoris" aria-label="Mes favoris"
                                 class="relative w-10 h-10 rounded-full flex items-center justify-center
-                                   text-slate-700 hover:text-[#CE1126] hover:bg-red-50 transition">
+                                   text-white hover:text-accent-200 hover:bg-white/10 transition">
 
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 
@@ -376,7 +375,7 @@
                                 @if ($wishlistCount > 0)
                                     <span
                                         class="absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] px-1
-                                             bg-[#CE1126] text-white text-[9px] font-black rounded-full
+                                             bg-accent-600 text-white text-[9px] font-black rounded-full
                                              flex items-center justify-center border-2 border-white">
 
                                         {{ $wishlistCount > 99 ? '99+' : $wishlistCount }}
@@ -388,7 +387,7 @@
                             {{-- PANIER --}}
                             <a href="{{ route('buyer.cart.index') }}" title="Mon panier" aria-label="Mon panier"
                                 class="relative w-10 h-10 rounded-full flex items-center justify-center
-                                   text-slate-700 hover:text-[#00843D] hover:bg-emerald-50 transition">
+                                   text-white hover:text-primary-100 hover:bg-white/10 transition">
 
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 
@@ -399,7 +398,7 @@
                                 @if ($cartCount > 0)
                                     <span
                                         class="absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] px-1
-                                             bg-[#CE1126] text-white text-[9px] font-black rounded-full
+                                             bg-accent-600 text-white text-[9px] font-black rounded-full
                                              flex items-center justify-center border-2 border-white">
 
                                         {{ $cartCount > 99 ? '99+' : $cartCount }}
@@ -422,8 +421,8 @@
 
                         <a href="{{ $dashboardRoute }}" title="Mon espace"
                             class="hidden md:flex items-center gap-2 h-10 px-4 rounded-full
-                               bg-[#00843D] hover:bg-[#006B32]
-                               text-white text-xs font-extrabold shadow-sm transition">
+                               bg-white hover:bg-primary-50
+                               text-primary-700 text-xs font-extrabold shadow-sm transition">
 
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 
@@ -440,7 +439,7 @@
                                 aria-label="Mon profil" class="hidden sm:block">
 
                                 <div
-                                    class="w-10 h-10 rounded-full bg-[#006B32] text-white font-black text-xs
+                                    class="w-10 h-10 rounded-full bg-primary-600 text-white font-black text-xs
                                         flex items-center justify-center uppercase border-2 border-white
                                         shadow-sm hover:scale-105 transition">
 
@@ -455,9 +454,9 @@
                             @csrf
 
                             <button type="submit" title="Se déconnecter"
-                                class="h-10 px-4 rounded-full border border-red-100
-                                   bg-red-50 text-[#CE1126]
-                                   hover:bg-[#CE1126] hover:text-white
+                                class="h-10 px-4 rounded-full border border-danger-100
+                                   bg-danger-50 text-danger
+                                   hover:bg-danger hover:text-white
                                    text-xs font-extrabold transition">
 
                                 Déconnexion
@@ -471,17 +470,17 @@
 
                         <a href="{{ route('login.show') }}"
                             class="hidden sm:flex h-10 px-4 items-center
-                               text-sm font-bold text-slate-700
-                               hover:text-[#00843D]">
+                               text-sm font-bold text-white
+                               hover:text-primary-100 transition">
 
                             Connexion
                         </a>
 
                         <a href="{{ route('register.show') }}"
                             class="hidden sm:flex h-10 px-5 items-center
-                               rounded-full bg-[#00843D]
-                               hover:bg-[#006B32]
-                               text-white text-sm font-extrabold shadow-sm">
+                               rounded-full bg-white
+                               hover:bg-primary-50
+                               text-primary-700 text-sm font-extrabold shadow-sm transition">
 
                             Inscription
                         </a>
@@ -493,7 +492,7 @@
                     <button type="button" @click="mobileMenuOpen = !mobileMenuOpen; categoriesOpen = false"
                         :aria-expanded="mobileMenuOpen.toString()" aria-label="Ouvrir le menu"
                         class="lg:hidden w-10 h-10 rounded-full
-                           bg-emerald-50 text-[#00843D]
+                           bg-white/15 text-white
                            flex items-center justify-center">
 
                         <svg x-show="!mobileMenuOpen" class="w-5 h-5" fill="none" stroke="currentColor"
@@ -520,7 +519,7 @@
              PETITE NAVBAR DESKTOP
         ====================================================== --}}
 
-            <div class="hidden lg:flex h-[46px] items-center border-t border-slate-100">
+            <div class="hidden lg:flex h-[46px] items-center border-t border-white/15">
 
                 {{-- CATÉGORIES --}}
                 <div class="relative h-full shrink-0">
@@ -528,11 +527,11 @@
                     <button type="button" @click="categoriesOpen = !categoriesOpen"
                         :aria-expanded="categoriesOpen.toString()"
                         class="h-full flex items-center gap-2.5 pr-6
-                           text-sm font-extrabold text-slate-800
-                           hover:text-[#00843D] transition">
+                           text-sm font-extrabold text-white
+                           hover:text-primary-100 transition">
 
                         <span
-                            class="w-8 h-8 rounded-lg bg-[#00843D] text-white
+                            class="w-8 h-8 rounded-lg bg-white text-primary-700
                                  flex items-center justify-center">
 
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -555,58 +554,58 @@
                 </div>
 
 
-                <div class="w-px h-6 bg-slate-200 mx-3"></div>
+                <div class="w-px h-6 bg-white/20 mx-3"></div>
 
 
                 {{-- LIENS --}}
                 <nav class="flex items-center gap-1 text-[13px] font-bold whitespace-nowrap">
 
                     <a href="{{ route('buyer.home') }}"
-                        class="px-3.5 py-2 rounded-lg text-[#00843D]
-                           bg-emerald-50 hover:bg-emerald-100 transition">
+                        class="px-3.5 py-2 rounded-lg text-white
+                           bg-white/15 hover:bg-white/25 transition">
 
                         Accueil
                     </a>
 
                     <a href="{{ route('buyer.home') }}#produits"
-                        class="px-3.5 py-2 rounded-lg text-slate-600
-                           hover:text-[#00843D] hover:bg-emerald-50 transition">
+                        class="px-3.5 py-2 rounded-lg text-white/80
+                           hover:text-white hover:bg-white/10 transition">
 
                         Boutiques
                     </a>
 
                     <a href="{{ route('buyer.home') }}#produits"
-                        class="px-3.5 py-2 rounded-lg text-slate-600
-                           hover:text-[#CE1126] hover:bg-red-50 transition">
+                        class="px-3.5 py-2 rounded-lg text-white/80
+                           hover:text-white hover:bg-white/10 transition">
 
                         Promotions
                     </a>
 
                     <a href="{{ route('tutorials.index') }}"
-                        class="px-3.5 py-2 rounded-lg text-slate-600
-                           hover:text-[#00843D] hover:bg-emerald-50 transition">
+                        class="px-3.5 py-2 rounded-lg text-white/80
+                           hover:text-white hover:bg-white/10 transition">
 
                         Comment ça marche ?
                     </a>
 
                     <a href="{{ route('buyer.home') }}#agences"
-                        class="px-3.5 py-2 rounded-lg text-slate-600
-                           hover:text-[#00843D] hover:bg-emerald-50 transition">
+                        class="px-3.5 py-2 rounded-lg text-white/80
+                           hover:text-white hover:bg-white/10 transition">
 
                         Nos agences
                     </a>
 
                     {{-- À PROPOS --}}
                     <a href="{{ route('about') }}"
-                        class="px-3.5 py-2 rounded-lg text-slate-600
-                           hover:text-[#CE1126] hover:bg-red-50 transition">
+                        class="px-3.5 py-2 rounded-lg text-white/80
+                           hover:text-white hover:bg-white/10 transition">
 
                         À propos
                     </a>
 
                     <a href="{{ route('help') }}"
-                        class="px-3.5 py-2 rounded-lg text-slate-600
-                           hover:text-[#00843D] hover:bg-emerald-50 transition">
+                        class="px-3.5 py-2 rounded-lg text-white/80
+                           hover:text-white hover:bg-white/10 transition">
 
                         Aide
                     </a>
@@ -621,12 +620,12 @@
 
             <div
                 class="lg:hidden flex items-center gap-2 h-[42px]
-                    border-t border-slate-100 overflow-x-auto scrollbar-hide">
+                    border-t border-white/15 overflow-x-auto scrollbar-hide">
 
                 <button type="button" @click="categoriesOpen = !categoriesOpen; mobileMenuOpen = false"
                     :aria-expanded="categoriesOpen.toString()"
                     class="shrink-0 flex items-center gap-1.5 px-3 py-1.5
-                       rounded-lg bg-[#00843D] text-white
+                       rounded-lg bg-white text-primary-700
                        text-[11px] font-extrabold">
 
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -641,7 +640,7 @@
 
                 <a href="{{ route('buyer.home') }}"
                     class="shrink-0 px-3 py-1.5 rounded-lg
-                       bg-emerald-50 text-[#00843D]
+                       bg-white/15 text-white
                        text-[11px] font-extrabold">
 
                     Accueil
@@ -649,28 +648,28 @@
 
 
                 <a href="{{ route('buyer.home') }}#produits"
-                    class="shrink-0 px-3 py-1.5 text-slate-600 text-[11px] font-bold">
+                    class="shrink-0 px-3 py-1.5 text-white/80 hover:text-white text-[11px] font-bold transition">
 
                     Boutiques
                 </a>
 
 
                 <a href="{{ route('buyer.home') }}#produits"
-                    class="shrink-0 px-3 py-1.5 text-slate-600 text-[11px] font-bold">
+                    class="shrink-0 px-3 py-1.5 text-white/80 hover:text-white text-[11px] font-bold transition">
 
                     Promotions
                 </a>
 
 
                 <a href="{{ route('tutorials.index') }}"
-                    class="shrink-0 px-3 py-1.5 text-slate-600 text-[11px] font-bold">
+                    class="shrink-0 px-3 py-1.5 text-white/80 hover:text-white text-[11px] font-bold transition">
 
                     Comment ça marche ?
                 </a>
 
 
                 <a href="{{ route('buyer.home') }}#agences"
-                    class="shrink-0 px-3 py-1.5 text-slate-600 text-[11px] font-bold">
+                    class="shrink-0 px-3 py-1.5 text-white/80 hover:text-white text-[11px] font-bold transition">
 
                     Nos agences
                 </a>
@@ -678,15 +677,15 @@
 
                 {{-- À PROPOS MOBILE --}}
                 <a href="{{ route('about') }}"
-                    class="shrink-0 px-3 py-1.5 text-slate-600
-                       hover:text-[#CE1126]
-                       text-[11px] font-bold">
+                    class="shrink-0 px-3 py-1.5 text-white/80
+                       hover:text-white
+                       text-[11px] font-bold transition">
 
                     À propos
                 </a>
 
 
-                <a href="{{ route('help') }}" class="shrink-0 px-3 py-1.5 text-slate-600 text-[11px] font-bold">
+                <a href="{{ route('help') }}" class="shrink-0 px-3 py-1.5 text-white/80 hover:text-white text-[11px] font-bold transition">
 
                     Aide
                 </a>
@@ -714,7 +713,7 @@
                         <div>
                             <p
                                 class="text-[11px] uppercase tracking-wider
-                                  font-black text-[#00843D]">
+                                  font-black text-primary-600">
 
                                 Explorer Ali-Kamer
                             </p>
@@ -760,9 +759,9 @@
                         @foreach ($akCategories as $category)
                             <a href="{{ route('buyer.home') }}#produits"
                                 class="group flex items-center gap-3 p-3 rounded-xl
-                                   border border-slate-100 bg-[#FAF9F6]
-                                   hover:bg-emerald-50
-                                   hover:border-emerald-200 transition">
+                                   border border-slate-100 bg-slate-50/60
+                                   hover:bg-primary-50
+                                   hover:border-primary-200 transition">
 
                                 <span
                                     class="w-9 h-9 shrink-0 rounded-lg
@@ -778,7 +777,7 @@
                                     <span
                                         class="block text-xs font-extrabold
                                              text-slate-800
-                                             group-hover:text-[#00843D]">
+                                             group-hover:text-primary-600 transition-colors">
 
                                         {{ $category['name'] }}
                                     </span>
@@ -791,14 +790,13 @@
 
                                 <svg class="w-3.5 h-3.5 ml-auto
                                         text-slate-300
-                                        group-hover:text-[#00843D]
+                                        group-hover:text-primary-600
                                         group-hover:translate-x-0.5 transition"
                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
 
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="m9 18 6-6-6-6" />
                                 </svg>
-
                             </a>
                         @endforeach
 
@@ -816,15 +814,15 @@
                 x-transition:leave="transition ease-in duration-100"
                 x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2"
                 class="lg:hidden absolute left-0 right-0 top-full
-                   bg-white border-t border-emerald-100 shadow-xl">
+                   bg-white border-t border-slate-200 shadow-xl">
 
                 <div class="max-w-[1440px] mx-auto px-4 py-4">
 
                     <div class="grid grid-cols-2 gap-2">
 
                         <a href="{{ route('buyer.home') }}"
-                            class="px-4 py-3 rounded-xl bg-emerald-50
-                               text-[#00843D] text-sm font-bold">
+                            class="px-4 py-3 rounded-xl bg-primary-50
+                               text-primary-600 text-sm font-bold">
                             Accueil
                         </a>
 
@@ -835,27 +833,27 @@
                         </a>
 
                         <a href="{{ route('buyer.home') }}#produits"
-                            class="px-4 py-3 rounded-xl bg-red-50
-                               text-[#CE1126] text-sm font-bold">
+                            class="px-4 py-3 rounded-xl bg-accent-50
+                               text-accent-600 text-sm font-bold">
                             Promotions
                         </a>
 
                         <a href="{{ route('tutorials.index') }}"
-                            class="px-4 py-3 rounded-xl bg-emerald-50
-                               text-[#00843D] text-sm font-bold">
+                            class="px-4 py-3 rounded-xl bg-primary-50
+                               text-primary-600 text-sm font-bold">
                             Comment ça marche ?
                         </a>
 
                         <a href="{{ route('buyer.home') }}#agences"
-                            class="px-4 py-3 rounded-xl bg-yellow-50
-                               text-[#806600] text-sm font-bold">
+                            class="px-4 py-3 rounded-xl bg-slate-50
+                               text-slate-700 text-sm font-bold">
                             Nos agences
                         </a>
 
                         {{-- À PROPOS --}}
                         <a href="{{ route('about') }}"
-                            class="px-4 py-3 rounded-xl bg-red-50
-                               text-[#CE1126] text-sm font-bold">
+                            class="px-4 py-3 rounded-xl bg-slate-50
+                               text-slate-700 text-sm font-bold">
                             À propos
                         </a>
 
@@ -869,21 +867,21 @@
                         @auth
 
                             <a href="{{ $dashboardRoute }}"
-                                class="px-4 py-3 rounded-xl bg-[#00843D]
+                                class="px-4 py-3 rounded-xl bg-primary-600
                                    text-white text-sm font-bold">
                                 Mon espace
                             </a>
 
                             @if (auth()->user()->isBuyer())
                                 <a href="{{ route('buyer.wishlist.index') }}"
-                                    class="px-4 py-3 rounded-xl bg-red-50
-                                       text-[#CE1126] text-sm font-bold">
+                                    class="px-4 py-3 rounded-xl bg-accent-50
+                                       text-accent-600 text-sm font-bold">
                                     Mes favoris
                                 </a>
 
                                 <a href="{{ route('buyer.cart.index') }}"
-                                    class="px-4 py-3 rounded-xl bg-yellow-50
-                                       text-[#806600] text-sm font-bold">
+                                    class="px-4 py-3 rounded-xl bg-primary-50
+                                       text-primary-600 text-sm font-bold">
                                     Mon panier
                                 </a>
 
@@ -901,8 +899,8 @@
 
                                 <button type="submit"
                                     class="w-full px-4 py-3 rounded-xl
-                                       bg-red-50 text-[#CE1126]
-                                       text-sm font-bold">
+                                       bg-danger-50 text-danger
+                                       text-sm font-bold hover:bg-danger hover:text-white transition">
 
                                     Déconnexion
                                 </button>
@@ -915,15 +913,15 @@
 
                             <a href="{{ route('login.show') }}"
                                 class="px-4 py-3 rounded-xl border
-                                   border-emerald-100 text-slate-700
-                                   text-sm font-bold">
+                                   border-slate-200 text-slate-700
+                                   text-sm font-bold hover:border-primary-500">
 
                                 Connexion
                             </a>
 
                             <a href="{{ route('register.show') }}"
-                                class="px-4 py-3 rounded-xl bg-[#00843D]
-                                   text-white text-sm font-bold">
+                                class="px-4 py-3 rounded-xl bg-primary-600
+                                   text-white text-sm font-bold hover:bg-primary-700 transition">
 
                                 Inscription
                             </a>
@@ -960,10 +958,10 @@
         @if (session('success'))
             <div
                 class="flex items-center gap-3 rounded-2xl
-                    border border-emerald-200 bg-emerald-50 p-4
-                    text-sm text-emerald-800 shadow-sm mb-4">
+                    border border-success-200 bg-success-50 p-4
+                    text-sm text-success-800 shadow-sm mb-4">
 
-                <svg class="h-5 w-5 shrink-0 text-[#00843D]" fill="none" viewBox="0 0 24 24"
+                <svg class="h-5 w-5 shrink-0 text-success" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
 
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
@@ -977,10 +975,10 @@
         @if (session('fail') || session('error'))
             <div
                 class="flex items-center gap-3 rounded-2xl
-                    border border-red-200 bg-red-50 p-4
-                    text-sm text-red-800 shadow-sm mb-4">
+                    border border-danger-200 bg-danger-50 p-4
+                    text-sm text-danger-800 shadow-sm mb-4">
 
-                <svg class="h-5 w-5 shrink-0 text-[#CE1126]" fill="none" viewBox="0 0 24 24"
+                <svg class="h-5 w-5 shrink-0 text-danger" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
 
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -1007,7 +1005,7 @@
      FOOTER
 ========================================================== --}}
 
-    <footer class="bg-[#004D2A] text-white border-t border-emerald-900 mt-16">
+    <footer class="bg-primary-900 text-white border-t border-primary-800 mt-16">
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
@@ -1019,11 +1017,11 @@
                     <a href="{{ route('buyer.home') }}" class="inline-block">
 
                         <img src="{{ asset('images/afrique.png') }}" alt="Ali-Kamer" width="155" height="68"
-                            class="w-[150px] h-auto object-contain">
+                            class="w-[150px] h-auto object-contain brightness-0 invert">
 
                     </a>
 
-                    <p class="text-sm leading-relaxed text-emerald-50/80">
+                    <p class="text-sm leading-relaxed text-primary-100/80">
                         La marketplace construite au Cameroun pour l'Afrique.
                         Achetez et vendez sans stress, en toute confiance.
                     </p>
@@ -1032,7 +1030,7 @@
 
                         <span
                             class="inline-flex items-center gap-1.5
-                                 bg-white/10 text-emerald-100
+                                 bg-white/10 text-primary-100
                                  text-xs font-semibold px-3 py-1.5
                                  rounded-full border border-white/10">
 
@@ -1041,7 +1039,7 @@
 
                         <span
                             class="inline-flex items-center gap-1.5
-                                 bg-white/10 text-yellow-200
+                                 bg-white/10 text-accent-500
                                  text-xs font-semibold px-3 py-1.5
                                  rounded-full border border-white/10">
 
@@ -1066,21 +1064,21 @@
 
                         <li>
                             <a href="{{ route('buyer.home') }}"
-                                class="text-emerald-50/80 hover:text-[#FCD116] transition">
+                                class="text-primary-100/80 hover:text-accent-500 transition">
                                 Accueil
                             </a>
                         </li>
 
                         <li>
                             <a href="{{ route('tutorials.index') }}"
-                                class="text-emerald-50/80 hover:text-[#FCD116] transition">
+                                class="text-primary-100/80 hover:text-accent-500 transition">
                                 Tutoriels & Guides
                             </a>
                         </li>
 
                         <li>
                             <a href="{{ route('about') }}"
-                                class="text-emerald-50/80 hover:text-[#FCD116] transition">
+                                class="text-primary-100/80 hover:text-accent-500 transition">
                                 À propos d'Ali-Kamer
                             </a>
                         </li>
@@ -1102,19 +1100,19 @@
                     <ul class="space-y-3 text-sm">
 
                         <li>
-                            <a href="{{ route('help') }}" class="text-emerald-50/80 hover:text-[#FCD116] transition">
+                            <a href="{{ route('help') }}" class="text-primary-100/80 hover:text-accent-500 transition">
                                 Centre d'aide & FAQ
                             </a>
                         </li>
 
                         <li>
-                            <a href="#" class="text-emerald-50/80 hover:text-[#FCD116] transition">
+                            <a href="#" class="text-primary-100/80 hover:text-accent-500 transition">
                                 Comment fonctionne l'Escrow ?
                             </a>
                         </li>
 
                         <li>
-                            <a href="#" class="text-emerald-50/80 hover:text-[#FCD116] transition">
+                            <a href="#" class="text-primary-100/80 hover:text-accent-500 transition">
                                 Signaler un problème
                             </a>
                         </li>
@@ -1133,20 +1131,20 @@
                         Paiements locaux
                     </h3>
 
-                    <p class="text-xs text-emerald-50/70 mb-4 leading-relaxed">
+                    <p class="text-xs text-primary-100/70 mb-4 leading-relaxed">
                         Payez facilement avec vos moyens de paiement locaux.
                     </p>
 
                     <div class="flex flex-wrap gap-2 text-xs font-bold">
 
                         <span
-                            class="bg-[#FCD116] text-slate-900
-                                 px-3 py-1.5 rounded-lg">
+                            class="bg-accent-500 text-slate-900
+                                 px-3 py-1.5 rounded-lg font-extrabold shadow-xs">
                             MTN MoMo
                         </span>
 
-                        <span class="bg-[#CE1126] text-white
-                                 px-3 py-1.5 rounded-lg">
+                        <span class="bg-accent-600 text-white
+                                 px-3 py-1.5 rounded-lg font-bold shadow-xs">
                             Orange Money
                         </span>
 
@@ -1172,21 +1170,21 @@
                     py-5 flex flex-col sm:flex-row
                     items-center justify-between gap-3 text-xs">
 
-                <div class="text-emerald-50/70 text-center sm:text-left">
+                <div class="text-primary-100/70 text-center sm:text-left">
                     &copy; {{ date('Y') }} Ali-Kamer. Tous droits réservés.
                 </div>
 
                 <div class="flex flex-wrap justify-center gap-5">
 
-                    <a href="#" class="text-emerald-50/70 hover:text-white transition">
+                    <a href="#" class="text-primary-100/70 hover:text-white transition">
                         Conditions Générales
                     </a>
 
-                    <a href="#" class="text-emerald-50/70 hover:text-white transition">
+                    <a href="#" class="text-primary-100/70 hover:text-white transition">
                         Politique de Confidentialité
                     </a>
 
-                    <span class="text-[#FCD116] font-semibold">
+                    <span class="text-accent-500 font-semibold">
                         Construit au Cameroun pour l'Afrique 🇨🇲
                     </span>
 

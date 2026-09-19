@@ -87,21 +87,21 @@ class WalletTransaction extends Model
             // Argent réel qui vient d'entrer, mais VERROUILLÉ (séquestre).
             self::TYPE_CREDIT_ESCROW => [
                 'sign' => '+',
-                'text' => 'text-[#F9A01B]',
-                'bg' => 'bg-[#F9A01B]/10',
+                'text' => 'text-accent-500',
+                'bg' => 'bg-accent-500/10',
             ],
             // Pas de nouvel argent : simple déplacement séquestre → disponible.
             self::TYPE_CREDIT_AVAILABLE => [
                 'sign' => '→',
-                'text' => 'text-blue-600',
-                'bg' => 'bg-blue-50',
+                'text' => 'text-primary-600',
+                'bg' => 'bg-primary-50',
             ],
             self::TYPE_CREDIT_TRANSPORT_FEE,
             self::TYPE_CREDIT_REFUND,
             self::TYPE_CREDIT_SECRETARY => [
                 'sign' => '+',
-                'text' => 'text-[#016837]',
-                'bg' => 'bg-[#016837]/10',
+                'text' => 'text-primary-600',
+                'bg' => 'bg-primary-600/10',
             ],
             // TYPE_CREDIT_BUY : l'acheteur DÉPENSE — jamais vert malgré le préfixe.
             self::TYPE_CREDIT_BUY,
@@ -109,10 +109,10 @@ class WalletTransaction extends Model
             self::TYPE_DEBIT_COMMISSION,
             self::TYPE_DEBIT_TRANSPORT_FEE => [
                 'sign' => '-',
-                'text' => 'text-[#E30613]',
-                'bg' => 'bg-[#E30613]/10',
+                'text' => 'text-danger',
+                'bg' => 'bg-danger/10',
             ],
-            default => ['sign' => '', 'text' => 'text-gray-500', 'bg' => 'bg-gray-100'],
+            default => ['sign' => '', 'text' => 'text-slate-500', 'bg' => 'bg-slate-100'],
         };
     }
 

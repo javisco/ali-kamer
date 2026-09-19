@@ -12,13 +12,13 @@
     </div>
 
     @if(session('success'))
-        <div class="bg-emerald-50 border border-emerald-200 text-[#016837] rounded-xl px-4 py-3 text-sm font-bold">
+        <div class="bg-success-50 border border-success-200 text-primary-600 rounded-xl px-4 py-3 text-sm font-bold">
             {{ session('success') }}
         </div>
     @endif
 
     @if($snapshot['balance_error'])
-        <div class="bg-red-50 border border-red-200 text-[#E30613] rounded-xl px-4 py-3 text-sm font-bold">
+        <div class="bg-danger-50 border border-danger-200 text-danger rounded-xl px-4 py-3 text-sm font-bold">
             ⚠️ Solde Elgiopay indisponible ({{ $snapshot['balance_error'] }}). Retrait bloqué par sécurité.
         </div>
     @endif
@@ -33,9 +33,9 @@
             </p>
         </div>
 
-        <div class="bg-white rounded-2xl border border-amber-300 p-5">
-            <p class="text-[11px] font-bold uppercase tracking-wider text-[#F9A01B] mb-1">Dû aux vendeurs/agences</p>
-            <p class="text-2xl font-black text-[#F9A01B]">
+        <div class="bg-white rounded-2xl border border-warning-200 p-5">
+            <p class="text-[11px] font-bold uppercase tracking-wider text-accent-500 mb-1">Dû aux vendeurs/agences</p>
+            <p class="text-2xl font-black text-accent-500">
                 {{ number_format($snapshot['total_liabilities'], 0, ',', ' ') }}
                 <span class="text-xs font-bold">FCFA</span>
             </p>
@@ -45,9 +45,9 @@
             </p>
         </div>
 
-        <div class="bg-white rounded-2xl border-2 border-[#016837]/40 p-5">
-            <p class="text-[11px] font-bold uppercase tracking-wider text-[#016837] mb-1">Retirable maintenant</p>
-            <p class="text-2xl font-black text-[#016837]">
+        <div class="bg-white rounded-2xl border-2 border-primary-600/40 p-5">
+            <p class="text-[11px] font-bold uppercase tracking-wider text-primary-600 mb-1">Retirable maintenant</p>
+            <p class="text-2xl font-black text-primary-600">
                 {{ $snapshot['withdrawable'] !== null ? number_format($snapshot['withdrawable'], 0, ',', ' ') : '—' }}
                 <span class="text-xs font-bold">FCFA</span>
             </p>
@@ -65,7 +65,7 @@
         <h2 class="font-black text-slate-900 mb-4">Effectuer un retrait</h2>
 
         @if($errors->any())
-            <div class="bg-red-50 border border-red-200 text-[#E30613] rounded-xl px-4 py-3 text-xs font-bold mb-4">
+            <div class="bg-danger-50 border border-danger-200 text-danger rounded-xl px-4 py-3 text-xs font-bold mb-4">
                 @foreach($errors->all() as $error)
                     <p>{{ $error }}</p>
                 @endforeach
@@ -110,15 +110,15 @@
             </div>
 
             <div class="border-t border-slate-200 pt-4">
-                <label class="block text-xs font-bold text-[#E30613] mb-1">
+                <label class="block text-xs font-bold text-danger mb-1">
                     Confirmez avec votre mot de passe
                 </label>
                 <input type="password" name="password"
-                       class="w-full border border-red-300 rounded-xl px-4 py-2.5 text-sm" required>
+                       class="w-full border border-danger-200 rounded-xl px-4 py-2.5 text-sm" required>
             </div>
 
             <button type="submit"
-                    class="w-full bg-[#016837] hover:bg-[#01522b] text-white font-black py-3 rounded-xl text-sm uppercase tracking-wider">
+                    class="w-full bg-primary-600 hover:bg-primary-700 text-white font-black py-3 rounded-xl text-sm uppercase tracking-wider">
                 Confirmer le retrait
             </button>
         </form>
@@ -136,7 +136,7 @@
                     @if($tx->note)<p class="text-xs text-slate-400">{{ $tx->note }}</p>@endif
                     <p class="text-[10px] text-slate-400">{{ $tx->created_at->format('d/m/Y à H:i') }}</p>
                 </div>
-                <p class="font-black text-[#E30613]">- {{ number_format($tx->amount, 0, ',', ' ') }} FCFA</p>
+                <p class="font-black text-danger">- {{ number_format($tx->amount, 0, ',', ' ') }} FCFA</p>
             </div>
         @empty
             <div class="px-5 py-8 text-center text-slate-400 text-xs">Aucun retrait effectué.</div>

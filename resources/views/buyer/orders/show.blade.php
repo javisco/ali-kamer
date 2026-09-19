@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="min-h-screen bg-[#F7F7F2] py-6 sm:py-8">
+<div class="min-h-screen bg-slate-50 py-6 sm:py-8">
     <div class="max-w-3xl mx-auto px-4">
 
         {{-- =========================================================
@@ -14,17 +14,17 @@
 
             <div class="min-w-0">
                 <div class="flex items-center gap-2 mb-1">
-                    <span class="w-2 h-2 rounded-full bg-[#016837]"></span>
-                    <span class="text-[11px] font-extrabold uppercase tracking-wider text-[#F9A01B]">
+                    <span class="w-2 h-2 rounded-full bg-primary-600"></span>
+                    <span class="text-[11px] font-extrabold uppercase tracking-wider text-accent-500">
                         Détails de la commande
                     </span>
                 </div>
 
-                <h1 class="text-xl sm:text-2xl font-extrabold text-[#0a1b12] truncate">
+                <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 truncate">
                     {{ $order->reference }}
                 </h1>
 
-                <p class="text-xs sm:text-sm text-gray-500 mt-1">
+                <p class="text-xs sm:text-sm text-slate-500 mt-1">
                     Passée le {{ $order->created_at->format('d/m/Y à H:i') }}
                 </p>
             </div>
@@ -32,30 +32,30 @@
             {{-- Badge statut --}}
             @php
                 $statusConfig = [
-                    'pending' => ['label' => 'En attente', 'class' => 'bg-gray-100 text-gray-600'],
-                    'awaiting_payment' => ['label' => 'Paiement requis', 'class' => 'bg-[#F9A01B]/15 text-[#9A5D00]'],
-                    'paid' => ['label' => 'Payé', 'class' => 'bg-[#016837]/10 text-[#016837]'],
-                    'preparing' => ['label' => 'En préparation', 'class' => 'bg-[#016837]/10 text-[#016837]'],
+                    'pending' => ['label' => 'En attente', 'class' => 'bg-slate-100 text-slate-600'],
+                    'awaiting_payment' => ['label' => 'Paiement requis', 'class' => 'bg-accent-500/15 text-accent-600'],
+                    'paid' => ['label' => 'Payé', 'class' => 'bg-primary-600/10 text-primary-600'],
+                    'preparing' => ['label' => 'En préparation', 'class' => 'bg-primary-600/10 text-primary-600'],
                     'registered_origin' => [
                         'label' => 'Déposé en agence',
-                        'class' => 'bg-[#016837]/10 text-[#016837]',
+                        'class' => 'bg-primary-600/10 text-primary-600',
                     ],
-                    'in_transit' => ['label' => 'En transit', 'class' => 'bg-[#F9A01B]/15 text-[#9A5D00]'],
-                    'arrived_destination' => ['label' => 'Arrivé', 'class' => 'bg-[#016837]/10 text-[#016837]'],
+                    'in_transit' => ['label' => 'En transit', 'class' => 'bg-accent-500/15 text-accent-600'],
+                    'arrived_destination' => ['label' => 'Arrivé', 'class' => 'bg-primary-600/10 text-primary-600'],
                     'awaiting_buyer_confirmation' => [
                         'label' => 'À retirer',
-                        'class' => 'bg-[#F9A01B]/15 text-[#9A5D00]',
+                        'class' => 'bg-accent-500/15 text-accent-600',
                     ],
-                    'completed' => ['label' => 'Livré', 'class' => 'bg-[#016837]/10 text-[#016837]'],
-                    'auto_completed' => ['label' => 'Livré (auto)', 'class' => 'bg-[#016837]/10 text-[#016837]'],
-                    'disputed' => ['label' => 'Litige', 'class' => 'bg-[#E30613]/10 text-[#E30613]'],
-                    'cancelled' => ['label' => 'Annulée', 'class' => 'bg-gray-100 text-gray-500'],
-                    'failed' => ['label' => 'Échouée', 'class' => 'bg-[#E30613]/10 text-[#E30613]'],
+                    'completed' => ['label' => 'Livré', 'class' => 'bg-primary-600/10 text-primary-600'],
+                    'auto_completed' => ['label' => 'Livré (auto)', 'class' => 'bg-primary-600/10 text-primary-600'],
+                    'disputed' => ['label' => 'Litige', 'class' => 'bg-danger/10 text-danger'],
+                    'cancelled' => ['label' => 'Annulée', 'class' => 'bg-slate-100 text-slate-500'],
+                    'failed' => ['label' => 'Échouée', 'class' => 'bg-danger/10 text-danger'],
                 ];
 
                 $sc = $statusConfig[$order->status] ?? [
                     'label' => $order->status,
-                    'class' => 'bg-gray-100 text-gray-600',
+                    'class' => 'bg-slate-100 text-slate-600',
                 ];
             @endphp
 
@@ -71,10 +71,10 @@
             MESSAGE SUCCÈS
         ========================================================== --}}
         @if (session('success'))
-            <div class="bg-[#016837]/10 border border-[#016837]/20 text-[#016837]
+            <div class="bg-primary-600/10 border border-primary-600/20 text-primary-600
                         px-4 py-3 rounded-xl mb-5 text-sm flex items-center gap-2">
 
-                <div class="w-6 h-6 rounded-lg bg-[#016837] text-white
+                <div class="w-6 h-6 rounded-lg bg-primary-600 text-white
                             flex items-center justify-center flex-shrink-0">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
                          viewBox="0 0 24 24">
@@ -115,7 +115,7 @@
 
         @if (!in_array($order->status, ['cancelled', 'failed', 'disputed']))
 
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm
                         p-4 sm:p-5 mb-5">
 
                 <div class="flex items-center justify-between">
@@ -127,8 +127,8 @@
                             <div class="w-8 h-8 rounded-full flex items-center justify-center
                                         text-xs font-extrabold transition-all
                                 {{ $i <= $currentStep
-                                    ? 'bg-[#016837] text-white shadow-sm'
-                                    : 'bg-gray-100 text-gray-400' }}">
+                                    ? 'bg-primary-600 text-white shadow-sm'
+                                    : 'bg-slate-100 text-slate-400' }}">
 
                                 @if ($i < $currentStep)
                                     ✓
@@ -140,8 +140,8 @@
 
                             <p class="text-[9px] sm:text-[11px] mt-2 text-center leading-tight
                                 {{ $i <= $currentStep
-                                    ? 'text-[#016837] font-bold'
-                                    : 'text-gray-400' }}">
+                                    ? 'text-primary-600 font-bold'
+                                    : 'text-slate-400' }}">
                                 {{ $step['label'] }}
                             </p>
 
@@ -151,8 +151,8 @@
 
                             <div class="flex-1 h-0.5
                                 {{ $i < $currentStep
-                                    ? 'bg-[#016837]'
-                                    : 'bg-gray-100' }}
+                                    ? 'bg-primary-600'
+                                    : 'bg-slate-100' }}
                                 -mt-5 mx-1">
                             </div>
 
@@ -173,8 +173,8 @@
 
             <a href="{{ route('buyer.reviews.create', $order) }}"
                class="flex items-center justify-center gap-2 w-full
-                      bg-[#F9A01B] hover:bg-[#E99A0A]
-                      text-[#0a1b12] font-extrabold
+                      bg-accent-500 hover:bg-accent-500
+                      text-slate-900 font-extrabold
                       py-3 rounded-2xl text-center text-sm
                       transition mb-4">
 
@@ -191,13 +191,13 @@
         ========================================================== --}}
         @if ($order->status === 'awaiting_payment')
 
-            <div class="bg-[#F9A01B]/10 border border-[#F9A01B]/25
+            <div class="bg-accent-500/10 border border-accent-500/25
                         rounded-2xl p-4 sm:p-5 mb-5">
 
                 <div class="flex items-start gap-3">
 
-                    <div class="w-10 h-10 rounded-xl bg-[#F9A01B]/20
-                                text-[#9A5D00] flex items-center justify-center
+                    <div class="w-10 h-10 rounded-xl bg-accent-500/20
+                                text-accent-600 flex items-center justify-center
                                 flex-shrink-0">
 
                         <svg class="w-5 h-5" fill="none" stroke="currentColor"
@@ -211,45 +211,45 @@
 
                     <div class="flex-1">
 
-                        <h2 class="font-extrabold text-[#0a1b12] mb-1">
+                        <h2 class="font-extrabold text-slate-900 mb-1">
                             ⏳ En attente de paiement
                         </h2>
 
-                        <p class="text-sm text-[#7A5200] mb-3">
+                        <p class="text-sm text-accent-700 mb-3">
                             Transférez exactement
-                            <strong class="font-extrabold text-[#0a1b12]">
+                            <strong class="font-extrabold text-slate-900">
                                 {{ number_format($order->total_amount, 0, ',', ' ') }} FCFA
                             </strong>
                             vers le numéro de la plateforme ci-dessous :
                         </p>
 
-                        <div class="bg-white rounded-xl border border-[#F9A01B]/20
+                        <div class="bg-white rounded-xl border border-accent-500/20
                                     p-3.5 space-y-2 text-sm shadow-sm">
 
                             <div class="flex justify-between items-center gap-3">
-                                <span class="text-gray-600 font-medium">
+                                <span class="text-slate-600 font-medium">
                                     MTN MoMo
                                 </span>
 
                                 <span class="font-bold font-mono
-                                             bg-[#F9A01B]/10 text-[#9A5D00]
+                                             bg-accent-500/10 text-accent-600
                                              px-2.5 py-1 rounded-lg
-                                             border border-[#F9A01B]/20">
+                                             border border-accent-500/20">
                                     6XX XXX XXX
                                 </span>
                             </div>
 
                             <div class="flex justify-between items-center gap-3
-                                        border-t border-gray-100 pt-2">
+                                        border-t border-slate-100 pt-2">
 
-                                <span class="text-gray-600 font-medium">
+                                <span class="text-slate-600 font-medium">
                                     Orange Money
                                 </span>
 
                                 <span class="font-bold font-mono
-                                             bg-[#E30613]/5 text-[#E30613]
+                                             bg-danger/5 text-danger
                                              px-2.5 py-1 rounded-lg
-                                             border border-[#E30613]/15">
+                                             border border-danger/15">
                                     6XX XXX XXX
                                 </span>
 
@@ -257,7 +257,7 @@
 
                         </div>
 
-                        <p class="text-xs text-[#8A6500] mt-3">
+                        <p class="text-xs text-accent-600 mt-3">
                             Conservez l'ID de la transaction reçu par SMS après transfert.
                             L'administrateur validera votre paiement.
                         </p>
@@ -282,12 +282,12 @@
                     \App\Models\Order::STATUS_AWAITING_BUYER_CONFIRMATION,
                 ]))
 
-            <div class="mt-5 rounded-2xl border border-[#016837]/20
-                        bg-[#016837]/5 p-4 sm:p-5">
+            <div class="mt-5 rounded-2xl border border-primary-600/20
+                        bg-primary-600/5 p-4 sm:p-5">
 
                 <div class="flex items-start gap-3 sm:gap-4">
 
-                    <div class="w-11 h-11 rounded-xl bg-[#016837] text-white
+                    <div class="w-11 h-11 rounded-xl bg-primary-600 text-white
                                 flex items-center justify-center flex-shrink-0">
 
                         <svg class="w-5 h-5" fill="none" stroke="currentColor"
@@ -303,21 +303,21 @@
 
                     <div class="flex-1">
 
-                        <h3 class="font-extrabold text-[#0a1b12]">
+                        <h3 class="font-extrabold text-slate-900">
                             Votre code de retrait
                         </h3>
 
-                        <p class="text-sm text-[#016837] mt-1">
+                        <p class="text-sm text-primary-600 mt-1">
                             Présentez ce code au secrétaire lors du retrait
                             de votre colis.
                         </p>
 
                         <div class="mt-4 inline-flex items-center px-5 py-3
-                                    bg-white border border-[#016837]/20
+                                    bg-white border border-primary-600/20
                                     rounded-xl shadow-sm">
 
                             <span class="text-2xl sm:text-3xl font-black
-                                         tracking-[0.3em] text-[#016837]">
+                                         tracking-[0.3em] text-primary-600">
                                 {{ $order->otp_code }}
                             </span>
 
@@ -325,7 +325,7 @@
 
                         @if ($order->otp_expires_at)
 
-                            <p class="text-xs text-[#016837] mt-3">
+                            <p class="text-xs text-primary-600 mt-3">
                                 Valable jusqu'au
                                 {{ $order->otp_expires_at->format('d/m/Y à H:i') }}
                             </p>
@@ -354,19 +354,19 @@
 
             @if ($buyerReview)
 
-                <div class="bg-white rounded-2xl border border-gray-100
+                <div class="bg-white rounded-2xl border border-slate-100
                             shadow-sm p-5 mb-5">
 
                     <div class="flex items-center gap-2 mb-3">
 
-                        <div class="w-8 h-8 rounded-lg bg-[#F9A01B]/10
+                        <div class="w-8 h-8 rounded-lg bg-accent-500/10
                                     flex items-center justify-center">
 
-                            <span class="text-[#F9A01B]">★</span>
+                            <span class="text-accent-500">★</span>
 
                         </div>
 
-                        <h2 class="font-bold text-[#0a1b12]">
+                        <h2 class="font-bold text-slate-900">
                             Votre note reçue du vendeur
                         </h2>
 
@@ -374,13 +374,13 @@
 
                     <div class="flex items-center gap-2">
 
-                        <span class="text-[#F9A01B] text-xl">
+                        <span class="text-accent-500 text-xl">
                             @for ($i = 1; $i <= 5; $i++)
                                 {{ $i <= $buyerReview->rating ? '★' : '☆' }}
                             @endfor
                         </span>
 
-                        <span class="text-lg font-extrabold text-[#0a1b12]">
+                        <span class="text-lg font-extrabold text-slate-900">
                             {{ $buyerReview->rating }}/5
                         </span>
 
@@ -388,15 +388,15 @@
 
                     @if ($buyerReview->body)
 
-                        <p class="text-sm text-gray-600 mt-2 italic">
+                        <p class="text-sm text-slate-600 mt-2 italic">
                             "{{ $buyerReview->body }}"
                         </p>
 
                     @endif
 
-                    <p class="text-xs text-gray-400 mt-2">
+                    <p class="text-xs text-slate-400 mt-2">
                         Score de fiabilité actuel :
-                        <strong class="text-[#016837]">
+                        <strong class="text-primary-600">
                             {{ auth()->user()->trust_score }}/100
                         </strong>
                     </p>
@@ -414,13 +414,13 @@
             {{-- =====================================================
                 ARTICLES
             ====================================================== --}}
-            <div class="bg-white rounded-2xl border border-gray-100
+            <div class="bg-white rounded-2xl border border-slate-100
                         shadow-sm p-5">
 
-                <h2 class="font-extrabold text-[#0a1b12] mb-4 text-[11px]
+                <h2 class="font-extrabold text-slate-900 mb-4 text-[11px]
                            uppercase tracking-wider flex items-center gap-2">
 
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#016837]"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-primary-600"></span>
                     Articles commandés
 
                 </h2>
@@ -428,7 +428,7 @@
                 @foreach ($order->items as $item)
 
                     <div class="flex items-center gap-3.5 py-3
-                                {{ !$loop->last ? 'border-b border-gray-100' : '' }}">
+                                {{ !$loop->last ? 'border-b border-slate-100' : '' }}">
 
                         {{-- Visuel Produit / Variante --}}
                         @php
@@ -439,9 +439,9 @@
                         @if ($itemImage)
                             <img src="{{ asset('storage/' . $itemImage) }}"
                                  alt="{{ $item->product_title }}"
-                                 class="w-14 h-14 rounded-xl object-cover flex-shrink-0 bg-slate-50 border border-gray-100 shadow-xs">
+                                 class="w-14 h-14 rounded-xl object-cover flex-shrink-0 bg-slate-50 border border-slate-100 shadow-xs">
                         @else
-                            <div class="w-14 h-14 rounded-xl bg-slate-100 flex-shrink-0 flex items-center justify-center text-gray-400">
+                            <div class="w-14 h-14 rounded-xl bg-slate-100 flex-shrink-0 flex items-center justify-center text-slate-400">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                 </svg>
@@ -450,7 +450,7 @@
 
                         <div class="flex-1 min-w-0">
 
-                            <p class="font-bold text-gray-900 text-sm line-clamp-1">
+                            <p class="font-bold text-slate-900 text-sm line-clamp-1">
                                 {{ $item->product_title }}
                             </p>
 
@@ -476,14 +476,14 @@
                                 </div>
                             @endif
 
-                            <p class="text-xs text-gray-400 mt-1 font-medium">
+                            <p class="text-xs text-slate-400 mt-1 font-medium">
                                 {{ number_format($item->unit_price, 0, ',', ' ') }} FCFA × {{ $item->quantity }}
                             </p>
 
                         </div>
 
                         <div class="text-right flex-shrink-0">
-                            <p class="font-extrabold text-[#016837] text-sm sm:text-base">
+                            <p class="font-extrabold text-primary-600 text-sm sm:text-base">
                                 {{ number_format($item->subtotal, 0, ',', ' ') }} <span class="text-[10px] font-bold text-slate-500">FCFA</span>
                             </p>
                         </div>
@@ -500,61 +500,61 @@
             ====================================================== --}}
             @if ($order->payment)
 
-                <div class="bg-white rounded-2xl border border-gray-100
+                <div class="bg-white rounded-2xl border border-slate-100
                             shadow-sm p-5">
 
                     <h2 class="font-extrabold text-[11px] uppercase
-                               tracking-wider text-gray-400 mb-3">
+                               tracking-wider text-slate-400 mb-3">
                         Informations de règlement
                     </h2>
 
                     <div class="space-y-2.5 text-sm">
 
                         <div class="flex justify-between items-center gap-3">
-                            <span class="text-gray-500">
+                            <span class="text-slate-500">
                                 Opérateur
                             </span>
 
                             <span class="font-bold uppercase text-[10px]
                                          px-2.5 py-1 rounded-md border
                                 {{ $order->payment->payer_operator === 'mtn'
-                                    ? 'bg-[#F9A01B]/10 border-[#F9A01B]/20 text-[#9A5D00]'
-                                    : 'bg-[#E30613]/5 border-[#E30613]/15 text-[#E30613]' }}">
+                                    ? 'bg-accent-500/10 border-accent-500/20 text-accent-600'
+                                    : 'bg-danger/5 border-danger/15 text-danger' }}">
                                 {{ $order->payment->payer_operator }}
                             </span>
                         </div>
 
                         <div class="flex justify-between gap-3">
-                            <span class="text-gray-500">
+                            <span class="text-slate-500">
                                 Numéro payeur
                             </span>
 
-                            <span class="font-medium text-gray-900 text-right">
+                            <span class="font-medium text-slate-900 text-right">
                                 +237 {{ $order->payment->payer_phone }}
                             </span>
                         </div>
 
                         <div class="flex justify-between gap-3">
-                            <span class="text-gray-500">
+                            <span class="text-slate-500">
                                 Méthode
                             </span>
 
-                            <span class="font-medium text-gray-800 capitalize">
+                            <span class="font-medium text-slate-800 capitalize">
                                 {{ $order->payment->method }}
                             </span>
                         </div>
 
                         <div class="flex justify-between items-center gap-3
-                                    border-t border-gray-50 pt-2">
+                                    border-t border-slate-50 pt-2">
 
-                            <span class="text-gray-500">
+                            <span class="text-slate-500">
                                 Statut du règlement
                             </span>
 
                             <span class="text-[10px] font-bold px-2 py-1 rounded
                                 {{ $order->payment->status === 'completed'
-                                    ? 'bg-[#016837]/10 text-[#016837]'
-                                    : 'bg-gray-100 text-gray-600' }}">
+                                    ? 'bg-primary-600/10 text-primary-600'
+                                    : 'bg-slate-100 text-slate-600' }}">
                                 {{ ucfirst($order->payment->status) }}
                             </span>
 
@@ -577,21 +577,21 @@
                     $order->status === 'awaiting_buyer_confirmation'
             )
 
-                <div class="bg-[#E30613]/5 border border-[#E30613]/20
+                <div class="bg-danger/5 border border-danger/20
                             rounded-2xl p-4">
 
-                    <p class="text-sm font-extrabold text-[#E30613] mb-1">
+                    <p class="text-sm font-extrabold text-danger mb-1">
                         ⚠ Frais de transport à payer avant retrait
                     </p>
 
-                    <p class="text-sm text-[#E30613]/80 mb-3">
+                    <p class="text-sm text-danger/80 mb-3">
                         Montant :
                         {{ number_format($order->shipment->transport_fee, 0, ',', ' ') }}
                         FCFA
                     </p>
 
                     <a href="{{ route('buyer.orders.transport', $order) }}"
-                       class="block w-full bg-[#E30613] hover:bg-[#B90510]
+                       class="block w-full bg-accent-600 hover:bg-accent-700
                               text-white font-extrabold
                               py-3 rounded-xl text-center text-sm transition">
 
@@ -609,48 +609,48 @@
             ====================================================== --}}
             @if ($order->shipment)
 
-                <div class="bg-white rounded-2xl border border-gray-100
+                <div class="bg-white rounded-2xl border border-slate-100
                             shadow-sm p-5">
 
                     <h2 class="font-extrabold text-[11px] uppercase
-                               tracking-wider text-gray-400 mb-3">
+                               tracking-wider text-slate-400 mb-3">
                         Expédition & Livraison
                     </h2>
 
                     <div class="space-y-2.5 text-sm">
 
                         <div class="flex justify-between gap-3">
-                            <span class="text-gray-500">Destinataire</span>
-                            <span class="font-semibold text-gray-900 text-right">
+                            <span class="text-slate-500">Destinataire</span>
+                            <span class="font-semibold text-slate-900 text-right">
                                 {{ $order->shipment->recipient_name }}
                             </span>
                         </div>
 
                         <div class="flex justify-between gap-3">
-                            <span class="text-gray-500">Téléphone contact</span>
-                            <span class="font-medium text-gray-800 text-right">
+                            <span class="text-slate-500">Téléphone contact</span>
+                            <span class="font-medium text-slate-800 text-right">
                                 {{ $order->shipment->recipient_phone }}
                             </span>
                         </div>
 
                         <div class="flex justify-between gap-3">
-                            <span class="text-gray-500">Ville de destination</span>
-                            <span class="font-medium text-gray-800 text-right">
+                            <span class="text-slate-500">Ville de destination</span>
+                            <span class="font-medium text-slate-800 text-right">
                                 {{ $order->shipment->destination_city }}
                             </span>
                         </div>
 
                         <div class="flex justify-between items-center gap-3 pt-1">
 
-                            <span class="text-gray-500">
+                            <span class="text-slate-500">
                                 Frais d'expédition
                             </span>
 
                             <span class="text-[10px] sm:text-xs font-bold
                                         px-2.5 py-1 rounded-lg text-right
                                 {{ $order->shipment->shipping_included
-                                    ? 'bg-[#016837]/10 text-[#016837] border border-[#016837]/15'
-                                    : 'bg-[#F9A01B]/10 text-[#9A5D00] border border-[#F9A01B]/20' }}">
+                                    ? 'bg-primary-600/10 text-primary-600 border border-primary-600/15'
+                                    : 'bg-accent-500/10 text-accent-600 border border-accent-500/20' }}">
 
                                 {{ $order->shipment->shipping_included
                                     ? '✓ Inclus dans le prix'
@@ -663,13 +663,13 @@
                         @if ($order->shipment?->transport_fee > 0)
 
                             <div class="flex justify-between items-center
-                                        border-t border-gray-50 pt-2 mt-2">
+                                        border-t border-slate-50 pt-2 mt-2">
 
-                                <span class="text-gray-500">
+                                <span class="text-slate-500">
                                     Montant transport
                                 </span>
 
-                                <span class="font-extrabold text-[#E30613]">
+                                <span class="font-extrabold text-danger">
                                     {{ number_format($order->shipment->transport_fee, 0, ',', ' ') }}
                                     FCFA
                                 </span>
@@ -687,31 +687,31 @@
             {{-- =====================================================
                 BOUTIQUE
             ====================================================== --}}
-            <div class="bg-white rounded-2xl border border-gray-100
+            <div class="bg-white rounded-2xl border border-slate-100
                         shadow-sm p-5">
 
                 <h2 class="font-extrabold text-[11px] uppercase
-                           tracking-wider text-gray-400 mb-3">
+                           tracking-wider text-slate-400 mb-3">
                     Vendeur
                 </h2>
 
                 <div class="flex items-center gap-3">
 
-                    <div class="w-10 h-10 rounded-xl bg-[#016837]/10
-                                text-[#016837] font-extrabold
+                    <div class="w-10 h-10 rounded-xl bg-primary-600/10
+                                text-primary-600 font-extrabold
                                 flex items-center justify-center uppercase
-                                text-sm border border-[#016837]/10">
+                                text-sm border border-primary-600/10">
 
                         {{ substr($order->shop->name, 0, 2) }}
 
                     </div>
 
                     <div>
-                        <p class="font-bold text-gray-900 text-sm">
+                        <p class="font-bold text-slate-900 text-sm">
                             {{ $order->shop->name }}
                         </p>
 
-                        <p class="text-xs text-gray-400">
+                        <p class="text-xs text-slate-400">
                             {{ $order->shop->city }}
                         </p>
                     </div>
@@ -723,12 +723,12 @@
             {{-- =====================================================
                 RÉCAPITULATIF FINANCIER
             ====================================================== --}}
-            <div class="bg-[#016837]/5 border border-[#016837]/15
+            <div class="bg-primary-600/5 border border-primary-600/15
                         rounded-2xl p-5">
 
                 <div class="flex items-center gap-2 mb-4">
 
-                    <div class="w-8 h-8 rounded-lg bg-[#016837]
+                    <div class="w-8 h-8 rounded-lg bg-primary-600
                                 text-white flex items-center justify-center">
 
                         <svg class="w-4 h-4" fill="none" stroke="currentColor"
@@ -745,7 +745,7 @@
 
                     </div>
 
-                    <h2 class="font-extrabold text-[#0a1b12]">
+                    <h2 class="font-extrabold text-slate-900">
                         Récapitulatif financier
                     </h2>
 
@@ -753,37 +753,37 @@
 
                 <div class="space-y-2.5 text-sm">
 
-                    <div class="flex justify-between text-gray-600">
+                    <div class="flex justify-between text-slate-600">
                         <span>Sous-total articles</span>
 
-                        <span class="font-medium text-gray-900">
+                        <span class="font-medium text-slate-900">
                             {{ number_format($order->subtotal, 0, ',', ' ') }} FCFA
                         </span>
                     </div>
 
-                    <div class="flex justify-between text-gray-600">
+                    <div class="flex justify-between text-slate-600">
                         <span>Frais de protection (2%)</span>
 
-                        <span class="font-medium text-gray-900">
+                        <span class="font-medium text-slate-900">
                             {{ number_format($order->protection_fee, 0, ',', ' ') }} FCFA
                         </span>
                     </div>
 
-                    <div class="flex justify-between text-gray-600">
+                    <div class="flex justify-between text-slate-600">
                         <span>Frais Mobile Money (2%)</span>
 
-                        <span class="font-medium text-gray-900">
+                        <span class="font-medium text-slate-900">
                             {{ number_format($order->gateway_fee, 0, ',', ' ') }} FCFA
                         </span>
                     </div>
 
                     <div class="flex justify-between font-extrabold
-                                text-[#0a1b12] border-t border-[#016837]/15
+                                text-slate-900 border-t border-primary-600/15
                                 pt-3 mt-3 text-base">
 
                         <span>Total général</span>
 
-                        <span class="text-[#016837]">
+                        <span class="text-primary-600">
                             {{ number_format($order->total_amount, 0, ',', ' ') }}
                             FCFA
                         </span>
@@ -807,10 +807,10 @@
                         @csrf
 
                         <button
-                            class="w-full border-2 border-[#E30613]/20
-                                   text-[#E30613] font-bold
+                            class="w-full border-2 border-danger/20
+                                   text-danger font-bold
                                    py-3 rounded-2xl
-                                   hover:bg-[#E30613]/5 transition text-sm">
+                                   hover:bg-danger/5 transition text-sm">
 
                             Annuler la commande
 
@@ -826,11 +826,11 @@
                     @if ($order->dispute)
 
                         <a href="{{ route('buyer.disputes.show', $order->dispute) }}"
-                           class="block w-full bg-[#E30613]/5
-                                  border-2 border-[#E30613]/20
-                                  text-[#E30613] font-bold
+                           class="block w-full bg-danger/5
+                                  border-2 border-danger/20
+                                  text-danger font-bold
                                   py-3 rounded-2xl
-                                  hover:bg-[#E30613]/10
+                                  hover:bg-danger/10
                                   transition text-sm text-center">
 
                             Voir le litige
@@ -840,11 +840,11 @@
                     @else
 
                         <a href="{{ route('buyer.disputes.create', $order) }}"
-                           class="block w-full bg-[#F9A01B]/10
-                                  border-2 border-[#F9A01B]/25
-                                  text-[#9A5D00] font-bold
+                           class="block w-full bg-accent-500/10
+                                  border-2 border-accent-500/25
+                                  text-accent-600 font-bold
                                   py-3 rounded-2xl
-                                  hover:bg-[#F9A01B]/20
+                                  hover:bg-accent-500/20
                                   transition text-sm text-center">
 
                             ⚠️ Signaler un problème / Ouvrir un litige
@@ -858,10 +858,10 @@
 
                 <a href="{{ route('buyer.orders.index') }}"
                    class="block w-full bg-white
-                          border border-gray-200
-                          text-gray-600 font-bold
+                          border border-slate-200
+                          text-slate-600 font-bold
                           py-3 rounded-2xl
-                          hover:bg-[#F7F7F2]
+                          hover:bg-slate-50
                           transition text-sm text-center shadow-sm">
 
                     ← Retour à mes commandes

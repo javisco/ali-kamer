@@ -2,7 +2,7 @@
 
 @section('content')
 
-<div class="min-h-screen bg-[#FAF9F6] py-10 px-4">
+<div class="min-h-screen bg-slate-50 py-10 px-4">
 
     <div class="max-w-3xl mx-auto">
 
@@ -17,21 +17,21 @@
                 >
             </div>
 
-            <h1 class="text-2xl md:text-3xl font-bold text-[#004d28]">
+            <h1 class="text-2xl md:text-3xl font-bold text-primary-800">
                 Créez votre boutique Ali-Kamer
             </h1>
 
-            <p class="text-gray-500 mt-2">
+            <p class="text-slate-500 mt-2">
                 Votre compte Facebook est reconnu.
                 Complétez maintenant les informations de votre boutique.
             </p>
 
         </div>
 
-        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 md:p-8">
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 md:p-8">
 
             {{-- Facebook identity --}}
-            <div class="flex items-center gap-4 p-4 rounded-xl bg-gray-50 mb-7">
+            <div class="flex items-center gap-4 p-4 rounded-xl bg-slate-50 mb-7">
 
                 @if(!empty(session('facebook_pending.avatar')))
                     <img
@@ -40,23 +40,23 @@
                         class="w-14 h-14 rounded-full object-cover"
                     >
                 @else
-                    <div class="w-14 h-14 rounded-full bg-[#006837] text-white flex items-center justify-center font-bold text-xl">
+                    <div class="w-14 h-14 rounded-full bg-primary-600 text-white flex items-center justify-center font-bold text-xl">
                         {{ strtoupper(substr(session('facebook_pending.name', 'A'), 0, 1)) }}
                     </div>
                 @endif
 
                 <div>
-                    <p class="font-semibold text-gray-900">
+                    <p class="font-semibold text-slate-900">
                         {{ session('facebook_pending.name') }}
                     </p>
 
                     @if(session('facebook_pending.provider_email'))
-                        <p class="text-sm text-gray-500">
+                        <p class="text-sm text-slate-500">
                             {{ session('facebook_pending.provider_email') }}
                         </p>
                     @endif
 
-                    <span class="inline-flex mt-1 text-xs font-medium text-[#006837]">
+                    <span class="inline-flex mt-1 text-xs font-medium text-primary-600">
                         Compte Facebook vérifié
                     </span>
                 </div>
@@ -64,8 +64,8 @@
             </div>
 
             @if($errors->any())
-                <div class="mb-6 rounded-xl bg-red-50 border border-red-200 p-4">
-                    <ul class="text-sm text-red-700 space-y-1">
+                <div class="mb-6 rounded-xl bg-danger-50 border border-danger-200 p-4">
+                    <ul class="text-sm text-danger-700 space-y-1">
                         @foreach($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
@@ -82,14 +82,14 @@
 
                 {{-- Paiement --}}
                 <div>
-                    <h2 class="text-lg font-bold text-[#004d28] mb-4">
+                    <h2 class="text-lg font-bold text-primary-800 mb-4">
                         Informations de paiement
                     </h2>
 
                     <div class="grid md:grid-cols-2 gap-5">
 
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">
                                 Numéro Mobile Money *
                             </label>
 
@@ -99,19 +99,19 @@
                                 value="{{ old('phone_momo') }}"
                                 placeholder="6XXXXXXXX"
                                 required
-                                class="w-full rounded-xl border-gray-300 focus:border-[#006837] focus:ring-[#006837] px-4 py-3"
+                                class="w-full rounded-xl border-slate-300 focus:border-primary-600 focus:ring-primary-500 px-4 py-3"
                             >
                         </div>
 
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">
                                 Opérateur *
                             </label>
 
                             <select
                                 name="momo_operator"
                                 required
-                                class="w-full rounded-xl border-gray-300 focus:border-[#006837] focus:ring-[#006837] px-4 py-3"
+                                class="w-full rounded-xl border-slate-300 focus:border-primary-600 focus:ring-primary-500 px-4 py-3"
                             >
                                 <option value="">Choisir</option>
                                 <option value="mtn" {{ old('momo_operator') === 'mtn' ? 'selected' : '' }}>
@@ -128,14 +128,14 @@
 
                 {{-- Contact --}}
                 <div>
-                    <h2 class="text-lg font-bold text-[#004d28] mb-4">
+                    <h2 class="text-lg font-bold text-primary-800 mb-4">
                         Coordonnées
                     </h2>
 
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">
                             Téléphone
-                            <span class="font-normal text-gray-400">
+                            <span class="font-normal text-slate-400">
                                 (facultatif)
                             </span>
                         </label>
@@ -145,21 +145,21 @@
                             name="phone"
                             value="{{ old('phone') }}"
                             placeholder="6XXXXXXXX"
-                            class="w-full rounded-xl border-gray-300 focus:border-[#006837] focus:ring-[#006837] px-4 py-3"
+                            class="w-full rounded-xl border-slate-300 focus:border-primary-600 focus:ring-primary-500 px-4 py-3"
                         >
                     </div>
                 </div>
 
                 {{-- Boutique --}}
                 <div>
-                    <h2 class="text-lg font-bold text-[#004d28] mb-4">
+                    <h2 class="text-lg font-bold text-primary-800 mb-4">
                         Votre boutique
                     </h2>
 
                     <div class="space-y-5">
 
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">
                                 Nom de la boutique *
                             </label>
 
@@ -168,14 +168,14 @@
                                 name="shop_name"
                                 value="{{ old('shop_name') }}"
                                 required
-                                class="w-full rounded-xl border-gray-300 focus:border-[#006837] focus:ring-[#006837] px-4 py-3"
+                                class="w-full rounded-xl border-slate-300 focus:border-primary-600 focus:ring-primary-500 px-4 py-3"
                             >
                         </div>
 
                         <div class="grid md:grid-cols-2 gap-5">
 
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">
                                     Ville *
                                 </label>
 
@@ -185,12 +185,12 @@
                                     value="{{ old('city') }}"
                                     required
                                     placeholder="Yaoundé"
-                                    class="w-full rounded-xl border-gray-300 focus:border-[#006837] focus:ring-[#006837] px-4 py-3"
+                                    class="w-full rounded-xl border-slate-300 focus:border-primary-600 focus:ring-primary-500 px-4 py-3"
                                 >
                             </div>
 
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">
                                     Catégorie *
                                 </label>
 
@@ -200,14 +200,14 @@
                                     value="{{ old('category') }}"
                                     required
                                     placeholder="Électronique"
-                                    class="w-full rounded-xl border-gray-300 focus:border-[#006837] focus:ring-[#006837] px-4 py-3"
+                                    class="w-full rounded-xl border-slate-300 focus:border-primary-600 focus:ring-primary-500 px-4 py-3"
                                 >
                             </div>
 
                         </div>
 
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">
                                 Description
                             </label>
 
@@ -215,7 +215,7 @@
                                 name="description"
                                 rows="4"
                                 placeholder="Présentez brièvement votre boutique..."
-                                class="w-full rounded-xl border-gray-300 focus:border-[#006837] focus:ring-[#006837] px-4 py-3"
+                                class="w-full rounded-xl border-slate-300 focus:border-primary-600 focus:ring-primary-500 px-4 py-3"
                             >{{ old('description') }}</textarea>
                         </div>
 
@@ -223,11 +223,11 @@
                 </div>
 
                 {{-- Information KYC --}}
-                <div class="rounded-xl bg-yellow-50 border border-yellow-200 p-4">
+                <div class="rounded-xl bg-warning-50 border border-warning-200 p-4">
                     <div class="flex gap-3">
 
                         <svg
-                            class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5"
+                            class="w-5 h-5 text-warning flex-shrink-0 mt-0.5"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -241,11 +241,11 @@
                         </svg>
 
                         <div>
-                            <p class="font-semibold text-yellow-800">
+                            <p class="font-semibold text-warning-800">
                                 Vérification de votre boutique
                             </p>
 
-                            <p class="text-sm text-yellow-700 mt-1">
+                            <p class="text-sm text-warning-700 mt-1">
                                 Après la création de votre boutique,
                                 vous serez redirigé vers l'étape de
                                 vérification KYC.
@@ -257,7 +257,7 @@
 
                 <button
                     type="submit"
-                    class="w-full bg-[#006837] hover:bg-[#004d28] text-white font-bold py-3.5 rounded-xl transition"
+                    class="w-full bg-primary-600 hover:bg-primary-800 text-white font-bold py-3.5 rounded-xl transition"
                 >
                     Créer ma boutique
                 </button>
@@ -266,7 +266,7 @@
 
         </div>
 
-        <p class="text-center text-xs text-gray-400 mt-6">
+        <p class="text-center text-xs text-slate-400 mt-6">
             Ali-Kamer — Acheter et vendre sans stress.
         </p>
 

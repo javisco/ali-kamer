@@ -15,8 +15,8 @@
 
     {{-- Alerte de succès --}}
     @if(session('success'))
-        <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-3">
-            <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="p-4 rounded-xl bg-success-50 border border-success-200 text-success-800 text-xs font-semibold flex items-center gap-3">
+            <svg class="w-5 h-5 text-success shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
             <span>{{ session('success') }}</span>
@@ -55,14 +55,14 @@
                         @foreach($orders as $order)
                             @php
                                 $statusConfig = [
-                                    'paid'                         => ['label' => 'À préparer',          'class' => 'bg-blue-50 text-blue-700 border-blue-200',     'dot' => 'bg-blue-500'],
-                                    'preparing'                    => ['label' => 'En préparation',      'class' => 'bg-amber-50 text-amber-700 border-amber-200',   'dot' => 'bg-amber-500'],
-                                    'registered_origin'            => ['label' => 'Déposé',              'class' => 'bg-indigo-50 text-indigo-700 border-indigo-200', 'dot' => 'bg-indigo-500'],
-                                    'in_transit'                   => ['label' => 'En transit',           'class' => 'bg-purple-50 text-purple-700 border-purple-200', 'dot' => 'bg-purple-500'],
-                                    'arrived_destination'          => ['label' => 'Arrivé',               'class' => 'bg-teal-50 text-teal-700 border-teal-200',     'dot' => 'bg-teal-500'],
-                                    'awaiting_buyer_confirmation'  => ['label' => 'Attente confirmation', 'class' => 'bg-orange-50 text-orange-700 border-orange-200', 'dot' => 'bg-orange-500'],
-                                    'completed'                    => ['label' => 'Terminée',            'class' => 'bg-emerald-50 text-emerald-700 border-emerald-200', 'dot' => 'bg-emerald-500'],
-                                    'auto_completed'               => ['label' => 'Terminée (Auto)',     'class' => 'bg-emerald-50 text-emerald-700 border-emerald-200', 'dot' => 'bg-emerald-500'],
+                                    'paid'                         => ['label' => 'À préparer',          'class' => 'bg-primary-50 text-primary-700 border-primary-200',     'dot' => 'bg-primary-500'],
+                                    'preparing'                    => ['label' => 'En préparation',      'class' => 'bg-warning-50 text-warning-700 border-warning-200',   'dot' => 'bg-warning'],
+                                    'registered_origin'            => ['label' => 'Déposé',              'class' => 'bg-primary-50 text-primary-700 border-primary-200', 'dot' => 'bg-primary-500'],
+                                    'in_transit'                   => ['label' => 'En transit',           'class' => 'bg-primary-50 text-primary-700 border-primary-200', 'dot' => 'bg-primary-500'],
+                                    'arrived_destination'          => ['label' => 'Arrivé',               'class' => 'bg-primary-50 text-primary-700 border-primary-200',     'dot' => 'bg-primary-500'],
+                                    'awaiting_buyer_confirmation'  => ['label' => 'Attente confirmation', 'class' => 'bg-accent-50 text-accent-700 border-accent-200', 'dot' => 'bg-accent-500'],
+                                    'completed'                    => ['label' => 'Terminée',            'class' => 'bg-success-50 text-success-700 border-success-200', 'dot' => 'bg-success'],
+                                    'auto_completed'               => ['label' => 'Terminée (Auto)',     'class' => 'bg-success-50 text-success-700 border-success-200', 'dot' => 'bg-success'],
                                     'disputed'                     => ['label' => 'Litige ouvert',       'class' => 'bg-rose-50 text-rose-700 border-rose-200',       'dot' => 'bg-rose-500'],
                                     'cancelled'                    => ['label' => 'Annulée',              'class' => 'bg-slate-100 text-slate-500 border-slate-200',  'dot' => 'bg-slate-400'],
                                 ];
@@ -79,7 +79,7 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <p class="font-black text-slate-900">{{ number_format($order->net_amount, 0, ',', ' ') }} <span class="text-[10px] font-bold text-slate-500">FCFA</span></p>
-                                    <p class="text-[10px] text-emerald-600 font-semibold">Net vendeur</p>
+                                    <p class="text-[10px] text-success font-semibold">Net vendeur</p>
                                 </td>
                                 <td class="px-6 py-4">
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border {{ $sc['class'] }}">
@@ -93,7 +93,7 @@
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <a href="{{ route('seller.orders.show', $order) }}" 
-                                       class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-blue-50 text-[#1769E0] font-bold text-xs hover:bg-[#1769E0] hover:text-white transition-all">
+                                       class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary-50 text-[#1769E0] font-bold text-xs hover:bg-[#1769E0] hover:text-white transition-all">
                                         <span>Détails</span>
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -131,7 +131,7 @@
                             </div>
                             <div class="text-right">
                                 <p class="text-xs font-black text-slate-900">{{ number_format($order->net_amount, 0, ',', ' ') }} FCFA</p>
-                                <p class="text-[9px] text-emerald-600 font-bold">Net vendeur</p>
+                                <p class="text-[9px] text-success font-bold">Net vendeur</p>
                             </div>
                         </div>
 

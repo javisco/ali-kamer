@@ -67,21 +67,21 @@ class AgencyWalletTransaction extends Model
         return match ($this->type) {
             'credit_commission_pending' => [
                 'sign' => '+',
-                'text' => 'text-[#F9A01B]',
-                'bg' => 'bg-[#F9A01B]/10',
+                'text' => 'text-accent-500',
+                'bg' => 'bg-accent-500/10',
             ],
             'credit_commission',
             'debit_withdrawal_failed' => [
                 'sign' => '+',
-                'text' => 'text-[#016837]',
-                'bg' => 'bg-[#016837]/10',
+                'text' => 'text-primary-600',
+                'bg' => 'bg-primary-600/10',
             ],
             'debit_withdrawal' => [
                 'sign' => '-',
-                'text' => 'text-[#E30613]',
-                'bg' => 'bg-[#E30613]/10',
+                'text' => 'text-danger',
+                'bg' => 'bg-danger/10',
             ],
-            default => ['sign' => '', 'text' => 'text-gray-500', 'bg' => 'bg-gray-100'],
+            default => ['sign' => '', 'text' => 'text-slate-500', 'bg' => 'bg-slate-100'],
         };
     }
 }

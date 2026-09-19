@@ -22,9 +22,9 @@
                     sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
                 },
                 colors: {
-                    aliGreen: '#006837',
-                    aliRed: '#EA2328',
-                    aliYellow: '#FFC20E',
+                    aliGreen: '#0D9488',
+                    aliRed: '#EF4444',
+                    aliYellow: '#F59E0B',
                 }
             }
         }
@@ -109,7 +109,7 @@
                     class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl
                            bg-slate-50 border border-slate-100
                            shadow-sm flex items-center justify-center
-                           group-hover:border-[#006837]/30
+                           group-hover:border-primary-600/30
                            group-hover:shadow-md transition-all">
 
                     <img
@@ -131,10 +131,10 @@
 
             <span
                 class="shrink-0 text-[9px] sm:text-[10px] font-black
-                       tracking-widest text-[#006837]
-                       bg-[#006837]/10
+                       tracking-widest text-primary-600
+                       bg-primary-600/10
                        px-3 py-2 rounded-full
-                       uppercase border border-[#006837]/20">
+                       uppercase border border-primary-600/20">
                 Espace vendeur
             </span>
         </header>
@@ -151,12 +151,12 @@
                     <div class="flex items-center gap-2 mb-2">
 
                         <span
-                            class="w-2.5 h-2.5 rounded-full bg-[#EA2328] pulse-soft">
+                            class="w-2.5 h-2.5 rounded-full bg-danger pulse-soft">
                         </span>
 
                         <span
                             class="text-[10px] sm:text-xs font-extrabold
-                                   uppercase tracking-widest text-[#EA2328]">
+                                   uppercase tracking-widest text-danger">
                             Étape obligatoire
                         </span>
 
@@ -184,10 +184,10 @@
                 @if (session('fail'))
                     <div
                         class="mb-5 rounded-2xl
-                               border border-[#EA2328]/30
-                               bg-[#EA2328]/5
+                               border border-danger/30
+                               bg-danger/5
                                p-4 flex items-start gap-3
-                               text-sm text-[#EA2328] shadow-sm">
+                               text-sm text-danger shadow-sm">
 
                         <svg
                             class="w-5 h-5 shrink-0 mt-0.5"
@@ -214,10 +214,10 @@
                 @if (session('success'))
                     <div
                         class="mb-5 rounded-2xl
-                               border border-[#006837]/30
-                               bg-[#006837]/5
+                               border border-primary-600/30
+                               bg-primary-600/5
                                p-4 flex items-start gap-3
-                               text-sm text-[#006837] shadow-sm">
+                               text-sm text-primary-600 shadow-sm">
 
                         <svg
                             class="w-5 h-5 shrink-0 mt-0.5"
@@ -265,7 +265,7 @@
 
                                 CNI — Recto
 
-                                <span class="text-[#EA2328]">*</span>
+                                <span class="text-danger">*</span>
 
                             </label>
 
@@ -284,22 +284,22 @@
                                        file:border-0
                                        file:text-[10px]
                                        file:font-extrabold
-                                       file:bg-[#006837]
+                                       file:bg-primary-600
                                        file:text-white
-                                       hover:file:bg-[#00522b]
+                                       hover:file:bg-primary-700
                                        cursor-pointer transition
                                        focus:outline-none
                                        @error('cni_front_url')
-                                           border-[#EA2328]
+                                           border-danger
                                        @else
                                            border-slate-200
-                                           focus:border-[#006837]
+                                           focus:border-primary-600
                                            focus:ring-4
-                                           focus:ring-[#006837]/10
+                                           focus:ring-primary-500/10
                                        @enderror">
 
                             @error('cni_front_url')
-                                <p class="mt-1 text-[10px] text-[#EA2328] font-semibold">
+                                <p class="mt-1 text-[10px] text-danger font-semibold">
                                     {{ $message }}
                                 </p>
                             @enderror
@@ -318,7 +318,7 @@
 
                                 CNI — Verso
 
-                                <span class="text-[#EA2328]">*</span>
+                                <span class="text-danger">*</span>
 
                             </label>
 
@@ -337,22 +337,22 @@
                                        file:border-0
                                        file:text-[10px]
                                        file:font-extrabold
-                                       file:bg-[#006837]
+                                       file:bg-primary-600
                                        file:text-white
-                                       hover:file:bg-[#00522b]
+                                       hover:file:bg-primary-700
                                        cursor-pointer transition
                                        focus:outline-none
                                        @error('cni_back_url')
-                                           border-[#EA2328]
+                                           border-danger
                                        @else
                                            border-slate-200
-                                           focus:border-[#006837]
+                                           focus:border-primary-600
                                            focus:ring-4
-                                           focus:ring-[#006837]/10
+                                           focus:ring-primary-500/10
                                        @enderror">
 
                             @error('cni_back_url')
-                                <p class="mt-1 text-[10px] text-[#EA2328] font-semibold">
+                                <p class="mt-1 text-[10px] text-danger font-semibold">
                                     {{ $message }}
                                 </p>
                             @enderror
@@ -373,7 +373,7 @@
 
                             Selfie avec votre CNI
 
-                            <span class="text-[#EA2328]">*</span>
+                            <span class="text-danger">*</span>
 
                         </label>
 
@@ -397,22 +397,22 @@
                                    file:border-0
                                    file:text-[10px]
                                    file:font-extrabold
-                                   file:bg-[#006837]
+                                   file:bg-primary-600
                                    file:text-white
-                                   hover:file:bg-[#00522b]
+                                   hover:file:bg-primary-700
                                    cursor-pointer transition
                                    focus:outline-none
                                    @error('selfie_url')
-                                       border-[#EA2328]
+                                       border-danger
                                    @else
                                        border-slate-200
-                                       focus:border-[#006837]
+                                       focus:border-primary-600
                                        focus:ring-4
-                                       focus:ring-[#006837]/10
+                                       focus:ring-primary-500/10
                                    @enderror">
 
                         @error('selfie_url')
-                            <p class="mt-1 text-[10px] text-[#EA2328] font-semibold">
+                            <p class="mt-1 text-[10px] text-danger font-semibold">
                                 {{ $message }}
                             </p>
                         @enderror
@@ -461,16 +461,16 @@
                                    cursor-pointer transition
                                    focus:outline-none
                                    @error('rccm_url')
-                                       border-[#EA2328]
+                                       border-danger
                                    @else
                                        border-slate-200
-                                       focus:border-[#006837]
+                                       focus:border-primary-600
                                        focus:ring-4
-                                       focus:ring-[#006837]/10
+                                       focus:ring-primary-500/10
                                    @enderror">
 
                         @error('rccm_url')
-                            <p class="mt-1 text-[10px] text-[#EA2328] font-semibold">
+                            <p class="mt-1 text-[10px] text-danger font-semibold">
                                 {{ $message }}
                             </p>
                         @enderror
@@ -488,12 +488,12 @@
 
                         <div
                             class="w-9 h-9 rounded-xl
-                                   bg-[#006837]/10
+                                   bg-primary-600/10
                                    flex items-center justify-center
                                    shrink-0">
 
                             <svg
-                                class="w-4 h-4 text-[#006837]"
+                                class="w-4 h-4 text-primary-600"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -528,12 +528,12 @@
                     <button
                         type="submit"
                         class="w-full rounded-2xl
-                               bg-[#006837]
+                               bg-primary-600
                                py-3.5 sm:py-4
                                text-xs sm:text-sm
                                font-extrabold text-white
-                               shadow-lg shadow-[#006837]/20
-                               hover:bg-[#00522b]
+                               shadow-lg shadow-primary-600/20
+                               hover:bg-primary-700
                                active:scale-[0.99]
                                transition-all
                                flex items-center justify-center gap-2
@@ -544,7 +544,7 @@
                         </span>
 
                         <svg
-                            class="w-4 h-4 text-[#FFC20E]
+                            class="w-4 h-4 text-warning
                                    transition-transform
                                    group-hover:translate-x-1"
                             fill="none"
@@ -580,7 +580,7 @@
                 href="/"
                 class="inline-flex items-center gap-1.5
                        font-bold text-slate-500
-                       hover:text-[#006837] transition-colors">
+                       hover:text-primary-600 transition-colors">
 
                 <svg
                     class="w-4 h-4"
@@ -619,9 +619,9 @@
                w-1/2 min-h-screen
                relative overflow-hidden
                bg-gradient-to-br
-               from-[#004d28]
-               via-[#006837]
-               to-[#780f12]
+               from-primary-800
+               via-primary-600
+               to-danger-800
                text-white
                p-10 xl:p-14
                flex-col justify-between">
@@ -632,7 +632,7 @@
                    -top-32 -right-32
                    w-[500px] h-[500px]
                    rounded-full
-                   bg-[#FFC20E]/15
+                   bg-warning/15
                    blur-3xl
                    pointer-events-none">
         </div>
@@ -642,7 +642,7 @@
                    -bottom-32 -left-32
                    w-[500px] h-[500px]
                    rounded-full
-                   bg-[#EA2328]/20
+                   bg-danger/20
                    blur-3xl
                    pointer-events-none">
         </div>
@@ -674,16 +674,16 @@
                            font-black
                            tracking-widest
                            uppercase
-                           text-[#FFC20E]
+                           text-warning
                            bg-black/20
                            px-4 py-2
                            rounded-full
                            backdrop-blur-md
-                           border border-[#FFC20E]/30">
+                           border border-warning/30">
 
                     <span
                         class="w-2 h-2 rounded-full
-                               bg-[#EA2328] pulse-soft">
+                               bg-danger pulse-soft">
                     </span>
 
                     Sécurité & conformité
@@ -720,7 +720,7 @@
                     <br>
 
                     en toute
-                    <span class="text-[#FFC20E]">
+                    <span class="text-warning">
                         confiance.
                     </span>
 
@@ -728,7 +728,7 @@
 
                 <p
                     class="text-sm
-                           text-emerald-100/90
+                           text-success-100/90
                            mt-4
                            max-w-lg
                            leading-relaxed">
@@ -757,7 +757,7 @@
                            font-black
                            uppercase
                            tracking-widest
-                           text-[#FFC20E]">
+                           text-warning">
 
                     Validation du dossier
 
@@ -782,7 +782,7 @@
                 <div
                     class="w-10 h-10
                            rounded-xl
-                           bg-[#FFC20E]
+                           bg-warning
                            text-slate-900
                            font-black
                            text-xs
@@ -801,7 +801,7 @@
 
                     <p
                         class="text-[11px]
-                               text-emerald-100/75
+                               text-success-100/75
                                mt-1
                                leading-relaxed">
 
@@ -829,7 +829,7 @@
                 <div
                     class="w-10 h-10
                            rounded-xl
-                           bg-[#EA2328]
+                           bg-danger
                            text-white
                            font-black
                            text-xs
@@ -848,7 +848,7 @@
 
                     <p
                         class="text-[11px]
-                               text-emerald-100/75
+                               text-success-100/75
                                mt-1
                                leading-relaxed">
 
@@ -876,8 +876,8 @@
                 <div
                     class="w-10 h-10
                            rounded-xl
-                           bg-[#006837]
-                           border border-emerald-300/30
+                           bg-primary-600
+                           border border-success-200/30
                            text-white
                            font-black
                            text-xs
@@ -896,7 +896,7 @@
 
                     <p
                         class="text-[11px]
-                               text-emerald-100/75
+                               text-success-100/75
                                mt-1
                                leading-relaxed">
 
@@ -927,7 +927,7 @@
 
                     <p
                         class="text-[10px]
-                               text-emerald-100/80
+                               text-success-100/80
                                font-medium">
 
                         Temps moyen de traitement
@@ -937,7 +937,7 @@
                     <p
                         class="text-sm
                                font-black
-                               text-[#FFC20E]
+                               text-warning
                                mt-0.5">
 
                         24h à 48h ouvrées
@@ -952,21 +952,21 @@
                     <span
                         class="w-3.5 h-3.5
                                rounded-full
-                               bg-[#006837]
+                               bg-primary-600
                                border border-white/40">
                     </span>
 
                     <span
                         class="w-3.5 h-3.5
                                rounded-full
-                               bg-[#EA2328]
+                               bg-danger
                                border border-white/40">
                     </span>
 
                     <span
                         class="w-3.5 h-3.5
                                rounded-full
-                               bg-[#FFC20E]
+                               bg-warning
                                border border-white/40">
                     </span>
 
@@ -978,7 +978,7 @@
             <p
                 class="text-[10px]
                        text-center
-                       text-emerald-100/60
+                       text-success-100/60
                        mt-4">
 
                 Besoin d'aide ?

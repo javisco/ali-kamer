@@ -9,7 +9,7 @@
 
 @section('content')
 
-<div class="bg-[#F7F7F2] min-h-screen flex flex-col font-sans">
+<div class="bg-slate-50 min-h-screen flex flex-col font-sans">
 
     {{-- =========================================================
          EN-TÊTE CONVERSATION
@@ -19,7 +19,7 @@
         $partner = $user->isBuyer() ? $conversation->shop->name : $conversation->buyer->name;
     @endphp
 
-    <div class="bg-white border-b border-gray-100
+    <div class="bg-white border-b border-slate-100
                 sticky top-0 z-20 shadow-sm">
 
         <div class="max-w-3xl mx-auto px-4 py-3
@@ -29,7 +29,7 @@
 
                 {{-- Retour --}}
                 <a href="{{ route('messaging.index') }}"
-                   class="text-gray-400 hover:text-[#016837]
+                   class="text-slate-400 hover:text-primary-600
                           transition p-1 -ml-1">
 
                     <svg class="w-6 h-6"
@@ -49,7 +49,7 @@
 
                 {{-- Avatar --}}
                 <div class="w-9 h-9 rounded-xl
-                            bg-green-50 text-[#016837]
+                            bg-success-50 text-primary-600
                             font-bold flex items-center
                             justify-center uppercase text-xs">
 
@@ -61,14 +61,14 @@
                 {{-- Identité --}}
                 <div>
 
-                    <p class="font-bold text-gray-900 text-sm leading-tight">
+                    <p class="font-bold text-slate-900 text-sm leading-tight">
                         {{ $partner }}
                     </p>
 
                     @if ($user->isBuyer())
 
                         <a href="{{ route('shop.show', $conversation->shop) }}"
-                           class="text-[11px] text-[#016837]
+                           class="text-[11px] text-primary-600
                                   hover:underline">
 
                             Voir la boutique →
@@ -83,10 +83,10 @@
 
 
             {{-- Sécurité --}}
-            <span class="text-[10px] text-gray-400
+            <span class="text-[10px] text-slate-400
                          hidden sm:inline-block
-                         bg-gray-50 px-2.5 py-1 rounded-full
-                         border border-gray-100">
+                         bg-slate-50 px-2.5 py-1 rounded-full
+                         border border-slate-100">
 
                 🔒 Messages immuables & horodatés
 
@@ -116,10 +116,10 @@
 
                 <span class="text-xs
                     {{ $buyer->trust_score >= 70
-                        ? 'text-[#016837]'
+                        ? 'text-primary-600'
                         : ($buyer->trust_score >= 40
-                            ? 'text-[#F9A01B]'
-                            : 'text-[#E30613]') }}">
+                            ? 'text-accent-500'
+                            : 'text-danger') }}">
 
                     Score : {{ $buyer->trust_score }}/100
 
@@ -128,9 +128,9 @@
 
                 @if ($buyer->prepayment_required)
 
-                    <span class="text-xs bg-yellow-50
-                                 text-[#9A6500]
-                                 border border-yellow-200
+                    <span class="text-xs bg-warning-50
+                                 text-accent-600
+                                 border border-warning-200
                                  px-2 py-0.5 rounded-full">
 
                         ⚠ Prépaiement requis
@@ -162,7 +162,7 @@
                     @if (!$isMine)
 
                         <p class="text-[11px] font-semibold
-                                  text-gray-500 ml-1">
+                                  text-slate-500 ml-1">
 
                             {{ $message->sender->name }}
 
@@ -182,10 +182,10 @@
 
                             <span class="text-xs
                                 {{ $buyer->trust_score >= 70
-                                    ? 'text-[#016837]'
+                                    ? 'text-primary-600'
                                     : ($buyer->trust_score >= 40
-                                        ? 'text-[#F9A01B]'
-                                        : 'text-[#E30613]') }}">
+                                        ? 'text-accent-500'
+                                        : 'text-danger') }}">
 
                                 Score : {{ $buyer->trust_score }}/100
 
@@ -193,9 +193,9 @@
 
                             @if ($buyer->prepayment_required)
 
-                                <span class="text-xs bg-yellow-50
-                                             text-[#9A6500]
-                                             border border-yellow-200
+                                <span class="text-xs bg-warning-50
+                                             text-accent-600
+                                             border border-warning-200
                                              px-2 py-0.5 rounded-full">
 
                                     ⚠ Prépaiement requis
@@ -215,9 +215,9 @@
                     <div class="px-3.5 py-2.5 rounded-2xl
                                 text-sm shadow-sm relative
                                 {{ $isMine
-                                    ? 'bg-[#016837] text-white rounded-br-none'
-                                    : 'bg-white border border-gray-200
-                                       text-gray-800 rounded-bl-none' }}">
+                                    ? 'bg-primary-600 text-white rounded-br-none'
+                                    : 'bg-white border border-slate-200
+                                       text-slate-800 rounded-bl-none' }}">
 
 
                         {{-- Texte --}}
@@ -280,7 +280,7 @@
                                class="flex items-center gap-2.5 py-1
                                {{ $isMine
                                    ? 'text-white'
-                                   : 'text-[#016837]' }}">
+                                   : 'text-primary-600' }}">
 
                                 <svg class="w-6 h-6 flex-shrink-0"
                                      fill="currentColor"
@@ -347,8 +347,8 @@
                         <div class="flex items-center justify-end gap-1 mt-1
                             text-[10px]
                             {{ $isMine
-                                ? 'text-green-100'
-                                : 'text-gray-400' }}">
+                                ? 'text-success-100'
+                                : 'text-slate-400' }}">
 
                             <span>
                                 {{ $message->sent_at->format('H:i') }}
@@ -389,7 +389,7 @@
     {{-- =========================================================
          ZONE DE SAISIE
     ========================================================== --}}
-    <div class="bg-white border-t border-gray-200
+    <div class="bg-white border-t border-slate-200
                 sticky bottom-0 z-10">
 
         <div class="max-w-3xl mx-auto px-4 py-2.5">
@@ -404,9 +404,9 @@
 
                 {{-- Pièce jointe --}}
                 <label
-                    class="text-gray-400 hover:text-[#016837]
+                    class="text-slate-400 hover:text-primary-600
                            transition cursor-pointer p-1.5
-                           rounded-lg hover:bg-green-50
+                           rounded-lg hover:bg-success-50
                            flex-shrink-0"
                     title="Joindre une image ou un PDF">
 
@@ -443,19 +443,19 @@
                     placeholder="Écrivez un message..."
                     maxlength="2000"
                     autocomplete="off"
-                    class="flex-1 border border-gray-200
-                           bg-gray-50 rounded-xl px-4 py-2
+                    class="flex-1 border border-slate-200
+                           bg-slate-50 rounded-xl px-4 py-2
                            text-sm focus:bg-white
-                           focus:ring-2 focus:ring-green-500/10
-                           focus:border-[#016837]
+                           focus:ring-2 focus:ring-success/10
+                           focus:border-primary-600
                            transition">
 
 
                 {{-- Envoi --}}
                 <button
                     type="submit"
-                    class="bg-[#016837] hover:bg-[#0a542d]
-                           active:bg-[#064323]
+                    class="bg-primary-600 hover:bg-primary-700
+                           active:bg-primary-800
                            text-white font-medium px-4 py-2
                            rounded-xl transition text-sm
                            flex items-center justify-center
@@ -596,16 +596,16 @@
                                 <div class="px-3.5 py-2.5 rounded-2xl
                                             text-sm shadow-sm relative
                                             ${isMine
-                                                ? 'bg-[#016837] text-white rounded-br-none'
-                                                : 'bg-white border border-gray-200 text-gray-800 rounded-bl-none'}">
+                                                ? 'bg-primary-600 text-white rounded-br-none'
+                                                : 'bg-white border border-slate-200 text-slate-800 rounded-bl-none'}">
 
                                     ${content}
 
                                     <div class="flex items-center justify-end
                                                 gap-1 mt-1 text-[10px]
                                                 ${isMine
-                                                    ? 'text-green-100'
-                                                    : 'text-gray-400'}">
+                                                    ? 'text-success-100'
+                                                    : 'text-slate-400'}">
 
                                         <span>À l'instant</span>
 

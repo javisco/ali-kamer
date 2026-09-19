@@ -13,12 +13,12 @@
 
         <div>
             <div class="mb-1.5 flex items-center gap-2">
-                <span class="inline-flex items-center rounded-md bg-[#016837]/10 px-2 py-1
-                             text-[9px] font-bold uppercase tracking-wider text-[#016837]">
+                <span class="inline-flex items-center rounded-md bg-primary-600/10 px-2 py-1
+                             text-[9px] font-bold uppercase tracking-wider text-primary-600">
                     Espace acheteur
                 </span>
 
-                <span class="h-1 w-1 rounded-full bg-[#F9A01B]"></span>
+                <span class="h-1 w-1 rounded-full bg-accent-500"></span>
 
                 <span class="text-[9px] font-medium text-slate-400">
                     Mon activité
@@ -37,9 +37,9 @@
 
         {{-- Bouton marketplace --}}
         <a href="/"
-           class="inline-flex w-fit items-center gap-2 rounded-lg bg-[#016837] px-3.5 py-2
-                  text-[10px] font-bold text-white shadow-sm shadow-[#016837]/20
-                  transition hover:-translate-y-0.5 hover:bg-[#015a30]">
+           class="inline-flex w-fit items-center gap-2 rounded-lg bg-primary-600 px-3.5 py-2
+                  text-[10px] font-bold text-white shadow-sm shadow-primary-600/20
+                  transition hover:-translate-y-0.5 hover:bg-primary-700">
 
             <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
@@ -60,7 +60,7 @@
         <div class="group relative overflow-hidden rounded-xl border border-slate-200
                     bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
 
-            <div class="absolute right-0 top-0 h-16 w-16 rounded-bl-full bg-[#016837]/5"></div>
+            <div class="absolute right-0 top-0 h-16 w-16 rounded-bl-full bg-primary-600/5"></div>
 
             <div class="relative flex items-start justify-between">
 
@@ -69,7 +69,7 @@
                         Commandes en cours
                     </p>
 
-                    <p class="mt-1 text-xl font-extrabold text-[#016837]">
+                    <p class="mt-1 text-xl font-extrabold text-primary-600">
                         {{ $stats['active_orders'] }}
                     </p>
 
@@ -78,7 +78,7 @@
                     </p>
                 </div>
 
-                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#016837]/10 text-[#016837]">
+                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary-600/10 text-primary-600">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
                               d="M3 7h18M5 7l1.5 12h11L19 7M9 7V5a3 3 0 016 0v2"/>
@@ -92,7 +92,7 @@
         <div class="group relative overflow-hidden rounded-xl border border-slate-200
                     bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
 
-            <div class="absolute right-0 top-0 h-16 w-16 rounded-bl-full bg-[#016837]/5"></div>
+            <div class="absolute right-0 top-0 h-16 w-16 rounded-bl-full bg-primary-600/5"></div>
 
             <div class="relative flex items-start justify-between">
 
@@ -101,7 +101,7 @@
                         Livrées & terminées
                     </p>
 
-                    <p class="mt-1 text-xl font-extrabold text-[#016837]">
+                    <p class="mt-1 text-xl font-extrabold text-primary-600">
                         {{ $stats['completed_orders'] }}
                     </p>
 
@@ -110,7 +110,7 @@
                     </p>
                 </div>
 
-                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#016837]/10 text-[#016837]">
+                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary-600/10 text-primary-600">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
                               d="M5 13l4 4L19 7"/>
@@ -124,7 +124,7 @@
         <div class="group relative overflow-hidden rounded-xl border border-slate-200
                     bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
 
-            <div class="absolute right-0 top-0 h-16 w-16 rounded-bl-full bg-[#E30613]/5"></div>
+            <div class="absolute right-0 top-0 h-16 w-16 rounded-bl-full bg-danger/5"></div>
 
             <div class="relative flex items-start justify-between">
 
@@ -133,7 +133,7 @@
                         Litiges / réclamations
                     </p>
 
-                    <p class="mt-1 text-xl font-extrabold text-[#E30613]">
+                    <p class="mt-1 text-xl font-extrabold text-danger">
                         {{ $stats['disputed_orders'] }}
                     </p>
 
@@ -142,7 +142,7 @@
                     </p>
                 </div>
 
-                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#E30613]/10 text-[#E30613]">
+                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-danger/10 text-danger">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
                               d="M12 9v4M12 17h.01M10.3 4.7l-7 12A2 2 0 005 20h14a2 2 0 001.7-3.3l-7-12a2 2 0 00-3.4 0z"/>
@@ -156,7 +156,7 @@
         <div class="group relative overflow-hidden rounded-xl border border-slate-200
                     bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
 
-            <div class="absolute right-0 top-0 h-16 w-16 rounded-bl-full bg-[#F9A01B]/10"></div>
+            <div class="absolute right-0 top-0 h-16 w-16 rounded-bl-full bg-accent-500/10"></div>
 
             <div class="relative flex items-start justify-between">
 
@@ -167,7 +167,7 @@
 
                     <p class="mt-1 truncate text-lg font-extrabold text-slate-900">
                         {{ number_format($stats['total_spent'], 0, ',', ' ') }}
-                        <span class="text-[10px] text-[#F9A01B]">FCFA</span>
+                        <span class="text-[10px] text-accent-500">FCFA</span>
                     </p>
 
                     <p class="mt-0.5 text-[9px] text-slate-400">
@@ -175,7 +175,7 @@
                     </p>
                 </div>
 
-                <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#F9A01B]/15 text-[#b87500]">
+                <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent-500/15 text-accent-600">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
                               d="M12 3v18M16 7.5c0-1.7-1.8-3-4-3s-4 1.3-4 3 1.8 3 4 3 4 1.3 4 3-1.8 3-4 3-4-1.3-4-3"/>
@@ -195,12 +195,12 @@
         {{-- Historique --}}
         <a href="{{ route('buyer.wallet.history') }}"
            class="group flex items-center justify-between rounded-xl border border-slate-200
-                  bg-white p-3.5 shadow-sm transition hover:-translate-y-0.5 hover:border-[#016837]/20
+                  bg-white p-3.5 shadow-sm transition hover:-translate-y-0.5 hover:border-primary-600/20
                   hover:shadow-md">
 
             <div class="flex items-center gap-3">
 
-                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#016837]/10 text-[#016837]">
+                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary-600/10 text-primary-600">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
                               d="M3 12a9 9 0 1018 0A9 9 0 003 12zM12 7v5l3 2"/>
@@ -220,7 +220,7 @@
 
             <span class="flex h-7 w-7 items-center justify-center rounded-lg
                          bg-slate-50 text-slate-400 transition
-                         group-hover:bg-[#016837] group-hover:text-white">
+                         group-hover:bg-primary-600 group-hover:text-white">
                 <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M9 5l7 7-7 7"/>
@@ -232,12 +232,12 @@
         {{-- Profil --}}
         <a href="{{ route('buyer.profile') }}"
            class="group flex items-center justify-between rounded-xl border border-slate-200
-                  bg-white p-3.5 shadow-sm transition hover:-translate-y-0.5 hover:border-[#F9A01B]/30
+                  bg-white p-3.5 shadow-sm transition hover:-translate-y-0.5 hover:border-accent-500/30
                   hover:shadow-md">
 
             <div class="flex items-center gap-3">
 
-                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#F9A01B]/15 text-[#b87500]">
+                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-500/15 text-accent-600">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
                               d="M20 21a8 8 0 00-16 0M12 13a4 4 0 100-8 4 4 0 000 8z"/>
@@ -257,7 +257,7 @@
 
             <span class="flex h-7 w-7 items-center justify-center rounded-lg
                          bg-slate-50 text-slate-400 transition
-                         group-hover:bg-[#F9A01B] group-hover:text-white">
+                         group-hover:bg-accent-500 group-hover:text-white">
                 <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M9 5l7 7-7 7"/>
@@ -273,11 +273,11 @@
     ========================================================== --}}
     @if ($activeOrder)
 
-        <div class="relative mb-5 overflow-hidden rounded-2xl bg-[#0A1B12] shadow-lg">
+        <div class="relative mb-5 overflow-hidden rounded-2xl bg-slate-900 shadow-lg">
 
             {{-- Décor --}}
-            <div class="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-[#016837]/30"></div>
-            <div class="absolute -bottom-20 left-1/3 h-40 w-40 rounded-full bg-[#F9A01B]/10"></div>
+            <div class="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-primary-600/30"></div>
+            <div class="absolute -bottom-20 left-1/3 h-40 w-40 rounded-full bg-accent-500/10"></div>
 
             <div class="relative p-4 sm:p-5">
 
@@ -287,14 +287,14 @@
                     <div class="flex items-center gap-3">
 
                         <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10">
-                            <svg class="h-5 w-5 text-[#F9A01B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="h-5 w-5 text-accent-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
                                       d="M3 7h18M5 7l1.5 12h11L19 7M9 7V5a3 3 0 016 0v2"/>
                             </svg>
                         </div>
 
                         <div>
-                            <p class="text-[9px] font-bold uppercase tracking-[0.14em] text-[#F9A01B]">
+                            <p class="text-[9px] font-bold uppercase tracking-[0.14em] text-accent-500">
                                 Commande en cours
                             </p>
 
@@ -305,10 +305,10 @@
 
                     </div>
 
-                    <span class="inline-flex w-fit items-center rounded-full bg-[#F9A01B]/15
-                                 px-2.5 py-1 text-[9px] font-bold text-[#F9A01B]">
+                    <span class="inline-flex w-fit items-center rounded-full bg-accent-500/15
+                                 px-2.5 py-1 text-[9px] font-bold text-accent-500">
 
-                        <span class="mr-1.5 h-1.5 w-1.5 rounded-full bg-[#F9A01B]"></span>
+                        <span class="mr-1.5 h-1.5 w-1.5 rounded-full bg-accent-500"></span>
 
                         En suivi
                     </span>
@@ -362,13 +362,13 @@
                         $activeOrder->status === \App\Models\Order::STATUS_AWAITING_BUYER_CONFIRMATION
                     )
 
-                        <div class="flex flex-col gap-3 rounded-xl border border-[#F9A01B]/20
-                                    bg-[#F9A01B]/10 p-3.5 sm:flex-row sm:items-center sm:justify-between">
+                        <div class="flex flex-col gap-3 rounded-xl border border-accent-500/20
+                                    bg-accent-500/10 p-3.5 sm:flex-row sm:items-center sm:justify-between">
 
                             <div class="flex items-center gap-3">
 
                                 <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg
-                                            bg-[#F9A01B] text-[#0A1B12]">
+                                            bg-accent-500 text-slate-900">
 
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -377,7 +377,7 @@
                                 </div>
 
                                 <div>
-                                    <p class="text-[10px] font-bold text-[#F9A01B]">
+                                    <p class="text-[10px] font-bold text-accent-500">
                                         Code OTP de retrait
                                     </p>
 
@@ -391,7 +391,7 @@
                             <div class="flex items-center gap-2">
 
                                 <div class="rounded-lg bg-white px-3 py-2 text-center">
-                                    <span class="text-lg font-black tracking-[0.25em] text-[#0A1B12]">
+                                    <span class="text-lg font-black tracking-[0.25em] text-slate-900">
                                         {{ $activeOrder->otp_code }}
                                     </span>
                                 </div>
@@ -407,7 +407,7 @@
 
                             <div class="flex items-center gap-3">
 
-                                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#016837]">
+                                <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary-600">
                                     <svg class="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
                                               d="M9 5l7 7-7 7"/>
@@ -426,7 +426,7 @@
 
                             </div>
 
-                            <svg class="h-4 w-4 text-white/30 transition group-hover:translate-x-1 group-hover:text-[#F9A01B]"
+                            <svg class="h-4 w-4 text-white/30 transition group-hover:translate-x-1 group-hover:text-accent-500"
                                  fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                       d="M9 5l7 7-7 7"/>
@@ -453,7 +453,7 @@
         <div class="flex items-center justify-between border-b border-slate-100 px-4 py-3.5">
 
             <div>
-                <p class="text-[9px] font-bold uppercase tracking-wider text-[#016837]">
+                <p class="text-[9px] font-bold uppercase tracking-wider text-primary-600">
                     Activité
                 </p>
 
@@ -463,7 +463,7 @@
             </div>
 
             <a href="{{ route('buyer.orders.index') }}"
-               class="group inline-flex items-center gap-1 text-[10px] font-bold text-[#016837] hover:text-[#014d2c]">
+               class="group inline-flex items-center gap-1 text-[10px] font-bold text-primary-600 hover:text-primary-700">
 
                 Voir tout
 
@@ -524,26 +524,26 @@
                                         'bg-slate-100 text-slate-600',
 
                                     \App\Models\Order::STATUS_AWAITING_PAYMENT =>
-                                        'bg-[#F9A01B]/15 text-[#9a6400]',
+                                        'bg-accent-500/15 text-accent-600',
 
                                     \App\Models\Order::STATUS_PAID,
                                     \App\Models\Order::STATUS_PREPARING,
                                     \App\Models\Order::STATUS_IN_TRANSIT =>
-                                        'bg-[#016837]/10 text-[#016837]',
+                                        'bg-primary-600/10 text-primary-600',
 
                                     \App\Models\Order::STATUS_REGISTERED_ORIGIN,
                                     \App\Models\Order::STATUS_ARRIVED_DESTINATION =>
-                                        'bg-[#F9A01B]/15 text-[#9a6400]',
+                                        'bg-accent-500/15 text-accent-600',
 
                                     \App\Models\Order::STATUS_AWAITING_BUYER_CONFIRMATION =>
-                                        'bg-[#F9A01B]/20 text-[#8a5800]',
+                                        'bg-accent-500/20 text-accent-600',
 
                                     \App\Models\Order::STATUS_COMPLETED,
                                     \App\Models\Order::STATUS_AUTO_COMPLETED =>
-                                        'bg-[#016837]/10 text-[#016837]',
+                                        'bg-primary-600/10 text-primary-600',
 
                                     \App\Models\Order::STATUS_DISPUTED =>
-                                        'bg-[#E30613]/10 text-[#E30613]',
+                                        'bg-danger/10 text-danger',
 
                                     \App\Models\Order::STATUS_CANCELLED,
                                     \App\Models\Order::STATUS_FAILED =>
@@ -571,7 +571,7 @@
                                 };
                             @endphp
 
-                            <tr class="group transition hover:bg-[#016837]/[0.025]">
+                            <tr class="group transition hover:bg-primary-600/[0.025]">
 
                                 <td class="whitespace-nowrap px-4 py-3">
 
@@ -595,7 +595,7 @@
                                         {{ number_format($order->total_amount, 0, ',', ' ') }}
                                     </span>
 
-                                    <span class="ml-0.5 text-[8px] font-bold text-[#F9A01B]">
+                                    <span class="ml-0.5 text-[8px] font-bold text-accent-500">
                                         FCFA
                                     </span>
 
@@ -624,8 +624,8 @@
 
                                     <a href="{{ route('buyer.orders.show', $order) }}"
                                        class="inline-flex h-7 items-center gap-1 rounded-md px-2
-                                              text-[9px] font-bold text-[#016837]
-                                              transition hover:bg-[#016837]/10">
+                                              text-[9px] font-bold text-primary-600
+                                              transition hover:bg-primary-600/10">
 
                                         Détails
 
@@ -662,17 +662,17 @@
                             \App\Models\Order::STATUS_REGISTERED_ORIGIN,
                             \App\Models\Order::STATUS_ARRIVED_DESTINATION,
                             \App\Models\Order::STATUS_AWAITING_BUYER_CONFIRMATION =>
-                                'bg-[#F9A01B]/15 text-[#946000]',
+                                'bg-accent-500/15 text-accent-600',
 
                             \App\Models\Order::STATUS_PAID,
                             \App\Models\Order::STATUS_PREPARING,
                             \App\Models\Order::STATUS_IN_TRANSIT,
                             \App\Models\Order::STATUS_COMPLETED,
                             \App\Models\Order::STATUS_AUTO_COMPLETED =>
-                                'bg-[#016837]/10 text-[#016837]',
+                                'bg-primary-600/10 text-primary-600',
 
                             \App\Models\Order::STATUS_DISPUTED =>
-                                'bg-[#E30613]/10 text-[#E30613]',
+                                'bg-danger/10 text-danger',
 
                             default =>
                                 'bg-slate-100 text-slate-500',
@@ -732,7 +732,7 @@
                                     {{ number_format($order->total_amount, 0, ',', ' ') }}
                                 </p>
 
-                                <p class="text-[8px] font-bold text-[#F9A01B]">
+                                <p class="text-[8px] font-bold text-accent-500">
                                     FCFA
                                 </p>
 
@@ -759,7 +759,7 @@
             ================================================== --}}
             <div class="px-5 py-10 text-center">
 
-                <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-[#016837]/10 text-[#016837]">
+                <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-primary-600/10 text-primary-600">
 
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"
@@ -778,9 +778,9 @@
                 </p>
 
                 <a href="{{ route('buyer.home') }}"
-                   class="mt-4 inline-flex items-center gap-2 rounded-lg bg-[#016837] px-4 py-2
+                   class="mt-4 inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2
                           text-[10px] font-bold text-white shadow-sm transition
-                          hover:bg-[#015a30]">
+                          hover:bg-primary-700">
 
                     Découvrir les produits
 

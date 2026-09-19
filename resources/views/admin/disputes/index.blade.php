@@ -2,7 +2,7 @@
 @section('title', 'Litiges')
 
 @section('content')
-    <div class="bg-gradient-to-b from-[#F3FBF6]/50 via-white to-slate-50 min-h-screen py-8">
+    <div class="bg-gradient-to-b from-success-50/50 via-white to-slate-50 min-h-screen py-8">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
             {{-- En-tête de page --}}
@@ -23,7 +23,7 @@
                     <a href="?status={{ $s }}"
                         class="px-4 py-2 rounded-xl text-xs font-bold transition-all duration-150 flex items-center gap-2
                       {{ $status === $s 
-                          ? 'bg-[#00843D] text-white shadow-sm shadow-emerald-900/20' 
+                          ? 'bg-primary-600 text-white shadow-sm shadow-success-800/20' 
                           : 'bg-transparent text-slate-600 hover:text-slate-900 hover:bg-white/60' }}">
                         <span>{{ $label }}</span>
                         @if (isset($counts[$s]) && $counts[$s] > 0)
@@ -51,7 +51,7 @@
                         </thead>
                         <tbody class="divide-y divide-slate-100 text-sm">
                             @forelse($disputes as $dispute)
-                                <tr class="hover:bg-[#F3FBF6]/40 transition-colors">
+                                <tr class="hover:bg-success-50/40 transition-colors">
                                     <td class="px-5 py-4 font-black text-slate-900">
                                         <span class="inline-flex items-center gap-1.5">
                                             <span class="w-1.5 h-1.5 rounded-full bg-[#CE1126]"></span>
@@ -71,7 +71,7 @@
                                     </td>
                                     <td class="px-5 py-4 text-right">
                                         <a href="{{ route('admin.disputes.show', $dispute) }}"
-                                            class="inline-flex items-center gap-1 text-xs font-black text-[#00843D] hover:text-[#006B32] hover:underline">
+                                            class="inline-flex items-center gap-1 text-xs font-black text-primary-600 hover:text-primary-700 hover:underline">
                                             <span>Examiner</span>
                                             <span>→</span>
                                         </a>

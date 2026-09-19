@@ -19,7 +19,7 @@
             is_active: true
         }
     }"
-    class="min-h-screen bg-[#F7F7F2] p-4 sm:p-5 lg:p-6">
+    class="min-h-screen bg-slate-50 p-4 sm:p-5 lg:p-6">
 
         <div class="max-w-7xl mx-auto space-y-5">
 
@@ -30,14 +30,14 @@
 
                 <div>
                     <div class="flex items-center gap-2 mb-1">
-                        <span class="w-2 h-2 rounded-full bg-[#016837]"></span>
+                        <span class="w-2 h-2 rounded-full bg-primary-600"></span>
 
-                        <span class="text-[10px] font-black uppercase tracking-[0.16em] text-[#016837]">
+                        <span class="text-[10px] font-black uppercase tracking-[0.16em] text-primary-600">
                             Administration
                         </span>
                     </div>
 
-                    <h1 class="text-xl sm:text-2xl font-black text-[#0a1b12] tracking-tight">
+                    <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                         Gestion des catégories
                     </h1>
 
@@ -51,7 +51,7 @@
                             bg-white border border-slate-200
                             shadow-sm">
 
-                    <span class="w-2 h-2 rounded-full bg-[#F9A01B]"></span>
+                    <span class="w-2 h-2 rounded-full bg-accent-500"></span>
 
                     <span class="text-xs font-bold text-slate-600">
                         {{ $categories->total() }} catégories
@@ -65,12 +65,12 @@
                 FLASH MESSAGES
             ====================================================== --}}
             @if(session('success'))
-                <div class="p-3.5 bg-[#016837]/5 border border-[#016837]/20
-                            text-[#016837] rounded-xl text-xs sm:text-sm font-semibold
+                <div class="p-3.5 bg-primary-600/5 border border-primary-600/20
+                            text-primary-600 rounded-xl text-xs sm:text-sm font-semibold
                             flex items-center justify-between gap-3">
 
                     <div class="flex items-center gap-2">
-                        <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-[#016837]/10">
+                        <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-primary-600/10">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round"
                                       stroke-linejoin="round"
@@ -83,7 +83,7 @@
                     </div>
 
                     <button onclick="this.parentElement.remove()"
-                            class="text-[#016837]/60 hover:text-[#016837] transition">
+                            class="text-primary-600/60 hover:text-primary-600 transition">
                         ✕
                     </button>
                 </div>
@@ -91,12 +91,12 @@
 
 
             @if(session('error'))
-                <div class="p-3.5 bg-[#E30613]/5 border border-[#E30613]/20
-                            text-[#E30613] rounded-xl text-xs sm:text-sm font-semibold
+                <div class="p-3.5 bg-danger/5 border border-danger/20
+                            text-danger rounded-xl text-xs sm:text-sm font-semibold
                             flex items-center justify-between gap-3">
 
                     <div class="flex items-center gap-2">
-                        <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-[#E30613]/10">
+                        <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-danger/10">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round"
                                       stroke-linejoin="round"
@@ -109,7 +109,7 @@
                     </div>
 
                     <button onclick="this.parentElement.remove()"
-                            class="text-[#E30613]/60 hover:text-[#E30613] transition">
+                            class="text-danger/60 hover:text-danger transition">
                         ✕
                     </button>
                 </div>
@@ -130,15 +130,15 @@
 
                     {{-- Header --}}
                     <div class="px-5 py-4 border-b border-slate-100
-                                bg-[#0a1b12] text-white">
+                                bg-slate-900 text-white">
 
                         <div class="flex items-center gap-3">
 
                             <div class="w-9 h-9 rounded-xl
-                                        bg-[#F9A01B]/15
+                                        bg-accent-500/15
                                         flex items-center justify-center">
 
-                                <svg class="w-5 h-5 text-[#F9A01B]"
+                                <svg class="w-5 h-5 text-accent-500"
                                      fill="none"
                                      stroke="currentColor"
                                      viewBox="0 0 24 24">
@@ -188,8 +188,8 @@
                                           rounded-xl text-sm text-slate-800
                                           placeholder:text-slate-400
                                           focus:bg-white
-                                          focus:ring-2 focus:ring-[#016837]/15
-                                          focus:border-[#016837]
+                                          focus:ring-2 focus:ring-primary-500/15
+                                          focus:border-primary-600
                                           transition-all outline-none">
                         </div>
 
@@ -206,8 +206,8 @@
                                            bg-slate-50 border border-slate-200
                                            rounded-xl text-sm text-slate-800
                                            focus:bg-white
-                                           focus:ring-2 focus:ring-[#016837]/15
-                                           focus:border-[#016837]
+                                           focus:ring-2 focus:ring-primary-500/15
+                                           focus:border-primary-600
                                            transition-all outline-none">
 
                                 <option value="">
@@ -239,10 +239,10 @@
                                           file:px-3
                                           file:rounded-lg
                                           file:border-0
-                                          file:bg-[#016837]/10
-                                          file:text-[#016837]
+                                          file:bg-primary-600/10
+                                          file:text-primary-600
                                           file:font-bold
-                                          hover:file:bg-[#016837]/15
+                                          hover:file:bg-primary-600/15
                                           transition">
                         </div>
 
@@ -261,8 +261,8 @@
                                           bg-slate-50 border border-slate-200
                                           rounded-xl text-sm
                                           focus:bg-white
-                                          focus:ring-2 focus:ring-[#016837]/15
-                                          focus:border-[#016837]
+                                          focus:ring-2 focus:ring-primary-500/15
+                                          focus:border-primary-600
                                           transition outline-none">
                         </div>
 
@@ -277,8 +277,8 @@
                                    checked
                                    class="w-4 h-4 rounded
                                           border-slate-300
-                                          text-[#016837]
-                                          focus:ring-[#016837]">
+                                          text-primary-600
+                                          focus:ring-primary-500">
 
                             <label for="is_active"
                                    class="text-xs font-bold text-slate-700">
@@ -291,12 +291,12 @@
                         {{-- Bouton --}}
                         <button type="submit"
                                 class="w-full py-2.5
-                                       bg-[#016837]
+                                       bg-primary-600
                                        text-white
                                        font-black
                                        rounded-xl
                                        text-xs
-                                       hover:bg-[#0a542d]
+                                       hover:bg-primary-700
                                        active:scale-[0.99]
                                        shadow-sm
                                        transition">
@@ -335,10 +335,10 @@
 
                         <div class="flex items-center gap-3">
 
-                            <div class="w-9 h-9 rounded-xl bg-[#016837]/10
+                            <div class="w-9 h-9 rounded-xl bg-primary-600/10
                                         flex items-center justify-center">
 
-                                <svg class="w-5 h-5 text-[#016837]"
+                                <svg class="w-5 h-5 text-primary-600"
                                      fill="none"
                                      stroke="currentColor"
                                      viewBox="0 0 24 24">
@@ -351,7 +351,7 @@
                             </div>
 
                             <div>
-                                <h3 class="text-sm font-black text-[#0a1b12]">
+                                <h3 class="text-sm font-black text-slate-900">
                                     Arborescence des catégories
                                 </h3>
 
@@ -364,9 +364,9 @@
 
                         <span class="hidden sm:inline-flex items-center
                                      px-2.5 py-1 rounded-lg
-                                     bg-[#F9A01B]/10
+                                     bg-accent-500/10
                                      text-[#9a6200]
-                                     border border-[#F9A01B]/20
+                                     border border-accent-500/20
                                      text-[10px] font-black">
                             Organisation
                         </span>
@@ -397,9 +397,9 @@
 
                                         @else
 
-                                            <div class="w-10 h-10 bg-[#016837]/10
+                                            <div class="w-10 h-10 bg-primary-600/10
                                                         rounded-xl flex items-center justify-center
-                                                        text-xs font-black text-[#016837]">
+                                                        text-xs font-black text-primary-600">
                                                 #
                                             </div>
 
@@ -408,7 +408,7 @@
 
                                         <div class="min-w-0">
 
-                                            <h4 class="font-black text-[#0a1b12]
+                                            <h4 class="font-black text-slate-900
                                                        text-sm sm:text-base truncate">
                                                 {{ $category->name }}
                                             </h4>
@@ -418,7 +418,7 @@
                                                          font-bold mt-0.5">
 
                                                 <span class="w-1.5 h-1.5 rounded-full
-                                                             bg-[#F9A01B]"></span>
+                                                             bg-accent-500"></span>
 
                                                 {{ $category->products_count }} produits
 
@@ -445,8 +445,8 @@
                                                 editModal = true;
                                             "
                                             class="p-2 text-slate-400
-                                                   hover:text-[#016837]
-                                                   hover:bg-[#016837]/10
+                                                   hover:text-primary-600
+                                                   hover:bg-primary-600/10
                                                    rounded-lg transition"
                                             title="Modifier">
 
@@ -475,7 +475,7 @@
                                                     class="px-2.5 py-1 text-[10px]
                                                            font-black rounded-full transition
                                                            {{ $category->is_active
-                                                               ? 'bg-[#016837]/10 text-[#016837] border border-[#016837]/20'
+                                                               ? 'bg-primary-600/10 text-primary-600 border border-primary-600/20'
                                                                : 'bg-slate-100 text-slate-500 border border-slate-200' }}">
 
                                                 {{ $category->is_active ? 'Actif' : 'Inactif' }}
@@ -494,8 +494,8 @@
 
                                             <button type="submit"
                                                     class="p-2 text-slate-400
-                                                           hover:text-[#E30613]
-                                                           hover:bg-[#E30613]/10
+                                                           hover:text-danger
+                                                           hover:bg-danger/10
                                                            rounded-lg transition"
                                                     title="Supprimer">
 
@@ -526,18 +526,18 @@
 
                                     <div class="ml-5 sm:ml-8 mt-3
                                                 space-y-1.5
-                                                border-l-2 border-[#F9A01B]/30
+                                                border-l-2 border-accent-500/30
                                                 pl-4">
 
                                         @foreach ($category->children as $child)
 
                                             <div class="flex items-center justify-between
                                                         gap-3 py-2 px-2 rounded-lg
-                                                        hover:bg-[#F9A01B]/5 transition">
+                                                        hover:bg-accent-500/5 transition">
 
                                                 <div class="flex items-center gap-2 min-w-0">
 
-                                                    <span class="text-[#F9A01B] text-xs">
+                                                    <span class="text-accent-500 text-xs">
                                                         ↳
                                                     </span>
 
@@ -571,8 +571,8 @@
                                                             editModal = true;
                                                         "
                                                         class="p-1.5 text-slate-400
-                                                               hover:text-[#016837]
-                                                               hover:bg-[#016837]/10
+                                                               hover:text-primary-600
+                                                               hover:bg-primary-600/10
                                                                rounded-lg transition"
                                                         title="Modifier">
 
@@ -601,7 +601,7 @@
                                                                 class="px-2 py-0.5 text-[9px]
                                                                        font-black rounded-full transition
                                                                        {{ $child->is_active
-                                                                           ? 'bg-[#016837]/10 text-[#016837] border border-[#016837]/15'
+                                                                           ? 'bg-primary-600/10 text-primary-600 border border-primary-600/15'
                                                                            : 'bg-slate-100 text-slate-500' }}">
 
                                                             {{ $child->is_active ? 'Actif' : 'Inactif' }}
@@ -621,8 +621,8 @@
 
                                                         <button type="submit"
                                                                 class="p-1.5 text-slate-400
-                                                                       hover:text-[#E30613]
-                                                                       hover:bg-[#E30613]/10
+                                                                       hover:text-danger
+                                                                       hover:bg-danger/10
                                                                        rounded-lg transition">
 
                                                             <svg class="w-3.5 h-3.5"
@@ -683,7 +683,7 @@
                  x-transition:leave-end="opacity-0"
                  class="fixed inset-0 z-[999]
                         flex items-center justify-center
-                        p-4 bg-[#0a1b12]/70 backdrop-blur-sm"
+                        p-4 bg-slate-900/70 backdrop-blur-sm"
                  x-cloak>
 
                 <div @click.away="editModal = false"
@@ -698,15 +698,15 @@
                     <div class="px-5 py-4
                                 border-b border-slate-100
                                 flex items-center justify-between
-                                bg-[#0a1b12]">
+                                bg-slate-900">
 
                         <div class="flex items-center gap-3">
 
                             <div class="w-9 h-9 rounded-xl
-                                        bg-[#F9A01B]/15
+                                        bg-accent-500/15
                                         flex items-center justify-center">
 
-                                <svg class="w-5 h-5 text-[#F9A01B]"
+                                <svg class="w-5 h-5 text-accent-500"
                                      fill="none"
                                      stroke="currentColor"
                                      viewBox="0 0 24 24">
@@ -782,8 +782,8 @@
                                           rounded-xl text-sm
                                           focus:bg-white
                                           focus:ring-2
-                                          focus:ring-[#016837]/15
-                                          focus:border-[#016837]
+                                          focus:ring-primary-500/15
+                                          focus:border-primary-600
                                           transition outline-none">
 
                         </div>
@@ -805,8 +805,8 @@
                                            rounded-xl text-sm
                                            focus:bg-white
                                            focus:ring-2
-                                           focus:ring-[#016837]/15
-                                           focus:border-[#016837]
+                                           focus:ring-primary-500/15
+                                           focus:border-primary-600
                                            transition outline-none">
 
                                 <option value="">
@@ -842,10 +842,10 @@
                                           file:px-3
                                           file:rounded-lg
                                           file:border-0
-                                          file:bg-[#016837]/10
-                                          file:text-[#016837]
+                                          file:bg-primary-600/10
+                                          file:text-primary-600
                                           file:font-bold
-                                          hover:file:bg-[#016837]/15
+                                          hover:file:bg-primary-600/15
                                           transition">
 
                         </div>
@@ -868,8 +868,8 @@
                                           rounded-xl text-sm
                                           focus:bg-white
                                           focus:ring-2
-                                          focus:ring-[#016837]/15
-                                          focus:border-[#016837]
+                                          focus:ring-primary-500/15
+                                          focus:border-primary-600
                                           transition outline-none">
 
                         </div>
@@ -885,8 +885,8 @@
                                    :checked="editCategory.is_active"
                                    class="w-4 h-4 rounded
                                           border-slate-300
-                                          text-[#016837]
-                                          focus:ring-[#016837]">
+                                          text-primary-600
+                                          focus:ring-primary-500">
 
                             <label for="edit_is_active"
                                    class="text-xs font-bold text-slate-700">
@@ -916,11 +916,11 @@
 
                             <button type="submit"
                                     class="px-5 py-2.5
-                                           bg-[#016837]
+                                           bg-primary-600
                                            text-white
                                            rounded-xl
                                            text-xs font-black
-                                           hover:bg-[#0a542d]
+                                           hover:bg-primary-700
                                            shadow-sm
                                            transition">
 

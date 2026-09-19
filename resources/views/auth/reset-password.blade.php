@@ -27,16 +27,16 @@
             <div class="bg-white shadow-xl rounded-3xl overflow-hidden border border-slate-100">
 
                 <!-- En-tête avec les couleurs officielles Ali-Kamer -->
-                <div class="bg-gradient-to-br from-[#004d28] via-[#006837] to-[#046A38] text-white px-8 py-8 relative overflow-hidden">
+                <div class="bg-gradient-to-br from-primary-800 via-primary-600 to-[#046A38] text-white px-8 py-8 relative overflow-hidden">
                     <div class="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-white/10 blur-xl"></div>
-                    <div class="absolute -bottom-10 -left-10 w-28 h-28 rounded-full bg-[#FFC20E]/20 blur-lg"></div>
+                    <div class="absolute -bottom-10 -left-10 w-28 h-28 rounded-full bg-warning/20 blur-lg"></div>
                     
                     <div class="relative z-10">
-                        <span class="text-[11px] font-bold tracking-widest uppercase text-[#FFC20E] bg-white/10 px-3 py-1 rounded-full border border-white/10">
+                        <span class="text-[11px] font-bold tracking-widest uppercase text-warning bg-white/10 px-3 py-1 rounded-full border border-white/10">
                             Sécurité du compte
                         </span>
                         <h1 class="text-2xl sm:text-3xl font-black mt-3">Nouveau mot de passe</h1>
-                        <p class="mt-1.5 text-emerald-100/90 text-xs sm:text-sm leading-relaxed">
+                        <p class="mt-1.5 text-success-100/90 text-xs sm:text-sm leading-relaxed">
                             Choisissez un mot de passe fort pour sécuriser l'accès à votre compte.
                         </p>
                     </div>
@@ -47,8 +47,8 @@
 
                     <!-- Statut Succès -->
                     @if (session('status'))
-                        <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3.5 text-xs sm:text-sm text-emerald-700 font-medium flex items-center gap-2">
-                            <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="mb-6 rounded-2xl border border-success-200 bg-success-50 px-4 py-3.5 text-xs sm:text-sm text-success-700 font-medium flex items-center gap-2">
+                            <svg class="w-5 h-5 text-success shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                             </svg>
                             <span>{{ session('status') }}</span>
@@ -57,9 +57,9 @@
 
                     <!-- Erreurs Globales -->
                     @if ($errors->any())
-                        <div class="mb-6 rounded-2xl border border-red-200 bg-red-50 p-4 text-xs sm:text-sm text-red-700">
+                        <div class="mb-6 rounded-2xl border border-danger-200 bg-danger-50 p-4 text-xs sm:text-sm text-danger-700">
                             <p class="font-bold mb-1">Attention, veuillez corriger les points suivants :</p>
-                            <ul class="list-disc list-inside space-y-1 text-red-600">
+                            <ul class="list-disc list-inside space-y-1 text-danger">
                                 @foreach ($errors->all() as $error)
                                     <li>{{ $error }}</li>
                                 @endforeach
@@ -88,31 +88,31 @@
                         <!-- Nouveau mot de passe -->
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-                                Nouveau mot de passe <span class="text-red-500">*</span>
+                                Nouveau mot de passe <span class="text-danger">*</span>
                             </label>
                             <input type="password" name="password" required placeholder="Minimum 8 caractères"
                                 class="w-full rounded-2xl border px-4 py-3 text-sm transition bg-slate-50/50
-                                @error('password') border-red-500 focus:ring-red-500/20 @else border-slate-200 focus:border-[#006837] focus:ring-4 focus:ring-[#006837]/10 @enderror focus:outline-none">
+                                @error('password') border-danger focus:ring-danger/20 @else border-slate-200 focus:border-primary-600 focus:ring-4 focus:ring-primary-500/10 @enderror focus:outline-none">
                             @error('password')
-                                <p class="mt-1 text-xs text-red-600 font-medium">{{ $message }}</p>
+                                <p class="mt-1 text-xs text-danger font-medium">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Confirmation -->
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-                                Confirmer le mot de passe <span class="text-red-500">*</span>
+                                Confirmer le mot de passe <span class="text-danger">*</span>
                             </label>
                             <input type="password" name="password_confirmation" required placeholder="Retapez le mot de passe"
-                                class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm transition bg-slate-50/50 focus:border-[#006837] focus:ring-4 focus:ring-[#006837]/10 focus:outline-none">
+                                class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm transition bg-slate-50/50 focus:border-primary-600 focus:ring-4 focus:ring-primary-500/10 focus:outline-none">
                         </div>
 
                         <!-- Conseils Sécurité -->
-                        <div class="rounded-2xl border border-amber-200 bg-amber-50/50 p-4">
-                            <h2 class="mb-2 font-bold text-amber-900 text-xs flex items-center gap-1.5">
+                        <div class="rounded-2xl border border-warning-200 bg-warning-50/50 p-4">
+                            <h2 class="mb-2 font-bold text-warning-800 text-xs flex items-center gap-1.5">
                                 <span>🛡️</span> Conseils pour un mot de passe solide :
                             </h2>
-                            <ul class="list-disc pl-4 space-y-1 text-[11px] text-amber-800/90 leading-relaxed">
+                            <ul class="list-disc pl-4 space-y-1 text-[11px] text-warning-800/90 leading-relaxed">
                                 <li>Utilisez au moins 8 caractères.</li>
                                 <li>Mélangez lettres majuscules, minuscules et chiffres.</li>
                                 <li>Ajoutez un symbole spécial (!, @, #, $, etc.).</li>
@@ -122,7 +122,7 @@
 
                         <!-- Bouton Valider -->
                         <button type="submit"
-                            class="w-full rounded-2xl bg-[#006837] py-3.5 text-sm font-bold text-white shadow-lg shadow-[#006837]/20 transition hover:bg-[#004d28] active:scale-[0.99] flex items-center justify-center gap-2">
+                            class="w-full rounded-2xl bg-primary-600 py-3.5 text-sm font-bold text-white shadow-lg shadow-primary-600/20 transition hover:bg-primary-800 active:scale-[0.99] flex items-center justify-center gap-2">
                             <span>Mettre à jour le mot de passe</span>
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
@@ -134,7 +134,7 @@
 
                 <!-- Footer carte / Retour à la connexion -->
                 <div class="bg-slate-50 px-6 py-4 border-t border-slate-100 text-center">
-                    <a href="{{ route('login.show') }}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-[#006837] transition-colors">
+                    <a href="{{ route('login.show') }}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-primary-600 transition-colors">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>

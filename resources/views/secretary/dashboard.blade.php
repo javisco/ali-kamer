@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="bg-[#F7F7F2] min-h-screen py-8">
+<div class="bg-slate-50 min-h-screen py-8">
     <div class="max-w-3xl mx-auto px-4">
 
         {{-- =========================================================
@@ -14,7 +14,7 @@
 
             <div class="flex items-center gap-3 mb-2">
 
-                <div class="w-10 h-10 rounded-xl bg-[#016837]
+                <div class="w-10 h-10 rounded-xl bg-primary-600
                             flex items-center justify-center shadow-sm">
                     <svg class="w-5 h-5 text-white"
                          fill="none"
@@ -30,11 +30,11 @@
 
                 <div>
                     <p class="text-[10px] font-bold uppercase
-                              tracking-[0.12em] text-[#F9A01B]">
+                              tracking-[0.12em] text-accent-500">
                         Espace professionnel
                     </p>
 
-                    <h1 class="text-2xl font-extrabold text-gray-900">
+                    <h1 class="text-2xl font-extrabold text-slate-900">
                         Interface Secrétaire
                     </h1>
                 </div>
@@ -46,9 +46,9 @@
 
                 <div class="flex items-center gap-2 mt-3">
 
-                    <span class="w-7 h-7 rounded-lg bg-green-50
+                    <span class="w-7 h-7 rounded-lg bg-success-50
                                  flex items-center justify-center">
-                        <svg class="w-4 h-4 text-[#016837]"
+                        <svg class="w-4 h-4 text-primary-600"
                              fill="none"
                              stroke="currentColor"
                              viewBox="0 0 24 24">
@@ -66,7 +66,7 @@
                         </svg>
                     </span>
 
-                    <p class="text-sm text-gray-500">
+                    <p class="text-sm text-slate-500">
                         {{ $counter->full_name }}
                     </p>
 
@@ -75,8 +75,8 @@
             @else
 
                 <div class="flex items-start gap-3
-                            bg-red-50 border border-red-200
-                            text-[#E30613] px-4 py-3 rounded-xl
+                            bg-danger-50 border border-danger-200
+                            text-danger px-4 py-3 rounded-xl
                             mt-4 text-sm">
 
                     <span class="text-base">⚠</span>
@@ -86,7 +86,7 @@
                             Aucun comptoir assigné
                         </p>
 
-                        <p class="text-xs mt-0.5 text-red-600">
+                        <p class="text-xs mt-0.5 text-danger">
                             Contactez l'administrateur.
                         </p>
                     </div>
@@ -104,14 +104,14 @@
         @if (session('success'))
 
             <div class="flex items-center gap-3
-                        bg-green-50 border border-green-200
-                        text-[#016837] px-4 py-3 rounded-xl
+                        bg-success-50 border border-success-200
+                        text-primary-600 px-4 py-3 rounded-xl
                         mb-6 text-sm">
 
-                <div class="w-7 h-7 rounded-lg bg-green-100
+                <div class="w-7 h-7 rounded-lg bg-success-100
                             flex items-center justify-center shrink-0">
 
-                    <svg class="w-4 h-4 text-[#016837]"
+                    <svg class="w-4 h-4 text-primary-600"
                          fill="none"
                          stroke="currentColor"
                          viewBox="0 0 24 24">
@@ -136,11 +136,11 @@
         <div class="mb-3">
 
             <p class="text-[10px] font-bold uppercase
-                      tracking-[0.12em] text-gray-400">
+                      tracking-[0.12em] text-slate-400">
                 Gestion des colis
             </p>
 
-            <p class="text-sm text-gray-500 mt-1">
+            <p class="text-sm text-slate-500 mt-1">
                 Sélectionnez l'opération à effectuer.
             </p>
 
@@ -154,19 +154,19 @@
                 DÉPÔT
             ====================================================== --}}
             <a href="{{ route('secretary.deposit.page') }}"
-               class="group bg-white rounded-2xl border border-gray-100
+               class="group bg-white rounded-2xl border border-slate-100
                       shadow-sm p-5
-                      hover:shadow-md hover:border-green-200
+                      hover:shadow-md hover:border-success-200
                       transition-all duration-200
                       flex items-center gap-4">
 
-                <div class="w-12 h-12 bg-green-50
+                <div class="w-12 h-12 bg-success-50
                             rounded-xl flex items-center
                             justify-center flex-shrink-0
-                            group-hover:bg-[#016837]
+                            group-hover:bg-primary-600
                             transition-colors">
 
-                    <svg class="w-6 h-6 text-[#016837]
+                    <svg class="w-6 h-6 text-primary-600
                                 group-hover:text-white transition-colors"
                          fill="none"
                          stroke="currentColor"
@@ -187,21 +187,21 @@
 
                     <div class="flex items-center justify-between gap-3">
 
-                        <h2 class="font-bold text-gray-900
-                                   group-hover:text-[#016837]
+                        <h2 class="font-bold text-slate-900
+                                   group-hover:text-primary-600
                                    transition-colors">
                             Enregistrer un dépôt
                         </h2>
 
-                        <span class="text-gray-300
-                                     group-hover:text-[#016837]
+                        <span class="text-slate-300
+                                     group-hover:text-primary-600
                                      transition-colors">
                             →
                         </span>
 
                     </div>
 
-                    <p class="text-sm text-gray-500 mt-0.5">
+                    <p class="text-sm text-slate-500 mt-0.5">
                         Le vendeur vous donne son code — saisissez-le ici
                     </p>
 
@@ -214,19 +214,19 @@
                 ARRIVÉES
             ====================================================== --}}
             <a href="{{ route('secretary.arrivals.page') }}"
-               class="group bg-white rounded-2xl border border-gray-100
+               class="group bg-white rounded-2xl border border-slate-100
                       shadow-sm p-5
-                      hover:shadow-md hover:border-yellow-200
+                      hover:shadow-md hover:border-warning-200
                       transition-all duration-200
                       flex items-center gap-4">
 
-                <div class="w-12 h-12 bg-yellow-50
+                <div class="w-12 h-12 bg-warning-50
                             rounded-xl flex items-center
                             justify-center flex-shrink-0
-                            group-hover:bg-[#F9A01B]
+                            group-hover:bg-accent-500
                             transition-colors">
 
-                    <svg class="w-6 h-6 text-[#F9A01B]
+                    <svg class="w-6 h-6 text-accent-500
                                 group-hover:text-white transition-colors"
                          fill="none"
                          stroke="currentColor"
@@ -253,15 +253,15 @@
 
                     <div class="flex items-center gap-3">
 
-                        <h2 class="font-bold text-gray-900
-                                   group-hover:text-[#016837]
+                        <h2 class="font-bold text-slate-900
+                                   group-hover:text-primary-600
                                    transition-colors">
                             Valider les arrivées
                         </h2>
 
                         @if ($stats['pending_arrivals'] > 0)
 
-                            <span class="bg-[#F9A01B] text-white
+                            <span class="bg-accent-500 text-white
                                          text-[11px] font-bold
                                          min-w-6 h-6 px-2
                                          rounded-full
@@ -276,14 +276,14 @@
 
                     </div>
 
-                    <p class="text-sm text-gray-500 mt-0.5">
+                    <p class="text-sm text-slate-500 mt-0.5">
                         Colis arrivés à valider à votre comptoir
                     </p>
 
                 </div>
 
-                <span class="text-gray-300
-                             group-hover:text-[#F9A01B]
+                <span class="text-slate-300
+                             group-hover:text-accent-500
                              transition-colors">
                     →
                 </span>
@@ -295,19 +295,19 @@
                 REMISE OTP
             ====================================================== --}}
             <a href="{{ route('secretary.handover.page') }}"
-               class="group bg-white rounded-2xl border border-gray-100
+               class="group bg-white rounded-2xl border border-slate-100
                       shadow-sm p-5
-                      hover:shadow-md hover:border-red-200
+                      hover:shadow-md hover:border-danger-200
                       transition-all duration-200
                       flex items-center gap-4">
 
-                <div class="w-12 h-12 bg-red-50
+                <div class="w-12 h-12 bg-danger-50
                             rounded-xl flex items-center
                             justify-center flex-shrink-0
-                            group-hover:bg-[#E30613]
+                            group-hover:bg-danger
                             transition-colors">
 
-                    <svg class="w-6 h-6 text-[#E30613]
+                    <svg class="w-6 h-6 text-danger
                                 group-hover:text-white transition-colors"
                          fill="none"
                          stroke="currentColor"
@@ -334,15 +334,15 @@
 
                     <div class="flex items-center gap-3">
 
-                        <h2 class="font-bold text-gray-900
-                                   group-hover:text-[#016837]
+                        <h2 class="font-bold text-slate-900
+                                   group-hover:text-primary-600
                                    transition-colors">
                             Remettre un colis
                         </h2>
 
                         @if ($stats['pending_handovers'] > 0)
 
-                            <span class="bg-[#E30613] text-white
+                            <span class="bg-danger text-white
                                          text-[11px] font-bold
                                          min-w-6 h-6 px-2
                                          rounded-full
@@ -357,14 +357,14 @@
 
                     </div>
 
-                    <p class="text-sm text-gray-500 mt-0.5">
+                    <p class="text-sm text-slate-500 mt-0.5">
                         Saisir le code OTP de l'acheteur
                     </p>
 
                 </div>
 
-                <span class="text-gray-300
-                             group-hover:text-[#E30613]
+                <span class="text-slate-300
+                             group-hover:text-danger
                              transition-colors">
                     →
                 </span>
@@ -378,20 +378,20 @@
             LÉGENDE RAPIDE
         ========================================================== --}}
         <div class="mt-6 flex flex-wrap items-center justify-center
-                    gap-x-5 gap-y-2 text-[10px] text-gray-400">
+                    gap-x-5 gap-y-2 text-[10px] text-slate-400">
 
             <div class="flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-[#016837]"></span>
+                <span class="w-2 h-2 rounded-full bg-primary-600"></span>
                 Dépôt
             </div>
 
             <div class="flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-[#F9A01B]"></span>
+                <span class="w-2 h-2 rounded-full bg-accent-500"></span>
                 Arrivée
             </div>
 
             <div class="flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-[#E30613]"></span>
+                <span class="w-2 h-2 rounded-full bg-danger"></span>
                 Remise OTP
             </div>
 

@@ -36,8 +36,8 @@
 
                 <!-- Messages d'Alerte -->
                 @if (session('fail'))
-                    <div class="mb-3 rounded-2xl border border-red-200 bg-red-50/90 p-3 text-xs sm:text-sm text-red-700 shadow-sm flex items-center gap-3">
-                        <svg class="h-5 w-5 shrink-0 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div class="mb-3 rounded-2xl border border-danger-200 bg-danger-50/90 p-3 text-xs sm:text-sm text-danger-700 shadow-sm flex items-center gap-3">
+                        <svg class="h-5 w-5 shrink-0 text-danger" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <span class="font-medium">{{ session('fail') }}</span>
@@ -45,9 +45,9 @@
                 @endif
 
                 @if ($errors->any())
-                    <div class="mb-3 rounded-2xl border border-red-200 bg-red-50/90 p-3 text-xs text-red-700 shadow-sm">
-                        <p class="font-bold text-xs text-red-800 mb-0.5">Veuillez corriger les erreurs suivantes :</p>
-                        <ul class="list-disc list-inside text-xs text-red-600 space-y-0.5">
+                    <div class="mb-3 rounded-2xl border border-danger-200 bg-danger-50/90 p-3 text-xs text-danger-700 shadow-sm">
+                        <p class="font-bold text-xs text-danger-800 mb-0.5">Veuillez corriger les erreurs suivantes :</p>
+                        <ul class="list-disc list-inside text-xs text-danger space-y-0.5">
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
                             @endforeach
@@ -93,44 +93,44 @@
                     <!-- SECTION 1 : INFOS PERSONNELLES -->
                     <div class="space-y-3 pt-1">
                         <div class="flex items-center gap-2 border-b border-slate-100 pb-1.5">
-                            <span class="flex h-5 w-5 items-center justify-center rounded-full bg-[#006837]/10 text-[11px] font-extrabold text-[#006837]">1</span>
+                            <span class="flex h-5 w-5 items-center justify-center rounded-full bg-primary-600/10 text-[11px] font-extrabold text-primary-600">1</span>
                             <h2 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider">Informations personnelles</h2>
                         </div>
 
                         <!-- Nom complet -->
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                                Nom complet <span class="text-red-500">*</span>
+                                Nom complet <span class="text-danger">*</span>
                             </label>
                             <input type="text" name="name" value="{{ old('name') }}" required placeholder="Jean Dupont"
                                 class="w-full rounded-2xl border px-3.5 py-2 text-sm transition bg-slate-50/50 hover:bg-white focus:bg-white
-                                @error('name') border-red-500 focus:ring-2 focus:ring-red-500/10 @else border-slate-200 focus:border-[#006837] focus:ring-4 focus:ring-[#006837]/10 @enderror focus:outline-none">
+                                @error('name') border-danger focus:ring-2 focus:ring-danger/10 @else border-slate-200 focus:border-primary-600 focus:ring-4 focus:ring-primary-500/10 @enderror focus:outline-none">
                         </div>
 
                         <!-- Numéro Mobile Money + Choix Opérateur -->
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                                Numéro Mobile Money <span class="text-red-500">*</span>
-                                <span class="text-[#006837] font-semibold normal-case text-[11px]">(pour vos retraits)</span>
+                                Numéro Mobile Money <span class="text-danger">*</span>
+                                <span class="text-primary-600 font-semibold normal-case text-[11px]">(pour vos retraits)</span>
                             </label>
 
                             <!-- Sélection Opérateur -->
                             <div class="grid grid-cols-2 gap-2 mb-2">
                                 <label class="flex items-center gap-2 border-2 rounded-2xl p-2 cursor-pointer transition-all
-                                    {{ old('momo_operator') === 'mtn' ? 'border-yellow-400 bg-yellow-50/50' : 'border-slate-200 hover:border-slate-300' }}">
-                                    <input type="radio" name="momo_operator" value="mtn" {{ old('momo_operator') === 'mtn' ? 'checked' : '' }} required class="accent-[#006837]">
-                                    <span class="text-xs font-bold text-yellow-700">MTN MoMo</span>
+                                    {{ old('momo_operator') === 'mtn' ? 'border-warning bg-warning-50/50' : 'border-slate-200 hover:border-slate-300' }}">
+                                    <input type="radio" name="momo_operator" value="mtn" {{ old('momo_operator') === 'mtn' ? 'checked' : '' }} required class="accent-primary-600">
+                                    <span class="text-xs font-bold text-warning-700">MTN MoMo</span>
                                 </label>
                                 <label class="flex items-center gap-2 border-2 rounded-2xl p-2 cursor-pointer transition-all
-                                    {{ old('momo_operator') === 'orange' ? 'border-orange-400 bg-orange-50/50' : 'border-slate-200 hover:border-slate-300' }}">
-                                    <input type="radio" name="momo_operator" value="orange" {{ old('momo_operator') === 'orange' ? 'checked' : '' }} class="accent-[#006837]">
-                                    <span class="text-xs font-bold text-orange-600">Orange Money</span>
+                                    {{ old('momo_operator') === 'orange' ? 'border-accent-500 bg-accent-50/50' : 'border-slate-200 hover:border-slate-300' }}">
+                                    <input type="radio" name="momo_operator" value="orange" {{ old('momo_operator') === 'orange' ? 'checked' : '' }} class="accent-primary-600">
+                                    <span class="text-xs font-bold text-accent-600">Orange Money</span>
                                 </label>
                             </div>
 
                             <!-- Champ Téléphone MoMo -->
                             <div class="flex rounded-2xl border overflow-hidden transition bg-slate-50/50 hover:bg-white focus-within:bg-white
-                                @error('phone_momo') border-red-500 @else border-slate-200 focus-within:border-[#006837] focus-within:ring-4 focus-within:ring-[#006837]/10 @enderror">
+                                @error('phone_momo') border-danger @else border-slate-200 focus-within:border-primary-600 focus-within:ring-4 focus-within:ring-primary-600/10 @enderror">
                                 <div class="px-3 flex items-center bg-slate-100 text-slate-600 text-xs font-bold border-r border-slate-200 shrink-0">
                                     🇨🇲 +237
                                 </div>
@@ -145,7 +145,7 @@
                                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
                                     Contact <span class="text-slate-400 font-normal normal-case">(optionnel)</span>
                                 </label>
-                                <div class="flex rounded-2xl border overflow-hidden transition bg-slate-50/50 hover:bg-white focus-within:bg-white border-slate-200 focus-within:border-[#006837]">
+                                <div class="flex rounded-2xl border overflow-hidden transition bg-slate-50/50 hover:bg-white focus-within:bg-white border-slate-200 focus-within:border-primary-600">
                                     <div class="px-2.5 flex items-center bg-slate-100 text-slate-600 text-xs font-bold border-r border-slate-200 shrink-0">
                                         +237
                                     </div>
@@ -156,11 +156,11 @@
 
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                                    Adresse e-mail <span class="text-red-500">*</span>
+                                    Adresse e-mail <span class="text-danger">*</span>
                                 </label>
                                 <input type="email" name="email" value="{{ old('email') }}" required placeholder="vous@exemple.cm"
                                     class="w-full rounded-2xl border px-3.5 py-2 text-sm transition bg-slate-50/50 hover:bg-white focus:bg-white
-                                    @error('email') border-red-500 @else border-slate-200 focus:border-[#006837] focus:ring-4 focus:ring-[#006837]/10 @enderror focus:outline-none">
+                                    @error('email') border-danger @else border-slate-200 focus:border-primary-600 focus:ring-4 focus:ring-primary-500/10 @enderror focus:outline-none">
                             </div>
                         </div>
 
@@ -168,18 +168,18 @@
                         <div class="grid sm:grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                                    Mot de passe <span class="text-red-500">*</span>
+                                    Mot de passe <span class="text-danger">*</span>
                                 </label>
                                 <input type="password" name="password" required placeholder="Min. 8 car."
                                     class="w-full rounded-2xl border px-3.5 py-2 text-sm transition bg-slate-50/50 hover:bg-white focus:bg-white
-                                    @error('password') border-red-500 @else border-slate-200 focus:border-[#006837] focus:ring-4 focus:ring-[#006837]/10 @enderror focus:outline-none">
+                                    @error('password') border-danger @else border-slate-200 focus:border-primary-600 focus:ring-4 focus:ring-primary-500/10 @enderror focus:outline-none">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                                    Confirmer <span class="text-red-500">*</span>
+                                    Confirmer <span class="text-danger">*</span>
                                 </label>
                                 <input type="password" name="password_confirmation" required placeholder="Répéter"
-                                    class="w-full rounded-2xl border border-slate-200 px-3.5 py-2 text-sm transition bg-slate-50/50 hover:bg-white focus:bg-white focus:border-[#006837] focus:ring-4 focus:ring-[#006837]/10 focus:outline-none">
+                                    class="w-full rounded-2xl border border-slate-200 px-3.5 py-2 text-sm transition bg-slate-50/50 hover:bg-white focus:bg-white focus:border-primary-600 focus:ring-4 focus:ring-primary-500/10 focus:outline-none">
                             </div>
                         </div>
                     </div>
@@ -187,28 +187,28 @@
                     <!-- SECTION 2 : INFOS BOUTIQUE -->
                     <div class="space-y-3 pt-1">
                         <div class="flex items-center gap-2 border-b border-slate-100 pb-1.5">
-                            <span class="flex h-5 w-5 items-center justify-center rounded-full bg-[#006837]/10 text-[11px] font-extrabold text-[#006837]">2</span>
+                            <span class="flex h-5 w-5 items-center justify-center rounded-full bg-primary-600/10 text-[11px] font-extrabold text-primary-600">2</span>
                             <h2 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider">Votre Boutique</h2>
                         </div>
 
                         <!-- Nom boutique -->
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                                Nom de la boutique <span class="text-red-500">*</span>
+                                Nom de la boutique <span class="text-danger">*</span>
                             </label>
                             <input type="text" name="shop_name" value="{{ old('shop_name') }}" required placeholder="Ex: Tech Shop Douala"
                                 class="w-full rounded-2xl border px-3.5 py-2 text-sm transition bg-slate-50/50 hover:bg-white focus:bg-white
-                                @error('shop_name') border-red-500 @else border-slate-200 focus:border-[#006837] focus:ring-4 focus:ring-[#006837]/10 @enderror focus:outline-none">
+                                @error('shop_name') border-danger @else border-slate-200 focus:border-primary-600 focus:ring-4 focus:ring-primary-500/10 @enderror focus:outline-none">
                         </div>
 
                         <!-- Ville + Catégorie (Grid 2 cols) -->
                         <div class="grid sm:grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                                    Ville <span class="text-red-500">*</span>
+                                    Ville <span class="text-danger">*</span>
                                 </label>
                                 <select name="city" required
-                                    class="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm transition bg-slate-50/50 hover:bg-white focus:bg-white focus:border-[#006837] focus:ring-4 focus:ring-[#006837]/10 focus:outline-none">
+                                    class="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm transition bg-slate-50/50 hover:bg-white focus:bg-white focus:border-primary-600 focus:ring-4 focus:ring-primary-500/10 focus:outline-none">
                                     <option value="">-- Choisir --</option>
                                     @foreach (['Douala', 'Yaoundé', 'Bafoussam', 'Bamenda', 'Buea', 'Limbé', 'Garoua', 'Maroua', 'Ngaoundéré', 'Bertoua', 'Ebolowa', 'Kribi'] as $city)
                                         <option value="{{ $city }}" {{ old('city') === $city ? 'selected' : '' }}>{{ $city }}</option>
@@ -218,10 +218,10 @@
 
                             <div>
                                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                                    Catégorie <span class="text-red-500">*</span>
+                                    Catégorie <span class="text-danger">*</span>
                                 </label>
                                 <select name="category" required
-                                    class="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm transition bg-slate-50/50 hover:bg-white focus:bg-white focus:border-[#006837] focus:ring-4 focus:ring-[#006837]/10 focus:outline-none">
+                                    class="w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm transition bg-slate-50/50 hover:bg-white focus:bg-white focus:border-primary-600 focus:ring-4 focus:ring-primary-500/10 focus:outline-none">
                                     <option value="">-- Choisir --</option>
                                     @foreach ($categories as $cat)
                                         <option value="{{ $cat->slug }}" {{ old('category') === $cat->slug ? 'selected' : '' }}>{{ $cat->name }}</option>
@@ -236,21 +236,21 @@
                                 Description <span class="text-slate-400 font-normal normal-case">(optionnel)</span>
                             </label>
                             <textarea name="description" rows="2" maxlength="500" placeholder="Décrivez votre boutique..."
-                                class="w-full rounded-2xl border border-slate-200 px-3.5 py-2 text-sm bg-slate-50/50 hover:bg-white focus:bg-white focus:border-[#006837] focus:ring-4 focus:ring-[#006837]/10 focus:outline-none resize-none">{{ old('description') }}</textarea>
+                                class="w-full rounded-2xl border border-slate-200 px-3.5 py-2 text-sm bg-slate-50/50 hover:bg-white focus:bg-white focus:border-primary-600 focus:ring-4 focus:ring-primary-500/10 focus:outline-none resize-none">{{ old('description') }}</textarea>
                         </div>
                     </div>
 
                     <!-- Note KYC -->
-                    <div class="rounded-2xl border border-amber-200 bg-amber-50/80 p-3 text-xs text-amber-900 shadow-sm">
-                        <p class="font-bold mb-0.5 flex items-center gap-1.5 text-amber-800">📋 Étape suivante : Validation KYC</p>
-                        <p class="leading-relaxed text-amber-800/90 text-[11px]">
+                    <div class="rounded-2xl border border-warning-200 bg-warning-50/80 p-3 text-xs text-warning-800 shadow-sm">
+                        <p class="font-bold mb-0.5 flex items-center gap-1.5 text-warning-800">📋 Étape suivante : Validation KYC</p>
+                        <p class="leading-relaxed text-warning-800/90 text-[11px]">
                             Vous soumettrez une pièce d'identité après création. Activation sous 24h à 48h.
                         </p>
                     </div>
 
                     <!-- Bouton Submit -->
                     <button type="submit"
-                        class="w-full rounded-2xl bg-[#006837] py-3 text-sm font-bold text-white shadow-lg shadow-[#006837]/25 transition-all hover:bg-[#00522b] active:scale-[0.99] flex items-center justify-center gap-2 group mt-2">
+                        class="w-full rounded-2xl bg-primary-600 py-3 text-sm font-bold text-white shadow-lg shadow-primary-600/25 transition-all hover:bg-primary-700 active:scale-[0.99] flex items-center justify-center gap-2 group mt-2">
                         <span>Créer mon compte vendeur</span>
                         <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
@@ -261,13 +261,13 @@
                 <!-- Lien Se Connecter -->
                 <p class="mt-4 text-center text-xs sm:text-sm text-slate-500 font-medium">
                     Déjà un compte ?
-                    <a href="{{ route('login.show') }}" class="font-bold text-[#006837] hover:underline">Se connecter</a>
+                    <a href="{{ route('login.show') }}" class="font-bold text-primary-600 hover:underline">Se connecter</a>
                 </p>
             </div>
 
             <!-- 3. Mini Footer / Navigation -->
             <div class="shrink-0 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400 mt-2">
-                <a href="{{ route('register.show') }}" class="inline-flex items-center gap-1.5 font-bold text-slate-500 hover:text-[#006837] transition-colors">
+                <a href="{{ route('register.show') }}" class="inline-flex items-center gap-1.5 font-bold text-slate-500 hover:text-primary-600 transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
@@ -278,11 +278,11 @@
         </div>
 
         <!-- ================= COLONNE DROITE : BANNIÈRE AVEC LOGO INTEGRÉ ================= -->
-        <div class="hidden lg:flex w-1/2 h-full bg-[#004d28] text-white p-10 xl:p-14 flex-col justify-between relative overflow-hidden shrink-0">
+        <div class="hidden lg:flex w-1/2 h-full bg-primary-800 text-white p-10 xl:p-14 flex-col justify-between relative overflow-hidden shrink-0">
 
             <!-- Cercles décoratifs d'arrière-plan -->
             <div class="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-white/5 blur-3xl pointer-events-none"></div>
-            <div class="absolute -bottom-20 -left-20 w-96 h-96 rounded-full bg-[#FFC20E]/10 blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-20 -left-20 w-96 h-96 rounded-full bg-warning/10 blur-3xl pointer-events-none"></div>
 
             <!-- Logo Ali-Kamer géant en arrière-plan (Filigrane) -->
             <div class="absolute -right-16 top-1/2 -translate-y-1/2 opacity-10 pointer-events-none">
@@ -292,7 +292,7 @@
             <div class="relative z-10">
                 <!-- Badge & Grand Logo Ali-Kamer en surbrillance -->
                 <div class="flex items-center justify-between">
-                    <span class="inline-block text-xs font-bold tracking-widest uppercase text-[#FFC20E] bg-white/10 px-3.5 py-1.5 rounded-full backdrop-blur-md">
+                    <span class="inline-block text-xs font-bold tracking-widest uppercase text-warning bg-white/10 px-3.5 py-1.5 rounded-full backdrop-blur-md">
                         Espace Vendeurs Partner
                     </span>
                     <div class="p-2.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 shadow-xl">
@@ -301,9 +301,9 @@
                 </div>
 
                 <h2 class="text-3xl xl:text-4xl font-black mt-6 leading-tight tracking-tight">
-                    Développez vos ventes <br><span class="text-[#FFC20E]">partout au Cameroun.</span>
+                    Développez vos ventes <br><span class="text-warning">partout au Cameroun.</span>
                 </h2>
-                <p class="text-sm text-emerald-100/90 mt-3 leading-relaxed max-w-md font-normal">
+                <p class="text-sm text-success-100/90 mt-3 leading-relaxed max-w-md font-normal">
                     Rejoignez la plus grande marketplace locale et touchez des milliers de clients à Douala, Yaoundé et dans toutes les régions.
                 </p>
             </div>
@@ -316,7 +316,7 @@
                     </div>
                     <div>
                         <h3 class="font-bold text-sm text-white">Paiements directs MoMo & Orange Money</h3>
-                        <p class="text-xs text-emerald-100/80 mt-1 leading-snug">Recevez l'argent de vos ventes directement sur votre compte Mobile Money dès livraison.</p>
+                        <p class="text-xs text-success-100/80 mt-1 leading-snug">Recevez l'argent de vos ventes directement sur votre compte Mobile Money dès livraison.</p>
                     </div>
                 </div>
 
@@ -326,7 +326,7 @@
                     </div>
                     <div>
                         <h3 class="font-bold text-sm text-white">Réseau de livraison partenaire</h3>
-                        <p class="text-xs text-emerald-100/80 mt-1 leading-snug">Expédiez facilement vos commandes interurbaines via nos agences partenaires sans tracas.</p>
+                        <p class="text-xs text-success-100/80 mt-1 leading-snug">Expédiez facilement vos commandes interurbaines via nos agences partenaires sans tracas.</p>
                     </div>
                 </div>
 
@@ -336,17 +336,17 @@
                     </div>
                     <div>
                         <h3 class="font-bold text-sm text-white">Gestion simple & badge certifié</h3>
-                        <p class="text-xs text-emerald-100/80 mt-1 leading-snug">Tableau de bord intuitif pour gérer vos stocks, commandes et obtenir votre badge vérifié (KYC).</p>
+                        <p class="text-xs text-success-100/80 mt-1 leading-snug">Tableau de bord intuitif pour gérer vos stocks, commandes et obtenir votre badge vérifié (KYC).</p>
                     </div>
                 </div>
             </div>
 
             <!-- Citation -->
             <div class="relative z-10 pt-5 border-t border-white/10">
-                <p class="text-xs sm:text-sm text-emerald-100/90 italic leading-relaxed">
+                <p class="text-xs sm:text-sm text-success-100/90 italic leading-relaxed">
                     « Ali-Kamer nous permet d'expédier nos produits depuis Douala et Yaoundé en toute sérénité. »
                 </p>
-                <p class="text-xs font-bold text-[#FFC20E] mt-2">— Vendeur partenaire à Bafoussam</p>
+                <p class="text-xs font-bold text-warning mt-2">— Vendeur partenaire à Bafoussam</p>
             </div>
 
         </div>

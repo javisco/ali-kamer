@@ -17,8 +17,8 @@
 
             {{-- Alerte de succès --}}
             @if (session('status'))
-                <div class="mb-5 flex items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-xs sm:text-sm text-emerald-700 shadow-sm font-medium">
-                    <svg class="h-5 w-5 shrink-0 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="mb-5 flex items-center gap-3 rounded-2xl border border-success-200 bg-success-50 p-4 text-xs sm:text-sm text-success-700 shadow-sm font-medium">
+                    <svg class="h-5 w-5 shrink-0 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                     </svg>
                     <span>{{ session('status') }}</span>
@@ -39,16 +39,16 @@
             <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
 
                 <!-- En-tête aux couleurs Ali-Kamer -->
-                <div class="bg-gradient-to-br from-[#004d28] via-[#006837] to-[#046A38] px-6 pt-8 pb-6 text-center relative overflow-hidden text-white">
+                <div class="bg-gradient-to-br from-primary-800 via-primary-600 to-[#046A38] px-6 pt-8 pb-6 text-center relative overflow-hidden text-white">
                     <div class="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-white/10 blur-xl"></div>
-                    <div class="absolute -bottom-12 -left-12 w-32 h-32 rounded-full bg-[#FFC20E]/20 blur-xl"></div>
+                    <div class="absolute -bottom-12 -left-12 w-32 h-32 rounded-full bg-warning/20 blur-xl"></div>
 
                     <div class="relative z-10">
                         <div class="inline-flex items-center justify-center p-2.5 bg-white rounded-2xl shadow-lg mb-3">
                             <img src="{{ asset('images/afrique.png') }}" alt="Ali-Kamer Logo" class="h-12 w-auto object-contain">
                         </div>
                         <h1 class="text-2xl font-black tracking-tight text-white">Mot de passe oublié ?</h1>
-                        <p class="text-xs text-emerald-100/90 mt-1">Pas d'inquiétude, nous allons vous aider à récupérer l'accès</p>
+                        <p class="text-xs text-success-100/90 mt-1">Pas d'inquiétude, nous allons vous aider à récupérer l'accès</p>
                     </div>
                 </div>
 
@@ -65,7 +65,7 @@
                         <!-- Champ Email -->
                         <div>
                             <label for="email" class="block mb-1.5 text-xs font-bold uppercase tracking-wider text-slate-700">
-                                Adresse e-mail <span class="text-red-500">*</span>
+                                Adresse e-mail <span class="text-danger">*</span>
                             </label>
 
                             <div class="relative flex items-center">
@@ -78,7 +78,7 @@
                                 <input type="email" name="email" id="email" value="{{ old('email') }}" required autofocus
                                     placeholder="exemple@email.cm"
                                     class="w-full pl-11 pr-4 py-3 rounded-2xl border text-sm transition bg-slate-50/50 text-slate-800 placeholder-slate-400
-                                    @error('email') border-rose-500 focus:ring-rose-500/20 @else border-slate-200 focus:border-[#006837] focus:ring-4 focus:ring-[#006837]/10 @enderror
+                                    @error('email') border-rose-500 focus:ring-rose-500/20 @else border-slate-200 focus:border-primary-600 focus:ring-4 focus:ring-primary-500/10 @enderror
                                     focus:outline-none">
                             </div>
 
@@ -91,7 +91,7 @@
 
                         <!-- Bouton d'action -->
                         <button type="submit"
-                            class="w-full rounded-2xl bg-[#006837] hover:bg-[#004d28] py-3.5 text-sm font-bold text-white shadow-lg shadow-[#006837]/20 transition active:scale-[0.99] flex items-center justify-center gap-2">
+                            class="w-full rounded-2xl bg-primary-600 hover:bg-primary-800 py-3.5 text-sm font-bold text-white shadow-lg shadow-primary-600/20 transition active:scale-[0.99] flex items-center justify-center gap-2">
                             <span>Envoyer le lien de réinitialisation</span>
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
@@ -101,7 +101,7 @@
 
                     <!-- Lien retour -->
                     <div class="mt-6 border-t border-slate-100 pt-5 text-center">
-                        <a href="{{ route('login.show') }}" class="inline-flex items-center gap-2 text-xs font-bold text-[#006837] hover:text-[#004d28] transition-colors">
+                        <a href="{{ route('login.show') }}" class="inline-flex items-center gap-2 text-xs font-bold text-primary-600 hover:text-primary-800 transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                             </svg>

@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="bg-[#F7F7F2] min-h-screen py-8">
+<div class="bg-slate-50 min-h-screen py-8">
 
     <div class="max-w-3xl mx-auto px-4">
 
@@ -13,19 +13,19 @@
 
             <a href="{{ route('secretary.dashboard') }}"
                class="w-9 h-9 flex items-center justify-center
-                      rounded-xl bg-white border border-gray-100
-                      text-gray-400 hover:text-[#016837]
-                      hover:border-green-100 transition">
+                      rounded-xl bg-white border border-slate-100
+                      text-slate-400 hover:text-primary-600
+                      hover:border-success-100 transition">
                 ←
             </a>
 
             <div>
                 <p class="text-[10px] font-bold uppercase
-                          tracking-wider text-[#F9A01B]">
+                          tracking-wider text-accent-500">
                     Livraison
                 </p>
 
-                <h1 class="text-2xl font-extrabold text-gray-900">
+                <h1 class="text-2xl font-extrabold text-slate-900">
                     Remise de colis
                 </h1>
             </div>
@@ -35,11 +35,11 @@
         {{-- Succès --}}
         @if (session('success'))
 
-            <div class="bg-green-50 border border-green-200
-                        text-[#016837] px-4 py-3 rounded-xl mb-6
+            <div class="bg-success-50 border border-success-200
+                        text-primary-600 px-4 py-3 rounded-xl mb-6
                         text-sm flex items-center gap-2">
 
-                <span class="w-2 h-2 rounded-full bg-[#016837]"></span>
+                <span class="w-2 h-2 rounded-full bg-primary-600"></span>
 
                 {{ session('success') }}
 
@@ -50,11 +50,11 @@
         {{-- Erreur OTP --}}
         @if ($errors->has('otp'))
 
-            <div class="bg-red-50 border border-red-200
-                        text-[#E30613] px-4 py-3 rounded-xl mb-6
+            <div class="bg-danger-50 border border-danger-200
+                        text-danger px-4 py-3 rounded-xl mb-6
                         text-sm flex items-center gap-2">
 
-                <span class="w-2 h-2 rounded-full bg-[#E30613]"></span>
+                <span class="w-2 h-2 rounded-full bg-danger"></span>
 
                 {{ $errors->first('otp') }}
 
@@ -64,21 +64,21 @@
 
         @if ($orders->isEmpty())
 
-            <div class="bg-white rounded-2xl border border-gray-100
+            <div class="bg-white rounded-2xl border border-slate-100
                         shadow-sm p-10 text-center">
 
                 <div class="w-12 h-12 mx-auto mb-3 rounded-2xl
-                            bg-green-50 flex items-center justify-center">
+                            bg-success-50 flex items-center justify-center">
 
-                    <span class="text-xl text-[#016837]">✓</span>
+                    <span class="text-xl text-primary-600">✓</span>
 
                 </div>
 
-                <p class="font-semibold text-gray-700">
+                <p class="font-semibold text-slate-700">
                     Aucun colis en attente de remise.
                 </p>
 
-                <p class="text-gray-400 text-sm mt-1">
+                <p class="text-slate-400 text-sm mt-1">
                     Les colis prêts à être remis apparaîtront ici.
                 </p>
 
@@ -88,14 +88,14 @@
 
             <div class="flex items-center justify-between mb-3">
 
-                <p class="text-xs text-gray-500">
-                    <span class="font-bold text-gray-900">
+                <p class="text-xs text-slate-500">
+                    <span class="font-bold text-slate-900">
                         {{ $orders->count() }}
                     </span>
                     colis en attente — saisir le code OTP de l'acheteur
                 </p>
 
-                <span class="w-2 h-2 rounded-full bg-[#F9A01B]"></span>
+                <span class="w-2 h-2 rounded-full bg-accent-500"></span>
 
             </div>
 
@@ -111,7 +111,7 @@
                             !$order->shipment->transport_fee_paid;
                     @endphp
 
-                    <div class="bg-white rounded-2xl border border-gray-100
+                    <div class="bg-white rounded-2xl border border-slate-100
                                 shadow-sm p-5 hover:shadow-md
                                 transition-all">
 
@@ -120,16 +120,16 @@
 
                             <div>
 
-                                <p class="font-bold text-gray-900">
+                                <p class="font-bold text-slate-900">
                                     {{ $order->reference }}
                                 </p>
 
-                                <p class="text-sm text-gray-500 mt-0.5">
+                                <p class="text-sm text-slate-500 mt-0.5">
                                     {{ $order->shipment->recipient_name }}
                                     — {{ $order->buyer->phone }}
                                 </p>
 
-                                <p class="text-xs text-gray-400 mt-0.5">
+                                <p class="text-xs text-slate-400 mt-0.5">
                                     Arrivé le
                                     {{ $order->shipment->arrived_at?->format('d/m/Y à H:i') }}
                                 </p>
@@ -141,14 +141,14 @@
 
                                 <div class="text-right">
 
-                                    <p class="text-xs text-gray-400">
+                                    <p class="text-xs text-slate-400">
                                         Expire
                                     </p>
 
                                     <p class="text-xs font-bold
                                         {{ $order->isTimerExpired()
-                                            ? 'text-[#E30613]'
-                                            : 'text-[#F9A01B]' }}">
+                                            ? 'text-danger'
+                                            : 'text-accent-500' }}">
 
                                         {{ $order->timer_deadline->format('d/m H:i') }}
 
@@ -163,17 +163,17 @@
                         {{-- Transport non payé --}}
                         @if ($transportBlocked)
 
-                            <div class="bg-yellow-50 border border-yellow-200
+                            <div class="bg-warning-50 border border-warning-200
                                         rounded-xl p-3 mb-4">
 
                                 <div class="flex items-start gap-3">
 
                                     <div class="w-8 h-8 rounded-lg
-                                                bg-[#F9A01B]/15
+                                                bg-accent-500/15
                                                 flex items-center justify-center
                                                 shrink-0">
 
-                                        <span class="text-[#F9A01B] font-bold">
+                                        <span class="text-accent-500 font-bold">
                                             !
                                         </span>
 
@@ -181,11 +181,11 @@
 
                                     <div>
 
-                                        <p class="text-sm font-bold text-[#9A6500]">
+                                        <p class="text-sm font-bold text-accent-600">
                                             Frais transport non payés
                                         </p>
 
-                                        <p class="text-xs text-[#A66D00] mt-1">
+                                        <p class="text-xs text-accent-600 mt-1">
                                             L'acheteur doit payer
                                             {{ number_format($order->shipment->transport_fee, 0, ',', ' ') }}
                                             FCFA avant de récupérer son colis.
@@ -213,16 +213,16 @@
                                     maxlength="6"
                                     placeholder="_ _ _ _ _ _"
                                     {{ $transportBlocked ? 'disabled' : '' }}
-                                    class="flex-1 border border-gray-200
-                                           bg-gray-50 rounded-xl px-4 py-3
+                                    class="flex-1 border border-slate-200
+                                           bg-slate-50 rounded-xl px-4 py-3
                                            text-center text-xl font-mono
                                            tracking-[0.4em]
                                            focus:outline-none focus:bg-white
-                                           focus:border-[#016837]
+                                           focus:border-primary-600
                                            focus:ring-2
-                                           focus:ring-green-500/10
+                                           focus:ring-success/10
                                            {{ $transportBlocked
-                                               ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                               ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
                                                : '' }}">
 
                                 <button
@@ -230,8 +230,8 @@
                                     class="px-6 py-3 rounded-xl font-bold
                                            text-sm transition-all
                                            {{ $transportBlocked
-                                               ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                               : 'bg-[#016837] hover:bg-[#0a542d]
+                                               ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                                               : 'bg-primary-600 hover:bg-primary-700
                                                   text-white shadow-sm hover:shadow-md' }}">
 
                                     {{ $transportBlocked

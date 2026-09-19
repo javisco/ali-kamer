@@ -18,10 +18,10 @@
         theme: {
             extend: {
                 colors: {
-                    aliGreen: '#006837',
-                    aliGreenDark: '#004d28',
-                    aliRed: '#EA2328',
-                    aliYellow: '#FFC20E',
+                    aliGreen: '#0D9488',
+                    aliGreenDark: '#115E59',
+                    aliRed: '#EF4444',
+                    aliYellow: '#F59E0B',
                 },
                 fontFamily: {
                     sans: ['Plus Jakarta Sans', 'sans-serif'],
@@ -165,14 +165,14 @@
                 </a>
 
                 <span
-                    class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 bg-[#FFC20E]/10 border border-[#FFC20E]/30 text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-amber-900 whitespace-nowrap"
+                    class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 bg-warning/10 border border-warning/30 text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-warning-800 whitespace-nowrap"
                 >
                     <span class="relative flex h-2 w-2">
                         <span
-                            class="absolute inline-flex h-full w-full rounded-full bg-[#EA2328] opacity-70 animate-ping"
+                            class="absolute inline-flex h-full w-full rounded-full bg-danger opacity-70 animate-ping"
                         ></span>
                         <span
-                            class="relative inline-flex h-2 w-2 rounded-full bg-[#EA2328]"
+                            class="relative inline-flex h-2 w-2 rounded-full bg-danger"
                         ></span>
                     </span>
                     Examen en cours
@@ -186,24 +186,24 @@
 
                 {{-- Statut principal --}}
                 <div
-                    class="rounded-[1.4rem] border border-[#FFC20E]/30 bg-gradient-to-br from-[#FFC20E]/15 via-amber-50/50 to-slate-50 p-4 sm:p-5 flex items-center gap-4"
+                    class="rounded-[1.4rem] border border-warning/30 bg-gradient-to-br from-warning/15 via-warning-50/50 to-slate-50 p-4 sm:p-5 flex items-center gap-4"
                 >
 
                     <div class="relative shrink-0">
 
                         <div
-                            class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#FFC20E]/20 flex items-center justify-center text-2xl sm:text-3xl shadow-inner"
+                            class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-warning/20 flex items-center justify-center text-2xl sm:text-3xl shadow-inner"
                         >
                             ⏳
                         </div>
 
                         <span class="absolute -top-1.5 -right-1.5 flex h-4 w-4">
                             <span
-                                class="absolute inline-flex h-full w-full rounded-full bg-[#EA2328] opacity-60 animate-ping"
+                                class="absolute inline-flex h-full w-full rounded-full bg-danger opacity-60 animate-ping"
                             ></span>
 
                             <span
-                                class="relative inline-flex h-4 w-4 rounded-full bg-[#EA2328] border-2 border-white"
+                                class="relative inline-flex h-4 w-4 rounded-full bg-danger border-2 border-white"
                             ></span>
                         </span>
 
@@ -211,7 +211,7 @@
 
                     <div class="min-w-0">
                         <p
-                            class="text-[9px] sm:text-[10px] uppercase tracking-[.16em] font-black text-amber-700 mb-1"
+                            class="text-[9px] sm:text-[10px] uppercase tracking-[.16em] font-black text-warning-700 mb-1"
                         >
                             Statut actuel
                         </p>
@@ -238,7 +238,7 @@
                     <div class="flex items-center gap-2 mb-3">
 
                         <div
-                            class="w-8 h-8 rounded-xl bg-[#006837]/10 text-[#006837] flex items-center justify-center"
+                            class="w-8 h-8 rounded-xl bg-primary-600/10 text-primary-600 flex items-center justify-center"
                         >
                             <svg
                                 class="w-4 h-4"
@@ -293,9 +293,9 @@
                             </span>
 
                             <span
-                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FFC20E]/15 border border-[#FFC20E]/40 text-[9px] font-black text-amber-900 whitespace-nowrap"
+                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-warning/15 border border-warning/40 text-[9px] font-black text-warning-800 whitespace-nowrap"
                             >
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#EA2328]"></span>
+                                <span class="w-1.5 h-1.5 rounded-full bg-danger"></span>
                                 En traitement
                             </span>
                         </div>
@@ -309,7 +309,7 @@
                                 Délai estimé
                             </span>
 
-                            <span class="font-black text-[#006837] text-right">
+                            <span class="font-black text-primary-600 text-right">
                                 24 à 48 h ouvrables
                             </span>
                         </div>
@@ -321,11 +321,11 @@
 
                 {{-- Notification --}}
                 <div
-                    class="mt-3.5 rounded-[1.3rem] border border-[#006837]/20 bg-[#006837]/5 p-3.5 flex items-start gap-3"
+                    class="mt-3.5 rounded-[1.3rem] border border-primary-600/20 bg-primary-600/5 p-3.5 flex items-start gap-3"
                 >
 
                     <div
-                        class="w-9 h-9 rounded-xl bg-[#006837] text-white flex items-center justify-center shrink-0 shadow-sm"
+                        class="w-9 h-9 rounded-xl bg-primary-600 text-white flex items-center justify-center shrink-0 shadow-sm"
                     >
                         <svg
                             class="w-4 h-4"
@@ -344,7 +344,7 @@
 
                     <div>
                         <h3
-                            class="text-[9px] font-black uppercase tracking-[.15em] text-[#006837]"
+                            class="text-[9px] font-black uppercase tracking-[.15em] text-primary-600"
                         >
                             Vous serez informé
                         </h3>
@@ -373,21 +373,21 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
 
                         <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-[#EA2328] shrink-0"></span>
+                            <span class="w-2 h-2 rounded-full bg-danger shrink-0"></span>
                             <span class="text-[10px] text-slate-500 font-medium">
                                 Ne renvoyez pas un nouveau dossier
                             </span>
                         </div>
 
                         <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-[#FFC20E] shrink-0"></span>
+                            <span class="w-2 h-2 rounded-full bg-warning shrink-0"></span>
                             <span class="text-[10px] text-slate-500 font-medium">
                                 Vérifiez vos e-mails et spams
                             </span>
                         </div>
 
                         <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-[#006837] shrink-0"></span>
+                            <span class="w-2 h-2 rounded-full bg-primary-600 shrink-0"></span>
                             <span class="text-[10px] text-slate-500 font-medium">
                                 Préparez vos premiers produits
                             </span>
@@ -414,7 +414,7 @@
 
                 <a
                     href="/"
-                    class="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-black text-slate-500 hover:text-[#006837] transition-colors"
+                    class="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-black text-slate-500 hover:text-primary-600 transition-colors"
                 >
                     <svg
                         class="w-4 h-4"
@@ -446,16 +446,16 @@
             COLONNE DROITE
         ========================================================== --}}
         <section
-            class="hidden lg:flex relative w-[42%] overflow-hidden bg-gradient-to-br from-[#004d28] via-[#006837] to-[#780f12] text-white p-8 flex-col justify-between"
+            class="hidden lg:flex relative w-[42%] overflow-hidden bg-gradient-to-br from-primary-800 via-primary-600 to-danger-800 text-white p-8 flex-col justify-between"
         >
 
             {{-- Effets lumineux --}}
             <div
-                class="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-[#FFC20E]/20 blur-3xl"
+                class="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-warning/20 blur-3xl"
             ></div>
 
             <div
-                class="absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-[#EA2328]/25 blur-3xl"
+                class="absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-danger/25 blur-3xl"
             ></div>
 
             <div
@@ -476,11 +476,11 @@
                     class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/20 border border-white/10 backdrop-blur-md"
                 >
                     <span
-                        class="w-2 h-2 rounded-full bg-[#FFC20E] soft-pulse"
+                        class="w-2 h-2 rounded-full bg-warning soft-pulse"
                     ></span>
 
                     <span
-                        class="text-[9px] font-black uppercase tracking-[.17em] text-[#FFC20E]"
+                        class="text-[9px] font-black uppercase tracking-[.17em] text-warning"
                     >
                         Espace vendeur
                     </span>
@@ -491,13 +491,13 @@
                     class="text-2xl xl:text-3xl font-black leading-tight tracking-tight mt-6"
                 >
                     Votre boutique est
-                    <span class="text-[#FFC20E]">
+                    <span class="text-warning">
                         presque prête.
                     </span>
                 </h2>
 
                 <p
-                    class="text-xs text-emerald-50/80 leading-relaxed mt-3 max-w-sm"
+                    class="text-xs text-success-50/80 leading-relaxed mt-3 max-w-sm"
                 >
                     La vérification KYC protège les vendeurs et les acheteurs
                     et contribue à créer une marketplace de confiance au Cameroun.
@@ -515,7 +515,7 @@
                 >
 
                     <div
-                        class="w-9 h-9 rounded-xl bg-[#006837] border border-white/20 flex items-center justify-center font-black text-sm shrink-0"
+                        class="w-9 h-9 rounded-xl bg-primary-600 border border-white/20 flex items-center justify-center font-black text-sm shrink-0"
                     >
                         ✓
                     </div>
@@ -525,7 +525,7 @@
                             1. Dossier soumis
                         </h3>
 
-                        <p class="text-[10px] text-emerald-100/70 mt-0.5">
+                        <p class="text-[10px] text-success-100/70 mt-0.5">
                             Vos documents ont été reçus.
                         </p>
                     </div>
@@ -535,21 +535,21 @@
 
                 {{-- Etape 2 --}}
                 <div
-                    class="rounded-2xl bg-black/20 backdrop-blur-md border border-[#FFC20E]/40 p-4 flex items-center gap-3 shadow-lg"
+                    class="rounded-2xl bg-black/20 backdrop-blur-md border border-warning/40 p-4 flex items-center gap-3 shadow-lg"
                 >
 
                     <div
-                        class="w-9 h-9 rounded-xl bg-[#FFC20E] text-slate-900 flex items-center justify-center font-black text-sm shrink-0 soft-pulse"
+                        class="w-9 h-9 rounded-xl bg-warning text-slate-900 flex items-center justify-center font-black text-sm shrink-0 soft-pulse"
                     >
                         2
                     </div>
 
                     <div>
-                        <h3 class="text-xs font-black text-[#FFC20E]">
+                        <h3 class="text-xs font-black text-warning">
                             2. Vérification
                         </h3>
 
-                        <p class="text-[10px] text-emerald-100/80 mt-0.5">
+                        <p class="text-[10px] text-success-100/80 mt-0.5">
                             Notre équipe examine actuellement votre dossier.
                         </p>
                     </div>
@@ -563,7 +563,7 @@
                 >
 
                     <div
-                        class="w-9 h-9 rounded-xl bg-[#EA2328] border border-white/20 flex items-center justify-center font-black text-sm shrink-0"
+                        class="w-9 h-9 rounded-xl bg-danger border border-white/20 flex items-center justify-center font-black text-sm shrink-0"
                     >
                         3
                     </div>
@@ -573,7 +573,7 @@
                             3. Activation vendeur
                         </h3>
 
-                        <p class="text-[10px] text-emerald-100/70 mt-0.5">
+                        <p class="text-[10px] text-success-100/70 mt-0.5">
                             Votre boutique pourra commencer à vendre.
                         </p>
                     </div>
@@ -591,7 +591,7 @@
                 <div class="flex items-start gap-3">
 
                     <div
-                        class="w-9 h-9 rounded-xl bg-[#FFC20E] text-slate-900 flex items-center justify-center shrink-0"
+                        class="w-9 h-9 rounded-xl bg-warning text-slate-900 flex items-center justify-center shrink-0"
                     >
                         <svg
                             class="w-4 h-4"
@@ -613,7 +613,7 @@
                             Vos données sont protégées
                         </h3>
 
-                        <p class="text-[9px] text-emerald-50/70 mt-1 leading-relaxed">
+                        <p class="text-[9px] text-success-50/70 mt-1 leading-relaxed">
                             Les informations transmises sont utilisées uniquement
                             dans le cadre de la vérification de votre identité.
                         </p>
@@ -630,11 +630,11 @@
             >
 
                 <div>
-                    <p class="text-[9px] text-emerald-100/60 uppercase tracking-wider font-bold">
+                    <p class="text-[9px] text-success-100/60 uppercase tracking-wider font-bold">
                         Assistance
                     </p>
 
-                    <p class="text-[10px] font-black text-[#FFC20E] mt-0.5">
+                    <p class="text-[10px] font-black text-warning mt-0.5">
                         support@ali-kamer.cm
                     </p>
                 </div>
@@ -643,15 +643,15 @@
                 <div class="flex items-center gap-1.5">
 
                     <span
-                        class="w-2.5 h-2.5 rounded-full bg-[#006837] border border-white/40"
+                        class="w-2.5 h-2.5 rounded-full bg-primary-600 border border-white/40"
                     ></span>
 
                     <span
-                        class="w-2.5 h-2.5 rounded-full bg-[#EA2328] border border-white/40"
+                        class="w-2.5 h-2.5 rounded-full bg-danger border border-white/40"
                     ></span>
 
                     <span
-                        class="w-2.5 h-2.5 rounded-full bg-[#FFC20E] border border-white/40"
+                        class="w-2.5 h-2.5 rounded-full bg-warning border border-white/40"
                     ></span>
 
                 </div>

@@ -26,9 +26,9 @@
         {{-- Compte Acheteur --}}
         <a href="{{ route('register.buyer') }}"
            class="group bg-white rounded-3xl border-2 border-slate-100 shadow-sm
-                  hover:border-[#006837] hover:shadow-xl transition-all p-8 text-center block">
-            <div class="w-20 h-20 bg-emerald-50 rounded-2xl flex items-center justify-center
-                        mx-auto mb-5 group-hover:bg-[#006837]/10 transition-colors text-4xl">
+                  hover:border-primary-600 hover:shadow-xl transition-all p-8 text-center block">
+            <div class="w-20 h-20 bg-success-50 rounded-2xl flex items-center justify-center
+                        mx-auto mb-5 group-hover:bg-primary-600/10 transition-colors text-4xl">
                 🛒
             </div>
             <h2 class="text-xl font-extrabold text-slate-900 mb-2">Je veux acheter</h2>
@@ -36,8 +36,8 @@
                 Parcourez des milliers de produits de vendeurs camerounais
                 et recevez-les où vous voulez.
             </p>
-            <div class="mt-6 inline-block bg-[#006837] text-white font-bold
-                        px-6 py-2.5 rounded-xl text-sm group-hover:bg-[#004d28] shadow-md shadow-[#006837]/20 transition">
+            <div class="mt-6 inline-block bg-primary-600 text-white font-bold
+                        px-6 py-2.5 rounded-xl text-sm group-hover:bg-primary-800 shadow-md shadow-primary-600/20 transition">
                 Créer un compte acheteur
             </div>
         </a>
@@ -45,9 +45,9 @@
         {{-- Compte Vendeur --}}
         <a href="{{ route('register.seller') }}"
            class="group bg-white rounded-3xl border-2 border-slate-100 shadow-sm
-                  hover:border-[#FFC20E] hover:shadow-xl transition-all p-8 text-center block">
-            <div class="w-20 h-20 bg-amber-50 rounded-2xl flex items-center justify-center
-                        mx-auto mb-5 group-hover:bg-[#FFC20E]/20 transition-colors text-4xl">
+                  hover:border-warning hover:shadow-xl transition-all p-8 text-center block">
+            <div class="w-20 h-20 bg-warning-50 rounded-2xl flex items-center justify-center
+                        mx-auto mb-5 group-hover:bg-warning/20 transition-colors text-4xl">
                 🏪
             </div>
             <h2 class="text-xl font-extrabold text-slate-900 mb-2">Je veux vendre</h2>
@@ -56,7 +56,7 @@
                 des acheteurs dans tout le Cameroun.
             </p>
             <div class="mt-6 inline-block bg-slate-900 text-white font-bold
-                        px-6 py-2.5 rounded-xl text-sm group-hover:bg-[#006837] transition">
+                        px-6 py-2.5 rounded-xl text-sm group-hover:bg-primary-600 transition">
                 Créer un compte vendeur
             </div>
         </a>
@@ -67,7 +67,7 @@
     <p class="text-center text-sm text-slate-500">
         Déjà un compte ?
         <a href="{{ route('login.show') }}"
-           class="text-[#006837] font-semibold hover:text-[#004d28] hover:underline">Se connecter</a>
+           class="text-primary-600 font-semibold hover:text-primary-800 hover:underline">Se connecter</a>
     </p>
 
 </div>

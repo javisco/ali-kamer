@@ -21,7 +21,7 @@
     }
 </style>
 
-<div class="min-h-screen bg-[#F7F8FA] p-4 sm:p-6 lg:p-7">
+<div class="min-h-screen bg-slate-50 p-4 sm:p-6 lg:p-7">
 
 
 <div class="max-w-7xl mx-auto space-y-6 animate-fade-in">
@@ -35,7 +35,7 @@
         <div>
 
             <p class="text-[11px] font-black uppercase
-                      tracking-widest text-[#00843D]">
+                      tracking-widest text-primary-600">
                 Vue d'ensemble
             </p>
 
@@ -55,8 +55,8 @@
             class="
                 inline-flex items-center justify-center gap-2
                 px-4 py-2.5 rounded-xl
-                bg-[#00843D]
-                hover:bg-[#006F34]
+                bg-primary-600
+                hover:bg-primary-700
                 text-white text-xs font-bold
                 shadow-sm hover:shadow-md
                 transition-all active:scale-95
@@ -88,7 +88,7 @@
         class="
             relative overflow-hidden
             rounded-2xl
-            bg-[#0a1b12]
+            bg-slate-900
             p-5 sm:p-6
             border border-slate-800
             shadow-sm
@@ -97,7 +97,7 @@
 
         {{-- Tricolore --}}
         <div class="absolute top-0 left-0 right-0 h-1 flex">
-            <span class="w-1/3 bg-[#00843D]"></span>
+            <span class="w-1/3 bg-primary-600"></span>
             <span class="w-1/3 bg-[#CE1126]"></span>
             <span class="w-1/3 bg-[#FCD116]"></span>
         </div>
@@ -111,7 +111,7 @@
 
                     <span
                         class="w-2 h-2 rounded-full
-                               bg-[#00843D] animate-pulse"
+                               bg-primary-600 animate-pulse"
                     ></span>
 
                     <span
@@ -190,7 +190,7 @@
 
                 <div
                     class="w-9 h-9 rounded-xl
-                           bg-[#00843D]/10 text-[#00843D]
+                           bg-primary-600/10 text-primary-600
                            flex items-center justify-center"
                 >
                     <svg class="w-5 h-5" fill="none"
@@ -239,7 +239,7 @@
 
                 <div
                     class="w-9 h-9 rounded-xl
-                           bg-[#FCD116]/20 text-[#9A7600]
+                           bg-[#FCD116]/20 text-warning-800
                            flex items-center justify-center"
                 >
                     <svg class="w-5 h-5" fill="none"
@@ -265,7 +265,7 @@
 
             </div>
 
-            <p class="mt-4 text-3xl font-black text-[#00843D]">
+            <p class="mt-4 text-3xl font-black text-primary-600">
                 {{ $visibleCount }}
             </p>
 
@@ -351,7 +351,7 @@
 
                 <div
                     class="w-9 h-9 rounded-xl
-                           bg-[#00843D]/10 text-[#00843D]
+                           bg-primary-600/10 text-primary-600
                            flex items-center justify-center"
                 >
 
@@ -370,7 +370,7 @@
 
             </div>
 
-            <p class="mt-4 text-xl font-black text-[#00843D]">
+            <p class="mt-4 text-xl font-black text-primary-600">
                 Active
             </p>
 
@@ -417,7 +417,7 @@
                         p-3.5 bg-white
                         border border-slate-200
                         rounded-xl
-                        hover:border-[#00843D]
+                        hover:border-primary-600
                         hover:shadow-sm
                         transition
                         group
@@ -426,10 +426,10 @@
 
                     <div
                         class="w-9 h-9 rounded-lg
-                               bg-[#00843D]/10
-                               text-[#00843D]
+                               bg-primary-600/10
+                               text-primary-600
                                flex items-center justify-center
-                               group-hover:bg-[#00843D]
+                               group-hover:bg-primary-600
                                group-hover:text-white
                                transition"
                     >
@@ -457,7 +457,7 @@
 
                     </div>
 
-                    <span class="text-slate-300 group-hover:text-[#00843D]">
+                    <span class="text-slate-300 group-hover:text-primary-600">
                         →
                     </span>
 
@@ -538,7 +538,7 @@
                     <div
                         class="w-9 h-9 rounded-lg
                                bg-[#FCD116]/20
-                               text-[#8A6900]
+                               text-warning-800
                                flex items-center justify-center
                                group-hover:bg-[#FCD116]
                                transition"
@@ -572,7 +572,7 @@
 
                     </div>
 
-                    <span class="text-slate-300 group-hover:text-[#8A6900]">
+                    <span class="text-slate-300 group-hover:text-warning-800">
                         →
                     </span>
 
@@ -604,7 +604,7 @@
 
                 <a
                     href="{{ route('seller.orders.index') }}"
-                    class="text-[11px] font-bold text-[#00843D]
+                    class="text-[11px] font-bold text-primary-600
                            hover:underline"
                 >
                     Voir tout
@@ -635,8 +635,8 @@
 
                     <div
                         class="w-9 h-9 rounded-xl
-                               bg-[#00843D]/10
-                               text-[#00843D]
+                               bg-primary-600/10
+                               text-primary-600
                                flex items-center justify-center"
                     >
 
@@ -667,8 +667,8 @@
 
                     <span
                         class="text-[10px] font-bold
-                               text-[#00843D]
-                               bg-[#00843D]/10
+                               text-primary-600
+                               bg-primary-600/10
                                px-2 py-1 rounded-full"
                     >
                         Active
@@ -690,7 +690,7 @@
                     <div
                         class="w-9 h-9 rounded-xl
                                bg-[#FCD116]/20
-                               text-[#8A6900]
+                               text-warning-800
                                flex items-center justify-center"
                     >
 
@@ -723,7 +723,7 @@
 
                     <span
                         class="text-[10px] font-bold
-                               text-[#8A6900]
+                               text-warning-800
                                bg-[#FCD116]/20
                                px-2 py-1 rounded-full"
                     >
@@ -797,7 +797,7 @@
     ====================================================== --}}
     <div class="flex items-center justify-center gap-2 pt-1">
 
-        <span class="w-5 h-1 rounded-full bg-[#00843D]"></span>
+        <span class="w-5 h-1 rounded-full bg-primary-600"></span>
         <span class="w-5 h-1 rounded-full bg-[#CE1126]"></span>
         <span class="w-5 h-1 rounded-full bg-[#FCD116]"></span>
 

@@ -12,12 +12,12 @@
 
         <section
             class="relative overflow-hidden rounded-[32px]
-           bg-gradient-to-br from-blue-900 via-blue-700 to-blue-500
+           bg-gradient-to-br from-primary-900 via-primary-700 to-primary-500
            shadow-2xl">
 
             {{-- Décor --}}
             <div class="absolute -top-24 -left-20 w-80 h-80 rounded-full bg-white/10 blur-3xl"></div>
-            <div class="absolute -bottom-32 -right-20 w-96 h-96 rounded-full bg-cyan-300/10 blur-3xl"></div>
+            <div class="absolute -bottom-32 -right-20 w-96 h-96 rounded-full bg-primary-300/10 blur-3xl"></div>
 
             <div class="relative z-10 grid lg:grid-cols-2 gap-10 items-center px-8 py-14 lg:px-14 lg:py-20">
 
@@ -30,7 +30,7 @@
                         class="inline-flex items-center gap-2
                        rounded-full bg-white/15 backdrop-blur
                        border border-white/20
-                       px-4 py-2 text-sm text-blue-100">
+                       px-4 py-2 text-sm text-primary-100">
 
                         🛡️ Marketplace sécurisée
 
@@ -42,13 +42,13 @@
                        leading-tight">
 
                         Achetez en toute
-                        <span class="text-cyan-300">
+                        <span class="text-primary-300">
                             confiance.
                         </span>
 
                     </h1>
 
-                    <p class="mt-6 text-lg text-blue-100
+                    <p class="mt-6 text-lg text-primary-100
                        leading-8 max-w-xl">
 
                         Votre paiement reste protégé jusqu'à la réception
@@ -72,13 +72,13 @@
                                 placeholder="Que recherchez-vous aujourd'hui ?"
                                 class="flex-1
                                px-6 py-5
-                               text-gray-700
+                               text-slate-700
                                text-base
                                outline-none">
 
                             <button
-                                class="bg-blue-600
-                               hover:bg-blue-700
+                                class="bg-primary-600
+                               hover:bg-primary-700
                                px-8
                                font-bold
                                text-white
@@ -117,7 +117,7 @@
 
                                 </div>
 
-                                <div class="text-sm text-blue-100">
+                                <div class="text-sm text-primary-100">
 
                                     Argent protégé
 
@@ -146,7 +146,7 @@
 
                                 </div>
 
-                                <div class="text-sm text-blue-100">
+                                <div class="text-sm text-primary-100">
 
                                     Partout au Cameroun
 
@@ -175,7 +175,7 @@
 
                                 </div>
 
-                                <div class="text-sm text-blue-100">
+                                <div class="text-sm text-primary-100">
 
                                     Plus de confiance
 
@@ -204,7 +204,7 @@
 
                                 </div>
 
-                                <div class="text-sm text-blue-100">
+                                <div class="text-sm text-primary-100">
 
                                     Nous vous aidons
 
@@ -237,7 +237,7 @@
 
                                 <div>
 
-                                    <p class="text-sm text-gray-500">
+                                    <p class="text-sm text-slate-500">
 
                                         Paiement sécurisé
 
@@ -246,7 +246,7 @@
                                     <h3
                                         class="text-2xl
                                        font-black
-                                       text-gray-900">
+                                       text-slate-900">
 
                                         Séquestre
 
@@ -257,7 +257,7 @@
                                 <div
                                     class="w-16 h-16
                                    rounded-2xl
-                                   bg-blue-100
+                                   bg-primary-100
                                    flex items-center justify-center
                                    text-3xl">
 
@@ -273,7 +273,7 @@
 
                                     <div
                                         class="w-10 h-10 rounded-full
-                                       bg-blue-600 text-white
+                                       bg-primary-600 text-white
                                        flex items-center justify-center
                                        font-bold">
 
@@ -289,7 +289,7 @@
 
                                         </div>
 
-                                        <div class="text-sm text-gray-500">
+                                        <div class="text-sm text-slate-500">
 
                                             Votre argent est sécurisé.
 
@@ -303,7 +303,7 @@
 
                                     <div
                                         class="w-10 h-10 rounded-full
-                                       bg-blue-600 text-white
+                                       bg-primary-600 text-white
                                        flex items-center justify-center
                                        font-bold">
 
@@ -319,7 +319,7 @@
 
                                         </div>
 
-                                        <div class="text-sm text-gray-500">
+                                        <div class="text-sm text-slate-500">
 
                                             Livraison suivie.
 
@@ -333,7 +333,7 @@
 
                                     <div
                                         class="w-10 h-10 rounded-full
-                                       bg-emerald-600 text-white
+                                       bg-success text-white
                                        flex items-center justify-center
                                        font-bold">
 
@@ -349,7 +349,7 @@
 
                                         </div>
 
-                                        <div class="text-sm text-gray-500">
+                                        <div class="text-sm text-slate-500">
 
                                             Le vendeur est payé.
 
@@ -374,7 +374,7 @@
                            px-6 py-4">
 
                             <div
-                                class="text-emerald-600
+                                class="text-success
                                font-black
                                text-2xl">
 
@@ -383,7 +383,7 @@
                             </div>
 
                             <div class="text-sm
-                               text-gray-500">
+                               text-slate-500">
 
                                 Paiement protégé
 
@@ -408,7 +408,7 @@
             <div class="flex items-center justify-between mb-8">
 
                 <div>
-                    <p class="text-blue-600 font-bold uppercase tracking-widest text-xs">
+                    <p class="text-primary-600 font-bold uppercase tracking-widest text-xs">
                         Explorer
                     </p>
 
@@ -423,7 +423,7 @@
 
                 <a href="#"
                     class="hidden md:flex items-center gap-2
-                   text-blue-600 font-bold hover:text-blue-700 transition">
+                   text-primary-600 font-bold hover:text-primary-700 transition">
 
                     Voir toutes
 
@@ -450,14 +450,14 @@
                     class="group bg-white rounded-3xl
                    border border-slate-200
                    p-7
-                   hover:border-blue-500
+                   hover:border-primary-500
                    hover:-translate-y-2
                    hover:shadow-2xl
                    transition">
 
                     <div
                         class="w-16 h-16 rounded-2xl
-                        bg-blue-100
+                        bg-primary-100
                         flex items-center justify-center
                         text-4xl">
 
@@ -478,7 +478,7 @@
 
                     </p>
 
-                    <div class="mt-6 text-blue-600 font-bold">
+                    <div class="mt-6 text-primary-600 font-bold">
 
                         Explorer →
 
@@ -492,14 +492,14 @@
                     class="group bg-white rounded-3xl
                    border border-slate-200
                    p-7
-                   hover:border-pink-500
+                   hover:border-accent-500
                    hover:-translate-y-2
                    hover:shadow-2xl
                    transition">
 
                     <div
                         class="w-16 h-16 rounded-2xl
-                        bg-pink-100
+                        bg-accent-100
                         flex items-center justify-center
                         text-4xl">
 
@@ -521,7 +521,7 @@
 
                     </p>
 
-                    <div class="mt-6 text-pink-600 font-bold">
+                    <div class="mt-6 text-accent-600 font-bold">
 
                         Explorer →
 
@@ -535,14 +535,14 @@
                     class="group bg-white rounded-3xl
                    border border-slate-200
                    p-7
-                   hover:border-amber-500
+                   hover:border-warning
                    hover:-translate-y-2
                    hover:shadow-2xl
                    transition">
 
                     <div
                         class="w-16 h-16 rounded-2xl
-                        bg-amber-100
+                        bg-warning-100
                         flex items-center justify-center
                         text-4xl">
 
@@ -564,7 +564,7 @@
 
                     </p>
 
-                    <div class="mt-6 text-amber-600 font-bold">
+                    <div class="mt-6 text-warning-600 font-bold">
 
                         Explorer →
 
@@ -578,14 +578,14 @@
                     class="group bg-white rounded-3xl
                    border border-slate-200
                    p-7
-                   hover:border-green-500
+                   hover:border-success
                    hover:-translate-y-2
                    hover:shadow-2xl
                    transition">
 
                     <div
                         class="w-16 h-16 rounded-2xl
-                        bg-green-100
+                        bg-success-100
                         flex items-center justify-center
                         text-4xl">
 
@@ -607,7 +607,7 @@
 
                     </p>
 
-                    <div class="mt-6 text-green-600 font-bold">
+                    <div class="mt-6 text-success font-bold">
 
                         Explorer →
 
@@ -621,14 +621,14 @@
                     class="group bg-white rounded-3xl
                    border border-slate-200
                    p-7
-                   hover:border-red-500
+                   hover:border-danger
                    hover:-translate-y-2
                    hover:shadow-2xl
                    transition">
 
                     <div
                         class="w-16 h-16 rounded-2xl
-                        bg-red-100
+                        bg-danger-100
                         flex items-center justify-center
                         text-4xl">
 
@@ -650,7 +650,7 @@
 
                     </p>
 
-                    <div class="mt-6 text-red-600 font-bold">
+                    <div class="mt-6 text-danger font-bold">
 
                         Explorer →
 
@@ -664,14 +664,14 @@
                     class="group bg-white rounded-3xl
                    border border-slate-200
                    p-7
-                   hover:border-fuchsia-500
+                   hover:border-accent-500
                    hover:-translate-y-2
                    hover:shadow-2xl
                    transition">
 
                     <div
                         class="w-16 h-16 rounded-2xl
-                        bg-fuchsia-100
+                        bg-accent-100
                         flex items-center justify-center
                         text-4xl">
 
@@ -693,7 +693,7 @@
 
                     </p>
 
-                    <div class="mt-6 text-fuchsia-600 font-bold">
+                    <div class="mt-6 text-accent-600 font-bold">
 
                         Explorer →
 
@@ -707,14 +707,14 @@
                     class="group bg-white rounded-3xl
                    border border-slate-200
                    p-7
-                   hover:border-orange-500
+                   hover:border-accent-500
                    hover:-translate-y-2
                    hover:shadow-2xl
                    transition">
 
                     <div
                         class="w-16 h-16 rounded-2xl
-                        bg-orange-100
+                        bg-accent-100
                         flex items-center justify-center
                         text-4xl">
 
@@ -736,7 +736,7 @@
 
                     </p>
 
-                    <div class="mt-6 text-orange-600 font-bold">
+                    <div class="mt-6 text-accent-600 font-bold">
 
                         Explorer →
 
@@ -749,11 +749,11 @@
                 <a href="#"
                     class="group rounded-3xl
                    border-2 border-dashed
-                   border-blue-300
-                   bg-blue-50
+                   border-primary-300
+                   bg-primary-50
                    p-7
-                   hover:bg-blue-600
-                   hover:border-blue-600
+                   hover:bg-primary-600
+                   hover:border-primary-600
                    transition">
 
                     <div
@@ -774,7 +774,7 @@
                     </h3>
 
                     <p class="text-slate-500 mt-2
-                      group-hover:text-blue-100">
+                      group-hover:text-primary-100">
 
                         Découvrez tous nos univers.
 
@@ -795,7 +795,7 @@
 
                 <div>
 
-                    <p class="text-blue-600 uppercase tracking-widest font-bold text-xs">
+                    <p class="text-primary-600 uppercase tracking-widest font-bold text-xs">
 
                         À ne pas manquer
 
@@ -809,7 +809,7 @@
 
                 </div>
 
-                <a href="#" class="text-blue-600 font-bold hover:text-blue-700">
+                <a href="#" class="text-primary-600 font-bold hover:text-primary-700">
 
                     Voir toutes →
 
@@ -824,7 +824,7 @@
 
                 <a href="#"
                     class="lg:col-span-2 relative overflow-hidden rounded-3xl
-                   bg-gradient-to-r from-blue-700 via-blue-600 to-cyan-500
+                   bg-gradient-to-r from-primary-700 via-primary-600 to-primary-500
                    p-10 text-white shadow-xl group">
 
                     <div class="absolute right-0 top-0 w-72 h-72 bg-white/10 rounded-full blur-3xl"></div>
@@ -850,7 +850,7 @@
 
                             Jusqu'à
 
-                            <span class="text-yellow-300">
+                            <span class="text-warning">
 
                                 -50%
 
@@ -862,7 +862,7 @@
                         </h3>
 
                         <p class="mt-6
-                           text-blue-100
+                           text-primary-100
                            leading-8">
 
                             Smartphones,
@@ -876,7 +876,7 @@
                         <button
                             class="mt-8
                            bg-white
-                           text-blue-700
+                           text-primary-700
                            px-8
                            py-4
                            rounded-2xl
@@ -898,8 +898,8 @@
                 <a href="#"
                     class="rounded-3xl
                    bg-gradient-to-br
-                   from-orange-500
-                   to-red-500
+                   from-accent-500
+                   to-danger
                    p-8
                    text-white
                    shadow-xl
@@ -922,7 +922,7 @@
                     </h3>
 
                     <p class="mt-4
-                       text-orange-100">
+                       text-accent-100">
 
                         Faites livrer
                         partout au Cameroun.
@@ -1022,7 +1022,7 @@
 
                 <div>
 
-                    <p class="text-blue-600 font-bold uppercase tracking-[0.3em] text-xs">
+                    <p class="text-primary-600 font-bold uppercase tracking-[0.3em] text-xs">
 
                         Les meilleures offres
 
@@ -1045,7 +1045,7 @@
                 <a href="{{ route('buyer.home') }}"
                     class="mt-4 md:mt-0
                    inline-flex items-center gap-2
-                   font-bold text-blue-600 hover:text-blue-700">
+                   font-bold text-primary-600 hover:text-primary-700">
 
                     Voir tous les produits
 
@@ -1063,7 +1063,7 @@
                 <form method="GET" action="{{ route('buyer.home') }}" class="max-w-2xl mx-auto">
                     <div class="relative flex items-center group">
                         <div
-                            class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-600 transition-colors">
+                            class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary-600 transition-colors">
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -1072,10 +1072,10 @@
 
                         <input type="text" name="q" value="{{ request('q') }}"
                             placeholder="Rechercher un produit, une ville..."
-                            class="w-full pl-11 pr-28 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 shadow-sm transition-all duration-200">
+                            class="w-full pl-11 pr-28 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-600 shadow-sm transition-all duration-200">
 
                         <button type="submit"
-                            class="absolute right-1.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-semibold px-5 py-2 rounded-xl text-xs transition-all duration-200 shadow-md shadow-blue-500/20">
+                            class="absolute right-1.5 bg-primary-600 hover:bg-primary-700 active:scale-95 text-white font-semibold px-5 py-2 rounded-xl text-xs transition-all duration-200 shadow-md shadow-primary-500/20">
                             Rechercher
                         </button>
                     </div>
@@ -1086,7 +1086,7 @@
             <div class="flex items-center justify-between mb-6 pb-3 border-b border-slate-200">
                 <h1 class="text-base font-bold text-slate-900 flex items-center gap-2">
                     @if (request('q'))
-                        Résultats pour <span class="text-blue-600 font-extrabold">"{{ request('q') }}"</span>
+                        Résultats pour <span class="text-primary-600 font-extrabold">"{{ request('q') }}"</span>
                     @else
                         Dernières annonces
                     @endif
@@ -1101,7 +1101,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                 @forelse($products as $product)
                     <a href="{{ route('product.show', $product) }}"
-                        class="group relative bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl hover:border-blue-400/60 hover:-translate-y-1.5 transition-all duration-300 ease-out flex flex-col justify-between">
+                        class="group relative bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl hover:border-primary-400/60 hover:-translate-y-1.5 transition-all duration-300 ease-out flex flex-col justify-between">
 
                         <div>
                             {{-- Zone Image --}}
@@ -1124,7 +1124,7 @@
                                 {{-- Tag Transport (Inclus ou Non Inclus) sur l'image --}}
                                 @if ($product->shipping_included)
                                     <span
-                                        class="absolute top-2.5 left-2.5 z-10 bg-emerald-600/95 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm uppercase tracking-wider">
+                                        class="absolute top-2.5 left-2.5 z-10 bg-success/95 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm uppercase tracking-wider">
                                         Transport inclus
                                     </span>
                                 @else
@@ -1139,7 +1139,7 @@
                             <div class="px-4 py-3">
                                 {{-- Titre --}}
                                 <h2
-                                    class="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors duration-200 line-clamp-1 leading-snug">
+                                    class="text-sm font-bold text-slate-800 group-hover:text-primary-600 transition-colors duration-200 line-clamp-1 leading-snug">
                                     {{ $product->title }}
                                 </h2>
 
@@ -1157,7 +1157,7 @@
 
                                 {{-- Prix + Ancien Prix + Taux de Réduction en Rouge --}}
                                 <div class="mt-3 flex items-center gap-2 flex-wrap">
-                                    <span class="text-base font-extrabold text-emerald-600">
+                                    <span class="text-base font-extrabold text-success">
                                         {{ number_format($product->price, 0, ',', ' ') }} <span
                                             class="text-[11px] font-bold">FCFA</span>
                                     </span>
@@ -1181,7 +1181,7 @@
                                             );
                                         @endphp
                                         <span
-                                            class="text-[10px] font-black text-red-600 bg-red-50 border border-red-200 px-1.5 py-0.5 rounded">
+                                            class="text-[10px] font-black text-danger bg-danger-50 border border-danger-200 px-1.5 py-0.5 rounded">
                                             -{{ $discountPercent }}%
                                         </span>
                                     @endif
@@ -1192,7 +1192,7 @@
                         {{-- Bouton d'action interactif --}}
                         <div class="p-4 pt-0 mt-2">
                             <span
-                                class="w-full flex items-center justify-center gap-1.5 bg-blue-600 group-hover:bg-blue-700 text-white font-semibold py-2 rounded-xl text-xs transition-all duration-200 shadow-sm shadow-blue-500/10">
+                                class="w-full flex items-center justify-center gap-1.5 bg-primary-600 group-hover:bg-primary-700 text-white font-semibold py-2 rounded-xl text-xs transition-all duration-200 shadow-sm shadow-primary-500/10">
                                 <span>Voir le produit</span>
                                 <svg class="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform duration-200"
                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1216,7 +1216,7 @@
                         <p class="text-sm text-slate-600 font-semibold">Aucun produit trouvé.</p>
                         @if (request('q'))
                             <a href="{{ route('buyer.home') }}"
-                                class="inline-block mt-2 text-xs text-blue-600 font-bold hover:underline">
+                                class="inline-block mt-2 text-xs text-primary-600 font-bold hover:underline">
                                 Réinitialiser la recherche
                             </a>
                         @endif

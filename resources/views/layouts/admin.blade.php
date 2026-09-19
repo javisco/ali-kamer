@@ -37,7 +37,7 @@
 </head>
 
 
-<body class="h-full font-sans antialiased text-slate-800 bg-slate-50" x-data="{ sidebarOpen: false }"
+<body class="h-full font-sans antialiased text-slate-900 bg-slate-50" x-data="{ sidebarOpen: false }"
     @keydown.escape.window="sidebarOpen = false">
 
 
@@ -60,7 +60,7 @@
     ========================================================== --}}
 
         <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-            class="fixed inset-y-0 left-0 z-50 w-64 bg-[#0a1b12] text-white flex flex-col transition-transform duration-300 ease-in-out md:static md:translate-x-0 border-r border-slate-800 shrink-0">
+            class="fixed inset-y-0 left-0 z-50 w-64 bg-primary-800 text-white flex flex-col transition-transform duration-300 ease-in-out md:static md:translate-x-0 border-r border-primary-900 shrink-0">
 
             <div class="flex flex-col h-full min-h-0">
 
@@ -86,7 +86,7 @@
                             </h2>
 
                             <span
-                                class="inline-block mt-1 text-[9px] font-bold text-[#F9A01B] bg-[#F9A01B]/10 px-2 py-0.5 rounded border border-[#F9A01B]/30">
+                                class="inline-block mt-1 text-[9px] font-bold text-accent-500 bg-accent-500/10 px-2 py-0.5 rounded border border-accent-500/30">
                                 Administration
                             </span>
 
@@ -121,7 +121,7 @@
                      VUE GLOBALE
                 ================================================== --}}
 
-                    <div class="px-3 pt-1 pb-1 text-[9px] font-black uppercase tracking-wider text-emerald-500/80">
+                    <div class="px-3 pt-1 pb-1 text-[9px] font-black uppercase tracking-wider text-success/80">
                         Vue globale
                     </div>
 
@@ -131,10 +131,10 @@
                     <a href="{{ route('admin.dashboard') }}" @click="sidebarOpen = false"
                         class="flex items-center gap-3 px-3 py-2 rounded-xl font-bold transition-all
                     {{ request()->routeIs('admin.dashboard')
-                        ? 'bg-[#016837] text-white shadow-lg shadow-[#016837]/40 ring-1 ring-emerald-400/30'
+                        ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/40 ring-1 ring-success/30'
                         : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
 
-                        <svg class="w-4 h-4 shrink-0 text-[#F9A01B]" fill="none" stroke="currentColor"
+                        <svg class="w-4 h-4 shrink-0 text-accent-500" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -149,7 +149,7 @@
                      UTILISATEURS & SÉCURITÉ
                 ================================================== --}}
 
-                    <div class="px-3 pt-3 pb-1 text-[9px] font-black uppercase tracking-wider text-emerald-500/80">
+                    <div class="px-3 pt-3 pb-1 text-[9px] font-black uppercase tracking-wider text-success/80">
                         Utilisateurs & sécurité
                     </div>
 
@@ -160,7 +160,7 @@
                     <a href="{{ route('admin.users.index') }}" @click="sidebarOpen = false"
                         class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
     {{ request()->routeIs('admin.users.index', 'admin.users.show', 'admin.users.edit', 'admin.users.history')
-        ? 'bg-[#016837] text-white shadow-lg shadow-[#016837]/40'
+        ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/40'
         : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
 
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -175,7 +175,7 @@
                     <a href="{{ route('admin.users.low-scores') }}" @click="sidebarOpen = false"
                         class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
     {{ request()->routeIs('admin.users.low*')
-        ? 'bg-[#016837] text-white shadow-lg shadow-[#016837]/40'
+        ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/40'
         : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
 
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -191,7 +191,7 @@
                     <a href="{{ route('admin.kyc.index') }}" @click="sidebarOpen = false"
                         class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
                     {{ request()->routeIs('admin.kyc.*')
-                        ? 'bg-[#016837] text-white shadow-lg shadow-[#016837]/40'
+                        ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/40'
                         : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
 
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -208,7 +208,7 @@
                      MARKETPLACE
                 ================================================== --}}
 
-                    <div class="px-3 pt-3 pb-1 text-[9px] font-black uppercase tracking-wider text-emerald-500/80">
+                    <div class="px-3 pt-3 pb-1 text-[9px] font-black uppercase tracking-wider text-success/80">
                         Marketplace
                     </div>
 
@@ -218,7 +218,7 @@
                     <a href="{{ route('admin.categories.index') }}" @click="sidebarOpen = false"
                         class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
                     {{ request()->routeIs('admin.categories.*')
-                        ? 'bg-[#016837] text-white shadow-lg shadow-[#016837]/40'
+                        ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/40'
                         : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
 
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -235,7 +235,7 @@
                      LOGISTIQUE
                 ================================================== --}}
 
-                    <div class="px-3 pt-3 pb-1 text-[9px] font-black uppercase tracking-wider text-emerald-500/80">
+                    <div class="px-3 pt-3 pb-1 text-[9px] font-black uppercase tracking-wider text-success/80">
                         Logistique
                     </div>
 
@@ -245,7 +245,7 @@
                     <a href="{{ route('admin.agencies.index') }}" @click="sidebarOpen = false"
                         class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
                     {{ request()->routeIs('admin.agencies.*')
-                        ? 'bg-[#016837] text-white shadow-lg shadow-[#016837]/40'
+                        ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/40'
                         : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
 
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -262,7 +262,7 @@
                      FINANCES
                 ================================================== --}}
 
-                    <div class="px-3 pt-3 pb-1 text-[9px] font-black uppercase tracking-wider text-emerald-500/80">
+                    <div class="px-3 pt-3 pb-1 text-[9px] font-black uppercase tracking-wider text-success/80">
                         Finances
                     </div>
 
@@ -272,7 +272,7 @@
                     <a href="{{ route('admin.financial-engine.index') }}" @click="sidebarOpen = false"
                         class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
                     {{ request()->routeIs('admin.financial-engine.*')
-                        ? 'bg-[#016837] text-white shadow-lg shadow-[#016837]/40'
+                        ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/40'
                         : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
 
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -287,7 +287,7 @@
                     <a href="{{ route('admin.treasury.index') }}" @click="sidebarOpen = false"
                         class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
 {{ request()->routeIs('admin.treasury.*')
-    ? 'bg-[#016837] text-white shadow-lg shadow-[#016837]/40'
+    ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/40'
     : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
 
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -302,7 +302,7 @@
                      MODÉRATION & SUPPORT
                 ================================================== --}}
 
-                    <div class="px-3 pt-3 pb-1 text-[9px] font-black uppercase tracking-wider text-emerald-500/80">
+                    <div class="px-3 pt-3 pb-1 text-[9px] font-black uppercase tracking-wider text-success/80">
                         Modération & support
                     </div>
 
@@ -312,7 +312,7 @@
                     <a href="{{ route('admin.disputes.index') }}" @click="sidebarOpen = false"
                         class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
                     {{ request()->routeIs('admin.disputes.*')
-                        ? 'bg-[#E30613] text-white shadow-lg shadow-red-600/30'
+                        ? 'bg-danger text-white shadow-lg shadow-danger/30'
                         : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
 
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -330,7 +330,7 @@
                     <a href="{{ route('admin.tutorials.index') }}" @click="sidebarOpen = false"
                         class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
                     {{ request()->routeIs('admin.tutorials.*')
-                        ? 'bg-[#016837] text-white shadow-lg shadow-[#016837]/40'
+                        ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/40'
                         : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
 
                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -354,7 +354,7 @@
                     <a href="{{ route('buyer.home') }}"
                         class="flex items-center justify-center gap-2 w-full px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 text-xs font-bold transition-all border border-white/10 group">
 
-                        <svg class="w-4 h-4 text-[#F9A01B] group-hover:-translate-x-1 transition-transform"
+                        <svg class="w-4 h-4 text-accent-500 group-hover:-translate-x-1 transition-transform"
                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -370,7 +370,7 @@
                         @csrf
 
                         <button type="submit"
-                            class="flex items-center justify-center gap-2 w-full px-3 py-2 rounded-xl text-red-300 hover:text-white hover:bg-[#E30613] transition-all text-xs font-bold">
+                            class="flex items-center justify-center gap-2 w-full px-3 py-2 rounded-xl text-danger-200 hover:text-white hover:bg-danger transition-all text-xs font-bold">
 
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -421,7 +421,7 @@
 
                     <div class="flex items-center gap-2">
 
-                        <span class="w-2.5 h-2.5 rounded-full bg-[#016837] animate-pulse"></span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-primary-600 animate-pulse"></span>
 
                         <span class="text-xs font-black text-slate-700 uppercase tracking-wider">
                             Panneau de contrôle
@@ -441,7 +441,7 @@
                     <div class="flex items-center gap-3 pl-3 border-l border-slate-200">
 
                         <div
-                            class="w-9 h-9 rounded-xl bg-[#016837] text-[#F9A01B] flex items-center justify-center font-black text-xs shadow-md">
+                            class="w-9 h-9 rounded-xl bg-primary-600 text-accent-500 flex items-center justify-center font-black text-xs shadow-md">
                             {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
                         </div>
 
@@ -467,7 +467,7 @@
                         @csrf
 
                         <button type="submit" title="Déconnexion"
-                            class="p-2 rounded-xl text-red-400 hover:text-[#E30613] hover:bg-red-50 transition">
+                            class="p-2 rounded-xl text-danger hover:text-danger hover:bg-danger-50 transition">
 
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -491,14 +491,14 @@
 
                 @if (session('success'))
                     <div
-                        class="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                        class="mb-4 rounded-xl border border-success-200 bg-success-50 px-4 py-3 text-sm text-success-700">
                         {{ session('success') }}
                     </div>
                 @endif
 
 
                 @if (session('error'))
-                    <div class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                    <div class="mb-4 rounded-xl border border-danger-200 bg-danger-50 px-4 py-3 text-sm text-danger-700">
                         {{ session('error') }}
                     </div>
                 @endif

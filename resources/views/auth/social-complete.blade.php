@@ -4,24 +4,24 @@
 
 @section('content')
 
-<div class="min-h-screen bg-[#FAF9F6] py-10">
+<div class="min-h-screen bg-slate-50 py-10">
 
     <div class="max-w-lg mx-auto px-4">
 
-        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 sm:p-8">
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 sm:p-8">
 
             <div class="text-center mb-8">
 
-                <div class="w-14 h-14 mx-auto rounded-2xl bg-[#006837]
+                <div class="w-14 h-14 mx-auto rounded-2xl bg-primary-600
                             flex items-center justify-center text-white text-2xl mb-4">
                     🇨🇲
                 </div>
 
-                <h1 class="text-2xl font-black text-gray-900">
+                <h1 class="text-2xl font-black text-slate-900">
                     Finalisez votre inscription
                 </h1>
 
-                <p class="mt-2 text-sm text-gray-500">
+                <p class="mt-2 text-sm text-slate-500">
                     Encore une information pour terminer votre inscription
                     sur Ali-Kamer.
                 </p>
@@ -29,14 +29,14 @@
             </div>
 
             @if(!empty($socialPending['name']))
-                <div class="mb-6 rounded-2xl bg-green-50 border border-green-100 p-4">
+                <div class="mb-6 rounded-2xl bg-success-50 border border-success-100 p-4">
 
-                    <p class="text-sm font-bold text-gray-900">
+                    <p class="text-sm font-bold text-slate-900">
                         {{ $socialPending['name'] }}
                     </p>
 
                     @if(!empty($socialPending['provider_email']))
-                        <p class="text-xs text-gray-500 mt-1">
+                        <p class="text-xs text-slate-500 mt-1">
                             {{ $socialPending['provider_email'] }}
                         </p>
                     @endif
@@ -53,7 +53,7 @@
                 @csrf
 
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">
                         Numéro Mobile Money
                     </label>
 
@@ -63,21 +63,21 @@
                         value="{{ old('phone_momo') }}"
                         placeholder="6XXXXXXXX"
                         required
-                        class="w-full rounded-xl border border-gray-200
+                        class="w-full rounded-xl border border-slate-200
                                px-4 py-3 text-sm outline-none
-                               focus:border-[#006837]
-                               focus:ring-2 focus:ring-[#006837]/10"
+                               focus:border-primary-600
+                               focus:ring-2 focus:ring-primary-500/10"
                     >
 
                     @error('phone_momo')
-                        <p class="mt-1 text-xs text-red-600">
+                        <p class="mt-1 text-xs text-danger">
                             {{ $message }}
                         </p>
                     @enderror
                 </div>
 
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">
                         Opérateur Mobile Money
                     </label>
 
@@ -92,10 +92,10 @@
                                 {{ old('momo_operator') === 'mtn' ? 'checked' : '' }}
                             >
 
-                            <div class="rounded-xl border border-gray-200
+                            <div class="rounded-xl border border-slate-200
                                         px-4 py-3 text-center font-bold
-                                        peer-checked:border-[#FFC20E]
-                                        peer-checked:bg-yellow-50">
+                                        peer-checked:border-warning
+                                        peer-checked:bg-warning-50">
                                 MTN
                             </div>
                         </label>
@@ -109,10 +109,10 @@
                                 {{ old('momo_operator') === 'orange' ? 'checked' : '' }}
                             >
 
-                            <div class="rounded-xl border border-gray-200
+                            <div class="rounded-xl border border-slate-200
                                         px-4 py-3 text-center font-bold
-                                        peer-checked:border-[#FF7900]
-                                        peer-checked:bg-orange-50">
+                                        peer-checked:border-accent-500
+                                        peer-checked:bg-accent-50">
                                 Orange
                             </div>
                         </label>
@@ -120,7 +120,7 @@
                     </div>
 
                     @error('momo_operator')
-                        <p class="mt-1 text-xs text-red-600">
+                        <p class="mt-1 text-xs text-danger">
                             {{ $message }}
                         </p>
                     @enderror
@@ -128,9 +128,9 @@
 
                 <button
                     type="submit"
-                    class="w-full rounded-xl bg-[#006837]
+                    class="w-full rounded-xl bg-primary-600
                            px-5 py-3.5 text-sm font-extrabold text-white
-                           hover:bg-[#004d28] transition"
+                           hover:bg-primary-800 transition"
                 >
                     Terminer mon inscription
                 </button>

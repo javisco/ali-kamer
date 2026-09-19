@@ -7,29 +7,29 @@
 @extends($layout)
 @section('title', 'Tutoriels')
 @section('content')
-<div class="bg-gray-50 min-h-screen py-8">
+<div class="bg-slate-50 min-h-screen py-8">
 <div class="max-w-4xl mx-auto px-4">
 
-    <h1 class="text-2xl font-extrabold text-gray-900 mb-2">Tutoriels</h1>
-    <p class="text-sm text-gray-500 mb-8">
+    <h1 class="text-2xl font-extrabold text-slate-900 mb-2">Tutoriels</h1>
+    <p class="text-sm text-slate-500 mb-8">
         Apprenez à utiliser Ali-Kamer facilement.
     </p>
 
     @forelse($tutorials as $category => $items)
         <div class="mb-10">
-            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <span class="w-1 h-6 bg-indigo-600 rounded-full inline-block"></span>
+            <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <span class="w-1 h-6 bg-primary-600 rounded-full inline-block"></span>
                 {{ App\Models\Tutorial::CATEGORIES[$category] ?? $category }}
             </h2>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 @foreach($items as $tutorial)
                     <a href="{{ route('tutorials.show', $tutorial) }}"
-                       class="bg-white rounded-2xl border border-gray-100 shadow-sm
-                              hover:shadow-md hover:border-indigo-200 transition overflow-hidden flex">
+                       class="bg-white rounded-2xl border border-slate-100 shadow-sm
+                              hover:shadow-md hover:border-primary-200 transition overflow-hidden flex">
 
                         {{-- Thumbnail ou icône --}}
-                        <div class="w-24 h-24 bg-indigo-50 flex-shrink-0 flex items-center
+                        <div class="w-24 h-24 bg-primary-50 flex-shrink-0 flex items-center
                                     justify-center relative">
                             @if($tutorial->thumbnail_url)
                                 <img src="{{ $tutorial->thumbnail_url }}"
@@ -56,15 +56,15 @@
 
                         {{-- Infos --}}
                         <div class="p-4 flex-1 min-w-0">
-                            <p class="font-semibold text-gray-900 text-sm line-clamp-2">
+                            <p class="font-semibold text-slate-900 text-sm line-clamp-2">
                                 {{ $tutorial->title }}
                             </p>
                             <div class="flex items-center gap-2 mt-2">
-                                <span class="text-xs text-gray-400 uppercase">
+                                <span class="text-xs text-slate-400 uppercase">
                                     {{ $tutorial->type === 'video' ? 'Vidéo' : 'Article' }}
                                 </span>
                                 @if($tutorial->duration_minutes)
-                                    <span class="text-xs text-gray-400">
+                                    <span class="text-xs text-slate-400">
                                         · {{ $tutorial->duration_minutes }} min
                                     </span>
                                 @endif
@@ -75,8 +75,8 @@
             </div>
         </div>
     @empty
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center">
-            <p class="text-gray-400">Aucun tutoriel disponible pour l'instant.</p>
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-12 text-center">
+            <p class="text-slate-400">Aucun tutoriel disponible pour l'instant.</p>
         </div>
     @endforelse
 

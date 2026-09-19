@@ -6,11 +6,11 @@
 
             <div class="bg-white rounded-3xl border border-slate-200/80 shadow-xl p-8 sm:p-10 mb-6 relative overflow-hidden">
                 {{-- Accent décoratif arrière-plan --}}
-                <div class="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-[#F9A01B]/10 blur-2xl"></div>
+                <div class="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-accent-500/10 blur-2xl"></div>
 
                 {{-- Icône animée --}}
-                <div class="w-20 h-20 bg-yellow-50 border border-[#F9A01B]/30 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xs">
-                    <svg class="w-10 h-10 text-[#F9A01B] animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-20 h-20 bg-warning-50 border border-accent-500/30 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xs">
+                    <svg class="w-10 h-10 text-accent-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                     </svg>
                 </div>
@@ -20,7 +20,7 @@
                 </h1>
                 <p class="text-xs sm:text-sm text-slate-600 font-medium mb-6 leading-relaxed">
                     Veuillez valider le paiement USSD de 
-                    <span class="font-extrabold text-[#016837]">
+                    <span class="font-extrabold text-primary-600">
                         {{ number_format($order->shipment->transport_fee, 0, ',', ' ') }} FCFA
                     </span> 
                     directement sur votre téléphone.
@@ -29,14 +29,14 @@
                 {{-- Indication d'avancement --}}
                 <div class="text-left space-y-3.5 mb-6 bg-slate-50 p-4 rounded-2xl border border-slate-100">
                     <div class="flex items-center gap-3 text-xs">
-                        <div class="w-6 h-6 rounded-xl bg-emerald-100 text-[#016837] font-black text-xs flex items-center justify-center shrink-0">
+                        <div class="w-6 h-6 rounded-xl bg-success-100 text-primary-600 font-black text-xs flex items-center justify-center shrink-0">
                             ✓
                         </div>
                         <span class="text-slate-600 font-bold">Colis disponible en agence</span>
                     </div>
 
                     <div class="flex items-center gap-3 text-xs">
-                        <div class="w-6 h-6 rounded-xl bg-[#F9A01B] text-slate-900 font-black text-xs flex items-center justify-center shrink-0 animate-pulse shadow-xs">
+                        <div class="w-6 h-6 rounded-xl bg-accent-500 text-slate-900 font-black text-xs flex items-center justify-center shrink-0 animate-pulse shadow-xs">
                             2
                         </div>
                         <span class="text-slate-900 font-black">
@@ -53,15 +53,15 @@
                 </div>
 
                 {{-- Status dynamique --}}
-                <div class="bg-emerald-50/60 border border-emerald-100 rounded-xl p-3.5 text-xs font-bold text-[#016837] flex items-center justify-center gap-2" id="statusArea">
-                    <span class="w-2 h-2 rounded-full bg-[#016837] animate-ping"></span>
+                <div class="bg-success-50/60 border border-success-100 rounded-xl p-3.5 text-xs font-bold text-primary-600 flex items-center justify-center gap-2" id="statusArea">
+                    <span class="w-2 h-2 rounded-full bg-primary-600 animate-ping"></span>
                     <span>Vérification de la transaction en cours...</span>
                 </div>
             </div>
 
             {{-- Lien retour --}}
             <a href="{{ route('buyer.orders.show', $order) }}" 
-               class="inline-flex items-center gap-1.5 text-xs font-extrabold text-slate-600 hover:text-[#016837] transition-colors">
+               class="inline-flex items-center gap-1.5 text-xs font-extrabold text-slate-600 hover:text-primary-600 transition-colors">
                 <span>← Revenir au détail de la commande</span>
             </a>
 
@@ -84,7 +84,7 @@
                         if (data.paid) {
                             clearInterval(check);
                             statusArea.innerHTML = '✅ Paiement confirmé ! Redirection en cours...';
-                            statusArea.className = 'bg-emerald-100 border border-emerald-200 rounded-xl p-3.5 text-xs font-black text-[#016837]';
+                            statusArea.className = 'bg-success-100 border border-success-200 rounded-xl p-3.5 text-xs font-black text-primary-600';
                             setTimeout(() => {
                                 window.location.href = '{{ route('buyer.orders.show', $order) }}';
                             }, 2000);

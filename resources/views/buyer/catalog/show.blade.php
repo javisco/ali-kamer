@@ -77,7 +77,7 @@
 </script>
 
 <div
-    class="min-h-screen bg-[#F7F9F7] py-5 sm:py-7 pb-24 lg:pb-8"
+    class="min-h-screen bg-slate-50 py-5 sm:py-7 pb-24 lg:pb-8"
     x-data="productShow()"
 >
 
@@ -90,7 +90,7 @@
 
             <a
                 href="{{ route('buyer.home') }}"
-                class="font-semibold text-slate-400 transition hover:text-[#016837]"
+                class="font-semibold text-slate-400 transition hover:text-primary-600"
             >
                 Accueil
             </a>
@@ -99,7 +99,7 @@
 
             <a
                 href="#"
-                class="font-semibold text-slate-400 transition hover:text-[#016837]"
+                class="font-semibold text-slate-400 transition hover:text-primary-600"
             >
                 {{ $product->category->name }}
             </a>
@@ -149,7 +149,7 @@
                             {{-- Plein écran --}}
                             <span
                                 class="absolute bottom-3 right-3 flex items-center gap-1.5
-                                       rounded-lg bg-[#0A1B12]/85 px-2.5 py-1.5 text-[9px]
+                                       rounded-lg bg-slate-900/85 px-2.5 py-1.5 text-[9px]
                                        font-bold text-white opacity-70 shadow-md backdrop-blur-md
                                        transition group-hover:opacity-100"
                             >
@@ -196,7 +196,7 @@
                         @if ($product->shipping_included)
 
                             <span
-                                class="rounded-md bg-[#016837]/95 px-2.5 py-1 text-[9px]
+                                class="rounded-md bg-primary-600/95 px-2.5 py-1 text-[9px]
                                        font-extrabold uppercase tracking-wide text-white shadow-sm"
                             >
                                 Transport inclus
@@ -207,7 +207,7 @@
                         @if ($product->hasDiscount())
 
                             <span
-                                class="w-fit rounded-md bg-[#E30613] px-2.5 py-1 text-[9px]
+                                class="w-fit rounded-md bg-danger px-2.5 py-1 text-[9px]
                                        font-extrabold text-white shadow-sm"
                             >
                                 -{{ $product->discountPercent() }}%
@@ -237,13 +237,13 @@
                                     class="flex h-8 w-8 items-center justify-center rounded-full
                                            border border-slate-200 bg-white/95 shadow-sm
                                            backdrop-blur transition hover:scale-105
-                                           hover:border-[#E30613]/30"
+                                           hover:border-danger/30"
                                 >
 
                                     <svg
                                         class="h-4 w-4 {{ $isWishlisted
-                                            ? 'fill-[#E30613] text-[#E30613]'
-                                            : 'text-slate-500 hover:text-[#E30613]' }}"
+                                            ? 'fill-danger text-danger'
+                                            : 'text-slate-500 hover:text-danger' }}"
                                         fill="{{ $isWishlisted ? 'currentColor' : 'none' }}"
                                         stroke="currentColor"
                                         viewBox="0 0 24 24"
@@ -280,8 +280,8 @@
                                     type="submit"
                                     title="Ajouter au panier"
                                     class="flex h-8 w-8 items-center justify-center rounded-full
-                                           bg-[#016837] text-white shadow-sm transition
-                                           hover:scale-105 hover:bg-[#01582f] active:scale-95"
+                                           bg-primary-600 text-white shadow-sm transition
+                                           hover:scale-105 hover:bg-primary-700 active:scale-95"
                                 >
 
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -321,8 +321,8 @@
                                        overflow-hidden rounded-xl border-2 bg-white p-1
                                        transition-all duration-200
                                        {{ $loop->first
-                                           ? 'border-[#016837] shadow-sm'
-                                           : 'border-slate-200 hover:border-[#016837]/50' }}"
+                                           ? 'border-primary-600 shadow-sm'
+                                           : 'border-slate-200 hover:border-primary-600/50' }}"
                             >
 
                                 <img
@@ -355,8 +355,8 @@
                     <div>
 
                         <span
-                            class="inline-flex rounded-md bg-[#016837]/10 px-2 py-1
-                                   text-[9px] font-extrabold uppercase tracking-wider text-[#016837]"
+                            class="inline-flex rounded-md bg-primary-600/10 px-2 py-1
+                                   text-[9px] font-extrabold uppercase tracking-wider text-primary-600"
                         >
                             {{ $product->category->name }}
                         </span>
@@ -369,7 +369,7 @@
                         {{-- Avis --}}
                         <div class="mt-1.5 flex items-center gap-2">
 
-                            <div class="flex text-sm text-[#F9A01B]">
+                            <div class="flex text-sm text-accent-500">
                                 @for ($i = 1; $i <= 5; $i++)
                                     <span>{{ $i <= round($productRating) ? '★' : '☆' }}</span>
                                 @endfor
@@ -377,7 +377,7 @@
 
                             <a
                                 href="#reviews-section"
-                                class="text-[10px] font-semibold text-slate-500 transition hover:text-[#016837]"
+                                class="text-[10px] font-semibold text-slate-500 transition hover:text-primary-600"
                             >
                                 {{ number_format($productRating, 1) }}
                                 ({{ $reviews->count() }} avis)
@@ -392,11 +392,11 @@
                         PRIX + QUANTITÉ
                     ================================================== --}}
                     <div class="mt-4 flex flex-wrap items-center justify-between gap-3
-                                rounded-xl border border-slate-100 bg-[#F7F9F7] p-3">
+                                rounded-xl border border-slate-100 bg-slate-50 p-3">
 
                         <div class="flex flex-wrap items-baseline gap-2">
 
-                            <span class="text-2xl font-black text-[#016837]">
+                            <span class="text-2xl font-black text-primary-600">
                                 <span x-text="formatPrice(selectedVariant ? selectedVariant.price : {{ $product->minPrice() ?: $product->price }})">{{ number_format($product->minPrice() ?: $product->price, 0, ',', ' ') }}</span>
                                 <span class="text-[10px] font-extrabold">
                                     FCFA
@@ -410,13 +410,13 @@
                             @endif
 
                             <span x-show="selectedVariant && selectedVariant.old_price && selectedVariant.old_price > selectedVariant.price"
-                                class="text-[11px] font-semibold text-[#E30613] line-through"
+                                class="text-[11px] font-semibold text-danger line-through"
                                 x-text="selectedVariant ? formatPrice(selectedVariant.old_price) + ' FCFA' : ''">
                             </span>
 
                             @if (!$product->hasVariants() && $product->hasDiscount())
 
-                                <span class="text-[11px] font-semibold text-[#E30613] line-through">
+                                <span class="text-[11px] font-semibold text-danger line-through">
                                     {{ number_format($product->old_price, 0, ',', ' ') }} FCFA
                                 </span>
 
@@ -490,10 +490,10 @@
                                                 @click="selectValue({{ $attribute->id }}, {{ $value->id }}, '{{ $value->image_path ? \Illuminate\Support\Facades\Storage::url($value->image_path) : '' }}')"
                                                 :disabled="!isValueAvailable({{ $attribute->id }}, {{ $value->id }})"
                                                 :class="selectedValues[{{ $attribute->id }}] === {{ $value->id }}
-                                                    ? 'border-[#016837] bg-[#016837]/10 text-[#016837] font-bold'
+                                                    ? 'border-primary-600 bg-primary-600/10 text-primary-600 font-bold'
                                                     : (!isValueAvailable({{ $attribute->id }}, {{ $value->id }})
                                                         ? 'border-slate-200 bg-slate-100 text-slate-300 line-through cursor-not-allowed'
-                                                        : 'border-slate-300 bg-white text-slate-600 hover:border-[#016837]/50')"
+                                                        : 'border-slate-300 bg-white text-slate-600 hover:border-primary-600/50')"
                                                 class="rounded-lg border px-2.5 py-1.5 text-[10px] transition"
                                             >
                                                 {{ $value->value }}
@@ -512,11 +512,11 @@
                             <div
                                 x-show="selectedVariant"
                                 x-transition
-                                class="mb-2 rounded-lg border border-[#016837]/10 bg-[#016837]/5 p-2"
+                                class="mb-2 rounded-lg border border-primary-600/10 bg-primary-600/5 p-2"
                             >
 
                                 <p
-                                    class="text-sm font-extrabold text-[#016837]"
+                                    class="text-sm font-extrabold text-primary-600"
                                     x-text="selectedVariant ? formatPrice(selectedVariant.price) + ' FCFA' : ''"
                                 ></p>
 
@@ -549,9 +549,9 @@
                                 <button
                                     type="submit"
                                     :disabled="!selectedVariant || selectedVariant.stock === 0"
-                                    class="w-full rounded-xl bg-[#016837] py-2.5 text-xs
+                                    class="w-full rounded-xl bg-primary-600 py-2.5 text-xs
                                            font-extrabold text-white shadow-sm
-                                           shadow-[#016837]/20 transition hover:bg-[#01582f]
+                                           shadow-primary-600/20 transition hover:bg-primary-700
                                            disabled:cursor-not-allowed disabled:bg-slate-300
                                            disabled:shadow-none"
                                 >
@@ -605,9 +605,9 @@
                             <button
                                 type="submit"
                                 class="flex w-full items-center justify-center gap-2 rounded-xl
-                                       bg-[#016837] py-2.5 text-xs font-extrabold text-white
-                                       shadow-sm shadow-[#016837]/20 transition
-                                       hover:bg-[#01582f] active:scale-[0.99]"
+                                       bg-primary-600 py-2.5 text-xs font-extrabold text-white
+                                       shadow-sm shadow-primary-600/20 transition
+                                       hover:bg-primary-700 active:scale-[0.99]"
                             >
 
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -641,7 +641,7 @@
 
                             <span
                                 class="mt-0.5 block text-[10px] font-extrabold
-                                    {{ $product->availableStock() > 0 ? 'text-[#016837]' : 'text-[#E30613]' }}"
+                                    {{ $product->availableStock() > 0 ? 'text-primary-600' : 'text-danger' }}"
                             >
                                 {{ $product->availableStock() > 0
                                     ? $product->availableStock() . ' en stock'
@@ -671,19 +671,19 @@
                     <a
                         href="{{ route('shop.show', $product->shop) }}"
                         class="group mt-3 flex items-center gap-2.5 rounded-xl border border-slate-200
-                               bg-slate-50 p-2.5 transition hover:border-[#016837]/30 hover:bg-white"
+                               bg-slate-50 p-2.5 transition hover:border-primary-600/30 hover:bg-white"
                     >
 
                         <div
                             class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg
-                                   bg-[#016837] text-[10px] font-extrabold uppercase text-white shadow-sm"
+                                   bg-primary-600 text-[10px] font-extrabold uppercase text-white shadow-sm"
                         >
                             {{ substr($product->shop->name, 0, 2) }}
                         </div>
 
                         <div class="min-w-0 flex-1">
 
-                            <p class="truncate text-[10px] font-extrabold text-slate-900 transition group-hover:text-[#016837]">
+                            <p class="truncate text-[10px] font-extrabold text-slate-900 transition group-hover:text-primary-600">
                                 {{ $product->shop->name }}
                             </p>
 
@@ -714,7 +714,7 @@
 
                         <svg
                             class="h-3.5 w-3.5 text-slate-300 transition
-                                   group-hover:translate-x-0.5 group-hover:text-[#016837]"
+                                   group-hover:translate-x-0.5 group-hover:text-primary-600"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -743,7 +743,7 @@
                                     <a
                                         :href="selectedVariant ? '{{ route('buyer.orders.create', $product->id) }}?variant_id=' + selectedVariant.id : '#variants-section'"
                                         @click="if(!selectedVariant) { $event.preventDefault(); document.getElementById('variants-section')?.scrollIntoView({behavior: 'smooth'}); alert('Veuillez sélectionner les options du produit avant de commander.'); }"
-                                        :class="selectedVariant ? 'bg-[#E30613] hover:bg-[#c90511]' : 'bg-slate-300 cursor-pointer'"
+                                        :class="selectedVariant ? 'bg-danger hover:bg-danger' : 'bg-slate-300 cursor-pointer'"
                                         class="flex items-center justify-center gap-1.5 rounded-xl
                                                px-3 py-2.5 text-[10px] font-extrabold
                                                text-white shadow-sm transition active:scale-[0.98]"
@@ -762,9 +762,9 @@
                                     <a
                                         href="{{ route('buyer.orders.create', $product->id) }}"
                                         class="flex items-center justify-center gap-1.5 rounded-xl
-                                               bg-[#E30613] px-3 py-2.5 text-[10px] font-extrabold
-                                               text-white shadow-sm shadow-[#E30613]/15 transition
-                                               hover:bg-[#c90511] active:scale-[0.98]"
+                                               bg-danger px-3 py-2.5 text-[10px] font-extrabold
+                                               text-white shadow-sm shadow-danger/15 transition
+                                               hover:bg-danger active:scale-[0.98]"
                                     >
                                         Commander
                                         <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -798,8 +798,8 @@
                                 ]) }}"
                                 class="flex items-center justify-center gap-1.5 rounded-xl border
                                        border-slate-200 bg-white px-3 py-2.5 text-[10px]
-                                       font-bold text-slate-700 transition hover:border-[#016837]/30
-                                       hover:bg-[#016837]/5 hover:text-[#016837]"
+                                       font-bold text-slate-700 transition hover:border-primary-600/30
+                                       hover:bg-primary-600/5 hover:text-primary-600"
                             >
 
                                 <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -819,9 +819,9 @@
 
                             <a
                                 href="{{ route('login') }}"
-                                class="col-span-2 rounded-xl bg-[#016837] px-4 py-2.5
+                                class="col-span-2 rounded-xl bg-primary-600 px-4 py-2.5
                                        text-center text-[10px] font-extrabold text-white
-                                       shadow-sm transition hover:bg-[#01582f]"
+                                       shadow-sm transition hover:bg-primary-700"
                             >
                                 Connectez-vous pour commander
                             </a>
@@ -839,7 +839,7 @@
                         <div class="flex items-center gap-3 text-[9px] font-semibold text-slate-500">
 
                             <span class="flex items-center gap-1">
-                                <svg class="h-3.5 w-3.5 text-[#016837]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="h-3.5 w-3.5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path
                                         stroke-linecap="round"
                                         stroke-linejoin="round"
@@ -851,7 +851,7 @@
                             </span>
 
                             <span class="flex items-center gap-1">
-                                <svg class="h-3.5 w-3.5 text-[#F9A01B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="h-3.5 w-3.5 text-accent-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path
                                         stroke-linecap="round"
                                         stroke-linejoin="round"
@@ -872,8 +872,8 @@
                                 href="https://api.whatsapp.com/send?text={{ urlencode($product->title . ' - ' . url()->current()) }}"
                                 target="_blank"
                                 class="flex h-7 w-7 items-center justify-center rounded-lg
-                                       bg-[#016837]/10 text-[#016837] transition
-                                       hover:bg-[#016837] hover:text-white"
+                                       bg-primary-600/10 text-primary-600 transition
+                                       hover:bg-primary-600 hover:text-white"
                                 title="Partager sur WhatsApp"
                             >
 
@@ -890,7 +890,7 @@
                                 @click="shareUrl()"
                                 class="relative flex h-7 w-7 items-center justify-center rounded-lg
                                        bg-slate-100 text-slate-500 transition
-                                       hover:bg-[#F9A01B]/15 hover:text-[#9a6500]"
+                                       hover:bg-accent-500/15 hover:text-accent-600"
                                 title="Copier le lien"
                             >
 
@@ -907,7 +907,7 @@
                                     x-show="copied"
                                     x-transition
                                     class="absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap
-                                           rounded bg-[#0A1B12] px-1.5 py-1 text-[8px] text-white shadow-md"
+                                           rounded bg-slate-900 px-1.5 py-1 text-[8px] text-white shadow-md"
                                 >
                                     Copié !
                                 </span>
@@ -940,7 +940,7 @@
 
                 <div class="mb-4 flex items-center gap-2 border-b border-slate-100 pb-3">
 
-                    <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-[#016837]/10 text-[#016837]">
+                    <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-primary-600/10 text-primary-600">
 
                         <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path
@@ -973,7 +973,7 @@
 
                     <div class="mb-4 flex items-center gap-2 border-b border-slate-100 pb-3">
 
-                        <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-[#F9A01B]/15 text-[#a96d00]">
+                        <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-accent-500/15 text-accent-600">
 
                             <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path
@@ -1027,7 +1027,7 @@
 
                 <div>
 
-                    <p class="text-[9px] font-extrabold uppercase tracking-wider text-[#016837]">
+                    <p class="text-[9px] font-extrabold uppercase tracking-wider text-primary-600">
                         Expérience client
                     </p>
 
@@ -1045,11 +1045,11 @@
 
                 <div class="text-center sm:border-r sm:border-slate-100">
 
-                    <p class="text-4xl font-black text-[#0A1B12]">
+                    <p class="text-4xl font-black text-slate-900">
                         {{ $productRating ? number_format($productRating, 1) : '—' }}
                     </p>
 
-                    <div class="mt-1 text-lg text-[#F9A01B]">
+                    <div class="mt-1 text-lg text-accent-500">
 
                         @for ($i = 1; $i <= 5; $i++)
                             {{ $i <= round($productRating) ? '★' : '☆' }}
@@ -1084,7 +1084,7 @@
                             <div class="h-2 flex-1 overflow-hidden rounded-full bg-slate-100">
 
                                 <div
-                                    class="h-full rounded-full bg-[#F9A01B]"
+                                    class="h-full rounded-full bg-accent-500"
                                     style="width: {{ $pct }}%"
                                 ></div>
 
@@ -1126,7 +1126,7 @@
 
                                 </div>
 
-                                <div class="text-sm text-[#F9A01B]">
+                                <div class="text-sm text-accent-500">
 
                                     @for ($i = 1; $i <= 5; $i++)
                                         {{ $i <= $review->rating ? '★' : '☆' }}
@@ -1144,7 +1144,7 @@
 
                             @endif
 
-                            <p class="mt-2 text-[8px] font-bold text-[#016837]">
+                            <p class="mt-2 text-[8px] font-bold text-primary-600">
                                 ✓ Achat vérifié
                             </p>
 
@@ -1158,7 +1158,7 @@
 
                 <div class="rounded-xl border border-slate-200 bg-white p-7 text-center shadow-sm">
 
-                    <div class="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[#F9A01B]/15 text-[#a96d00]">
+                    <div class="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-accent-500/15 text-accent-600">
 
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path
@@ -1195,7 +1195,7 @@
 
                 <div class="mb-3 flex items-center gap-2">
 
-                    <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-[#016837]/10 text-[#016837]">
+                    <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-primary-600/10 text-primary-600">
 
                         <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path
@@ -1219,7 +1219,7 @@
 
                     <div
                         class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl
-                               bg-[#016837] text-xs font-extrabold uppercase text-white"
+                               bg-primary-600 text-xs font-extrabold uppercase text-white"
                     >
                         {{ substr($product->shop->name, 0, 2) }}
                     </div>
@@ -1232,7 +1232,7 @@
 
                         <div class="mt-0.5 flex flex-wrap items-center gap-2">
 
-                            <div class="text-sm text-[#F9A01B]">
+                            <div class="text-sm text-accent-500">
 
                                 @for ($i = 1; $i <= 5; $i++)
                                     {{ $i <= round($shopRating) ? '★' : '☆' }}
@@ -1267,7 +1267,7 @@
 
                     <div>
 
-                        <p class="text-[9px] font-extrabold uppercase tracking-wider text-[#016837]">
+                        <p class="text-[9px] font-extrabold uppercase tracking-wider text-primary-600">
                             La boutique
                         </p>
 
@@ -1279,7 +1279,7 @@
 
                     <a
                         href="{{ route('shop.show', $product->shop) }}"
-                        class="text-[10px] font-extrabold text-[#016837] transition hover:text-[#014d2b]"
+                        class="text-[10px] font-extrabold text-primary-600 transition hover:text-primary-800"
                     >
                         Voir tout →
                     </a>
@@ -1295,7 +1295,7 @@
                             href="{{ route('product.show', $item) }}"
                             class="group overflow-hidden rounded-xl border border-slate-200
                                    bg-white shadow-sm transition duration-300
-                                   hover:-translate-y-0.5 hover:border-[#016837]/30 hover:shadow-md"
+                                   hover:-translate-y-0.5 hover:border-primary-600/30 hover:shadow-md"
                         >
 
                             <div class="relative flex h-36 items-center justify-center overflow-hidden bg-slate-50 p-2 sm:h-40">
@@ -1314,11 +1314,11 @@
 
                             <div class="p-2.5">
 
-                                <h3 class="line-clamp-1 text-[10px] font-bold text-slate-800 transition group-hover:text-[#016837]">
+                                <h3 class="line-clamp-1 text-[10px] font-bold text-slate-800 transition group-hover:text-primary-600">
                                     {{ $item->title }}
                                 </h3>
 
-                                <p class="mt-1.5 text-[12px] font-black text-[#016837]">
+                                <p class="mt-1.5 text-[12px] font-black text-primary-600">
                                     {{ number_format($item->price, 0, ',', ' ') }}
                                     <span class="text-[8px]">FCFA</span>
                                 </p>
@@ -1345,7 +1345,7 @@
 
                 <div class="mb-4">
 
-                    <p class="text-[9px] font-extrabold uppercase tracking-wider text-[#E30613]">
+                    <p class="text-[9px] font-extrabold uppercase tracking-wider text-danger">
                         Vous pourriez aussi aimer
                     </p>
 
@@ -1364,7 +1364,7 @@
                             href="{{ route('product.show', $item) }}"
                             class="group overflow-hidden rounded-xl border border-slate-200
                                    bg-white shadow-sm transition duration-300
-                                   hover:-translate-y-0.5 hover:border-[#016837]/30 hover:shadow-md"
+                                   hover:-translate-y-0.5 hover:border-primary-600/30 hover:shadow-md"
                         >
 
                             <div class="relative flex h-36 items-center justify-center overflow-hidden bg-slate-50 p-2 sm:h-40">
@@ -1383,7 +1383,7 @@
                                 @if ($item->shipping_included)
 
                                     <span
-                                        class="absolute left-2 top-2 rounded-md bg-[#016837]/95
+                                        class="absolute left-2 top-2 rounded-md bg-primary-600/95
                                                px-1.5 py-0.5 text-[7px] font-extrabold uppercase
                                                text-white"
                                     >
@@ -1395,7 +1395,7 @@
                                 @if ($item->hasDiscount())
 
                                     <span
-                                        class="absolute right-2 top-2 rounded-md bg-[#E30613]
+                                        class="absolute right-2 top-2 rounded-md bg-danger
                                                px-1.5 py-0.5 text-[7px] font-extrabold text-white"
                                     >
                                         -{{ $item->discountPercent() }}%
@@ -1408,20 +1408,20 @@
 
                             <div class="p-2.5">
 
-                                <h3 class="line-clamp-1 text-[10px] font-bold text-slate-800 transition group-hover:text-[#016837]">
+                                <h3 class="line-clamp-1 text-[10px] font-bold text-slate-800 transition group-hover:text-primary-600">
                                     {{ $item->title }}
                                 </h3>
 
                                 <div class="mt-1.5 flex items-baseline gap-1.5">
 
-                                    <p class="text-[12px] font-black text-[#016837]">
+                                    <p class="text-[12px] font-black text-primary-600">
                                         {{ number_format($item->price, 0, ',', ' ') }}
                                         <span class="text-[8px]">FCFA</span>
                                     </p>
 
                                     @if ($item->hasDiscount())
 
-                                        <p class="text-[8px] font-semibold text-[#E30613] line-through">
+                                        <p class="text-[8px] font-semibold text-danger line-through">
                                             {{ number_format($item->old_price, 0, ',', ' ') }}
                                         </p>
 
@@ -1451,14 +1451,14 @@
         x-show="lightboxOpen"
         x-transition.opacity
         @keydown.escape.window="lightboxOpen = false"
-        class="fixed inset-0 z-[60] flex items-center justify-center bg-[#0A1B12]/95 p-4 backdrop-blur-sm"
+        class="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/95 p-4 backdrop-blur-sm"
         style="display: none;"
     >
 
         <button
             @click="lightboxOpen = false"
             class="absolute right-4 top-4 flex h-9 w-9 items-center justify-center
-                   rounded-full bg-white/10 text-white transition hover:bg-[#E30613]"
+                   rounded-full bg-white/10 text-white transition hover:bg-danger"
         >
 
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1496,7 +1496,7 @@
                 Prix
             </p>
 
-            <p class="truncate text-sm font-black text-[#016837]">
+            <p class="truncate text-sm font-black text-primary-600">
                 <span x-text="formatPrice(selectedVariant ? selectedVariant.price : {{ $product->minPrice() }})"></span>
                 <span class="text-[9px]">FCFA</span>
             </p>
@@ -1511,7 +1511,7 @@
                     <a
                         :href="selectedVariant ? '{{ route('buyer.orders.create', $product->id) }}?variant_id=' + selectedVariant.id : '#variants-section'"
                         @click="if(!selectedVariant) { $event.preventDefault(); document.getElementById('variants-section')?.scrollIntoView({behavior: 'smooth'}); }"
-                        :class="selectedVariant ? 'bg-[#E30613] text-white shadow-sm' : 'bg-[#016837] text-white'"
+                        :class="selectedVariant ? 'bg-danger text-white shadow-sm' : 'bg-primary-600 text-white'"
                         class="flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-[10px] font-extrabold transition active:scale-95 cursor-pointer"
                     >
                         <span x-text="selectedVariant ? 'Commander' : 'Choisir une option'">Choisir une option</span>
@@ -1527,7 +1527,7 @@
                 @else
                 <a
                     href="{{ route('buyer.orders.create', $product->id) }}"
-                    class="flex items-center gap-1.5 rounded-xl bg-[#E30613]
+                    class="flex items-center gap-1.5 rounded-xl bg-danger
                            px-4 py-2.5 text-[10px] font-extrabold text-white shadow-sm
                            transition active:scale-95"
                 >
@@ -1558,7 +1558,7 @@
 
             <a
                 href="{{ route('login') }}"
-                class="rounded-xl bg-[#016837] px-4 py-2.5 text-[10px] font-extrabold text-white"
+                class="rounded-xl bg-primary-600 px-4 py-2.5 text-[10px] font-extrabold text-white"
             >
                 Connexion
             </a>
@@ -1587,7 +1587,7 @@
         document.querySelectorAll('.thumb-btn').forEach(btn => {
 
             btn.classList.remove(
-                'border-[#016837]',
+                'border-primary-600',
                 'shadow-sm'
             );
 
@@ -1598,7 +1598,7 @@
         button.classList.remove('border-slate-200');
 
         button.classList.add(
-            'border-[#016837]',
+            'border-primary-600',
             'shadow-sm'
         );
     }

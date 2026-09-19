@@ -12,10 +12,10 @@
     <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
         {{-- Hero Header --}}
         <section class="rounded-3xl bg-slate-950 px-6 py-10 text-white sm:px-10 lg:px-12 relative overflow-hidden border-b-4 border-[#FCD116]">
-            <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-[#00843D]/20 rounded-full blur-3xl pointer-events-none"></div>
-            <span class="inline-block rounded-full bg-[#00843D]/20 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-[#FCD116]">À propos d'Ali-Kamer</span>
+            <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-primary-600/20 rounded-full blur-3xl pointer-events-none"></div>
+            <span class="inline-block rounded-full bg-primary-600/20 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-[#FCD116]">À propos d'Ali-Kamer</span>
             <h1 class="mt-4 max-w-3xl text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl leading-tight">
-                Une marketplace pensée pour acheter et vendre au <span class="text-[#00843D]">Cameroun</span> <span class="text-[#CE1126]">avec</span> <span class="text-[#FCD116]">confiance.</span>
+                Une marketplace pensée pour acheter et vendre au <span class="text-primary-600">Cameroun</span> <span class="text-[#CE1126]">avec</span> <span class="text-[#FCD116]">confiance.</span>
             </h1>
             <p class="mt-4 max-w-2xl text-sm leading-6 text-slate-300">
                 Ali-Kamer met en relation acheteurs et vendeurs tout en structurant la transaction, le paiement et l'acheminement des commandes.
@@ -25,7 +25,7 @@
         {{-- 3 Piliers --}}
         <section class="mt-8 grid gap-4 md:grid-cols-3">
             <article class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-md transition">
-                <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-xl text-[#00843D]">🛒</div>
+                <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-success-50 text-xl text-primary-600">🛒</div>
                 <h2 class="mt-4 text-base font-black text-slate-900">Acheter simplement</h2>
                 <p class="mt-2 text-xs leading-5 text-slate-600">
                     Rechercher, découvrir les produits et accéder rapidement aux informations utiles avant de commander.
@@ -33,7 +33,7 @@
             </article>
 
             <article class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-md transition">
-                <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-xl text-[#00843D]">🔐</div>
+                <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-success-50 text-xl text-primary-600">🔐</div>
                 <h2 class="mt-4 text-base font-black text-slate-900">Protéger la transaction</h2>
                 <p class="mt-2 text-xs leading-5 text-slate-600">
                     Le système de paiement séquestre est au cœur du parcours : le paiement et la livraison sont traités comme deux étapes liées.
@@ -41,7 +41,7 @@
             </article>
 
             <article class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-md transition">
-                <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-xl text-[#00843D]">🚚</div>
+                <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-success-50 text-xl text-primary-600">🚚</div>
                 <h2 class="mt-4 text-base font-black text-slate-900">Faciliter l'acheminement</h2>
                 <p class="mt-2 text-xs leading-5 text-slate-600">
                     La plateforme est conçue pour prendre en compte les commandes pouvant circuler entre différentes villes et passer par des agences.
@@ -103,14 +103,14 @@
         </section>
 
         {{-- Section d'Appel à l'action --}}
-        <section class="mt-8 rounded-2xl border border-emerald-100 bg-gradient-to-br from-[#F3FBF6] to-[#FFFDF3] p-6 sm:p-8">
+        <section class="mt-8 rounded-2xl border border-success-100 bg-gradient-to-br from-success-50 to-[#FFFDF3] p-6 sm:p-8">
             <h2 class="text-xl font-black text-slate-900">Commencer sur Ali-Kamer</h2>
             <p class="mt-2 max-w-2xl text-xs sm:text-sm leading-relaxed text-slate-600">
                 Découvrez les produits depuis l'accueil. Si vous souhaitez passer une commande et accéder à votre espace personnel, connectez-vous ou créez un compte.
             </p>
             <div class="mt-5 flex flex-wrap gap-3">
                 <a href="{{ route('buyer.home') }}"
-                    class="rounded-full bg-[#00843D] hover:bg-[#006B32] px-5 py-2.5 text-xs font-black text-white shadow-sm transition">
+                    class="rounded-full bg-primary-600 hover:bg-primary-700 px-5 py-2.5 text-xs font-black text-white shadow-sm transition">
                     Voir les produits
                 </a>
                 @guest

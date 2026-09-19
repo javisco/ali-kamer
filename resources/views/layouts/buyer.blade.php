@@ -18,7 +18,7 @@
 </head>
 
 <body
-    class="h-full font-sans antialiased text-slate-800 bg-slate-50"
+    class="h-full font-sans antialiased text-slate-900 bg-slate-50"
     x-data="{ sidebarOpen: false }"
     @keydown.escape.window="sidebarOpen = false"
 >
@@ -42,7 +42,7 @@
     ========================================================== --}}
     <aside
         class="fixed inset-y-0 left-0 z-50 flex w-64 flex-col
-               bg-[#0a1b12] text-white border-r border-slate-800
+               bg-primary-800 text-white border-r border-primary-900
                transform transition-transform duration-300 ease-in-out
                lg:static lg:translate-x-0"
         :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
@@ -80,8 +80,8 @@
                         <div
                             class="inline-flex items-center mt-1 px-1.5 py-0.5
                                    rounded text-[8px] font-bold uppercase tracking-wider
-                                   text-[#F9A01B] bg-[#F9A01B]/10
-                                   border border-[#F9A01B]/30"
+                                   text-accent-500 bg-accent-500/10
+                                   border border-accent-500/30"
                         >
                             Espace acheteur
                         </div>
@@ -119,7 +119,7 @@
 
                 <div
                     class="w-8 h-8 flex-shrink-0 rounded-lg
-                           bg-[#016837] text-[#F9A01B]
+                           bg-primary-600 text-white
                            flex items-center justify-center
                            font-black text-xs"
                 >
@@ -140,7 +140,7 @@
 
                 <span
                     class="w-1.5 h-1.5 flex-shrink-0 rounded-full
-                           bg-emerald-500 shadow-sm shadow-emerald-500/50"
+                           bg-success shadow-sm shadow-success/50"
                     title="Compte actif"
                 ></span>
 
@@ -159,7 +159,7 @@
             ========================== --}}
             <div class="mb-2.5">
 
-                <p class="px-2 mb-1 text-[8px] font-bold uppercase tracking-[0.16em] text-emerald-500/80">
+                <p class="px-2 mb-1 text-[8px] font-bold uppercase tracking-[0.16em] text-primary-400">
                     Principal
                 </p>
 
@@ -172,15 +172,15 @@
                         class="group flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12px] font-semibold
                                transition-all duration-200
                                {{ request()->routeIs('buyer.dashboard')
-                                    ? 'bg-[#016837] text-white shadow-md shadow-[#016837]/30'
+                                    ? 'bg-primary-600 text-white shadow-md shadow-primary-600/30'
                                     : 'text-slate-400 hover:bg-white/5 hover:text-white' }}"
                     >
 
                         <svg
                             class="w-4 h-4 flex-shrink-0
                                    {{ request()->routeIs('buyer.dashboard')
-                                        ? 'text-[#F9A01B]'
-                                        : 'text-slate-500 group-hover:text-[#F9A01B]' }}"
+                                        ? 'text-accent-500'
+                                        : 'text-slate-500 group-hover:text-accent-500' }}"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -210,7 +210,7 @@
                     >
 
                         <svg
-                            class="w-4 h-4 flex-shrink-0 text-slate-500 group-hover:text-[#F9A01B]"
+                            class="w-4 h-4 flex-shrink-0 text-slate-500 group-hover:text-accent-500"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -237,7 +237,7 @@
             ========================== --}}
             <div class="mb-2.5">
 
-                <p class="px-2 mb-1 text-[8px] font-bold uppercase tracking-[0.16em] text-emerald-500/80">
+                <p class="px-2 mb-1 text-[8px] font-bold uppercase tracking-[0.16em] text-primary-400">
                     Mes achats
                 </p>
 
@@ -250,15 +250,15 @@
                         class="group flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12px] font-semibold
                                transition-all duration-200
                                {{ request()->routeIs('buyer.orders.*')
-                                    ? 'bg-[#016837] text-white shadow-md shadow-[#016837]/30'
+                                    ? 'bg-primary-600 text-white shadow-md shadow-primary-600/30'
                                     : 'text-slate-400 hover:bg-white/5 hover:text-white' }}"
                     >
 
                         <svg
                             class="w-4 h-4 flex-shrink-0
                                    {{ request()->routeIs('buyer.orders.*')
-                                        ? 'text-[#F9A01B]'
-                                        : 'text-slate-500 group-hover:text-[#F9A01B]' }}"
+                                        ? 'text-accent-500'
+                                        : 'text-slate-500 group-hover:text-accent-500' }}"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -285,15 +285,15 @@
                         class="group flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12px] font-semibold
                                transition-all duration-200
                                {{ request()->routeIs('buyer.wishlist.*')
-                                    ? 'bg-[#016837] text-white shadow-md shadow-[#016837]/30'
+                                    ? 'bg-primary-600 text-white shadow-md shadow-primary-600/30'
                                     : 'text-slate-400 hover:bg-white/5 hover:text-white' }}"
                     >
 
                         <svg
                             class="w-4 h-4 flex-shrink-0
                                    {{ request()->routeIs('buyer.wishlist.*')
-                                        ? 'text-[#E30613]'
-                                        : 'text-slate-500 group-hover:text-[#E30613]' }}"
+                                        ? 'text-danger'
+                                        : 'text-slate-500 group-hover:text-danger' }}"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -322,7 +322,7 @@
                     >
 
                         <svg
-                            class="w-4 h-4 flex-shrink-0 text-slate-500 group-hover:text-[#F9A01B]"
+                            class="w-4 h-4 flex-shrink-0 text-slate-500 group-hover:text-accent-500"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -357,7 +357,7 @@
                         @if($cartCount > 0)
                             <span
                                 class="min-w-[18px] h-[18px] px-1 rounded-full
-                                       bg-[#E30613] text-white text-[9px]
+                                       bg-accent-600 text-white text-[9px]
                                        font-black flex items-center justify-center"
                             >
                                 {{ $cartCount > 99 ? '99+' : $cartCount }}
@@ -375,7 +375,7 @@
             ========================== --}}
             <div class="mb-2.5">
 
-                <p class="px-2 mb-1 text-[8px] font-bold uppercase tracking-[0.16em] text-emerald-500/80">
+                <p class="px-2 mb-1 text-[8px] font-bold uppercase tracking-[0.16em] text-primary-400">
                     Finances
                 </p>
 
@@ -387,15 +387,15 @@
                         class="group flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12px] font-semibold
                                transition-all duration-200
                                {{ request()->routeIs('buyer.wallet.*')
-                                    ? 'bg-[#016837] text-white shadow-md shadow-[#016837]/30'
+                                    ? 'bg-primary-600 text-white shadow-md shadow-primary-600/30'
                                     : 'text-slate-400 hover:bg-white/5 hover:text-white' }}"
                     >
 
                         <svg
                             class="w-4 h-4 flex-shrink-0
                                    {{ request()->routeIs('buyer.wallet.*')
-                                        ? 'text-[#F9A01B]'
-                                        : 'text-slate-500 group-hover:text-[#F9A01B]' }}"
+                                        ? 'text-accent-500'
+                                        : 'text-slate-500 group-hover:text-accent-500' }}"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -425,7 +425,7 @@
             ========================== --}}
             <div class="mb-2.5">
 
-                <p class="px-2 mb-1 text-[8px] font-bold uppercase tracking-[0.16em] text-emerald-500/80">
+                <p class="px-2 mb-1 text-[8px] font-bold uppercase tracking-[0.16em] text-primary-400">
                     Communication
                 </p>
 
@@ -438,15 +438,15 @@
                         class="group flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12px] font-semibold
                                transition-all duration-200
                                {{ request()->routeIs('messaging.*')
-                                    ? 'bg-[#016837] text-white shadow-md shadow-[#016837]/30'
+                                    ? 'bg-primary-600 text-white shadow-md shadow-primary-600/30'
                                     : 'text-slate-400 hover:bg-white/5 hover:text-white' }}"
                     >
 
                         <svg
                             class="w-4 h-4 flex-shrink-0
                                    {{ request()->routeIs('messaging.*')
-                                        ? 'text-[#F9A01B]'
-                                        : 'text-slate-500 group-hover:text-[#F9A01B]' }}"
+                                        ? 'text-accent-500'
+                                        : 'text-slate-500 group-hover:text-accent-500' }}"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -475,7 +475,7 @@
                     >
 
                         <svg
-                            class="w-4 h-4 flex-shrink-0 text-slate-500 group-hover:text-[#F9A01B]"
+                            class="w-4 h-4 flex-shrink-0 text-slate-500 group-hover:text-accent-500"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -497,7 +497,7 @@
                         @if(isset($unreadNotifications) && $unreadNotifications > 0)
                             <span
                                 class="min-w-[18px] h-[18px] px-1 rounded-full
-                                       bg-[#E30613] text-white text-[9px]
+                                       bg-accent-600 text-white text-[9px]
                                        font-black flex items-center justify-center"
                             >
                                 {{ $unreadNotifications > 99 ? '99+' : $unreadNotifications }}
@@ -515,7 +515,7 @@
             ========================== --}}
             <div class="mb-2.5">
 
-                <p class="px-2 mb-1 text-[8px] font-bold uppercase tracking-[0.16em] text-emerald-500/80">
+                <p class="px-2 mb-1 text-[8px] font-bold uppercase tracking-[0.16em] text-primary-400">
                     Mon compte
                 </p>
 
@@ -528,15 +528,15 @@
                         class="group flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12px] font-semibold
                                transition-all duration-200
                                {{ request()->routeIs('buyer.profile')
-                                    ? 'bg-[#016837] text-white shadow-md shadow-[#016837]/30'
+                                    ? 'bg-primary-600 text-white shadow-md shadow-primary-600/30'
                                     : 'text-slate-400 hover:bg-white/5 hover:text-white' }}"
                     >
 
                         <svg
                             class="w-4 h-4 flex-shrink-0
                                    {{ request()->routeIs('buyer.profile')
-                                        ? 'text-[#F9A01B]'
-                                        : 'text-slate-500 group-hover:text-[#F9A01B]' }}"
+                                        ? 'text-accent-500'
+                                        : 'text-slate-500 group-hover:text-accent-500' }}"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -563,7 +563,7 @@
             ========================== --}}
             <div>
 
-                <p class="px-2 mb-1 text-[8px] font-bold uppercase tracking-[0.16em] text-emerald-500/80">
+                <p class="px-2 mb-1 text-[8px] font-bold uppercase tracking-[0.16em] text-primary-400">
                     Assistance
                 </p>
 
@@ -578,7 +578,7 @@
                     >
 
                         <svg
-                            class="w-4 h-4 flex-shrink-0 text-slate-500 group-hover:text-[#F9A01B]"
+                            class="w-4 h-4 flex-shrink-0 text-slate-500 group-hover:text-accent-500"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -613,7 +613,7 @@
                     >
 
                         <svg
-                            class="w-4 h-4 flex-shrink-0 text-slate-500 group-hover:text-[#F9A01B]"
+                            class="w-4 h-4 flex-shrink-0 text-slate-500 group-hover:text-accent-500"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -656,7 +656,7 @@
             >
 
                 <svg
-                    class="w-4 h-4 flex-shrink-0 text-[#F9A01B]"
+                    class="w-4 h-4 flex-shrink-0 text-accent-500"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -687,7 +687,7 @@
                     type="submit"
                     class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg
                            text-[11px] font-semibold text-slate-400
-                           hover:text-white hover:bg-[#E30613]
+                           hover:text-white hover:bg-danger
                            transition-all duration-200"
                 >
 
@@ -728,7 +728,7 @@
             TOPBAR
         ====================================================== --}}
         <header
-            class="flex-shrink-0 bg-white border-b border-slate-200
+            class="flex-shrink-0 bg-primary-600 border-b border-primary-700
                    sticky top-0 z-30"
         >
 
@@ -767,8 +767,8 @@
 
                         <span
                             class="w-2 h-2 flex-shrink-0 rounded-full
-                                   bg-[#016837]
-                                   shadow-sm shadow-[#016837]/50"
+                                   bg-primary-600
+                                   shadow-sm shadow-primary-600/50"
                         ></span>
 
                         <span
@@ -800,48 +800,13 @@
 
                     {{-- Notifications --}}
                     @include('components.notification-bell')
-                    {{-- <a
-                        href="{{ route('notifications.index') }}"
-                        class="relative p-2 rounded-xl
-                               text-slate-500 hover:text-[#016837]
-                               hover:bg-[#016837]/5 transition"
-                        title="Notifications"
-                    >
-
-                        <svg
-                            class="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11
-                                   a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341
-                                   C7.67 6.165 6 8.388 6 11v3.159
-                                   c0 .538-.214 1.055-.595 1.436L4 17h5
-                                   m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-                            />
-                        </svg> 
-
-                        @if(isset($unreadNotifications) && $unreadNotifications > 0)
-                            <span
-                                class="absolute top-1 right-1 w-2 h-2 rounded-full
-                                       bg-[#E30613] ring-2 ring-white"
-                            ></span>
-                        @endif
-
-                    </a> --}}
-
 
                     {{-- Messages --}}
                     <a
                         href="{{ route('messaging.index') }}"
                         class="hidden sm:flex p-2 rounded-xl
-                               text-slate-500 hover:text-[#016837]
-                               hover:bg-[#016837]/5 transition"
+                               text-slate-500 hover:text-primary-600
+                               hover:bg-primary-50 transition"
                         title="Messages"
                     >
 
@@ -869,7 +834,7 @@
 
                         <div
                             class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl
-                                   bg-[#016837] text-[#F9A01B]
+                                   bg-primary-600 text-white
                                    flex items-center justify-center
                                    font-black text-xs sm:text-sm shadow-sm"
                         >
@@ -901,8 +866,8 @@
 
                         <button
                             type="submit"
-                            class="p-2 rounded-xl text-red-400
-                                   hover:text-white hover:bg-[#E30613]
+                            class="p-2 rounded-xl text-danger
+                                   hover:text-white hover:bg-danger
                                    transition"
                             title="Déconnexion"
                         >
@@ -948,16 +913,16 @@
 
                     <div
                         class="mb-4 flex items-start gap-3 p-3 rounded-xl
-                               bg-emerald-50 border border-emerald-200
-                               text-emerald-800"
+                               bg-success-50 border border-success-200
+                               text-success-800"
                     >
 
                         <div
                             class="w-8 h-8 flex-shrink-0 rounded-lg
-                                   bg-emerald-100 flex items-center justify-center"
+                                   bg-success-100 flex items-center justify-center"
                         >
                             <svg
-                                class="w-4 h-4 text-[#016837]"
+                                class="w-4 h-4 text-primary-600"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -995,16 +960,16 @@
 
                     <div
                         class="mb-4 flex items-start gap-3 p-3 rounded-xl
-                               bg-red-50 border border-red-200
-                               text-red-800"
+                               bg-danger-50 border border-danger-200
+                               text-danger-800"
                     >
 
                         <div
                             class="w-8 h-8 flex-shrink-0 rounded-lg
-                                   bg-red-100 flex items-center justify-center"
+                                   bg-danger-100 flex items-center justify-center"
                         >
                             <svg
-                                class="w-4 h-4 text-[#E30613]"
+                                class="w-4 h-4 text-danger"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -1042,14 +1007,14 @@
 
                     <div
                         class="mb-4 p-3 rounded-xl
-                               bg-red-50 border border-red-200
-                               text-red-800"
+                               bg-danger-50 border border-danger-200
+                               text-danger-800"
                     >
 
                         <div class="flex items-center gap-2 mb-2">
 
                             <svg
-                                class="w-5 h-5 text-[#E30613]"
+                                class="w-5 h-5 text-danger"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"

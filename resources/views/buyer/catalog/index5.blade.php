@@ -12,9 +12,9 @@
         <section class="relative overflow-hidden bg-slate-950 text-white">
 
             {{-- Décorations --}}
-            <div class="absolute -top-32 -left-32 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl"></div>
-            <div class="absolute top-20 -right-32 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl"></div>
-            <div class="absolute bottom-0 left-1/3 w-80 h-40 bg-orange-500/10 rounded-full blur-3xl"></div>
+            <div class="absolute -top-32 -left-32 w-96 h-96 bg-primary-600/20 rounded-full blur-3xl"></div>
+            <div class="absolute top-20 -right-32 w-96 h-96 bg-success/10 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 left-1/3 w-80 h-40 bg-accent-500/10 rounded-full blur-3xl"></div>
 
             {{-- Grille --}}
             <div class="absolute inset-0 opacity-[0.04]"
@@ -36,8 +36,8 @@
 
                             <span class="relative flex h-2.5 w-2.5">
                                 <span
-                                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400"></span>
+                                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-success"></span>
                             </span>
 
                             Marketplace sécurisée au Cameroun
@@ -47,12 +47,12 @@
                         <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.05]">
 
                             Achetez.
-                            <span class="text-blue-500">Vendez.</span>
+                            <span class="text-primary-500">Vendez.</span>
 
                             <br>
 
-                            <span class="text-orange-500">En toute</span>
-                            <span class="text-emerald-400">confiance.</span>
+                            <span class="text-accent-500">En toute</span>
+                            <span class="text-success">confiance.</span>
 
                         </h1>
 
@@ -89,12 +89,12 @@
 
                                 <button type="submit"
                                     class="inline-flex items-center justify-center gap-2
-                                           bg-blue-600 hover:bg-blue-700
+                                           bg-primary-600 hover:bg-primary-700
                                            text-white font-bold text-sm
                                            px-7 py-3.5 rounded-xl
                                            transition-all duration-200
-                                           shadow-lg shadow-blue-600/20
-                                           hover:shadow-blue-600/30
+                                           shadow-lg shadow-primary-600/20
+                                           hover:shadow-primary-600/30
                                            active:scale-[.98]">
 
                                     Rechercher
@@ -115,10 +115,10 @@
 
                             <div class="flex items-center gap-2 text-slate-300">
                                 <div
-                                    class="w-8 h-8 rounded-lg bg-emerald-500/10
-                                        border border-emerald-400/20
+                                    class="w-8 h-8 rounded-lg bg-success/10
+                                        border border-success/20
                                         flex items-center justify-center">
-                                    <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24"
+                                    <svg class="w-4 h-4 text-success" fill="none" viewBox="0 0 24 24"
                                         stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
@@ -130,10 +130,10 @@
 
                             <div class="flex items-center gap-2 text-slate-300">
                                 <div
-                                    class="w-8 h-8 rounded-lg bg-blue-500/10
-                                        border border-blue-400/20
+                                    class="w-8 h-8 rounded-lg bg-primary-500/10
+                                        border border-primary-400/20
                                         flex items-center justify-center">
-                                    <svg class="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24"
+                                    <svg class="w-4 h-4 text-primary-400" fill="none" viewBox="0 0 24 24"
                                         stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M5 12h14M12 5l7 7-7 7" />
@@ -145,8 +145,8 @@
 
                             <div class="flex items-center gap-2 text-slate-300">
                                 <div
-                                    class="w-8 h-8 rounded-lg bg-orange-500/10
-                                        border border-orange-400/20
+                                    class="w-8 h-8 rounded-lg bg-accent-500/10
+                                        border border-accent-500/20
                                         flex items-center justify-center">
                                     <span class="text-sm">★</span>
                                 </div>
@@ -166,7 +166,7 @@
                         <div
                             class="absolute -top-5 -right-5 w-full h-full
                                 rounded-[2rem]
-                                bg-gradient-to-br from-blue-500/20 to-emerald-500/10
+                                bg-gradient-to-br from-primary-500/20 to-success/10
                                 border border-white/5
                                 rotate-3">
                         </div>
@@ -193,11 +193,11 @@
 
                                 <div
                                     class="w-11 h-11 rounded-xl
-                                        bg-emerald-500/10
-                                        border border-emerald-400/20
+                                        bg-success/10
+                                        border border-success/20
                                         flex items-center justify-center">
 
-                                    <svg class="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24"
+                                    <svg class="w-5 h-5 text-success" fill="none" viewBox="0 0 24 24"
                                         stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
@@ -217,7 +217,7 @@
                                         Paiement
                                     </span>
 
-                                    <span class="text-xs text-emerald-400 font-semibold">
+                                    <span class="text-xs text-success font-semibold">
                                         ● Sécurisé
                                     </span>
 
@@ -242,11 +242,11 @@
 
                                         <div
                                             class="w-8 h-8 rounded-full
-                                                bg-emerald-500/15
-                                                border border-emerald-400/30
+                                                bg-success/15
+                                                border border-success/30
                                                 flex items-center justify-center">
 
-                                            <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24"
+                                            <svg class="w-4 h-4 text-success" fill="none" viewBox="0 0 24 24"
                                                 stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M5 13l4 4L19 7" />
@@ -276,11 +276,11 @@
 
                                         <div
                                             class="w-8 h-8 rounded-full
-                                                bg-blue-500/15
-                                                border border-blue-400/30
+                                                bg-primary-500/15
+                                                border border-primary-400/30
                                                 flex items-center justify-center">
 
-                                            <svg class="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24"
+                                            <svg class="w-4 h-4 text-primary-400" fill="none" viewBox="0 0 24 24"
                                                 stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M5 12h14m-7-7l7 7-7 7" />
@@ -340,7 +340,7 @@
                                     flex items-center gap-3">
 
                                 <div
-                                    class="w-9 h-9 rounded-lg bg-blue-500/10
+                                    class="w-9 h-9 rounded-lg bg-primary-500/10
                                         flex items-center justify-center">
                                     🔒
                                 </div>
@@ -375,7 +375,7 @@
                 <div class="flex items-end justify-between mb-5">
 
                     <div>
-                        <p class="text-xs font-bold uppercase tracking-widest text-blue-600 mb-1">
+                        <p class="text-xs font-bold uppercase tracking-widest text-primary-600 mb-1">
                             Découvrez
                         </p>
 
@@ -424,8 +424,8 @@
                             class="group relative overflow-hidden
                               bg-white border border-slate-200
                               rounded-2xl p-5
-                              hover:border-blue-300
-                              hover:shadow-xl hover:shadow-blue-900/5
+                              hover:border-primary-300
+                              hover:shadow-xl hover:shadow-primary-900/5
                               transition-all duration-300">
 
                             <div class="flex items-start justify-between">
@@ -433,7 +433,7 @@
                                 <div
                                     class="w-12 h-12 rounded-xl
                                         bg-slate-100
-                                        group-hover:bg-blue-50
+                                        group-hover:bg-primary-50
                                         flex items-center justify-center
                                         text-2xl
                                         transition-colors">
@@ -443,7 +443,7 @@
                                 </div>
 
                                 <svg class="w-5 h-5 text-slate-300
-                                        group-hover:text-blue-500
+                                        group-hover:text-primary-500
                                         group-hover:translate-x-1
                                         transition-all"
                                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -457,7 +457,7 @@
 
                             <h3
                                 class="mt-4 text-sm font-bold text-slate-800
-                                   group-hover:text-blue-600 transition-colors">
+                                   group-hover:text-primary-600 transition-colors">
 
                                 {{ $cat['name'] }}
 
@@ -485,7 +485,7 @@
 
                     <div>
 
-                        <p class="text-xs font-bold uppercase tracking-widest text-blue-600 mb-1">
+                        <p class="text-xs font-bold uppercase tracking-widest text-primary-600 mb-1">
                             Marketplace
                         </p>
 
@@ -493,7 +493,7 @@
 
                             @if (request('q'))
                                 Résultats pour
-                                <span class="text-blue-600">
+                                <span class="text-primary-600">
                                     "{{ request('q') }}"
                                 </span>
                             @else
@@ -510,7 +510,7 @@
                             bg-white border border-slate-200
                             rounded-full px-3.5 py-1.5">
 
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-2"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-success mr-2"></span>
 
                         <span class="text-xs font-semibold text-slate-600">
                             {{ $products->total() }}
@@ -574,7 +574,7 @@
                                 @if ($product->shipping_included)
                                     <span
                                         class="absolute top-3 left-3
-                                             bg-emerald-600 text-white
+                                             bg-success text-white
                                              text-[10px] font-bold
                                              px-2.5 py-1 rounded-lg
                                              shadow-lg">
@@ -603,7 +603,7 @@
 
                                 <h3
                                     class="font-bold text-sm text-slate-800
-                                       group-hover:text-blue-600
+                                       group-hover:text-primary-600
                                        transition-colors line-clamp-2">
 
                                     {{ $product->title }}
@@ -677,9 +677,9 @@
 
                                                     <span
                                                         class="text-[9px] font-black
-                                                             text-red-600
-                                                             bg-red-50
-                                                             border border-red-100
+                                                             text-danger
+                                                             bg-danger-50
+                                                             border border-danger-100
                                                              px-1.5 py-0.5
                                                              rounded">
 
@@ -695,12 +695,12 @@
 
                                         <div
                                             class="w-9 h-9 rounded-xl
-                                                bg-blue-50
-                                                group-hover:bg-blue-600
+                                                bg-primary-50
+                                                group-hover:bg-primary-600
                                                 flex items-center justify-center
                                                 transition-colors">
 
-                                            <svg class="w-4 h-4 text-blue-600
+                                            <svg class="w-4 h-4 text-primary-600
                                                     group-hover:text-white
                                                     transition-colors"
                                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -754,7 +754,7 @@
                             @if (request('q'))
                                 <a href="{{ route('buyer.home') }}"
                                     class="inline-flex mt-5
-                                      bg-blue-600 hover:bg-blue-700
+                                      bg-primary-600 hover:bg-primary-700
                                       text-white text-xs font-bold
                                       px-5 py-2.5 rounded-xl">
 
@@ -790,7 +790,7 @@
 
                         <div>
 
-                            <p class="text-xs font-bold uppercase tracking-widest text-blue-600 mb-1">
+                            <p class="text-xs font-bold uppercase tracking-widest text-primary-600 mb-1">
                                 À découvrir
                             </p>
 
@@ -811,7 +811,7 @@
                                     border border-slate-200
                                     rounded-2xl p-4
                                     flex items-center justify-between
-                                    hover:border-blue-300
+                                    hover:border-primary-300
                                     hover:shadow-lg
                                     transition-all">
 
@@ -820,10 +820,10 @@
                                     <div
                                         class="w-12 h-12 rounded-xl
                                             bg-gradient-to-br
-                                            from-blue-600 to-blue-700
+                                            from-primary-600 to-primary-700
                                             text-white font-black
                                             flex items-center justify-center
-                                            shadow-lg shadow-blue-600/20">
+                                            shadow-lg shadow-primary-600/20">
 
                                         {{ strtoupper(substr($shop->name, 0, 2)) }}
 
@@ -837,7 +837,7 @@
 
                                         <div class="flex items-center gap-3 mt-1">
 
-                                            <span class="text-xs text-yellow-500 font-bold">
+                                            <span class="text-xs text-warning font-bold">
                                                 ★ 4.9
                                             </span>
 
@@ -856,11 +856,11 @@
 
                                 <a href="#"
                                     class="text-xs font-bold
-                                      text-blue-600
-                                      bg-blue-50
-                                      hover:bg-blue-600
+                                      text-primary-600
+                                      bg-primary-50
+                                      hover:bg-primary-600
                                       hover:text-white
-                                      border border-blue-100
+                                      border border-primary-100
                                       px-3 py-2 rounded-xl
                                       transition-colors">
 
@@ -885,7 +885,7 @@
 
                 <div class="text-center max-w-2xl mx-auto mb-8">
 
-                    <p class="text-xs font-bold uppercase tracking-widest text-blue-600 mb-2">
+                    <p class="text-xs font-bold uppercase tracking-widest text-primary-600 mb-2">
                         Simple et sécurisé
                     </p>
 
@@ -910,7 +910,7 @@
 
                             <div
                                 class="w-11 h-11 rounded-xl
-                                    bg-blue-50 text-blue-600
+                                    bg-primary-50 text-primary-600
                                     flex items-center justify-center
                                     font-black">
 
@@ -941,7 +941,7 @@
 
                             <div
                                 class="w-11 h-11 rounded-xl
-                                    bg-emerald-50 text-emerald-600
+                                    bg-success-50 text-success
                                     flex items-center justify-center
                                     font-black">
 
@@ -972,7 +972,7 @@
 
                             <div
                                 class="w-11 h-11 rounded-xl
-                                    bg-orange-50 text-orange-600
+                                    bg-accent-50 text-accent-600
                                     flex items-center justify-center
                                     font-black">
 
@@ -1012,7 +1012,7 @@
                 <div
                     class="absolute -right-20 -top-20
                         w-72 h-72
-                        bg-blue-600/20
+                        bg-primary-600/20
                         rounded-full blur-3xl">
                 </div>
 
@@ -1023,10 +1023,10 @@
                         <span
                             class="inline-flex items-center gap-2
                                  text-xs font-bold
-                                 text-emerald-400
+                                 text-success
                                  uppercase tracking-widest">
 
-                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                            <span class="w-2 h-2 rounded-full bg-success"></span>
 
                             Votre sécurité d'abord
 
@@ -1038,7 +1038,7 @@
                                font-black mt-3">
 
                             Achetez sans avoir à faire
-                            <span class="text-blue-400">
+                            <span class="text-primary-400">
                                 confiance à l'aveugle.
                             </span>
 
@@ -1126,7 +1126,7 @@
         ============================================================= --}}
             <section
                 class="bg-gradient-to-r
-                        from-blue-600 to-blue-700
+                        from-primary-600 to-primary-700
                         rounded-[2rem]
                         p-8 sm:p-10
                         text-white
@@ -1151,7 +1151,7 @@
                         <p
                             class="text-xs uppercase
                               tracking-widest
-                              font-bold text-blue-200">
+                              font-bold text-primary-200">
 
                             Vous êtes vendeur ?
 
@@ -1165,7 +1165,7 @@
 
                         </h2>
 
-                        <p class="text-sm text-blue-100
+                        <p class="text-sm text-primary-100
                               mt-2 max-w-xl">
 
                             Présentez vos produits à de nouveaux clients
@@ -1180,8 +1180,8 @@
                     <a href="#"
                         class="shrink-0 inline-flex items-center
                           justify-center gap-2
-                          bg-white text-blue-700
-                          hover:bg-blue-50
+                          bg-white text-primary-700
+                          hover:bg-primary-50
                           font-bold text-sm
                           px-6 py-3.5
                           rounded-xl

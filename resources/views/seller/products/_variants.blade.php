@@ -34,10 +34,10 @@
     }
 @endphp
 
-<div class="space-y-4 rounded-2xl border border-gray-200 bg-[#F7F7F2]/40 p-4 sm:p-5">
+<div class="space-y-4 rounded-2xl border border-slate-200 bg-slate-50/40 p-4 sm:p-5">
     <div>
-        <h2 class="text-sm font-black text-[#0a1b12]">Variantes</h2>
-        <p class="mt-1 text-xs text-gray-500">
+        <h2 class="text-sm font-black text-slate-900">Variantes</h2>
+        <p class="mt-1 text-xs text-slate-500">
             Couleur, taille, stockage… L’acheteur choisit une combinaison vendable. Sans variante, le prix et le stock du produit suffisent.
         </p>
     </div>
@@ -46,33 +46,33 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <label class="flex cursor-pointer items-center gap-3 rounded-xl border-2 p-3 transition"
-            :class="!hasVariants ? 'border-[#016837] bg-[#016837]/5' : 'border-gray-200'">
-            <input type="radio" class="h-4 w-4 text-[#016837]" :checked="!hasVariants" @change="hasVariants = false">
+            :class="!hasVariants ? 'border-primary-600 bg-primary-600/5' : 'border-slate-200'">
+            <input type="radio" class="h-4 w-4 text-primary-600" :checked="!hasVariants" @change="hasVariants = false">
             <span>
-                <span class="block text-xs font-bold text-[#0a1b12]">Non — produit simple</span>
-                <span class="block text-[11px] text-gray-500">Un seul prix et un seul stock</span>
+                <span class="block text-xs font-bold text-slate-900">Non — produit simple</span>
+                <span class="block text-[11px] text-slate-500">Un seul prix et un seul stock</span>
             </span>
         </label>
         <label class="flex cursor-pointer items-center gap-3 rounded-xl border-2 p-3 transition"
-            :class="hasVariants ? 'border-[#016837] bg-[#016837]/5' : 'border-gray-200'">
-            <input type="radio" class="h-4 w-4 text-[#016837]" :checked="hasVariants" @change="enableVariants()">
+            :class="hasVariants ? 'border-primary-600 bg-primary-600/5' : 'border-slate-200'">
+            <input type="radio" class="h-4 w-4 text-primary-600" :checked="hasVariants" @change="enableVariants()">
             <span>
-                <span class="block text-xs font-bold text-[#0a1b12]">Oui — plusieurs options</span>
-                <span class="block text-[11px] text-gray-500">Chaque combinaison a son prix et son stock</span>
+                <span class="block text-xs font-bold text-slate-900">Oui — plusieurs options</span>
+                <span class="block text-[11px] text-slate-500">Chaque combinaison a son prix et son stock</span>
             </span>
         </label>
     </div>
 
     <div x-show="hasVariants" x-cloak class="space-y-4">
         <template x-for="(attr, attrIndex) in attributes" :key="attrIndex">
-            <div class="rounded-xl border border-gray-200 bg-white p-3.5 space-y-3">
+            <div class="rounded-xl border border-slate-200 bg-white p-3.5 space-y-3">
                 <div class="flex items-center justify-between gap-2">
-                    <label class="text-xs font-bold text-[#0a1b12]">Attribut <span x-text="attrIndex + 1"></span></label>
-                    <button type="button" class="text-[11px] font-bold text-[#E30613]" @click="removeAttribute(attrIndex)"
+                    <label class="text-xs font-bold text-slate-900">Attribut <span x-text="attrIndex + 1"></span></label>
+                    <button type="button" class="text-[11px] font-bold text-danger" @click="removeAttribute(attrIndex)"
                         x-show="attributes.length > 1">Retirer</button>
                 </div>
 
-                <select class="w-full rounded-xl border border-gray-200 bg-[#F7F7F2]/60 px-3 py-2 text-xs font-semibold"
+                <select class="w-full rounded-xl border border-slate-200 bg-slate-50/60 px-3 py-2 text-xs font-semibold"
                     x-model="attr.name" @change="generateVariants()">
                     <option value="">— Choisir ou personnaliser —</option>
                     <template x-for="preset in presets" :key="preset">
@@ -83,15 +83,15 @@
                 <input type="text" x-show="attr.name === '__custom' || (attr.name && !presets.includes(attr.name))"
                     x-model="attr.customName" @input="attr.name = attr.customName; generateVariants()"
                     placeholder="Nom de l'attribut" maxlength="40"
-                    class="w-full rounded-xl border border-gray-200 bg-[#F7F7F2]/60 px-3 py-2 text-xs font-semibold">
+                    class="w-full rounded-xl border border-slate-200 bg-slate-50/60 px-3 py-2 text-xs font-semibold">
 
                 <input type="hidden" :name="'attributes[' + attrIndex + '][name]'" :value="attributeName(attr)">
 
                 <div>
-                    <p class="mb-1.5 text-[11px] font-bold text-gray-500">Valeurs</p>
+                    <p class="mb-1.5 text-[11px] font-bold text-slate-500">Valeurs</p>
                     <div class="flex flex-wrap gap-2">
                         <template x-for="(value, valueIndex) in attr.values" :key="valueIndex">
-                            <span class="inline-flex items-center gap-1 rounded-full bg-[#016837]/10 px-2.5 py-1 text-[11px] font-bold text-[#016837]">
+                            <span class="inline-flex items-center gap-1 rounded-full bg-primary-600/10 px-2.5 py-1 text-[11px] font-bold text-primary-600">
                                 <span x-text="value"></span>
                                 <button type="button" @click="removeValue(attrIndex, valueIndex)">×</button>
                                 <input type="hidden" :name="'attributes[' + attrIndex + '][values][]'" :value="value">
@@ -101,14 +101,14 @@
                     <div class="mt-2 flex gap-2">
                         <input type="text" x-model="attr.newValue" @keydown.enter.prevent="addValue(attrIndex)"
                             placeholder="+ Ajouter une valeur" maxlength="40"
-                            class="flex-1 rounded-xl border border-gray-200 bg-[#F7F7F2]/60 px-3 py-2 text-xs font-semibold">
+                            class="flex-1 rounded-xl border border-slate-200 bg-slate-50/60 px-3 py-2 text-xs font-semibold">
                         <button type="button" @click="addValue(attrIndex)"
-                            class="rounded-xl bg-[#016837] px-3 py-2 text-[11px] font-bold text-white">Ajouter</button>
+                            class="rounded-xl bg-primary-600 px-3 py-2 text-[11px] font-bold text-white">Ajouter</button>
                     </div>
-                    <p class="mt-1 text-[10px] text-gray-400">Photo optionnelle pour cette valeur (ex. couleur)</p>
+                    <p class="mt-1 text-[10px] text-slate-400">Photo optionnelle pour cette valeur (ex. couleur)</p>
                     <div class="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-2">
                         <template x-for="(value, valueIndex) in attr.values" :key="'img-' + valueIndex">
-                            <label class="block rounded-lg border border-dashed border-gray-200 p-2 text-center">
+                            <label class="block rounded-lg border border-dashed border-slate-200 p-2 text-center">
                                 <span class="block truncate text-[10px] font-bold text-slate-600" x-text="value"></span>
                                 <img x-show="attr.images && attr.images[valueIndex]" :src="attr.images[valueIndex]"
                                     class="mx-auto mt-1 h-10 w-10 rounded object-cover">
@@ -124,18 +124,18 @@
 
         <button type="button" @click="addAttribute()"
             x-show="attributes.length < maxAttributes"
-            class="text-xs font-bold text-[#016837]">+ Ajouter un attribut</button>
+            class="text-xs font-bold text-primary-600">+ Ajouter un attribut</button>
 
         <p class="text-[11px] font-semibold text-slate-600">
             <span x-text="variants.length"></span> combinaison(s) générée(s)
-            <span class="text-gray-400">(max <span x-text="maxCombinations"></span>)</span>
+            <span class="text-slate-400">(max <span x-text="maxCombinations"></span>)</span>
         </p>
 
-        <div x-show="tooMany" class="rounded-xl border border-[#E30613]/20 bg-[#E30613]/10 p-3 text-xs font-semibold text-[#E30613]">
+        <div x-show="tooMany" class="rounded-xl border border-danger/20 bg-danger/10 p-3 text-xs font-semibold text-danger">
             Trop de combinaisons. Réduisez le nombre de valeurs.
         </div>
 
-        <div x-show="variants.length" class="overflow-x-auto rounded-xl border border-gray-200 bg-white">
+        <div x-show="variants.length" class="overflow-x-auto rounded-xl border border-slate-200 bg-white">
             <table class="min-w-full text-left text-[11px]">
                 <thead class="bg-slate-50 text-slate-500">
                     <tr>
@@ -159,22 +159,22 @@
                             <td class="px-3 py-2">
                                 <input type="number" min="1" required x-model.number="variant.price"
                                     :name="'variants[' + index + '][price]'"
-                                    class="w-24 rounded-lg border border-gray-200 px-2 py-1 text-xs font-semibold">
+                                    class="w-24 rounded-lg border border-slate-200 px-2 py-1 text-xs font-semibold">
                             </td>
                             <td class="px-3 py-2">
                                 <input type="number" min="1" x-model="variant.old_price"
                                     :name="'variants[' + index + '][old_price]'"
-                                    class="w-24 rounded-lg border border-gray-200 px-2 py-1 text-xs font-semibold">
+                                    class="w-24 rounded-lg border border-slate-200 px-2 py-1 text-xs font-semibold">
                             </td>
                             <td class="px-3 py-2">
                                 <input type="number" min="0" required x-model.number="variant.stock"
                                     :name="'variants[' + index + '][stock]'"
-                                    class="w-20 rounded-lg border border-gray-200 px-2 py-1 text-xs font-semibold">
+                                    class="w-20 rounded-lg border border-slate-200 px-2 py-1 text-xs font-semibold">
                             </td>
                             <td class="px-3 py-2">
                                 <input type="text" maxlength="40" x-model="variant.sku"
                                     :name="'variants[' + index + '][sku]'"
-                                    class="w-24 rounded-lg border border-gray-200 px-2 py-1 text-xs font-semibold">
+                                    class="w-24 rounded-lg border border-slate-200 px-2 py-1 text-xs font-semibold">
                             </td>
                             <td class="px-3 py-2">
                                 <input type="hidden" :name="'variants[' + index + '][is_active]'" :value="variant.is_active ? 1 : 0">

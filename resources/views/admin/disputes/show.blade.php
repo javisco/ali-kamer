@@ -9,7 +9,7 @@
         DOSSIER LITIGE — STYLE ALI-KAMER
     ========================================================== --}}
 
-    <div class="min-h-screen bg-[#F7F7F2] py-5 sm:py-6">
+    <div class="min-h-screen bg-slate-50 py-5 sm:py-6">
 
         <div class="max-w-5xl mx-auto px-4 sm:px-5">
 
@@ -22,18 +22,18 @@
                 <div>
                     <div class="flex items-center gap-2 mb-1">
 
-                        <span class="w-2 h-2 rounded-full bg-[#E30613]"></span>
+                        <span class="w-2 h-2 rounded-full bg-danger"></span>
 
                         <span
                             class="text-[10px] font-black uppercase
-                                     tracking-[0.16em] text-[#E30613]">
+                                     tracking-[0.16em] text-danger">
                             Centre des litiges
                         </span>
 
                     </div>
 
                     <h1 class="text-xl sm:text-2xl font-black
-                               text-[#0a1b12] tracking-tight">
+                               text-slate-900 tracking-tight">
 
                         Dossier litige —
                         {{ $dispute->order->reference }}
@@ -50,8 +50,8 @@
                     class="inline-flex items-center gap-2 self-start
                           px-3.5 py-2 rounded-xl
                           bg-white border border-slate-200
-                          text-xs font-black text-[#016837]
-                          hover:bg-[#016837]/5
+                          text-xs font-black text-primary-600
+                          hover:bg-primary-600/5
                           transition shadow-sm">
 
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -72,16 +72,16 @@
             ====================================================== --}}
             @if (session('success'))
                 <div
-                    class="bg-[#016837]/5
-                            border border-[#016837]/20
-                            text-[#016837]
+                    class="bg-primary-600/5
+                            border border-primary-600/20
+                            text-primary-600
                             px-4 py-3 rounded-xl mb-5
                             text-xs sm:text-sm font-semibold
                             flex items-center gap-2">
 
                     <span
                         class="w-7 h-7 rounded-lg
-                                 bg-[#016837]/10
+                                 bg-primary-600/10
                                  flex items-center justify-center
                                  shrink-0">
 
@@ -126,10 +126,10 @@
 
                             <div
                                 class="w-9 h-9 rounded-xl
-                                        bg-[#016837]/10
+                                        bg-primary-600/10
                                         flex items-center justify-center">
 
-                                <svg class="w-5 h-5 text-[#016837]" fill="none" stroke="currentColor"
+                                <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
 
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -140,7 +140,7 @@
                             </div>
 
                             <div>
-                                <h2 class="text-sm font-black text-[#0a1b12]">
+                                <h2 class="text-sm font-black text-slate-900">
                                     Commande
                                 </h2>
 
@@ -157,7 +157,7 @@
                             <div class="flex justify-between items-center gap-4">
                                 <span class="text-slate-500">Référence</span>
 
-                                <span class="font-black text-[#016837]">
+                                <span class="font-black text-primary-600">
                                     {{ $dispute->order->reference }}
                                 </span>
                             </div>
@@ -189,7 +189,7 @@
                             <div class="flex justify-between gap-4 pt-1">
                                 <span class="text-slate-500">Montant total</span>
 
-                                <span class="font-black text-[#0a1b12]">
+                                <span class="font-black text-slate-900">
                                     {{ number_format($dispute->order->total_amount, 0, ',', ' ') }}
                                     FCFA
                                 </span>
@@ -201,7 +201,7 @@
                                     Montant net vendeur
                                 </span>
 
-                                <span class="font-black text-[#016837]">
+                                <span class="font-black text-primary-600">
                                     {{ number_format($dispute->order->net_amount, 0, ',', ' ') }}
                                     FCFA
                                 </span>
@@ -227,10 +227,10 @@
 
                             <div
                                 class="w-9 h-9 rounded-xl
-                                        bg-[#E30613]/10
+                                        bg-danger/10
                                         flex items-center justify-center">
 
-                                <svg class="w-5 h-5 text-[#E30613]" fill="none" stroke="currentColor"
+                                <svg class="w-5 h-5 text-danger" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
 
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -241,7 +241,7 @@
                             </div>
 
                             <div>
-                                <h2 class="text-sm font-black text-[#0a1b12]">
+                                <h2 class="text-sm font-black text-slate-900">
                                     Litige — {{ $dispute->typeLabel() }}
                                 </h2>
 
@@ -284,10 +284,10 @@
 
                                     <div
                                         class="w-9 h-9 rounded-xl
-                                                bg-[#F9A01B]/15
+                                                bg-accent-500/15
                                                 flex items-center justify-center">
 
-                                        <svg class="w-5 h-5 text-[#F9A01B]" fill="none" stroke="currentColor"
+                                        <svg class="w-5 h-5 text-accent-500" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
 
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -298,7 +298,7 @@
                                     </div>
 
                                     <div>
-                                        <h2 class="text-sm font-black text-[#0a1b12]">
+                                        <h2 class="text-sm font-black text-slate-900">
                                             Preuves
                                         </h2>
 
@@ -312,7 +312,7 @@
 
                                 <span
                                     class="px-2.5 py-1 rounded-lg
-                                             bg-[#F9A01B]/10
+                                             bg-accent-500/10
                                              text-[#9a6200]
                                              text-[10px] font-black">
                                     {{ $dispute->evidences->count() }}
@@ -363,14 +363,14 @@
                                         @else
                                             <a href="{{ asset('storage/' . $evidence->url) }}" target="_blank"
                                                 class="inline-flex items-center gap-2
-                                                      text-[#016837]
-                                                      hover:text-[#0a542d]
+                                                      text-primary-600
+                                                      hover:text-primary-700
                                                       font-bold text-xs
                                                       transition">
 
                                                 <span
                                                     class="w-7 h-7 rounded-lg
-                                                             bg-[#016837]/10
+                                                             bg-primary-600/10
                                                              flex items-center justify-center">
                                                     📄
                                                 </span>
@@ -411,10 +411,10 @@
 
                                     <div
                                         class="w-9 h-9 rounded-xl
-                            bg-[#016837]/10
+                            bg-primary-600/10
                             flex items-center justify-center">
 
-                                        <svg class="w-5 h-5 text-[#016837]" fill="none" stroke="currentColor"
+                                        <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
 
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -426,7 +426,7 @@
 
                                     <div>
 
-                                        <h2 class="text-sm font-black text-[#0a1b12]">
+                                        <h2 class="text-sm font-black text-slate-900">
                                             Historique de la conversation
                                         </h2>
 
@@ -443,7 +443,7 @@
 
                                     {{-- Acheteur --}}
                                     <div class="flex items-center gap-1.5">
-                                        <span class="w-2 h-2 rounded-full bg-[#016837]"></span>
+                                        <span class="w-2 h-2 rounded-full bg-primary-600"></span>
                                         <span class="text-[10px] font-bold text-slate-500">
                                             Acheteur
                                         </span>
@@ -451,7 +451,7 @@
 
                                     {{-- Vendeur --}}
                                     <div class="flex items-center gap-1.5">
-                                        <span class="w-2 h-2 rounded-full bg-[#F9A01B]"></span>
+                                        <span class="w-2 h-2 rounded-full bg-accent-500"></span>
                                         <span class="text-[10px] font-bold text-slate-500">
                                             Vendeur
                                         </span>
@@ -498,12 +498,12 @@
 
                                                 @if ($isBuyer)
                                                     <div class="flex items-center gap-2">
-                                                        <span class="w-2.5 h-2.5 rounded-full bg-[#016837]"></span>
+                                                        <span class="w-2.5 h-2.5 rounded-full bg-primary-600"></span>
 
                                                         <span
                                                             class="text-[10px] font-black
                                                  uppercase tracking-wider
-                                                 text-[#016837]">
+                                                 text-primary-600">
                                                             Acheteur
                                                         </span>
 
@@ -512,9 +512,9 @@
                                                         </span>
                                                     </div>
 
-                                                    <div class="flex-1 h-px bg-[#016837]/10"></div>
+                                                    <div class="flex-1 h-px bg-primary-600/10"></div>
                                                 @else
-                                                    <div class="flex-1 h-px bg-[#F9A01B]/20"></div>
+                                                    <div class="flex-1 h-px bg-accent-500/20"></div>
 
                                                     <div class="flex items-center gap-2">
 
@@ -529,7 +529,7 @@
                                                             Vendeur
                                                         </span>
 
-                                                        <span class="w-2.5 h-2.5 rounded-full bg-[#F9A01B]"></span>
+                                                        <span class="w-2.5 h-2.5 rounded-full bg-accent-500"></span>
 
                                                     </div>
                                                 @endif
@@ -555,7 +555,7 @@
                                         {{ $isBuyer ? 'justify-start' : 'justify-end' }}">
 
                                                     @if ($isBuyer)
-                                                        <span class="text-[10px] font-bold text-[#016837]">
+                                                        <span class="text-[10px] font-bold text-primary-600">
                                                             {{ $message->sender->name }}
                                                         </span>
 
@@ -580,8 +580,8 @@
                                                     class="px-4 py-3 rounded-2xl text-sm
                                         leading-relaxed
                                         {{ $isBuyer
-                                            ? 'bg-[#016837]/5 text-slate-800 border border-[#016837]/10 rounded-bl-md'
-                                            : 'bg-[#F9A01B]/10 text-slate-800 border border-[#F9A01B]/20 rounded-br-md' }}">
+                                            ? 'bg-primary-600/5 text-slate-800 border border-primary-600/10 rounded-bl-md'
+                                            : 'bg-accent-500/10 text-slate-800 border border-accent-500/20 rounded-br-md' }}">
 
                                                     @if ($message->isText())
                                                         {{ $message->body }}
@@ -598,13 +598,13 @@
                                                         <a href="{{ asset('storage/' . $message->attachment_url) }}"
                                                             target="_blank"
                                                             class="inline-flex items-center gap-2
-                                              {{ $isBuyer ? 'text-[#016837]' : 'text-[#9a6200]' }}
+                                              {{ $isBuyer ? 'text-primary-600' : 'text-[#9a6200]' }}
                                               hover:underline
                                               text-xs font-bold">
 
                                                             <span
                                                                 class="w-7 h-7 rounded-lg
-                                                     {{ $isBuyer ? 'bg-[#016837]/10' : 'bg-[#F9A01B]/15' }}
+                                                     {{ $isBuyer ? 'bg-primary-600/10' : 'bg-accent-500/15' }}
                                                      flex items-center justify-center">
                                                                 📄
                                                             </span>
@@ -635,15 +635,15 @@
                                         <div
                                             class="flex items-center gap-2
                                 px-3 py-2 rounded-xl
-                                bg-[#016837]/5
-                                border border-[#016837]/10">
+                                bg-primary-600/5
+                                border border-primary-600/10">
 
                                             <div
                                                 class="w-7 h-7 rounded-lg
-                                    bg-[#016837]/10
+                                    bg-primary-600/10
                                     flex items-center justify-center">
 
-                                                <svg class="w-3.5 h-3.5 text-[#016837]" fill="none"
+                                                <svg class="w-3.5 h-3.5 text-primary-600" fill="none"
                                                     stroke="currentColor" viewBox="0 0 24 24">
 
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -658,7 +658,7 @@
                                                 <p
                                                     class="text-[9px] uppercase
                                       tracking-wider
-                                      font-black text-[#016837]">
+                                      font-black text-primary-600">
                                                     Acheteur
                                                 </p>
 
@@ -677,12 +677,12 @@
                                         <div
                                             class="flex items-center gap-2
                                 px-3 py-2 rounded-xl
-                                bg-[#F9A01B]/5
-                                border border-[#F9A01B]/15">
+                                bg-accent-500/5
+                                border border-accent-500/15">
 
                                             <div
                                                 class="w-7 h-7 rounded-lg
-                                    bg-[#F9A01B]/15
+                                    bg-accent-500/15
                                     flex items-center justify-center">
 
                                                 <svg class="w-3.5 h-3.5 text-[#9a6200]" fill="none"
@@ -773,17 +773,17 @@
                             {{-- Header décision --}}
                             <div
                                 class="px-5 py-4
-                                        bg-[#0a1b12]
+                                        bg-slate-900
                                         text-white">
 
                                 <div class="flex items-center gap-3">
 
                                     <div
                                         class="w-9 h-9 rounded-xl
-                                                bg-[#F9A01B]/15
+                                                bg-accent-500/15
                                                 flex items-center justify-center">
 
-                                        <svg class="w-5 h-5 text-[#F9A01B]" fill="none" stroke="currentColor"
+                                        <svg class="w-5 h-5 text-accent-500" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
 
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -825,7 +825,7 @@
                                                   uppercase tracking-wider mb-1.5">
 
                                         Décision
-                                        <span class="text-[#E30613]">*</span>
+                                        <span class="text-danger">*</span>
 
                                     </label>
 
@@ -838,8 +838,8 @@
                                                    text-sm
                                                    focus:bg-white
                                                    focus:ring-2
-                                                   focus:ring-[#016837]/15
-                                                   focus:border-[#016837]
+                                                   focus:ring-primary-500/15
+                                                   focus:border-primary-600
                                                    outline-none transition">
 
                                         <option value="">
@@ -880,8 +880,8 @@
                                                   text-sm
                                                   focus:bg-white
                                                   focus:ring-2
-                                                  focus:ring-[#016837]/15
-                                                  focus:border-[#016837]
+                                                  focus:ring-primary-500/15
+                                                  focus:border-primary-600
                                                   outline-none transition">
 
                                 </div>
@@ -896,7 +896,7 @@
                                                   uppercase tracking-wider mb-1.5">
 
                                         Note de décision
-                                        <span class="text-[#E30613]">*</span>
+                                        <span class="text-danger">*</span>
 
                                     </label>
 
@@ -909,8 +909,8 @@
                                                      text-sm
                                                      focus:bg-white
                                                      focus:ring-2
-                                                     focus:ring-[#016837]/15
-                                                     focus:border-[#016837]
+                                                     focus:ring-primary-500/15
+                                                     focus:border-primary-600
                                                      outline-none transition"
                                         placeholder="Justifiez votre décision..."></textarea>
 
@@ -920,7 +920,7 @@
                                 {{-- Bouton --}}
                                 <button
                                     class="w-full
-                                           bg-[#E30613]
+                                           bg-danger
                                            hover:bg-[#b80510]
                                            text-white
                                            font-black
@@ -955,15 +955,15 @@
                             DÉCISION DÉJÀ APPLIQUÉE
                         ================================================== --}}
                         <div
-                            class="bg-[#016837]/5
-                                    border border-[#016837]/20
+                            class="bg-primary-600/5
+                                    border border-primary-600/20
                                     rounded-2xl
                                     shadow-sm
                                     overflow-hidden">
 
                             <div
                                 class="px-5 py-4
-                                        bg-[#016837]
+                                        bg-primary-600
                                         text-white">
 
                                 <div class="flex items-center gap-3">
@@ -1001,7 +1001,7 @@
 
                             <div class="p-5">
 
-                                <p class="text-sm font-black text-[#016837]">
+                                <p class="text-sm font-black text-primary-600">
                                     {{ $dispute->resolutionLabel() }}
                                 </p>
 
@@ -1010,7 +1010,7 @@
                                     <div
                                         class="inline-flex items-center
                                                 mt-2 px-2.5 py-1 rounded-lg
-                                                bg-[#F9A01B]/15
+                                                bg-accent-500/15
                                                 text-[#8a5900]
                                                 text-xs font-black">
 
@@ -1030,11 +1030,11 @@
 
                                 <div
                                     class="mt-3 pt-3
-                                            border-t border-[#016837]/10">
+                                            border-t border-primary-600/10">
 
                                     <p
                                         class="text-[10px]
-                                              text-[#016837]/70
+                                              text-primary-600/70
                                               font-semibold">
 
                                         Par {{ $dispute->resolver->name }}

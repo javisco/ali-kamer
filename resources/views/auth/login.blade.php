@@ -36,8 +36,8 @@
 
                 <!-- Messages d'Alerte (Succès / Erreur) -->
                 @if (session('fail'))
-                    <div class="mb-4 rounded-2xl border border-red-200 bg-red-50/90 p-3.5 text-sm text-red-700 shadow-sm flex items-center gap-3">
-                        <svg class="h-5 w-5 shrink-0 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div class="mb-4 rounded-2xl border border-danger-200 bg-danger-50/90 p-3.5 text-sm text-danger-700 shadow-sm flex items-center gap-3">
+                        <svg class="h-5 w-5 shrink-0 text-danger" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <span class="font-medium">{{ session('fail') }}</span>
@@ -45,8 +45,8 @@
                 @endif
 
                 @if (session('success'))
-                    <div class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50/90 p-3.5 text-sm text-emerald-700 shadow-sm flex items-center gap-3">
-                        <svg class="h-5 w-5 shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div class="mb-4 rounded-2xl border border-success-200 bg-success-50/90 p-3.5 text-sm text-success-700 shadow-sm flex items-center gap-3">
+                        <svg class="h-5 w-5 shrink-0 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                         </svg>
                         <span class="font-medium">{{ session('success') }}</span>
@@ -54,9 +54,9 @@
                 @endif
 
                 @if ($errors->any())
-                    <div class="mb-4 rounded-2xl border border-red-200 bg-red-50/90 p-3.5 text-xs text-red-700 shadow-sm">
-                        <p class="font-bold text-xs text-red-800 mb-1">Veuillez corriger les erreurs suivantes :</p>
-                        <ul class="list-disc list-inside text-xs text-red-600 space-y-0.5">
+                    <div class="mb-4 rounded-2xl border border-danger-200 bg-danger-50/90 p-3.5 text-xs text-danger-700 shadow-sm">
+                        <p class="font-bold text-xs text-danger-800 mb-1">Veuillez corriger les erreurs suivantes :</p>
+                        <ul class="list-disc list-inside text-xs text-danger space-y-0.5">
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
                             @endforeach
@@ -102,28 +102,28 @@
                     <!-- Email -->
                     <div>
                         <label for="email" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-                            Adresse e-mail <span class="text-red-500">*</span>
+                            Adresse e-mail <span class="text-danger">*</span>
                         </label>
                         <input id="email" type="email" name="email" value="{{ old('email') }}" required placeholder="exemple@email.com"
                             class="w-full rounded-2xl border px-4 py-3 text-sm transition bg-slate-50/50 hover:bg-white focus:bg-white
-                            @error('email') border-red-500 focus:ring-2 focus:ring-red-500/10 @else border-slate-200 focus:border-[#006837] focus:ring-4 focus:ring-[#006837]/10 @enderror focus:outline-none">
+                            @error('email') border-danger focus:ring-2 focus:ring-danger/10 @else border-slate-200 focus:border-primary-600 focus:ring-4 focus:ring-primary-500/10 @enderror focus:outline-none">
                     </div>
 
                     <!-- Mot de passe -->
                     <div>
                         <div class="flex items-center justify-between mb-1.5">
                             <label for="password" class="block text-xs font-bold uppercase tracking-wider text-slate-700">
-                                Mot de passe <span class="text-red-500">*</span>
+                                Mot de passe <span class="text-danger">*</span>
                             </label>
-                            <a href="{{ route('password.request') }}" class="text-xs font-bold text-[#006837] hover:underline">
+                            <a href="{{ route('password.request') }}" class="text-xs font-bold text-primary-600 hover:underline">
                                 Oublié ?
                             </a>
                         </div>
                         <div class="relative">
                             <input id="password" type="password" name="password" placeholder="••••••••" required
                                 class="w-full rounded-2xl border px-4 py-3 text-sm transition bg-slate-50/50 hover:bg-white focus:bg-white pr-10
-                                @error('password') border-red-500 focus:ring-2 focus:ring-red-500/10 @else border-slate-200 focus:border-[#006837] focus:ring-4 focus:ring-[#006837]/10 @enderror focus:outline-none">
-                            <button type="button" id="togglePassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#006837] text-sm p-1">
+                                @error('password') border-danger focus:ring-2 focus:ring-danger/10 @else border-slate-200 focus:border-primary-600 focus:ring-4 focus:ring-primary-500/10 @enderror focus:outline-none">
+                            <button type="button" id="togglePassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary-600 text-sm p-1">
                                 👁
                             </button>
                         </div>
@@ -132,14 +132,14 @@
                     <!-- Options (Se souvenir de moi) -->
                     <div class="flex items-center justify-between pt-1">
                         <label class="flex items-center gap-2.5 cursor-pointer select-none">
-                            <input type="checkbox" name="remember" class="h-4 w-4 rounded border-slate-300 text-[#006837] focus:ring-[#006837] cursor-pointer accent-[#006837]">
+                            <input type="checkbox" name="remember" class="h-4 w-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500 cursor-pointer accent-primary-600">
                             <span class="text-xs sm:text-sm text-slate-600 font-medium">Se souvenir de moi</span>
                         </label>
                     </div>
 
                     <!-- Bouton Submit -->
                     <button type="submit"
-                        class="w-full rounded-2xl bg-[#006837] py-3.5 text-sm font-bold text-white shadow-lg shadow-[#006837]/25 transition-all hover:bg-[#00522b] active:scale-[0.99] flex items-center justify-center gap-2 group mt-2">
+                        class="w-full rounded-2xl bg-primary-600 py-3.5 text-sm font-bold text-white shadow-lg shadow-primary-600/25 transition-all hover:bg-primary-700 active:scale-[0.99] flex items-center justify-center gap-2 group mt-2">
                         <span>Se connecter</span>
                         <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
@@ -150,13 +150,13 @@
                 <!-- Lien Inscription -->
                 <p class="mt-5 text-center text-xs sm:text-sm text-slate-500 font-medium">
                     Nouveau sur Ali-Kamer ?
-                    <a href="{{ route('register.show') }}" class="font-bold text-[#006837] hover:underline">Créer un compte</a>
+                    <a href="{{ route('register.show') }}" class="font-bold text-primary-600 hover:underline">Créer un compte</a>
                 </p>
             </div>
 
             <!-- 3. Mini Footer / Navigation -->
             <div class="shrink-0 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400 mt-2">
-                <a href="/" class="inline-flex items-center gap-1.5 font-bold text-slate-500 hover:text-[#006837] transition-colors">
+                <a href="/" class="inline-flex items-center gap-1.5 font-bold text-slate-500 hover:text-primary-600 transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
@@ -167,21 +167,21 @@
         </div>
 
         <!-- ================= COLONNE DROITE : BANNIÈRE VISUELLE ================= -->
-        <div class="hidden lg:flex w-1/2 h-full bg-[#004d28] text-white p-10 xl:p-14 flex-col justify-between relative overflow-hidden shrink-0">
+        <div class="hidden lg:flex w-1/2 h-full bg-primary-800 text-white p-10 xl:p-14 flex-col justify-between relative overflow-hidden shrink-0">
 
             <!-- Cercles décoratifs d'arrière-plan -->
             <div class="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-white/5 blur-3xl pointer-events-none"></div>
-            <div class="absolute -bottom-20 -left-20 w-96 h-96 rounded-full bg-[#FFC20E]/10 blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-20 -left-20 w-96 h-96 rounded-full bg-warning/10 blur-3xl pointer-events-none"></div>
 
             <div class="relative z-10">
-                <span class="inline-block text-xs font-bold tracking-widest uppercase text-[#FFC20E] bg-white/10 px-3.5 py-1.5 rounded-full backdrop-blur-md">
+                <span class="inline-block text-xs font-bold tracking-widest uppercase text-warning bg-white/10 px-3.5 py-1.5 rounded-full backdrop-blur-md">
                     Plateforme 100% Sécurisée
                 </span>
 
                 <h2 class="text-3xl xl:text-4xl font-black mt-5 leading-tight tracking-tight">
-                    Retrouvez vos achats <br><span class="text-[#FFC20E]">et vos boutiques.</span>
+                    Retrouvez vos achats <br><span class="text-warning">et vos boutiques.</span>
                 </h2>
-                <p class="text-sm text-emerald-100/90 mt-3 leading-relaxed max-w-md font-normal">
+                <p class="text-sm text-success-100/90 mt-3 leading-relaxed max-w-md font-normal">
                     Accédez à votre historique de commandes, suivez vos livraisons en cours et gérez votre profil en toute simplicité.
                 </p>
             </div>
@@ -194,7 +194,7 @@
                     </div>
                     <div>
                         <h3 class="font-bold text-sm text-white">Accès rapide & sécurisé</h3>
-                        <p class="text-xs text-emerald-100/80 mt-1 leading-snug">Connectez-vous en un clic avec vos identifiants ou via vos réseaux sociaux.</p>
+                        <p class="text-xs text-success-100/80 mt-1 leading-snug">Connectez-vous en un clic avec vos identifiants ou via vos réseaux sociaux.</p>
                     </div>
                 </div>
 
@@ -204,7 +204,7 @@
                     </div>
                     <div>
                         <h3 class="font-bold text-sm text-white">Suivi en temps réel</h3>
-                        <p class="text-xs text-emerald-100/80 mt-1 leading-snug">Gardez un œil sur l'acheminement de tous vos colis à travers le Cameroun.</p>
+                        <p class="text-xs text-success-100/80 mt-1 leading-snug">Gardez un œil sur l'acheminement de tous vos colis à travers le Cameroun.</p>
                     </div>
                 </div>
 
@@ -214,17 +214,17 @@
                     </div>
                     <div>
                         <h3 class="font-bold text-sm text-white">Assistance dédiée</h3>
-                        <p class="text-xs text-emerald-100/80 mt-1 leading-snug">Notre support est disponible pour répondre à l'ensemble de vos questions.</p>
+                        <p class="text-xs text-success-100/80 mt-1 leading-snug">Notre support est disponible pour répondre à l'ensemble de vos questions.</p>
                     </div>
                 </div>
             </div>
 
             <!-- Témoignage / Citation -->
             <div class="relative z-10 pt-5 border-t border-white/10">
-                <p class="text-xs sm:text-sm text-emerald-100/90 italic leading-relaxed">
+                <p class="text-xs sm:text-sm text-success-100/90 italic leading-relaxed">
                     « L'expérience d'achat sur Ali-Kamer est fluide et mes informations de paiement sont toujours protégées. »
                 </p>
-                <p class="text-xs font-bold text-[#FFC20E] mt-2">— Utilisateur régulier sur Ali-Kamer</p>
+                <p class="text-xs font-bold text-warning mt-2">— Utilisateur régulier sur Ali-Kamer</p>
             </div>
 
         </div>

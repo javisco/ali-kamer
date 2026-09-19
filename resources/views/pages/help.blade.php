@@ -13,7 +13,7 @@
     <div class="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
         <div class="max-w-3xl">
             <span
-                class="inline-block rounded-full bg-[#00843D]/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-[#00843D]">Centre
+                class="inline-block rounded-full bg-primary-600/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-primary-600">Centre
                 d'aide</span>
             <h1 class="mt-3 text-3xl font-black tracking-tight sm:text-4xl text-slate-950">Comment utiliser Ali-Kamer ?</h1>
             <p class="mt-3 text-sm leading-6 text-slate-600">
@@ -48,7 +48,7 @@
                     leurs informations de prix, vendeur, localisation, stock et transport lorsqu'elles sont disponibles.
                 </p>
                 <a href="{{ route('buyer.home') }}"
-                    class="mt-4 inline-block text-xs font-black text-[#00843D] hover:underline">Explorer les produits →</a>
+                    class="mt-4 inline-block text-xs font-black text-primary-600 hover:underline">Explorer les produits →</a>
             </article>
 
             <article class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm hover:shadow-md transition">
@@ -61,8 +61,8 @@
             </article>
 
             <article id="securite"
-                class="rounded-2xl border border-emerald-300 bg-[#F3FBF6] p-5 shadow-sm relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-2 h-full bg-[#00843D]"></div>
+                class="rounded-2xl border border-success-200 bg-success-50 p-5 shadow-sm relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-2 h-full bg-primary-600"></div>
                 <span class="text-xl">🔐</span>
                 <h2 class="mt-3 text-base font-black text-slate-900">4. Comprendre le paiement séquestre</h2>
                 <p class="mt-2 text-xs leading-5 text-slate-700">
@@ -90,7 +90,7 @@
                 </p>
             </article>
 
-            <article class="rounded-2xl border border-red-200 bg-red-50/40 p-5 shadow-sm">
+            <article class="rounded-2xl border border-danger-200 bg-danger-50/40 p-5 shadow-sm">
                 <span class="text-xl">⚠️</span>
                 <h2 class="mt-3 text-base font-black text-[#CE1126]">En cas de problème</h2>
                 <p class="mt-2 text-xs leading-5 text-slate-600">

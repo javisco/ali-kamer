@@ -10,7 +10,7 @@
 
 @section('content')
 
-<div class="bg-[#F7F7F2] min-h-screen py-8">
+<div class="bg-slate-50 min-h-screen py-8">
     <div class="max-w-3xl mx-auto px-4">
 
         {{-- En-tête --}}
@@ -18,7 +18,7 @@
 
             <div class="flex items-center gap-3">
 
-                <div class="w-10 h-10 rounded-xl bg-[#016837]
+                <div class="w-10 h-10 rounded-xl bg-primary-600
                             flex items-center justify-center shadow-sm">
 
                     <svg class="w-5 h-5 text-white"
@@ -37,11 +37,11 @@
 
                 <div>
                     <p class="text-[10px] font-bold uppercase
-                              tracking-[0.12em] text-[#F9A01B]">
+                              tracking-[0.12em] text-accent-500">
                         Communication
                     </p>
 
-                    <h1 class="text-2xl font-extrabold text-gray-900">
+                    <h1 class="text-2xl font-extrabold text-slate-900">
                         Messages
                     </h1>
                 </div>
@@ -49,7 +49,7 @@
             </div>
 
             @if ($totalUnread > 0)
-                <span class="bg-[#E30613] text-white
+                <span class="bg-danger text-white
                              text-xs font-bold px-3 py-1.5
                              rounded-full shadow-sm">
                     {{ $totalUnread }} non lu(s)
@@ -64,14 +64,14 @@
         ========================================================== --}}
         @if ($conversations->isEmpty())
 
-            <div class="bg-white rounded-2xl border border-gray-100
+            <div class="bg-white rounded-2xl border border-slate-100
                         shadow-sm p-12 text-center">
 
-                <div class="w-16 h-16 bg-green-50
+                <div class="w-16 h-16 bg-success-50
                             rounded-2xl flex items-center
                             justify-center mx-auto mb-4">
 
-                    <svg class="w-8 h-8 text-[#016837]"
+                    <svg class="w-8 h-8 text-primary-600"
                          fill="none"
                          stroke="currentColor"
                          viewBox="0 0 24 24">
@@ -89,11 +89,11 @@
 
                 </div>
 
-                <h2 class="text-lg font-bold text-gray-900 mb-1">
+                <h2 class="text-lg font-bold text-slate-900 mb-1">
                     Aucune conversation
                 </h2>
 
-                <p class="text-gray-500 text-sm">
+                <p class="text-slate-500 text-sm">
                     Contactez un vendeur depuis la fiche d'un produit
                     pour démarrer.
                 </p>
@@ -124,20 +124,20 @@
                        class="group flex items-center gap-4 bg-white
                               rounded-2xl border
                               {{ $unread > 0
-                                  ? 'border-green-200'
-                                  : 'border-gray-100' }}
+                                  ? 'border-success-200'
+                                  : 'border-slate-100' }}
                               shadow-sm hover:shadow-md
                               transition-all p-4">
 
                         {{-- Avatar --}}
                         <div class="w-12 h-12 rounded-xl
                                     {{ $unread > 0
-                                        ? 'bg-[#016837] text-white'
-                                        : 'bg-green-50 text-[#016837]' }}
+                                        ? 'bg-primary-600 text-white'
+                                        : 'bg-success-50 text-primary-600' }}
                                     font-bold text-sm
                                     flex items-center justify-center
                                     uppercase flex-shrink-0
-                                    group-hover:bg-[#016837]
+                                    group-hover:bg-primary-600
                                     group-hover:text-white
                                     transition-colors">
 
@@ -151,15 +151,15 @@
 
                             <div class="flex items-center justify-between gap-3">
 
-                                <p class="font-semibold text-gray-900 text-sm
-                                    {{ $unread > 0 ? 'text-[#016837]' : '' }}">
+                                <p class="font-semibold text-slate-900 text-sm
+                                    {{ $unread > 0 ? 'text-primary-600' : '' }}">
 
                                     {{ $partner }}
 
                                 </p>
 
                                 @if ($last)
-                                    <p class="text-xs text-gray-400 flex-shrink-0">
+                                    <p class="text-xs text-slate-400 flex-shrink-0">
                                         {{ $last->sent_at->diffForHumans() }}
                                     </p>
                                 @endif
@@ -171,7 +171,7 @@
 
                                 @if ($last)
 
-                                    <p class="text-xs text-gray-500 truncate">
+                                    <p class="text-xs text-slate-500 truncate">
 
                                         @if ($last->isText())
 
@@ -194,7 +194,7 @@
 
                                 @if ($unread > 0)
 
-                                    <span class="bg-[#E30613] text-white
+                                    <span class="bg-danger text-white
                                                  text-xs font-bold
                                                  min-w-5 h-5 px-1.5
                                                  rounded-full
@@ -214,8 +214,8 @@
 
 
                         {{-- Flèche --}}
-                        <span class="text-gray-300
-                                     group-hover:text-[#016837]
+                        <span class="text-slate-300
+                                     group-hover:text-primary-600
                                      transition-colors">
 
                             →

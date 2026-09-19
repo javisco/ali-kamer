@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="bg-[#F7F7F2] min-h-[calc(100vh-4rem)] py-10">
+<div class="bg-slate-50 min-h-[calc(100vh-4rem)] py-10">
 
     <div class="max-w-lg mx-auto px-4 sm:px-6">
 
@@ -13,9 +13,9 @@
 
             <a href="{{ route('secretary.dashboard') }}"
                class="w-9 h-9 flex items-center justify-center
-                      bg-white border border-gray-100
-                      text-gray-400 hover:text-[#016837]
-                      hover:border-green-100 rounded-xl transition-all"
+                      bg-white border border-slate-100
+                      text-slate-400 hover:text-primary-600
+                      hover:border-success-100 rounded-xl transition-all"
                title="Retour au tableau de bord">
                 <svg class="w-5 h-5" fill="none"
                      stroke="currentColor" viewBox="0 0 24 24">
@@ -28,11 +28,11 @@
 
             <div>
                 <p class="text-[10px] font-bold uppercase
-                          tracking-wider text-[#F9A01B]">
+                          tracking-wider text-accent-500">
                     Logistique
                 </p>
 
-                <h1 class="text-2xl font-bold text-gray-900 tracking-tight">
+                <h1 class="text-2xl font-bold text-slate-900 tracking-tight">
                     Enregistrer un dépôt
                 </h1>
             </div>
@@ -43,13 +43,13 @@
         @if (session('success'))
 
             <div class="flex items-center gap-3
-                        bg-green-50 border border-green-200
-                        text-[#016837] px-4 py-3.5 rounded-2xl
+                        bg-success-50 border border-success-200
+                        text-primary-600 px-4 py-3.5 rounded-2xl
                         mb-6 text-sm font-medium">
 
-                <div class="w-7 h-7 rounded-lg bg-green-100
+                <div class="w-7 h-7 rounded-lg bg-success-100
                             flex items-center justify-center shrink-0">
-                    <svg class="w-4 h-4 text-[#016837]"
+                    <svg class="w-4 h-4 text-primary-600"
                          fill="none" stroke="currentColor"
                          viewBox="0 0 24 24">
                         <path stroke-linecap="round"
@@ -69,13 +69,13 @@
         @if (session('error'))
 
             <div class="flex items-center gap-3
-                        bg-red-50 border border-red-200
-                        text-[#E30613] px-4 py-3.5 rounded-2xl
+                        bg-danger-50 border border-danger-200
+                        text-danger px-4 py-3.5 rounded-2xl
                         mb-6 text-sm font-medium">
 
-                <div class="w-7 h-7 rounded-lg bg-red-100
+                <div class="w-7 h-7 rounded-lg bg-danger-100
                             flex items-center justify-center shrink-0">
-                    <svg class="w-4 h-4 text-[#E30613]"
+                    <svg class="w-4 h-4 text-danger"
                          fill="none" stroke="currentColor"
                          viewBox="0 0 24 24">
                         <path stroke-linecap="round"
@@ -92,15 +92,15 @@
         @endif
 
         {{-- Formulaire --}}
-        <div class="bg-white rounded-3xl border border-gray-100
-                    shadow-xl shadow-gray-200/40 p-6 sm:p-8">
+        <div class="bg-white rounded-3xl border border-slate-100
+                    shadow-xl shadow-slate-200/40 p-6 sm:p-8">
 
             <div class="mb-6">
 
-                <div class="w-12 h-12 bg-green-50 rounded-2xl
+                <div class="w-12 h-12 bg-success-50 rounded-2xl
                             flex items-center justify-center mb-3">
 
-                    <svg class="w-6 h-6 text-[#016837]"
+                    <svg class="w-6 h-6 text-primary-600"
                          fill="none" stroke="currentColor"
                          viewBox="0 0 24 24">
                         <path stroke-linecap="round"
@@ -111,11 +111,11 @@
 
                 </div>
 
-                <h2 class="text-lg font-bold text-gray-900">
+                <h2 class="text-lg font-bold text-slate-900">
                     Code de dépôt vendeur
                 </h2>
 
-                <p class="text-sm text-gray-500 mt-1">
+                <p class="text-sm text-slate-500 mt-1">
                     Saisissez le code à 8 caractères fourni par le vendeur.
                 </p>
 
@@ -136,19 +136,19 @@
                             required
                             placeholder="AB3D7F2K"
                             value="{{ old('deposit_code') }}"
-                            class="w-full bg-gray-50 border border-gray-200
+                            class="w-full bg-slate-50 border border-slate-200
                                    rounded-2xl px-4 py-3.5
                                    text-center sm:text-left text-xl
                                    font-mono tracking-[0.25em]
-                                   uppercase text-gray-900
-                                   placeholder:text-gray-300
+                                   uppercase text-slate-900
+                                   placeholder:text-slate-300
                                    focus:outline-none focus:bg-white
-                                   focus:border-[#016837]
-                                   focus:ring-4 focus:ring-green-500/10
+                                   focus:border-primary-600
+                                   focus:ring-4 focus:ring-success/10
                                    transition-all
                                    @error('deposit_code')
-                                       border-red-400
-                                       focus:ring-red-500/10
+                                       border-danger
+                                       focus:ring-danger/10
                                    @enderror"
                             autofocus
                             autocomplete="off">
@@ -157,8 +157,8 @@
 
                     <button
                         type="submit"
-                        class="bg-[#016837] hover:bg-[#0a542d]
-                               active:bg-[#064323]
+                        class="bg-primary-600 hover:bg-primary-700
+                               active:bg-primary-800
                                text-white font-semibold
                                px-6 py-3.5 rounded-2xl
                                transition-all shadow-md
@@ -182,7 +182,7 @@
                 </div>
 
                 @error('deposit_code')
-                    <p class="text-[#E30613] text-xs font-medium mt-2">
+                    <p class="text-danger text-xs font-medium mt-2">
                         {{ $message }}
                     </p>
                 @enderror
@@ -190,12 +190,12 @@
             </form>
 
             {{-- Petite indication visuelle --}}
-            <div class="mt-6 pt-5 border-t border-gray-100
+            <div class="mt-6 pt-5 border-t border-slate-100
                         flex items-center gap-2">
 
-                <span class="w-2 h-2 rounded-full bg-[#F9A01B]"></span>
+                <span class="w-2 h-2 rounded-full bg-accent-500"></span>
 
-                <p class="text-[11px] text-gray-400">
+                <p class="text-[11px] text-slate-400">
                     Le code permet d'identifier rapidement le colis du vendeur.
                 </p>
 
