@@ -84,17 +84,17 @@ class ShippingService
                     // (payés en main propre par le vendeur à l'agence)
                     'transport_fee'     => $grossAmount,
                 ]);
+            } else {
+                $order->shipment->update([
+                    'origin_counter_id' => $counter->id,
+                    'registered_by'     => $secretary->id,
+                    'registered_at'     => now(),
+
+                    // Frais transport saisis par le secrétaire
+                    // (payés en main propre par le vendeur à l'agence)
+                    'transport_fee'     => $transportFee,
+                ]);
             }
-
-            $order->shipment->update([
-                'origin_counter_id' => $counter->id,
-                'registered_by'     => $secretary->id,
-                'registered_at'     => now(),
-
-                // Frais transport saisis par le secrétaire
-                // (payés en main propre par le vendeur à l'agence)
-                'transport_fee'     => $transportFee,
-            ]);
             $order->update([
                 'status'     => Order::STATUS_REGISTERED_ORIGIN,
                 'shipped_at' => now(),
