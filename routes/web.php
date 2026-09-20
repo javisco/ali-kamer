@@ -541,9 +541,8 @@ Route::middleware(['auth', 'check.status'])->prefix('admin')->name('admin.')->gr
 });
 
 
-
 use App\Http\Controllers\Api\NotificationController;
-use App\Services\ElgiopayService;
+
 
 // Accessible à tout utilisateur connecté (acheteur, vendeur, admin) —
 // pas de middleware 'role:' spécifique puisque la cloche est commune.
