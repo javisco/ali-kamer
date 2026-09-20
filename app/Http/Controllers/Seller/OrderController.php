@@ -31,7 +31,7 @@ class OrderController extends Controller
     {
         abort_unless($order->shop_id === auth()->user()->shop->id, 403);
 
-        $order->load(['buyer', 'items.product', 'payment', 'shipment']);
+        $order->load(['buyer', 'items.product.images', 'items.variant.attributeValues.attribute', 'payment', 'shipment']);
 
         // Agences qui desservent la ville de destination
         $agencies = collect();

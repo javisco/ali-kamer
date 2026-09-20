@@ -427,25 +427,66 @@
 
                 @foreach ($order->items as $item)
 
-                    <div class="flex items-center gap-3 py-2.5
-                                {{ !$loop->last ? 'border-b border-gray-50' : '' }}">
+                    <div class="flex items-center gap-3.5 py-3
+                                {{ !$loop->last ? 'border-b border-gray-100' : '' }}">
+
+                        {{-- Visuel Produit / Variante --}}
+                        @php
+                            $itemImage = ($item->variant && $item->variant->images?->isNotEmpty())
+                                ? $item->variant->images->first()->url
+                                : $item->product?->images->first()?->url;
+                        @endphp
+                        @if ($itemImage)
+                            <img src="{{ asset('storage/' . $itemImage) }}"
+                                 alt="{{ $item->product_title }}"
+                                 class="w-14 h-14 rounded-xl object-cover flex-shrink-0 bg-slate-50 border border-gray-100 shadow-xs">
+                        @else
+                            <div class="w-14 h-14 rounded-xl bg-slate-100 flex-shrink-0 flex items-center justify-center text-gray-400">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                        @endif
 
                         <div class="flex-1 min-w-0">
 
-                            <p class="font-semibold text-gray-900 text-sm line-clamp-2">
+                            <p class="font-bold text-gray-900 text-sm line-clamp-1">
                                 {{ $item->product_title }}
                             </p>
 
-                            <p class="text-xs text-gray-400 mt-0.5">
-                                {{ number_format($item->unit_price, 0, ',', ' ') }}
-                                FCFA × {{ $item->quantity }}
+                            {{-- Spécifications exactes de la variante --}}
+                            @if (!empty($item->variant_snapshot['attributes']))
+                                <div class="flex flex-wrap items-center gap-1.5 mt-1">
+                                    @foreach ($item->variant_snapshot['attributes'] as $attr)
+                                        <span class="inline-flex items-center text-[11px] font-semibold text-slate-700 bg-slate-100 border border-slate-200/80 px-2 py-0.5 rounded-md">
+                                            <span class="text-slate-400 font-medium mr-1">{{ $attr['name'] }}:</span> {{ $attr['value'] }}
+                                        </span>
+                                    @endforeach
+                                    @if (!empty($item->variant_snapshot['sku']))
+                                        <span class="inline-flex items-center text-[10px] font-mono text-slate-500 bg-slate-50 border border-slate-200/60 px-1.5 py-0.5 rounded">
+                                            SKU: {{ $item->variant_snapshot['sku'] }}
+                                        </span>
+                                    @endif
+                                </div>
+                            @elseif ($item->variant_label)
+                                <div class="flex items-center gap-1.5 mt-1">
+                                    <span class="inline-flex items-center text-[11px] font-semibold text-slate-700 bg-slate-100 border border-slate-200/80 px-2 py-0.5 rounded-md">
+                                        {{ str_replace(' / ', ' • ', $item->variant_label) }}
+                                    </span>
+                                </div>
+                            @endif
+
+                            <p class="text-xs text-gray-400 mt-1 font-medium">
+                                {{ number_format($item->unit_price, 0, ',', ' ') }} FCFA × {{ $item->quantity }}
                             </p>
 
                         </div>
 
-                        <p class="font-extrabold text-[#0a1b12] text-sm flex-shrink-0">
-                            {{ number_format($item->subtotal, 0, ',', ' ') }} FCFA
-                        </p>
+                        <div class="text-right flex-shrink-0">
+                            <p class="font-extrabold text-[#016837] text-sm sm:text-base">
+                                {{ number_format($item->subtotal, 0, ',', ' ') }} <span class="text-[10px] font-bold text-slate-500">FCFA</span>
+                            </p>
+                        </div>
 
                     </div>
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications;
+namespace App\Notifications\Payments;
 
 use App\Models\Order;
 use App\Notifications\Concerns\HasDatabasePayload;

@@ -41,7 +41,7 @@ class CartController extends Controller
 
         $variant = null;
         if ($request->variant_id) {
-            $variant = $product->variants()->findOrFail($request->variant_id);
+            $variant = $product->activeVariants()->findOrFail($request->variant_id);
         } elseif ($product->hasVariants()) {
             return back()->withErrors(['variant' => 'Veuillez choisir une variante.']);
         }

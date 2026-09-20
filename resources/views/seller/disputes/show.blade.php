@@ -73,7 +73,7 @@
                     @endif
                     <div>
                         <p class="font-medium text-gray-900">
-                            {{ $dispute->order->items->first()->product_title }}
+                            {{ $dispute->order->items->first()->purchasedLabel() }}
                         </p>
                         <p class="text-sm text-gray-500 mt-1">
                             {{ number_format($dispute->order->subtotal, 0, ',', ' ') }} FCFA

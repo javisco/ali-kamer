@@ -113,17 +113,25 @@ class Product extends Model
             ->where('is_active', true);
     }
 
-    // Le produit a-t-il des variantes ?
+    // Le produit a-t-il des variantes vendables ?
     public function hasVariants(): bool
     {
-        return $this->variants()->exists();
+        if ($this->relationLoaded('activeVariants')) {
+            return $this->activeVariants->isNotEmpty();
+        }
+
+        if ($this->relationLoaded('variants')) {
+            return $this->variants->contains(fn ($variant) => $variant->is_active);
+        }
+
+        return $this->activeVariants()->exists();
     }
 
     // Prix minimum parmi les variantes (pour l'affichage catalogue)
     public function minPrice(): int
     {
         if ($this->hasVariants()) {
-            return $this->activeVariants()->min('price') ?? $this->price;
+            return (int) ($this->sellableVariants()->min('price') ?? $this->price);
         }
         return $this->price;
     }
@@ -132,18 +140,31 @@ class Product extends Model
     public function maxPrice(): int
     {
         if ($this->hasVariants()) {
-            return $this->activeVariants()->max('price') ?? $this->price;
+            return (int) ($this->sellableVariants()->max('price') ?? $this->price);
         }
         return $this->price;
     }
 
-    // Stock total disponible (somme des variantes)
+    // Stock total disponible (somme des variantes, sinon stock produit)
     public function availableStock(): int
     {
         if ($this->hasVariants()) {
-            return $this->activeVariants()->sum(\DB::raw('stock - stock_reserved'));
+            return (int) $this->sellableVariants()->sum(fn ($variant) => $variant->availableStock());
         }
         return max(0, $this->stock - $this->stock_reserved);
+    }
+
+    private function sellableVariants()
+    {
+        if ($this->relationLoaded('activeVariants')) {
+            return $this->activeVariants;
+        }
+
+        if ($this->relationLoaded('variants')) {
+            return $this->variants->where('is_active', true);
+        }
+
+        return $this->activeVariants()->get();
     }
 
     // ── Helpers ──────────────────────────────────────────────────────

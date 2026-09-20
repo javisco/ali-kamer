@@ -77,10 +77,15 @@
                     @foreach($cart->items as $item)
                         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex gap-4 items-center">
 
-                            {{-- Image Produit --}}
-                            @if($item->product->images->first())
-                                <img src="{{ asset('storage/' . $item->product->images->first()->url) }}"
-                                     class="w-20 h-20 rounded-xl object-cover flex-shrink-0 bg-[#F7F7F2]">
+                            {{-- Image Produit / Variante --}}
+                            @php
+                                $itemImage = ($item->variant && $item->variant->images?->isNotEmpty())
+                                    ? $item->variant->images->first()->url
+                                    : $item->product->images->first()?->url;
+                            @endphp
+                            @if($itemImage)
+                                <img src="{{ asset('storage/' . $itemImage) }}"
+                                     class="w-20 h-20 rounded-xl object-cover flex-shrink-0 bg-[#F7F7F2] border border-gray-100">
                             @else
                                 <div class="w-20 h-20 rounded-xl bg-[#F7F7F2] flex-shrink-0 flex items-center justify-center text-gray-300">
                                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -95,11 +100,13 @@
                                     {{ $item->product->title }}
                                 </p>
 
-                                {{-- Badges & Variantes --}}
+                                {{-- Spécifications / Variantes (Format Mockup : Noir • Sans fil) --}}
                                 @if($item->variantLabel())
-                                    <span class="inline-block text-[10px] font-black uppercase text-[#F9A01B] bg-[#F9A01B]/10 px-2 py-0.5 rounded-md mt-1">
-                                        {{ $item->variantLabel() }}
-                                    </span>
+                                    <div class="flex items-center gap-1.5 mt-0.5">
+                                        <span class="inline-flex items-center text-xs font-semibold text-slate-700 bg-slate-100 border border-slate-200/80 px-2 py-0.5 rounded-md">
+                                            {{ $item->variantBulletLabel() }}
+                                        </span>
+                                    </div>
                                 @endif
 
                                 <p class="text-xs text-gray-400 mt-1 font-medium">
@@ -114,7 +121,7 @@
                                         @csrf @method('PATCH')
                                         <button type="submit" name="quantity"
                                                 value="{{ max(0, $item->quantity - 1) }}"
-                                                class="w-7 h-7 rounded-lg bg-white text-[#0a1b12] hover:bg-gray-100 text-sm font-black flex items-center justify-center transition shadow-xs">
+                                                class="w-7 h-7 rounded-lg bg-white text-[#0a1b12] hover:bg-gray-100 text-sm font-black flex items-center justify-center transition shadow-xs cursor-pointer">
                                             −
                                         </button>
                                         <span class="text-xs font-extrabold text-[#0a1b12] w-6 text-center">
@@ -122,19 +129,24 @@
                                         </span>
                                         <button type="submit" name="quantity"
                                                 value="{{ $item->quantity + 1 }}"
-                                                class="w-7 h-7 rounded-lg bg-white text-[#0a1b12] hover:bg-gray-100 text-sm font-black flex items-center justify-center transition shadow-xs">
+                                                class="w-7 h-7 rounded-lg bg-white text-[#0a1b12] hover:bg-gray-100 text-sm font-black flex items-center justify-center transition shadow-xs cursor-pointer">
                                             +
                                         </button>
                                     </form>
 
                                     {{-- Prix & Suppression (Rouge) --}}
                                     <div class="flex items-center gap-3">
-                                        <p class="font-black text-[#016837] text-sm">
-                                            {{ number_format($item->subtotal(), 0, ',', ' ') }} <span class="text-[10px]">FCFA</span>
-                                        </p>
+                                        <div class="text-right">
+                                            <p class="font-black text-[#016837] text-sm">
+                                                {{ number_format($item->subtotal(), 0, ',', ' ') }} <span class="text-[10px]">FCFA</span>
+                                            </p>
+                                            <p class="text-[10px] text-gray-400 font-medium">
+                                                Unit. {{ number_format($item->unit_price, 0, ',', ' ') }} FCFA
+                                            </p>
+                                        </div>
                                         <form method="POST" action="{{ route('buyer.cart.remove', $item) }}">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="w-7 h-7 rounded-lg bg-[#E30613]/10 hover:bg-[#E30613] text-[#E30613] hover:text-white transition flex items-center justify-center" title="Supprimer">
+                                            <button type="submit" class="w-7 h-7 rounded-lg bg-[#E30613]/10 hover:bg-[#E30613] text-[#E30613] hover:text-white transition flex items-center justify-center cursor-pointer" title="Supprimer">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                                 </svg>

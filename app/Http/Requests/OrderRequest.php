@@ -24,10 +24,12 @@ class OrderRequest extends FormRequest
     {
         return [
             'product_id'       => ['required', 'exists:products,id'],
+            'variant_id'       => ['nullable', 'exists:product_variants,id'],
             'quantity'         => ['required', 'integer', 'min:1'],
             'destination_city' => ['required', 'string'],
             'payer_phone'      => ['required', 'string', 'regex:/^6[0-9]{8}$/'],
             'payer_operator'   => ['required', 'in:mtn,orange'],
+            'note'             => ['nullable', 'string', 'max:500'],
         ];
     }
 }

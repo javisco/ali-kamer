@@ -389,7 +389,7 @@
                     @forelse($products as $product)
 
                         @php
-                            $availableStock = max(0, (int) $product->stock - (int) $product->stock_reserved);
+                            $availableStock = $product->availableStock();
 
                             $hasDiscount = $product->old_price && $product->old_price > $product->price;
                             $discountPercent = 0;
@@ -535,7 +535,10 @@
                                 <div class="mt-2 pt-1.5 border-t border-slate-100 flex items-center justify-between gap-1">
                                     <div class="min-w-0">
                                         <p class="text-[13px] sm:text-[14.5px] font-black text-[#00843D] leading-none">
-                                            {{ number_format($product->price, 0, ',', ' ') }}
+                                            @if ($product->hasVariants() && $product->minPrice() !== $product->maxPrice())
+                                                <span class="block text-[8.5px] font-bold uppercase tracking-wide text-slate-500">À partir de</span>
+                                            @endif
+                                            {{ number_format($product->minPrice(), 0, ',', ' ') }}
                                             <span class="text-[8.5px] font-bold text-slate-600">FCFA</span>
                                         </p>
 

@@ -45,8 +45,29 @@ class ProductService
                 }
             }
 
+            $this->syncVariantsIfRequested($product, $data);
+
             return $product;
         });
+    }
+
+    private function syncVariantsIfRequested(Product $product, array $data): void
+    {
+        $variantService = app(ProductVariantService::class);
+
+        if (empty($data['has_variants'])) {
+            if ($product->hasVariants()) {
+                $variantService->disableVariants($product);
+            }
+            return;
+        }
+
+        $variantService->sync(
+            $product,
+            $data['attributes'] ?? [],
+            $data['variants'] ?? [],
+            $data['value_images'] ?? []
+        );
     }
 
     // Modifier un produit
@@ -82,6 +103,8 @@ class ProductService
                     ]);
                 }
             }
+
+            $this->syncVariantsIfRequested($product, $data);
         });
 
         return $product->fresh();

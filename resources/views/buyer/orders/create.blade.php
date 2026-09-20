@@ -33,6 +33,9 @@
             <form method="POST" action="{{ route('buyer.orders.store') }}" class="p-6 sm:p-8">
                 @csrf
                 <input type="hidden" name="product_id" value="{{ $product->id }}">
+                @if (isset($variant) && $variant)
+                    <input type="hidden" name="variant_id" value="{{ $variant->id }}">
+                @endif
 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
@@ -41,8 +44,13 @@
 
                         {{-- Carte Produit --}}
                         <div class="flex gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-200 items-center">
-                            @if ($product->images->first())
-                                <img src="{{ asset('storage/' . $product->images->first()->url) }}"
+                            @php
+                                $displayImage = (isset($variant) && $variant && $variant->images->isNotEmpty())
+                                    ? $variant->images->first()->url
+                                    : $product->images->first()?->url;
+                            @endphp
+                            @if ($displayImage)
+                                <img src="{{ asset('storage/' . $displayImage) }}"
                                     class="w-20 h-20 rounded-xl object-cover shrink-0 border border-slate-200 shadow-xs">
                             @else
                                 <div class="w-20 h-20 rounded-xl bg-slate-200 flex items-center justify-center text-slate-400 text-xs font-semibold shrink-0">
@@ -51,9 +59,15 @@
                             @endif
                             <div class="flex-1 min-w-0">
                                 <h2 class="font-bold text-slate-900 text-sm sm:text-base line-clamp-1">{{ $product->title }}</h2>
+                                @if (isset($variant) && $variant)
+                                    <div class="mt-1 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                                        {{ $variant->label() }}
+                                    </div>
+                                @endif
                                 <p class="text-xs text-slate-500 font-medium mt-0.5">{{ $product->shop->name }} · {{ $product->shop->city }}</p>
                                 <p class="text-[#016837] font-black text-lg mt-1">
-                                    {{ number_format($product->price, 0, ',', ' ') }} <span class="text-xs font-bold">FCFA</span>
+                                    {{ number_format(isset($variant) && $variant ? $variant->price : $product->price, 0, ',', ' ') }} <span class="text-xs font-bold">FCFA</span>
                                     <span class="text-[11px] text-slate-400 font-normal">/ unité</span>
                                 </p>
                             </div>
@@ -67,9 +81,9 @@
                                 </label>
                                 <input type="number" id="quantity" name="quantity"
                                     value="{{ old('quantity', $product->min_quantity) }}" min="{{ $product->min_quantity }}"
-                                    max="{{ $product->availableStock() }}"
+                                    max="{{ isset($variant) && $variant ? $variant->availableStock() : $product->availableStock() }}"
                                     class="w-full border border-slate-300 focus:border-[#016837] focus:ring-1 focus:ring-[#016837] rounded-xl px-4 py-3 text-sm font-bold text-slate-900 transition outline-none">
-                                <p class="text-[11px] text-slate-400 font-medium mt-1">Min : {{ $product->min_quantity }} | Stock : {{ $product->availableStock() }}</p>
+                                <p class="text-[11px] text-slate-400 font-medium mt-1">Min : {{ $product->min_quantity }} | Stock : {{ isset($variant) && $variant ? $variant->availableStock() : $product->availableStock() }}</p>
                             </div>
 
                             <div>
@@ -182,7 +196,7 @@
 
     @push('scripts')
         <script>
-            const unitPrice = {{ $product->price }};
+            const unitPrice = {{ isset($variant) && $variant ? $variant->price : $product->price }};
             const protRate = {{ \App\Models\PlatformSetting::getRate('protection_rate') }};
             const collectRate = {{ \App\Models\PlatformSetting::getRate('gateway_collect_rate') }};
             const fixedFee = {{ (int) \App\Models\PlatformSetting::getValue('gateway_fixed_fee', 0) }};

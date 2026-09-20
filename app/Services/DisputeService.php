@@ -11,9 +11,9 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use App\Notifications\DisputeOpenedNotification;
-use App\Notifications\DisputeResolvedNotification;
-use App\Notifications\AdminDisputeOpenedNotification;
+use App\Notifications\Disputes\DisputeOpenedNotification;
+use App\Notifications\Disputes\DisputeResolvedNotification;
+use App\Notifications\Disputes\AdminDisputeOpenedNotification;
 use Illuminate\Support\Facades\Notification as NotificationFacade;
 
 class DisputeService
@@ -177,7 +177,9 @@ class DisputeService
         //     );
         // }
 
-        // // Vendeur avait tort
+
+        // Vendeur avait tort
+
         // if ($dispute->resolution === 'refund_buyer') {
         //     app(TrustService::class)->record(
         //         user: $order->shop->user,
@@ -198,7 +200,9 @@ class DisputeService
     // wallet ni de profil "opérateur MoMo" dédié comme le vendeur.
     private function refundBuyer(User $buyer, int $netAmount, Order $order): void
     {
+
         $phone = '237' . ltrim($order->payment->payer_phone ?? $order->orderGroup->payment->payer_phone, '0');
+
 
         $grossUp     = $this->elgiopay->grossUpPayout($netAmount);
         $grossAmount = $grossUp['gross'];
@@ -210,7 +214,9 @@ class DisputeService
                 grossAmount: $grossAmount,
                 reference: 'REFUND-' . $order->reference . '-' . Str::uuid(),
                 description: "Remboursement litige {$order->reference}",
+
                 operator: $order->payment->payer_operator ?? $order->orderGroup->payment->payer_operator  ?? 'mtn',
+
                 recipientName: $buyer->name
             );
 

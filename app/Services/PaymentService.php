@@ -13,9 +13,9 @@ use App\Models\WalletTransaction;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use App\Notifications\OrderPaidNotification;
-use App\Notifications\PaymentFailedNotification;
-use App\Notifications\TransportFeePaidNotification;
+use App\Notifications\Payments\OrderPaidNotification;
+use App\Notifications\Payments\PaymentFailedNotification;
+use App\Notifications\Payments\TransportFeePaidNotification;
 
 class PaymentService
 {
@@ -268,7 +268,9 @@ class PaymentService
             $order->update(['status' => Order::STATUS_FAILED]);
 
             foreach ($order->items as $item) {
-                $item->product->decrement('stock_reserved', $item->quantity);
+                $item->product_variant_id
+                    ? $item->variant?->decrement('stock_reserved', $item->quantity)
+                    : $item->product?->decrement('stock_reserved', $item->quantity);
             }
         });
         //   $order->buyer->notify(new PaymentFailedNotification($order));

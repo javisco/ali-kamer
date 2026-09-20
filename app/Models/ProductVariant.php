@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class ProductVariant extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'product_id', 'price', 'old_price',
         'stock', 'stock_reserved', 'sku', 'is_active',
@@ -18,6 +20,7 @@ class ProductVariant extends Model
         return [
             'is_active' => 'boolean',
             'price'     => 'integer',
+            'old_price' => 'integer',
             'stock'     => 'integer',
         ];
     }
@@ -44,13 +47,18 @@ class ProductVariant extends Model
     }
 
     // Label lisible de la variante
-    // Ex: "Core i5 / 8GB"
-    public function label(): string
+    // Ex: "Core i5 / 8GB" ou "Noir • Sans fil"
+    public function label(string $separator = ' / '): string
     {
         return $this->attributeValues
             ->sortBy('attribute.sort_order')
             ->pluck('value')
-            ->join(' / ');
+            ->join($separator);
+    }
+
+    public function bulletLabel(): string
+    {
+        return $this->label(' • ');
     }
 
     public function hasDiscount(): bool

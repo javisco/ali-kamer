@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\OrderGroup;
 use App\Models\OrderGroupPayment;
@@ -14,7 +15,8 @@ use App\Models\ProductVariant;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use App\Notifications\ProductOutOfStockNotification;
+use Illuminate\Validation\ValidationException;
+use App\Notifications\Products\ProductOutOfStockNotification;
 
 class OrderService
 {
@@ -116,6 +118,14 @@ class OrderService
                 ? ProductVariant::findOrFail($data['variant_id'])
                 : null;
 
+            if ($product->hasVariants() && ! $variant) {
+                throw new \Exception('Veuillez choisir une variante.');
+            }
+
+            if ($variant && ($variant->product_id !== $product->id || ! $variant->is_active)) {
+                throw new \Exception('Cette variante n\'est plus disponible.');
+            }
+
             $availableStock = $variant
                 ? $variant->availableStock()
                 : $product->availableStock();
@@ -167,8 +177,9 @@ class OrderService
                 'order_id'           => $order->id,
                 'product_id'         => $product->id,
                 'product_variant_id' => $variant?->id,
-                'product_title'      => $product->title
-                    . ($variant ? ' — ' . $variant->label() : ''),
+                'product_title'      => $product->title,
+                'variant_label'      => $variant?->label(),
+                'variant_snapshot'   => $variant ? app(ProductVariantService::class)->snapshot($variant) : null,
                 'quantity'           => $quantity,
                 'unit_price'         => $unitPrice,
                 'subtotal'           => $subtotal,
@@ -240,7 +251,31 @@ class OrderService
     {
         return DB::transaction(function () use ($buyer, $cart, $data) {
 
-            $items       = $cart->items->load('product.shop', 'variant');
+            $items       = $cart->items->load('product.shop', 'variant.attributeValues.attribute');
+
+            foreach ($items as $item) {
+                if ($item->product->hasVariants() && ! $item->variant) {
+                    throw ValidationException::withMessages([
+                        'cart' => 'Votre panier contient un produit dont la variante n\'est plus valide.',
+                    ]);
+                }
+                if ($item->variant && ! $item->variant->is_active) {
+                    throw ValidationException::withMessages([
+                        'cart' => 'La variante « ' . $item->variant->label() . ' » n\'est plus disponible.',
+                    ]);
+                }
+
+                $available = $item->variant
+                    ? $item->variant->availableStock()
+                    : $item->product->availableStock();
+
+                if ($item->quantity > $available) {
+                    $label = trim($item->product->title . ' ' . $item->variantLabel());
+                    throw ValidationException::withMessages([
+                        'cart' => "Stock insuffisant pour « {$label} ». Disponible : {$available}.",
+                    ]);
+                }
+            }
             $itemsByShop = $items->groupBy(fn($item) => $item->product->shop_id);
 
             if ($itemsByShop->count() === 1) {
@@ -282,16 +317,7 @@ class OrderService
         ]);
 
         foreach ($items as $item) {
-            OrderItem::create([
-                'order_id'           => $order->id,
-                'product_id'         => $item->product_id,
-                'product_variant_id' => $item->product_variant_id,
-                'product_title'      => $item->product->title
-                    . ($item->variantLabel() ? ' — ' . $item->variantLabel() : ''),
-                'quantity'           => $item->quantity,
-                'unit_price'         => $item->unit_price,
-                'subtotal'           => $item->subtotal(),
-            ]);
+            $this->createOrderItemFromCartItem($order, $item);
 
             $item->variant
                 ? $item->variant->increment('stock_reserved', $item->quantity)
@@ -326,6 +352,7 @@ class OrderService
     // ── PANIER MULTI-VENDEUR : un OrderGroup + un Order par boutique ──
     private function createMultiShopOrderGroup(User $buyer, $itemsByShop, array $data): OrderGroup
     {
+
         $totalSubtotal    = 0;
         $totalProtection  = 0;
         $shopCalculations = [];
@@ -386,16 +413,7 @@ class OrderService
             ]);
 
             foreach ($shopItems as $item) {
-                OrderItem::create([
-                    'order_id'           => $order->id,
-                    'product_id'         => $item->product_id,
-                    'product_variant_id' => $item->product_variant_id,
-                    'product_title'      => $item->product->title
-                        . ($item->variantLabel() ? ' — ' . $item->variantLabel() : ''),
-                    'quantity'           => $item->quantity,
-                    'unit_price'         => $item->unit_price,
-                    'subtotal'           => $item->subtotal(),
-                ]);
+                $this->createOrderItemFromCartItem($order, $item);
 
                 $item->variant
                     ? $item->variant->increment('stock_reserved', $item->quantity)
@@ -423,7 +441,7 @@ class OrderService
             'payer_phone'     => $data['payer_phone'],
             'payer_operator'  => $data['payer_operator'],
         ]);
-
+   
         return $group;
     }
 
@@ -467,6 +485,23 @@ class OrderService
                     );
                 });
             });
+    }
+
+    private function createOrderItemFromCartItem(Order $order, CartItem $item): void
+    {
+        $variant = $item->variant;
+
+        OrderItem::create([
+            'order_id'           => $order->id,
+            'product_id'         => $item->product_id,
+            'product_variant_id' => $item->product_variant_id,
+            'product_title'      => $item->product->title,
+            'variant_label'      => $variant?->label() ?: ($item->variantLabel() ?: null),
+            'variant_snapshot'   => $variant ? app(ProductVariantService::class)->snapshot($variant) : null,
+            'quantity'           => $item->quantity,
+            'unit_price'         => $item->unit_price,
+            'subtotal'           => $item->subtotal(),
+        ]);
     }
 
     private function checkStockAndNotify(Product|ProductVariant $stockable, Product $product): void

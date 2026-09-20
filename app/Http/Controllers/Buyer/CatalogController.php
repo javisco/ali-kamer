@@ -17,7 +17,11 @@ class CatalogController extends Controller
     public function index(Request $request)
     {
         $query = Product::visible()
-            ->with(['shop', 'images' => fn($q) => $q->where('is_primary', true)])
+            ->with([
+                'shop',
+                'images' => fn($q) => $q->where('is_primary', true),
+                'activeVariants',
+            ])
             ->latest();
 
         // Filtres

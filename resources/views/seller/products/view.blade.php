@@ -118,6 +118,38 @@
                     </div>
                 </div>
 
+                @if ($product->variants->isNotEmpty())
+                    <div class="rounded-xl border border-gray-200 overflow-hidden">
+                        <div class="bg-[#F7F7F2] px-3.5 py-2 text-xs font-extrabold uppercase tracking-wider text-[#0a1b12]">
+                            Variantes
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full text-left text-[11px]">
+                                <thead class="text-gray-500">
+                                    <tr>
+                                        <th class="px-3 py-2">Combinaison</th>
+                                        <th class="px-3 py-2">Prix</th>
+                                        <th class="px-3 py-2">Stock</th>
+                                        <th class="px-3 py-2">SKU</th>
+                                        <th class="px-3 py-2">Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($product->variants as $variant)
+                                        <tr class="border-t border-gray-100">
+                                            <td class="px-3 py-2 font-bold">{{ $variant->label() }}</td>
+                                            <td class="px-3 py-2">{{ number_format($variant->price, 0, ',', ' ') }} FCFA</td>
+                                            <td class="px-3 py-2">{{ $variant->availableStock() }}</td>
+                                            <td class="px-3 py-2">{{ $variant->sku ?: '—' }}</td>
+                                            <td class="px-3 py-2">{{ $variant->is_active ? 'Vendable' : 'Désactivée' }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                @endif
+
                 {{-- 3. Détails de livraison --}}
                 <div class="bg-[#016837]/5 p-3.5 rounded-xl border border-[#016837]/20 space-y-1.5">
                     <h3 class="text-xs font-extrabold uppercase tracking-wider text-[#016837]">Modalités de livraison</h3>

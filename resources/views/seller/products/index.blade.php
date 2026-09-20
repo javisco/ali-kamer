@@ -120,13 +120,13 @@
 
                             <div class="flex items-center justify-between text-xs pt-1 border-t border-gray-50">
                                 <div>
-                                    @if ($product->stock < 5)
+                                    @if ($product->availableStock() < 5)
                                         <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#E30613]/10 text-[#E30613]">
-                                            ⚠️ {{ $product->stock }} stock
+                                            ⚠️ {{ $product->availableStock() }} stock
                                         </span>
                                     @else
                                         <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#016837]/10 text-[#016837]">
-                                            {{ $product->stock }} stock
+                                            {{ $product->availableStock() }} stock
                                         </span>
                                     @endif
                                 </div>
@@ -244,13 +244,13 @@
 
                                     {{-- Stock --}}
                                     <td class="px-5 py-3.5 whitespace-nowrap">
-                                        @if ($product->stock < 5)
+                                        @if ($product->availableStock() < 5)
                                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-black bg-[#E30613]/10 text-[#E30613] border border-[#E30613]/20">
-                                                ⚠️ {{ $product->stock }} en stock
+                                                ⚠️ {{ $product->availableStock() }} en stock
                                             </span>
                                         @else
                                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#016837]/10 text-[#016837] border border-[#016837]/20">
-                                                {{ $product->stock }} en stock
+                                                {{ $product->availableStock() }} en stock
                                             </span>
                                         @endif
                                     </td>

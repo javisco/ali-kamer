@@ -4,7 +4,7 @@
 
 @section('content')
     {{-- Conteneur principal avec état Alpine.js pour la modale image --}}
-    <div x-data="{ activeImage: null }" class="min-h-screen bg-[#F7F7F2] py-6 px-4 sm:px-6">
+    <div x-data="productForm(@js($variantBuilder))" class="min-h-screen bg-[#F7F7F2] py-6 px-4 sm:px-6">
         <div class="w-full max-w-3xl mx-auto">
 
             {{-- Carte Principale --}}
@@ -165,17 +165,20 @@
                             @enderror
                         </div>
 
-                        <div>
+                        <div x-show="!hasVariants">
                             <label class="block text-xs sm:text-sm font-bold text-[#0a1b12] mb-1">
                                 Stock disponible <span class="text-[#E30613]">*</span>
                             </label>
-                            <input type="number" name="stock" value="{{ old('stock', $product->stock) }}" required
-                                min="0"
+                            <input type="number" name="stock" value="{{ old('stock', $product->stock) }}" min="0"
+                                :required="!hasVariants"
                                 class="w-full bg-[#F7F7F2]/60 border @error('stock') border-[#E30613] @else border-gray-200 @enderror rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-[#0a1b12] font-medium focus:bg-white focus:border-[#016837] focus:ring-1 focus:ring-[#016837] transition outline-none">
                             @error('stock')
                                 <p class="text-[#E30613] text-xs mt-0.5">{{ $message }}</p>
                             @enderror
                         </div>
+                        <p x-show="hasVariants" x-cloak class="text-xs text-gray-500 sm:col-span-2">
+                            Le stock se saisit par variante. Le prix ci-dessus sert de prix par défaut / d'affichage catalogue.
+                        </p>
 
                         <div>
                             <label class="block text-xs sm:text-sm font-bold text-[#0a1b12] mb-1">
@@ -249,6 +252,8 @@
                             <p class="text-[#E30613] text-xs mt-0.5">{{ $message }}</p>
                         @enderror
                     </div>
+
+                    @include('seller.products._variants')
 
                     {{-- 6. Photos supplémentaires --}}
                     <div>

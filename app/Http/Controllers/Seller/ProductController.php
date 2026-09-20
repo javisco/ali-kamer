@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Services\ProductService;
+use App\Services\ProductVariantService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,7 +16,10 @@ use function Symfony\Component\String\b;
 
 class ProductController extends Controller
 {
-    public function __construct(private ProductService $productService) {}
+    public function __construct(
+        private ProductService $productService,
+        private ProductVariantService $variantService,
+    ) {}
 
     // Liste des produits du vendeur
     public function index()
@@ -23,7 +27,7 @@ class ProductController extends Controller
 
         $products = Auth::user()->shop
             ->products()
-            ->with(['category', 'images'])
+            ->with(['category', 'images', 'activeVariants'])
             ->latest()
             ->paginate(20);
 
@@ -34,7 +38,17 @@ class ProductController extends Controller
     public function create()
     {
         $categories = Category::active()->parents()->with('children')->get();
-        return view('seller.products.create', compact('categories'));
+        $variantBuilder = [
+            'has_variants'     => false,
+            'presets'          => $this->variantService->presets(),
+            'max_attributes'   => (int) config('product_attributes.max_attributes', 3),
+            'max_values'       => (int) config('product_attributes.max_values', 12),
+            'max_combinations' => (int) config('product_attributes.max_combinations', 36),
+            'attributes'       => [],
+            'variants'         => [],
+        ];
+
+        return view('seller.products.create', compact('categories', 'variantBuilder'));
     }
 
     // Sauvegarder le produit
@@ -51,7 +65,7 @@ class ProductController extends Controller
     //Foncion permettant un vendeur de voir son produit
     public function view(Product $product)
     {
-        $product->load(['images', 'category']);
+        $product->load(['images', 'category', 'attributes.values', 'variants.attributeValues.attribute']);
         return view('seller.products.view', compact('product'));
     }
     // Formulaire modification
@@ -60,7 +74,9 @@ class ProductController extends Controller
         $this->authorizeProduct($product);
 
         $categories = Category::active()->parents()->with('children')->get();
-        return view('seller.products.edit', compact('product', 'categories'));
+        $variantBuilder = $this->variantService->builderPayload($product);
+
+        return view('seller.products.edit', compact('product', 'categories', 'variantBuilder'));
     }
 
     // Sauvegarder la modification

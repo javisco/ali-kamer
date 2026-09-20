@@ -25,9 +25,7 @@
         | écrans. Sur une hauteur desktop normale, tout est visible.
         */
 
-        .seller-sidebar-nav {
-            scrollbar-width: none;
-        }
+        [x-cloak] { display: none !important; }
 
         .seller-sidebar-nav::-webkit-scrollbar {
             display: none;
