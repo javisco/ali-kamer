@@ -237,7 +237,7 @@ class DisputeService
             ]);
 
             $seller = $order->shop->user;
-            $seller->decrement('wallet_pending',$netAmount);
+            $seller->decrement('wallet_pending',$order->net_amount);
         } catch (\Exception $e) {
             Log::error('Buyer refund failed', ['error' => $e->getMessage()]);
             throw $e;
