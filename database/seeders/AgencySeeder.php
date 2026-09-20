@@ -102,6 +102,7 @@ class AgencySeeder extends Seeder
             'role'      => User::ROLE_AGENCY_MANAGER,
             'status'    => User::STATUS_ACTIVE,
             'agency_id' => 1,
+            'email_verified_at' => now(),
         ]);
 
         User::create([
@@ -112,6 +113,7 @@ class AgencySeeder extends Seeder
             'role'      => User::ROLE_AGENCY_MANAGER,
             'status'    => User::STATUS_ACTIVE,
             'agency_id' => 2,
+            'email_verified_at' => now(),
         ]);
     }
 }

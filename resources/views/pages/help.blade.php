@@ -1,10 +1,10 @@
-@php
+{{-- @php
     $layout = auth()->user()->isBuyer()
         ? 'layouts.buyer'
         : 'layouts.seller';
-@endphp
+@endphp --}}
 
-@extends($layout)
+@extends('base')
 @section('title', 'Aide — Ali-Kamer')
 @section('meta_description', 'Centre d’aide Ali-Kamer : compte, recherche, commande, paiement séquestre, livraison et
     validation.')
