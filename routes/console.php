@@ -16,7 +16,7 @@ Artisan::command('inspire', function () {
 // Toutes les nuits à 02h00 — auto-complete les commandes expirées
 Schedule::call(function () {
     app(OrderService::class)->autoCompleteExpired();
-})->dailyAt('02:00');
+})->hourly();
 
 Schedule::command('orders:warn-unshipped')
     ->hourly();
