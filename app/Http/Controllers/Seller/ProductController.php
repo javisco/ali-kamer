@@ -82,7 +82,7 @@ class ProductController extends Controller
     // Sauvegarder la modification
     public function update(StoreProductRequest $request, Product $product)
     {
-
+        dd($request->all());
         $this->authorizeProduct($product);
 
         $this->productService->update($product, $request->validated());
