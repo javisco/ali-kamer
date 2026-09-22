@@ -140,6 +140,53 @@ class PlatformSettingsSeeder extends Seeder
                 'group'       => 'limites',
                 'sort_order'  => 4,
             ],
+
+            // ── Limites variantes ─────────────────────────────────────
+            [
+                'key'         => 'variant_max_attributes',
+                'value'       => '3',
+                'type'        => 'integer',
+                'label'       => "Nombre maximum d'attributs par produit",
+                'description' => "Nombre maximum d'attributs utilisables pour un produit.",
+                'group'       => 'variantes',
+                'sort_order'  => 1,
+            ],
+            [
+                'key'         => 'variant_max_values_per_attribute',
+                'value'       => '12',
+                'type'        => 'integer',
+                'label'       => 'Valeurs maximum par attribut',
+                'description' => 'Nombre maximum de valeurs pour un même attribut.',
+                'group'       => 'variantes',
+                'sort_order'  => 2,
+            ],
+            [
+                'key'         => 'variant_max_total_values',
+                'value'       => '30',
+                'type'        => 'integer',
+                'label'       => 'Valeurs maximum au total',
+                'description' => 'Nombre total de valeurs sur tous les attributs du produit.',
+                'group'       => 'variantes',
+                'sort_order'  => 3,
+            ],
+            [
+                'key'         => 'variant_max_combinations',
+                'value'       => '36',
+                'type'        => 'integer',
+                'label'       => 'Combinaisons maximum',
+                'description' => 'Nombre maximum de combinaisons générées.',
+                'group'       => 'variantes',
+                'sort_order'  => 4,
+            ],
+            [
+                'key'         => 'variant_max_active',
+                'value'       => '36',
+                'type'        => 'integer',
+                'label'       => 'Variantes actives maximum',
+                'description' => 'Nombre maximum de variantes pouvant être vendables simultanément.',
+                'group'       => 'variantes',
+                'sort_order'  => 5,
+            ],
         ];
 
         foreach ($settings as $setting) {

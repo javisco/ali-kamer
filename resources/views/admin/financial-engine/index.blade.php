@@ -248,6 +248,7 @@
                     'commissions' => '💰 Commissions et frais plateforme',
                     'timers'      => '⏱ Délais automatiques',
                     'limites'     => '🔒 Limites et seuils',
+                    'variantes'   => '🧩 Limites des variantes produits',
                 ];
             @endphp
 
