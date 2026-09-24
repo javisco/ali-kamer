@@ -24,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         $middleware->validateCsrfTokens(except: [
             'webhooks/elgiopay',
+            'didit/webhook',
             'api/*',
         ]);
     })->withMiddleware(function (Middleware $middleware) {
