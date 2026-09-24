@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\ProductAttribute;
 use App\Models\ProductAttributeValue;
 use App\Models\ProductVariant;
+use App\Models\PlatformSetting;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -27,9 +28,11 @@ class ProductVariantService
         return [
             'has_variants' => $product->hasVariants(),
             'presets'      => $this->presets(),
-            'max_attributes' => (int) config('product_attributes.max_attributes', 3),
-            'max_values'     => (int) config('product_attributes.max_values', 12),
-            'max_combinations' => (int) config('product_attributes.max_combinations', 36),
+            'max_attributes' => $this->maxAttributes(),
+            'max_values'     => $this->maxValuesPerAttribute(),
+            'max_total_values' => $this->maxTotalValues(),
+            'max_combinations' => $this->maxCombinations(),
+            'max_active_variants' => $this->maxActiveVariants(),
             'attributes'   => $product->attributes->map(function (ProductAttribute $attribute) {
                 return [
                     'name'   => $attribute->name,
@@ -41,6 +44,7 @@ class ProductVariantService
             })->values()->all(),
             'variants' => $product->variants->map(function (ProductVariant $variant) {
                 return [
+                    'id'        => $variant->id,
                     'key'       => $this->combinationKey($variant->attributeValues->pluck('value')->all()),
                     'label'     => $variant->label(),
                     'values'    => $variant->attributeValues
@@ -77,6 +81,12 @@ class ProductVariantService
         return DB::transaction(function () use (
             $product, $valueIds, $price, $stock, $oldPrice, $sku
         ) {
+            if (ProductVariant::where('product_id', $product->id)->where('is_active', true)->count() >= $this->maxActiveVariants()) {
+                throw ValidationException::withMessages([
+                    'variants' => 'La limite de variantes actives pour ce produit est atteinte.',
+                ]);
+            }
+
             $variant = ProductVariant::create([
                 'product_id' => $product->id,
                 'price'      => $price,
@@ -96,13 +106,45 @@ class ProductVariantService
         ProductVariant $variant,
         int $price,
         int $stock,
-        ?int $oldPrice = null
+        ?int $oldPrice = null,
+        ?string $sku = null,
+        ?bool $isActive = null
     ): void {
+        if ($price < 1) {
+            throw ValidationException::withMessages(['variants' => 'Le prix de la variante doit être supérieur à 0.']);
+        }
+
+        $maxPrice = (int) PlatformSetting::getValue('max_product_price', 10000000);
+        if ($price > $maxPrice) {
+            throw ValidationException::withMessages(['variants' => "Le prix de la variante ne peut pas dépasser {$maxPrice} FCFA."]);
+        }
+
+        if ($oldPrice !== null && $oldPrice <= $price) {
+            throw ValidationException::withMessages(['variants' => "L'ancien prix doit être supérieur au prix actuel."]);
+        }
+
+        if ($isActive === true && ! $variant->is_active) {
+            $activeCount = ProductVariant::where('product_id', $variant->product_id)
+                ->where('is_active', true)
+                ->where('id', '!=', $variant->id)
+                ->count();
+
+            if ($activeCount >= $this->maxActiveVariants()) {
+                throw ValidationException::withMessages([
+                    'variants' => 'La limite de variantes actives pour ce produit est atteinte.',
+                ]);
+            }
+        }
+
         $variant->update([
             'price'     => $price,
             'old_price' => $oldPrice,
-            'stock'     => $stock,
+            'stock'     => max(0, $stock),
+            'sku'       => $sku,
+            ...($isActive === null ? [] : ['is_active' => $isActive]),
         ]);
+
+        $this->syncCatalogFields($variant->product->fresh());
     }
 
     public function sync(
@@ -115,6 +157,13 @@ class ProductVariantService
         $this->assertLimits($attributesData);
 
         $expected = $this->cartesian($attributesData);
+
+        $maxActiveVariants = $this->maxActiveVariants();
+        if (count($expected) > $maxActiveVariants) {
+            throw ValidationException::withMessages([
+                'variants' => "Maximum {$maxActiveVariants} variantes actives autorisées.",
+            ]);
+        }
 
         $variantsByKey = [];
         foreach ($variantsData as $row) {
@@ -152,7 +201,10 @@ class ProductVariantService
                 foreach ($combo as $index => $value) {
                     $valueIds[] = $valueMap[$attributesData[$index]['name'] . '|' . $value];
                 }
-                $existing = $existingByKey[$key] ?? null;
+                $submittedId = isset($row['id']) ? (int) $row['id'] : 0;
+                $existing = $submittedId > 0
+                    ? $product->variants()->whereKey($submittedId)->first()
+                    : ($existingByKey[$key] ?? null);
 
                 $payload = [
                     'price'     => (int) ($row['price'] ?? $product->price),
@@ -192,6 +244,31 @@ class ProductVariantService
         });
 
         $this->syncCatalogFields($product->fresh());
+    }
+
+    public function maxAttributes(): int
+    {
+        return max(1, (int) PlatformSetting::getValue('variant_max_attributes', 3));
+    }
+
+    public function maxValuesPerAttribute(): int
+    {
+        return max(1, (int) PlatformSetting::getValue('variant_max_values_per_attribute', 12));
+    }
+
+    public function maxTotalValues(): int
+    {
+        return max(1, (int) PlatformSetting::getValue('variant_max_total_values', 30));
+    }
+
+    public function maxCombinations(): int
+    {
+        return max(1, (int) PlatformSetting::getValue('variant_max_combinations', 36));
+    }
+
+    public function maxActiveVariants(): int
+    {
+        return max(1, (int) PlatformSetting::getValue('variant_max_active', 36));
     }
 
     public function disableVariants(Product $product): void
@@ -366,9 +443,10 @@ class ProductVariantService
 
     private function assertLimits(array $attributesData): void
     {
-        $maxAttr = (int) config('product_attributes.max_attributes', 3);
-        $maxVal  = (int) config('product_attributes.max_values', 12);
-        $maxCombo = (int) config('product_attributes.max_combinations', 36);
+        $maxAttr = $this->maxAttributes();
+        $maxVal = $this->maxValuesPerAttribute();
+        $maxTotal = $this->maxTotalValues();
+        $maxCombo = $this->maxCombinations();
 
         if (count($attributesData) === 0) {
             throw ValidationException::withMessages([
@@ -382,19 +460,44 @@ class ProductVariantService
             ]);
         }
 
+        $totalValues = 0;
         foreach ($attributesData as $attr) {
-            if (count($attr['values']) > $maxVal) {
+            $count = count($attr['values']);
+            $totalValues += $count;
+
+            if ($count > $maxVal) {
                 throw ValidationException::withMessages([
                     'attributes' => "Maximum {$maxVal} valeurs pour « {$attr['name']} ».",
                 ]);
             }
         }
 
-        if (count($this->cartesian($attributesData)) > $maxCombo) {
+        if ($totalValues > $maxTotal) {
+            throw ValidationException::withMessages([
+                'attributes' => "Maximum {$maxTotal} valeurs au total pour un produit.",
+            ]);
+        }
+
+        if ($this->combinationCount($attributesData) > $maxCombo) {
             throw ValidationException::withMessages([
                 'variants' => "Trop de combinaisons (max {$maxCombo}). Réduisez le nombre de valeurs.",
             ]);
         }
+    }
+
+    private function combinationCount(array $attributesData): int
+    {
+        $count = 1;
+
+        foreach ($attributesData as $attr) {
+            $count *= max(1, count($attr['values']));
+
+            if ($count > $this->maxCombinations()) {
+                return $count;
+            }
+        }
+
+        return $count;
     }
 
     private function cartesian(array $attributesData): array

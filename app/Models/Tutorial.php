@@ -17,9 +17,16 @@ class Tutorial extends Model
     ];
 
     protected $fillable = [
-        'title', 'type', 'role_target', 'category',
-        'video_url', 'thumbnail_url', 'content',
-        'duration_minutes', 'sort_order', 'is_published',
+        'title',
+        'type',
+        'role_target',
+        'category',
+        'video_url',
+        'thumbnail_url',
+        'content',
+        'duration_minutes',
+        'sort_order',
+        'is_published',
     ];
 
     protected function casts(): array
@@ -36,7 +43,7 @@ class Tutorial extends Model
     {
         return $q->where(function ($query) use ($role) {
             $query->where('role_target', $role)
-                  ->orWhere('role_target', 'all');
+                ->orWhere('role_target', 'all');
         });
     }
 

@@ -53,6 +53,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'wallet_pending',
         'wallet_available',
         'trust_score',
+        'risk_profile',
+        'activated_at',
+        'distinct_ip_count',
+        'last_ip',
         'dispute_count',
         'abuse_count',
         'prepayment_required',
@@ -74,6 +78,8 @@ class User extends Authenticatable implements MustVerifyEmail
             'wallet_pending'      => 'integer',
             'wallet_available'    => 'integer',
             'trust_score'         => 'integer',
+            'activated_at'        => 'datetime',
+            'distinct_ip_count'  => 'integer',
         ];
     }
 
