@@ -835,7 +835,6 @@
                 <div class="w-px h-6 bg-slate-200 mx-3"></div>
 
 
-
                 {{-- LIENS --}}
 
                 <nav class="flex items-center gap-1 text-[13px] font-bold whitespace-nowrap">
