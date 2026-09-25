@@ -471,7 +471,7 @@ Route::middleware(['auth', 'role:admin', 'check.status'])->prefix('admin')->grou
 
 Route::view('/aide', 'pages.help')->name('help');
 Route::view('/a-propos', 'pages.about')->name('about');
-
+Route::view('/how-it-work','pages.work')->name('work');
 
 Route::middleware(['auth', 'role:buyer', 'verified', 'check.status'])->group(function () {
 

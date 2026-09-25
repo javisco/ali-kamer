@@ -62,7 +62,7 @@ class CatalogController extends Controller
             default      => $query->latest(),
         };
 
-        $products   = $query->paginate(20)->withQueryString();
+        $products   = $query->paginate(100)->withQueryString();
         $categories = Category::active()->parents()->get();
 
         return view('buyer.catalog.index', compact('products', 'categories'));

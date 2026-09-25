@@ -36,7 +36,7 @@ class DiditService
     /**
      * Crée (ou récupère, grâce à vendor_data) une session KYC Didit.
      */
-    public function createKycSession(User $user): array
+    public function createKycSession(User $user, ?string $callbackUrl = null, string $source = 'ali-kamer-web'): array
     {
         $workflowId = config('didit.workflow_id');
 
@@ -51,14 +51,14 @@ class DiditService
             // non terminée et regrouper les vérifications du même vendeur.
             'vendor_data' => 'user-' . $user->id,
 
-            // Callback navigateur. Il ne remplace PAS le webhook serveur.
-            'callback' => route('didit.kyc.callback'),
+            // Callback navigateur / mobile. Il ne remplace PAS le webhook serveur.
+            'callback' => $callbackUrl ?: route('didit.kyc.callback'),
             'callback_method' => 'both',
 
             'metadata' => [
                 'user_id' => $user->id,
                 'role' => 'seller',
-                'source' => 'ali-kamer-web',
+                'source' => $source,
             ],
 
             'language' => 'fr',

@@ -97,6 +97,30 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(KycDocument::class);
     }
 
+    public function sanctions(): HasMany
+    {
+        return $this->hasMany(Sanction::class);
+    }
+
+    public function activeSanctions(): HasMany
+    {
+        return $this->hasMany(Sanction::class)
+            ->where('status', Sanction::STATUS_ACTIVE)
+            ->where(function ($q) {
+                $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
+            });
+    }
+
+    public function decisionLogs(): HasMany
+    {
+        return $this->hasMany(DecisionLog::class);
+    }
+
+    public function adminReviews(): HasMany
+    {
+        return $this->hasMany(AdminReview::class);
+    }
+
     public function ordersAsBuyer(): HasMany
     {
         return $this->hasMany(Order::class, 'buyer_id');
@@ -172,15 +196,84 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->status === self::STATUS_BANNED;
     }
+    public function isSuspended(): bool
+    {
+        return $this->status === self::STATUS_SUSPENDED;
+    }
     public function isCandidate(): bool
     {
         return $this->status === self::STATUS_CANDIDATE;
+    }
+
+    public function getActiveSuspension(): ?Suspension
+    {
+        $sanction = $this->activeSanctions()
+            ->where('type', Sanction::TYPE_SUSPENSION)
+            ->with('suspension')
+            ->first();
+
+        return $sanction?->suspension;
+    }
+
+    public function getActiveRestrictions(): array
+    {
+        $sanctionIds = $this->activeSanctions()->pluck('id');
+
+        if ($sanctionIds->isEmpty()) {
+            return [];
+        }
+
+        return SanctionRestriction::whereIn('sanction_id', $sanctionIds)
+            ->pluck('restriction_code')
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    public function hasRestriction(string $code): bool
+    {
+        if ($this->isBanned() || $this->isSuspended()) {
+            return true;
+        }
+
+        return in_array($code, $this->getActiveRestrictions(), true);
+    }
+
+    public function canBuy(): bool
+    {
+        return ! $this->hasRestriction(SanctionRestriction::CANNOT_BUY);
+    }
+
+    public function canCreateOrder(): bool
+    {
+        return ! $this->hasRestriction(SanctionRestriction::CANNOT_CREATE_ORDER) && $this->canBuy();
+    }
+
+    public function canSell(): bool
+    {
+        return ! $this->hasRestriction(SanctionRestriction::CANNOT_SELL);
+    }
+
+    public function canPublish(): bool
+    {
+        return ! $this->hasRestriction(SanctionRestriction::CANNOT_PUBLISH) && $this->canSell();
+    }
+
+    public function canWithdraw(): bool
+    {
+        return ! $this->hasRestriction(SanctionRestriction::CANNOT_WITHDRAW);
+    }
+
+    public function canMessage(): bool
+    {
+        return ! $this->hasRestriction(SanctionRestriction::CANNOT_MESSAGE);
     }
 
     public function hasActiveShop(): bool
     {
         return $this->isSeller()
             && $this->isActive()
+            && ! $this->hasRestriction(SanctionRestriction::CANNOT_SELL)
             && $this->shop?->status === 'active';
     }
 

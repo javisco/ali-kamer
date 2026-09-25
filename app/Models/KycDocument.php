@@ -48,6 +48,16 @@ class KycDocument extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function decisionLogs()
+    {
+        return $this->hasMany(DecisionLog::class);
+    }
+
+    public function adminReviews()
+    {
+        return $this->hasMany(AdminReview::class);
+    }
+
     public function isPending(): bool { return $this->status === 'pending'; }
     public function isApproved(): bool { return $this->status === 'approved'; }
     public function isRejected(): bool { return $this->status === 'rejected'; }

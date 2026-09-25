@@ -41,6 +41,11 @@ class Review extends Model
         return $this->belongsTo(User::class, 'reviewer_id');
     }
 
+    public function scores(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(RatingScore::class, 'review_id');
+    }
+
     // ── Scopes ────────────────────────────────────────────────────────
 
     // Avis sur un produit

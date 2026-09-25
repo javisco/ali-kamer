@@ -93,7 +93,7 @@ class ProductSeeder extends Seeder
         $techVariants = ['Pro', 'Ultra', 'Max', 'Plus', 'Edition Limitée', 'Gamer RGB', 'Waterproof', 'Compact', 'Haute Vitesse', 'Reconditionné', 'Série X', 'Titanium', 'Slim', 'Smart', 'Elite', 'V2', 'Prime'];
         $techSpecs = ['64Go', '128Go', '256Go', '512Go', '1To', '8GB RAM', '16GB RAM', '32GB RAM', '10000mAh', '20000mAh', '30000mAh', '45W', '65W', '100W', '4K Ultra HD', 'Full HD 1080p', 'Class 10 V30'];
 
-        for ($i = 1; $i <= 20; $i++) {
+        for ($i = 1; $i <= 100; $i++) {
             $base = $techBases[array_rand($techBases)];
             $variant = $techVariants[array_rand($techVariants)];
             $spec = $techSpecs[array_rand($techSpecs)];
@@ -113,7 +113,7 @@ class ProductSeeder extends Seeder
                 'old_price' => $hasDiscount ? $price + rand(5, 50) : null,
                 'stock' => rand(5, 50),
                 'stock_reserved' => 0,
-                'min_quantity' => 1,
+                'min_quantity' => rand(1,100),
                 'shipping_included' => (bool) rand(0, 1),
                 'shipping_threshold_qty' => rand(2, 5),
                 'specifications' => json_encode(['Marque' => 'Générique/Original', 'Garantie' => '6 Mois', 'État' => 'Neuf']),
@@ -180,7 +180,7 @@ class ProductSeeder extends Seeder
         $fashionStyles = ['Chic', 'Slim Fit', 'Tendance', 'Confort Extra', 'Original', 'Vintage', 'Élégant', 'Urbain', 'Qualité Supérieure', 'Motif Imprimé', 'Moderne', 'Luxe Prestige', 'Casual', 'Coupe Droite', 'Broderie Hand-Made', 'Collection Été'];
         $fashionColors = ['Noir Proche', 'Blanc Pur', 'Bleu Marine', 'Beige Sable', 'Marron Chocolat', 'Rouge Bordeau', 'Doré Éclatant', 'Gris Anthracite', 'Vert Olive', 'Rose Poudré', 'Jaune Moutarde', 'Multicolore Wax'];
 
-        for ($i = 1; $i <= 20; $i++) {
+        for ($i = 1; $i <= 100; $i++) {
             $base = $fashionBases[array_rand($fashionBases)];
             $style = $fashionStyles[array_rand($fashionStyles)];
             $color = $fashionColors[array_rand($fashionColors)];
@@ -200,7 +200,7 @@ class ProductSeeder extends Seeder
                 'old_price' => $hasDiscount ? $price + rand(5, 30) : null,
                 'stock' => rand(10, 100),
                 'stock_reserved' => 0,
-                'min_quantity' => 1,
+                'min_quantity' => rand(1,100),
                 'shipping_included' => rand(0, 1),
                 'shipping_threshold_qty' => 3,
                 'specifications' => json_encode(['Taille' => 'S, M, L, XL', 'Matière' => 'Coton / Cuir', 'Origine' => 'Importation']),

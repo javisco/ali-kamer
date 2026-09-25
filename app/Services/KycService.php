@@ -23,19 +23,25 @@ class KycService
         protected DiditService $didit,
         protected IdentityResolver $identityResolver,
         protected TrustService $trustService,
+        protected DecisionEngine $decisionEngine,
+        protected SanctionEngine $sanctionEngine,
     ) {
     }
 
     /**
      * Lance le parcours Hosted Session Didit.
      */
-    public function startSession(User $user, string $consentVersion = 'kyc-didit-v1'): array
-    {
+    public function startSession(
+        User $user,
+        string $consentVersion = 'kyc-didit-v1',
+        ?string $callbackUrl = null,
+        string $source = 'ali-kamer-web'
+    ): array {
         if (! $user->isSeller()) {
             throw new RuntimeException('Le KYC Didit est réservé aux vendeurs.');
         }
 
-        $session = $this->didit->createKycSession($user);
+        $session = $this->didit->createKycSession($user, $callbackUrl, $source);
 
         $kyc = KycDocument::updateOrCreate(
             ['user_id' => $user->id],
@@ -296,44 +302,44 @@ class KycService
             userId: $user->id,
         );
 
+        $decisionResult = $this->decisionEngine->evaluate(
+            user: $user,
+            identityResolution: $resolution,
+            kyc: $kyc,
+            extraSignals: ['source' => 'didit_webhook'],
+            source: 'kyc'
+        );
+
         $kyc->update([
             'identity_resolution_status' => $resolution->decision,
+            'decision' => $decisionResult->decision,
+            'decision_reason' => $decisionResult->reason,
         ]);
 
-        if ($resolution->isBlocked()) {
+        if ($decisionResult->isBlocked()) {
             $kyc->update([
                 'status' => 'rejected',
-                'decision' => 'BLOCK',
-                'decision_reason' => $resolution->reason ?? 'Identifiant critique détecté.',
-                'rejection_reason' => $resolution->reason ?? 'Identifiant critique détecté.',
+                'rejection_reason' => $decisionResult->reason ?? 'Identifiant critique détecté.',
             ]);
 
-            $this->trustService->record(
-                user: $user,
-                type: 'kyc_issue',
-                roleContext: 'seller',
-                reason: 'KYC Didit approuvé mais un identifiant critique est blacklisté.',
-            );
-
+            $this->checkRepeatedKycFailures($user);
             return;
         }
 
-        if ($resolution->isRestricted() || $resolution->isChallenged()) {
+        if ($decisionResult->isReview() || $decisionResult->isChallenge() || $decisionResult->isRestricted()) {
             $kyc->update([
                 'status' => 'reviewing',
-                'decision' => 'REVIEW',
-                'decision_reason' => $resolution->reason ?? 'Signal d’identité nécessitant une revue.',
             ]);
 
             return;
         }
 
         // Tout est cohérent : activation du vendeur.
-        DB::transaction(function () use ($kyc, $user) {
+        DB::transaction(function () use ($kyc, $user, $decisionResult) {
             $kyc->update([
                 'status' => 'approved',
                 'decision' => 'ALLOW',
-                'decision_reason' => 'KYC Didit approuvé et résolution d’identité Ali-Kamer autorisée.',
+                'decision_reason' => $decisionResult->reason,
                 'rejection_reason' => null,
                 'reviewed_at' => now(),
             ]);
@@ -355,6 +361,24 @@ class KycService
                 reason: 'KYC Didit approuvé et identité Ali-Kamer cohérente.',
             );
         });
+    }
+
+    /**
+     * Vérifie et applique l'escalade des sanctions en cas d'échecs KYC répétés (règle 28).
+     */
+    public function checkRepeatedKycFailures(User $user): void
+    {
+        $failureCount = ($user->abuse_count ?? 0) + 1;
+        $user->update(['abuse_count' => $failureCount]);
+
+        if ($failureCount >= 3) {
+            $this->sanctionEngine->suspend(
+                user: $user,
+                durationMinutes: 1440, // 24h
+                reason: '3 échecs ou rejets consécutifs de vérification KYC.',
+                reasonCode: 'KYC_REPEATED_FAILURE'
+            );
+        }
     }
 
     // ────────────────────────────────────────────────────────────────
@@ -428,6 +452,8 @@ class KycService
                 $kyc->user_id,
                 "KYC rejeté : {$reason}"
             );
+
+            $this->checkRepeatedKycFailures($kyc->user);
         });
     }
 
