@@ -17,9 +17,14 @@ use RuntimeException;
  */
 class DiditWebhookSignatureService
 {
+    public function __construct(
+        private ?string $webhookSecret = null
+    ) {
+    }
+
     public function verify(Request $request): array
     {
-        $secret = (string) config('didit.webhook_secret');
+        $secret = $this->webhookSecret ?: (string) config('didit.webhook_secret');
         $timestamp = (string) $request->header('x-timestamp', '');
         $rawBody = $request->getContent();
 

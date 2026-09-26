@@ -29,8 +29,8 @@ class DecisionEngine
     const DECISION_BLOCK     = 'BLOCK';
 
     public function __construct(
-        protected SanctionEngine $sanctionEngine,
-        protected TrustService $trustService
+        protected ?SanctionEngine $sanctionEngine = null,
+        protected ?TrustService $trustService = null
     ) {
     }
 
@@ -43,6 +43,26 @@ class DecisionEngine
         ?KycDocument $kyc = null,
         array $extraSignals = [],
         string $source = 'system'
+    ): DecisionResult {
+        $result = $this->computeDecision($user, $identityResolution, $kyc, $extraSignals);
+
+        // 5. Consigner dans decision_logs
+        $this->logDecision($user, $kyc, $result, $source);
+
+        // 6. Déclencher les actions associées
+        $this->handleDecisionSideEffects($user, $kyc, $result);
+
+        return $result;
+    }
+
+    /**
+     * Calcule purement la décision sans effet de bord en base.
+     */
+    public function computeDecision(
+        User $user,
+        ?IdentityResolution $identityResolution = null,
+        ?KycDocument $kyc = null,
+        array $extraSignals = []
     ): DecisionResult {
         $signals = $extraSignals;
         $riskScore = 0.0;
@@ -64,11 +84,18 @@ class DecisionEngine
             }
 
             foreach ($identityResolution->linkedAccounts as $linked) {
+                if (($linked['link_type'] ?? '') === 'same_face') {
+                    $signals['same_face_detected'] = true;
+                }
                 if ($linked['status'] === User::STATUS_BANNED) {
                     $riskScore += ($linked['confidence'] >= 85) ? 60 : 35;
                     $signals['linked_to_banned_account'] = true;
                 }
             }
+        }
+
+        if (! empty($extraSignals['same_face'])) {
+            $signals['same_face_detected'] = true;
         }
 
         // 2. Signaux KYC Didit
@@ -117,7 +144,7 @@ class DecisionEngine
             $reason = 'Tentative de réutilisation d’identité fortement liée à un compte banni.';
         }
         // RÈGLE SAME_FACE SEUL OU SIGNAUX DIVERGENTS : -> REVIEW (jamais de ban automatique)
-        elseif (! empty($signals['linked_to_banned_account']) || $riskScore >= 50) {
+        elseif (! empty($signals['same_face_detected']) || ! empty($signals['linked_to_banned_account']) || $riskScore >= 50) {
             $decision = self::DECISION_REVIEW;
             $reasonCode = 'IDENTITY_CORROBORATION_REQUIRED';
             $reason = 'Correspondance faciale ou signaux d’identité nécessitant un examen administratif.';
@@ -141,7 +168,7 @@ class DecisionEngine
             $reason = 'Signal modéré détecté nécessitant une confirmation.';
         }
 
-        $result = new DecisionResult(
+        return new DecisionResult(
             decision: $decision,
             riskScore: $riskScore,
             trustScore: $trustScore,
@@ -149,14 +176,6 @@ class DecisionEngine
             signals: $signals,
             reason: $reason
         );
-
-        // 5. Consigner dans decision_logs
-        $this->logDecision($user, $kyc, $result, $source);
-
-        // 6. Déclencher les actions associées
-        $this->handleDecisionSideEffects($user, $kyc, $result);
-
-        return $result;
     }
 
     /**
@@ -239,4 +258,5 @@ class DecisionResult
     public function isReview(): bool { return $this->decision === DecisionEngine::DECISION_REVIEW; }
     public function isRestricted(): bool { return $this->decision === DecisionEngine::DECISION_RESTRICT; }
     public function isChallenge(): bool { return $this->decision === DecisionEngine::DECISION_CHALLENGE; }
+    public function isChallenged(): bool { return $this->isChallenge(); }
 }

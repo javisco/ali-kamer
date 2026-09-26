@@ -66,7 +66,7 @@ class Suspension extends Model
             return 0;
         }
 
-        return max(0, now()->diffInSeconds($this->expires_at, false));
+        return max(0, (int) round(now()->diffInSeconds($this->expires_at, false)));
     }
 
     public function formattedExpiry(): string

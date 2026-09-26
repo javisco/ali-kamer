@@ -5,6 +5,7 @@ use App\Http\Controllers\Seller\KycSellerController;
 use App\Http\Controllers\DiditKycCallbackController;
 use App\Http\Controllers\DiditWebhookController;
 use App\Http\Controllers\Admin\KycAdminController;
+use App\Http\Controllers\Admin\SanctionsAdminController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Seller\ProductController;
 use App\Http\Controllers\Buyer\CatalogController;
@@ -63,6 +64,11 @@ Route::middleware(['auth', 'verified', 'role:admin', 'check.status'])->prefix('a
         Route::get('/kyc/{kyc}', [KycAdminController::class, 'show'])->name('admin.kyc.show');
         Route::post('/kyc/{kyc}/approuver', [KycAdminController::class, 'approve'])->name('admin.kyc.approve');
         Route::post('/kyc/{kyc}/rejeter', [KycAdminController::class, 'reject'])->name('admin.kyc.reject');
+
+        // Sanctions & Sécurité
+        Route::get('/sanctions', [SanctionsAdminController::class, 'index'])->name('admin.sanctions.index');
+        Route::post('/sanctions', [SanctionsAdminController::class, 'store'])->name('admin.sanctions.store');
+        Route::post('/sanctions/{sanction}/lever', [SanctionsAdminController::class, 'lift'])->name('admin.sanctions.lift');
 });
 
 //boutique -  vendeur
