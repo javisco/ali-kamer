@@ -97,9 +97,9 @@
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-500">
-                                    + Frais Campay collecte — Gross-Up (<span x-text="pct(rates.collect)"></span>)
+                                    + Frais elgiopay collecte — Gross-Up (<span x-text="pct(rates.collect)"></span>)
                                 </span>
-                                <span class="text-[#F9A01B] font-bold" x-text="fmt(result.campayCollect)"></span>
+                                <span class="text-[#F9A01B] font-bold" x-text="fmt(result.elgiopayCollect)"></span>
                             </div>
                             <div class="flex justify-between font-black text-[#0a1b12] border-t border-gray-200 pt-2 mt-1 text-sm">
                                 <span>Total payé par l'acheteur</span>
@@ -110,7 +110,7 @@
                             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                             </svg>
-                            La plateforme reçoit <strong class="ml-1" x-text="fmt(result.subtotal + result.protection)"></strong> nets après Campay.
+                            La plateforme reçoit <strong class="ml-1" x-text="fmt(result.subtotal + result.protection)"></strong> nets après elgiopay.
                         </p>
                     </div>
 
@@ -136,13 +136,13 @@
                             </div>
                             <div class="flex justify-between text-[11px] text-gray-400 italic">
                                 <span>
-                                    Ali-Kamer envoie à Campay (Gross-Up <span x-text="pct(rates.payout)"></span>)
+                                    Ali-Kamer envoie à elgiopay (Gross-Up <span x-text="pct(rates.payout)"></span>)
                                 </span>
                                 <span x-text="fmt(result.grossSeller)"></span>
                             </div>
                             <div class="flex justify-between text-[11px] text-gray-400 italic">
-                                <span>Frais Campay payout (supportés Ali-Kamer)</span>
-                                <span x-text="'−' + fmt(result.campayPayout)"></span>
+                                <span>Frais elgiopay payout (supportés Ali-Kamer)</span>
+                                <span x-text="'−' + fmt(result.elgiopayPayout)"></span>
                             </div>
                         </div>
                         <p class="text-[11px] text-[#016837] font-bold mt-2.5 flex items-center gap-1">
@@ -167,13 +167,13 @@
                             </div>
                             <div class="flex justify-between text-[11px] text-gray-400 italic">
                                 <span>
-                                    Ali-Kamer envoie à Campay (Gross-Up <span x-text="pct(rates.payout)"></span>)
+                                    Ali-Kamer envoie à elgiopay (Gross-Up <span x-text="pct(rates.payout)"></span>)
                                 </span>
                                 <span x-text="fmt(result.grossAgency)"></span>
                             </div>
                             <div class="flex justify-between text-[11px] text-gray-400 italic">
-                                <span>Frais Campay payout (supportés Ali-Kamer)</span>
-                                <span x-text="'−' + fmt(result.campayAgency)"></span>
+                                <span>Frais elgiopay payout (supportés Ali-Kamer)</span>
+                                <span x-text="'−' + fmt(result.elgiopayAgency)"></span>
                             </div>
                         </div>
                     </div>
@@ -193,12 +193,12 @@
                                 <span class="font-bold" x-text="fmt(result.commission)"></span>
                             </div>
                             <div class="flex justify-between text-[#E30613]">
-                                <span>− Frais Campay payout vendeur</span>
-                                <span class="font-bold" x-text="'−' + fmt(result.campayPayout)"></span>
+                                <span>− Frais elgiopay payout vendeur</span>
+                                <span class="font-bold" x-text="'−' + fmt(result.elgiopayPayout)"></span>
                             </div>
                             <div class="flex justify-between text-[#E30613]">
-                                <span>− Frais Campay payout agence</span>
-                                <span class="font-bold" x-text="'−' + fmt(result.campayAgency)"></span>
+                                <span>− Frais elgiopay payout agence</span>
+                                <span class="font-bold" x-text="'−' + fmt(result.elgiopayAgency)"></span>
                             </div>
                             <div class="flex justify-between font-black text-[#0a1b12] border-t border-gray-100 pt-2 mt-1 text-sm">
                                 <span>Marge nette Ali-Kamer</span>
@@ -228,8 +228,8 @@
                                 <span x-text="fmt(result.platformNet) + ' FCFA'"></span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600">+ Frais Campay (collect + payouts)</span>
-                                <span x-text="fmt(result.campayCollect + result.campayPayout + result.campayAgency) + ' FCFA'"></span>
+                                <span class="text-gray-600">+ Frais elgiopay (collect + payouts)</span>
+                                <span x-text="fmt(result.elgiopayCollect + result.elgiopayPayout + result.elgiopayAgency) + ' FCFA'"></span>
                             </div>
                         </div>
                     </div>
@@ -244,10 +244,11 @@
 
             @php
                 $groupLabels = [
-                    'campay'      => '🔧 Taux Campay réels (ne pas modifier sans vérifier votre contrat Campay)',
+                    'elgiopay'      => '🔧 Taux elgiopay réels (ne pas modifier sans vérifier votre contrat elgiopay)',
                     'commissions' => '💰 Commissions et frais plateforme',
                     'timers'      => '⏱ Délais automatiques',
                     'limites'     => '🔒 Limites et seuils',
+                    'variantes'   => '🧩 Limites des variantes produits',
                 ];
             @endphp
 
@@ -257,12 +258,12 @@
                         {{ $groupLabels[$group] ?? $group }}
                     </h2>
 
-                    @if($group === 'campay')
+                    @if($group === 'elgiopay')
                         <p class="text-xs text-[#E30613] font-medium mb-4 flex items-center gap-1">
                             <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                             </svg>
-                            Ces taux sont utilisés pour le calcul Gross-Up. Vérifiez votre contrat Campay avant modification.
+                            Ces taux sont utilisés pour le calcul Gross-Up. Vérifiez votre contrat elgiopay avant modification.
                         </p>
                     @endif
 
@@ -325,9 +326,9 @@ function grossUpSimulator() {
             commission: {{ \App\Models\PlatformSetting::getRate('platform_commission_rate') }},
             agency:     {{ \App\Models\PlatformSetting::getRate('agency_commission_rate') }},
             protection: {{ \App\Models\PlatformSetting::getRate('protection_rate') }},
-            collect:    {{ \App\Models\PlatformSetting::getRate('campay_collect_rate') }},
-            payout:     {{ \App\Models\PlatformSetting::getRate('campay_payout_rate') }},
-            fixedFee:   {{ (int) \App\Models\PlatformSetting::getValue('campay_fixed_fee', 0) }},
+            collect:    {{ \App\Models\PlatformSetting::getRate('gateway_collect_rate') }},
+            payout:     {{ \App\Models\PlatformSetting::getRate('gateway_payout_rate') }},
+            fixedFee:   {{ (int) \App\Models\PlatformSetting::getValue('elgiopay_fixed_fee', 0) }},
         },
 
         calculate() {
@@ -342,35 +343,35 @@ function grossUpSimulator() {
             const grossSeller  = r.payout > 0 && r.payout < 1
                 ? Math.ceil((netSeller + r.fixedFee) / (1 - r.payout))
                 : netSeller + r.fixedFee;
-            const campayPayout = grossSeller - netSeller;
+            const elgiopayPayout = grossSeller - netSeller;
 
             const netAgency   = Math.round(s * r.agency);
             const grossAgency = r.payout > 0 && r.payout < 1
                 ? Math.ceil((netAgency + r.fixedFee) / (1 - r.payout))
                 : netAgency + r.fixedFee;
-            const campayAgency = grossAgency - netAgency;
+            const elgiopayAgency = grossAgency - netAgency;
 
             const protection    = Math.round(s * r.protection);
             const wantToReceive = s + protection;
             const totalAmount   = r.collect > 0 && r.collect < 1
                 ? Math.ceil((wantToReceive + r.fixedFee) / (1 - r.collect))
                 : wantToReceive + r.fixedFee;
-            const campayCollect = totalAmount - wantToReceive;
+            const elgiopayCollect = totalAmount - wantToReceive;
 
-            const platformNet = protection + commission - campayPayout - campayAgency;
+            const platformNet = protection + commission - elgiopayPayout - elgiopayAgency;
 
             this.result = {
                 subtotal:    s,
                 protection,
                 commission,
-                campayCollect,
+                elgiopayCollect,
                 totalAmount,
                 netSeller,
                 grossSeller,
-                campayPayout,
+                elgiopayPayout,
                 netAgency,
                 grossAgency,
-                campayAgency,
+                elgiopayAgency,
                 platformNet,
             };
         },

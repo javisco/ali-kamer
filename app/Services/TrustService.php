@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Blacklist;
+use App\Models\BlacklistV2;
 use App\Models\BlacklistIdentifier;
 use App\Models\PlatformSetting;
 use App\Models\TrustEvent;
@@ -19,7 +19,7 @@ class TrustService
 
     public function __construct()
     {
-        $this->pepper = config('app.blacklist_pepper', '');
+        $this->pepper = config('services.blacklist_pepper', '');
     }
 
     // ── ENREGISTRER UN ÉVÉNEMENT TRUST ───────────────────────────────
@@ -180,6 +180,7 @@ class TrustService
     public function updateRiskProfile(User $user): string
     {
         $score  = $user->trust_score;
+        $previousProfile = $user->risk_profile;
         $profile = match(true) {
             $score >= 70 => 'clean',
             $score >= 50 => 'watch',
@@ -190,7 +191,7 @@ class TrustService
         $user->update(['risk_profile' => $profile]);
 
         // Si passage en 'blocked' → déclencher la blacklist automatique
-        if ($profile === 'blocked' && $user->risk_profile !== 'blocked') {
+        if ($profile === 'blocked' && $previousProfile !== 'blocked') {
             $this->blacklist(
                 user:        $user,
                 reasonCode:  'auto_score_critical',
@@ -217,14 +218,14 @@ class TrustService
         ?Carbon $expiresAt    = null,
         string  $triggerType  = 'admin',
         ?User   $createdBy    = null
-    ): Blacklist {
+    ): BlacklistV2 {
 
         return DB::transaction(function () use (
             $user, $reasonCode, $severity, $reason,
             $description, $expiresAt, $triggerType, $createdBy
         ) {
             // Créer l'entrée blacklist
-            $blacklist = Blacklist::create([
+            $blacklist = BlacklistV2::create([
                 'user_id'      => $user->id,
                 'status'       => 'active',
                 'severity'     => $severity,
@@ -247,7 +248,7 @@ class TrustService
 
     // ── STOCKER LES IDENTIFIANTS HASHÉS ──────────────────────────────
 
-    private function storeIdentifiers(Blacklist $blacklist, User $user): void
+    private function storeIdentifiers(BlacklistV2 $blacklist, User $user): void
     {
         $identifiers = [];
 
@@ -299,14 +300,15 @@ class TrustService
         }
     }
 
-    // Stocke le hash de la CNI — appelé depuis KycService::blacklist()
-    public function storeCniIdentifier(Blacklist $blacklist, string $cniNumber): void
+    // Stocke directement la cni_identity_key HMAC déjà calculée par le KYC.
+    // Cela évite de re-hasher une clé qui est déjà protégée.
+    public function storeCniIdentifier(BlacklistV2 $blacklist, string $cniIdentityKey): void
     {
         BlacklistIdentifier::create([
             'blacklist_id'    => $blacklist->id,
             'type'            => 'cni_hash',
-            'value_hash'      => $this->hash($cniNumber),
-            'value_masked'    => 'CM***' . substr($cniNumber, -3),
+            'value_hash'      => $cniIdentityKey,
+            'value_masked'    => 'CNI***',
             'signal_strength' => 100,
         ]);
     }
@@ -314,7 +316,7 @@ class TrustService
     // ── LEVER UNE BLACKLIST ───────────────────────────────────────────
 
     public function liftBlacklist(
-        Blacklist $blacklist,
+        BlacklistV2 $blacklist,
         User      $admin,
         string    $liftReason
     ): void {

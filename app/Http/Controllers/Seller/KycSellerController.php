@@ -3,61 +3,79 @@
 namespace App\Http\Controllers\Seller;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\KycRequest;
-use App\Services\KycService;
 use App\Services\DashboardService;
+use App\Services\KycService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Throwable;
 
+/**
+ * Interface vendeur du KYC Hosted Session.
+ *
+ * Aucun fichier CNI/selfie n'est uploadé vers Laravel : Didit héberge la
+ * capture et exécute le workflow configuré dans son interface.
+ */
 class KycSellerController extends Controller
 {
     public function __construct(
         protected KycService $kycService,
-        protected DashboardService $dashboardService
-    ) {}
+        protected DashboardService $dashboardService,
+    ) {
+    }
 
-    // Formulaire d'upload du dossier KYC
-    // Accessible uniquement si l'email est vérifié et le KYC pas encore approuvé
     public function create()
     {
         $user = Auth::user();
-        $kyc  = $user->kycDocument;
+        $kyc = $user->kycDocument;
 
-        // Si déjà approuvé → rediriger vers le dashboard
         if ($kyc?->isApproved()) {
             return $this->dashboardService->dashboard($user);
         }
 
-        return view('seller.kyc.create');
+        return view('seller.kyc.create', compact('user', 'kyc'));
     }
 
-    // Soumission du dossier KYC
-    public function store(KycRequest $request)
+    public function start(Request $request)
     {
-        $this->kycService->submitDossier(Auth::user(), $request->validated());
+        $request->validate([
+            'consent' => ['accepted'],
+        ], [
+            'consent.accepted' => 'Votre consentement est requis pour démarrer la vérification.',
+        ]);
 
-        return redirect()
-            ->route('seller.kyc.pending')
-            ->with('success', 'Dossier soumis avec succès ! Traitement sous 24 à 48h ouvrables.');
+        try {
+            $result = $this->kycService->startSession(Auth::user());
+
+            // Redirection vers l'URL générée par Didit.
+            return redirect()->away($result['url']);
+        } catch (Throwable $e) {
+            report($e);
+
+            return back()
+                ->withInput()
+                ->with('fail', 'Impossible de démarrer la vérification pour le moment. Vérifiez votre configuration Didit puis réessayez.');
+        }
     }
 
-    // Page d'attente après soumission
     public function pending()
     {
         $kyc = Auth::user()->kycDocument;
 
-        // S'il n'y a pas de dossier → retour au formulaire
         if (! $kyc) {
             return redirect()->route('seller.kyc.create');
+        }
+
+        if ($kyc->isApproved()) {
+            return $this->dashboardService->dashboard(Auth::user());
         }
 
         return view('seller.kyc.pending', compact('kyc'));
     }
 
-    // Page de rejet — vendeur peut resoumettre
     public function rejected()
     {
         $user = Auth::user();
-        $kyc  = $user->kycDocument;
+        $kyc = $user->kycDocument;
 
         if (! $kyc?->isRejected()) {
             return $this->dashboardService->dashboard($user);

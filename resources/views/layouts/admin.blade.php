@@ -203,6 +203,22 @@
 
                     </a>
 
+                    {{-- Sanctions & Sécurité --}}
+                    <a href="{{ route('admin.sanctions.index') }}" @click="sidebarOpen = false"
+                        class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
+                    {{ request()->routeIs('admin.sanctions.*')
+                        ? 'bg-[#016837] text-white shadow-lg shadow-[#016837]/40'
+                        : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+
+                        <span>Sanctions & Sécurité</span>
+
+                    </a>
+
 
                     {{-- =================================================
                      MARKETPLACE
@@ -257,10 +273,28 @@
 
                     </a>
 
+                    <div class="px-3 pt-3 pb-1 text-[9px] font-black uppercase tracking-wider text-emerald-500/80">
+                        produits
+                    </div>
+                    <a href="{{ route('admin.products.index') }}" @click="sidebarOpen = false"
+                        class="flex items-center gap-3 px-3 py-2 rounded-xl font-semibold transition-all
+                        {{ request()->routeIs('admin.products.*') ? 'bg-[#016837] text-white' : 'text-gray-600 hover:bg-gray-100' }}">
+
+
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M20 7l-8-4-8 4m16 0v10l-8 4-8-4V7m16 0l-8 4m-8-4l8 4m0 0v10" />
+                        </svg>
+
+                        <span>Produits</span>
+
+
+                    </a>
 
                     {{-- =================================================
-                     FINANCES
+                    FINANCES
                 ================================================== --}}
+
 
                     <div class="px-3 pt-3 pb-1 text-[9px] font-black uppercase tracking-wider text-emerald-500/80">
                         Finances

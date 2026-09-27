@@ -8,9 +8,6 @@ use App\Models\Dispute;
 use App\Models\KycDocument;
 use App\Models\Order;
 use App\Models\User;
-use App\Models\WalletTransaction;
-use App\Services\CampayService;
-use App\Services\ElgiopayService;
 use App\Services\KycService;
 use App\Services\TreasuryService;
 use App\Services\WalletService;
@@ -92,21 +89,237 @@ class AdminDashboardController extends Controller
     }
 
     // Gestion des utilisateurs
-    public function users()
+    // Gestion des utilisateurs
+    public function users(Request $request)
     {
+        $query = User::with('shop');
 
-        $query = User::with('shop')->latest();
+        /*
+    |--------------------------------------------------------------------------
+    | RECHERCHE GÉNÉRALE
+    |--------------------------------------------------------------------------
+    | Recherche simultanément dans :
+    | - nom
+    | - email
+    | - téléphone
+    | - téléphone Mobile Money
+    */
+        if ($request->filled('q')) {
+            $search = trim($request->input('q'));
 
-        // Filtre par rôle si demandé
-        if (request('role')) {
-            $query->where('role', request('role'));
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%")
+                    ->orWhere('phone_momo', 'like', "%{$search}%");
+            });
         }
 
-        $users = $query->paginate(30);
+        /*
+    |--------------------------------------------------------------------------
+    | FILTRE PAR RÔLE
+    |--------------------------------------------------------------------------
+    */
+        if ($request->filled('role')) {
+            $query->where('role', $request->input('role'));
+        }
 
-        return view('admin.users.index', compact('users'));
+        /*
+    |--------------------------------------------------------------------------
+    | FILTRE PAR STATUT
+    |--------------------------------------------------------------------------
+    */
+        if ($request->filled('status')) {
+            $query->where('status', $request->input('status'));
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | FILTRE PAR VILLE
+    |--------------------------------------------------------------------------
+    */
+        if ($request->filled('city')) {
+            $query->where('city', $request->input('city'));
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | FILTRE OPÉRATEUR MOBILE MONEY
+    |--------------------------------------------------------------------------
+    */
+        if ($request->filled('momo_operator')) {
+            $query->where(
+                'momo_operator',
+                $request->input('momo_operator')
+            );
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | FILTRE EMAIL
+    |--------------------------------------------------------------------------
+    */
+        if ($request->filled('email_status')) {
+
+            if ($request->input('email_status') === 'verified') {
+                $query->whereNotNull('email_verified_at');
+            }
+
+            if ($request->input('email_status') === 'unverified') {
+                $query->whereNull('email_verified_at');
+            }
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | FILTRE TRUST SCORE
+    |--------------------------------------------------------------------------
+    */
+        if ($request->filled('trust_level')) {
+
+            match ($request->input('trust_level')) {
+
+                'critical' => $query->where('trust_score', '<', 20),
+
+                'low' => $query->whereBetween('trust_score', [20, 39]),
+
+                'medium' => $query->whereBetween('trust_score', [40, 69]),
+
+                'good' => $query->where('trust_score', '>=', 70),
+
+                default => null,
+            };
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | TRUST SCORE PERSONNALISÉ
+    |--------------------------------------------------------------------------
+    */
+        if ($request->filled('trust_min')) {
+            $query->where(
+                'trust_score',
+                '>=',
+                (int) $request->input('trust_min')
+            );
+        }
+
+        if ($request->filled('trust_max')) {
+            $query->where(
+                'trust_score',
+                '<=',
+                (int) $request->input('trust_max')
+            );
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | UTILISATEURS AVEC / SANS BOUTIQUE
+    |--------------------------------------------------------------------------
+    */
+        if ($request->filled('shop')) {
+
+            if ($request->input('shop') === 'yes') {
+                $query->has('shop');
+            }
+
+            if ($request->input('shop') === 'no') {
+                $query->doesntHave('shop');
+            }
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | FILTRE PAR DATE D'INSCRIPTION
+    |--------------------------------------------------------------------------
+    */
+        if ($request->filled('registered_from')) {
+            $query->whereDate(
+                'created_at',
+                '>=',
+                $request->input('registered_from')
+            );
+        }
+
+        if ($request->filled('registered_to')) {
+            $query->whereDate(
+                'created_at',
+                '<=',
+                $request->input('registered_to')
+            );
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | TRI
+    |--------------------------------------------------------------------------
+    */
+        match ($request->input('sort', 'recent')) {
+
+            'oldest' => $query->oldest('created_at'),
+
+            'name_asc' => $query->orderBy('name', 'asc'),
+
+            'name_desc' => $query->orderBy('name', 'desc'),
+
+            'trust_high' => $query->orderByDesc('trust_score'),
+
+            'trust_low' => $query->orderBy('trust_score'),
+
+            default => $query->latest('created_at'),
+        };
+
+        /*
+    |--------------------------------------------------------------------------
+    | PAGINATION
+    |--------------------------------------------------------------------------
+    */
+        $users = $query
+            ->paginate(30)
+            ->withQueryString();
+
+        /*
+    |--------------------------------------------------------------------------
+    | DONNÉES POUR LES FILTRES
+    |--------------------------------------------------------------------------
+    */
+        $roles = [
+            'buyer' => 'Acheteur',
+            'seller' => 'Vendeur',
+            'secretary' => 'Secrétaire',
+            'admin' => 'Administrateur',
+            'agency_manager' => 'Gestionnaire agence',
+        ];
+
+        $statuses = [
+            'candidate' => 'Candidat',
+            'active' => 'Actif',
+            'suspended' => 'Suspendu',
+            'banned' => 'Banni',
+        ];
+
+        $cities = [
+            'Douala',
+            'Yaoundé',
+            'Bafoussam',
+            'Bamenda',
+            'Buea',
+            'Limbé',
+            'Garoua',
+            'Maroua',
+            'Ngaoundéré',
+            'Bertoua',
+            'Ebolowa',
+            'Kribi',
+        ];
+
+        return view('admin.users.index', compact(
+            'users',
+            'roles',
+            'statuses',
+            'cities'
+        ));
     }
-
     // Bannir un utilisateur
     public function banUser(User $user)
     {
@@ -201,7 +414,7 @@ class AdminDashboardController extends Controller
         $threshold = $request->get('threshold', 40);
 
         $users = User::where('role', 'buyer')
-            ->where('trust_score', '<', $threshold)
+            ->where('trust_score', '<=', $threshold)
             ->orderBy('trust_score')
             ->with('shop')
             ->paginate(30);

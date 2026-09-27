@@ -2,7 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Seller\KycSellerController;
+use App\Http\Controllers\DiditKycCallbackController;
+use App\Http\Controllers\DiditWebhookController;
 use App\Http\Controllers\Admin\KycAdminController;
+use App\Http\Controllers\Admin\SanctionsAdminController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Seller\ProductController;
 use App\Http\Controllers\Buyer\CatalogController;
@@ -29,6 +32,7 @@ use App\Http\Controllers\Admin\TutorialController as AdminTutorialController;
 use App\Http\Controllers\TutorialController;
 use App\Http\Controllers\Buyer\CartController;
 use App\Http\Controllers\Buyer\ProfileController as BuyerProfileController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
 
 use App\Http\Controllers\Buyer\WishlistController;
 use App\Http\Controllers\Agency\DashboardController as AgencyDashboard;
@@ -44,10 +48,14 @@ require 'auth.php';
 // Vendeur — KYC
 Route::middleware(['auth', 'check.status', 'verified', 'role:seller'])->prefix('seller')->group(function () {
         Route::get('/kyc', [KycSellerController::class, 'create'])->name('seller.kyc.create');
-        Route::post('/kyc', [KycSellercontroller::class, 'store'])->name('seller.kyc.store');
+        Route::post('/kyc/start', [KycSellerController::class, 'start'])->name('seller.kyc.start');
         Route::get('/kyc/attente', [KycSellerController::class, 'pending'])->name('seller.kyc.pending');
         Route::get('/kyc/rejected', [KycSellerController::class, 'rejected'])->name('seller.kyc.rejected');
 });
+
+// Callback Didit : public car Didit peut terminer la vérification sur un autre appareil.
+Route::get('/didit/kyc/callback', DiditKycCallbackController::class)->name('didit.kyc.callback');
+Route::post('/didit/webhook', DiditWebhookController::class)->name('didit.webhook');
 
 // Admin — KYC
 Route::middleware(['auth', 'verified', 'role:admin', 'check.status'])->prefix('admin')->group(function () {
@@ -56,6 +64,11 @@ Route::middleware(['auth', 'verified', 'role:admin', 'check.status'])->prefix('a
         Route::get('/kyc/{kyc}', [KycAdminController::class, 'show'])->name('admin.kyc.show');
         Route::post('/kyc/{kyc}/approuver', [KycAdminController::class, 'approve'])->name('admin.kyc.approve');
         Route::post('/kyc/{kyc}/rejeter', [KycAdminController::class, 'reject'])->name('admin.kyc.reject');
+
+        // Sanctions & Sécurité
+        Route::get('/sanctions', [SanctionsAdminController::class, 'index'])->name('admin.sanctions.index');
+        Route::post('/sanctions', [SanctionsAdminController::class, 'store'])->name('admin.sanctions.store');
+        Route::post('/sanctions/{sanction}/lever', [SanctionsAdminController::class, 'lift'])->name('admin.sanctions.lift');
 });
 
 //boutique -  vendeur
@@ -464,7 +477,7 @@ Route::middleware(['auth', 'role:admin', 'check.status'])->prefix('admin')->grou
 
 Route::view('/aide', 'pages.help')->name('help');
 Route::view('/a-propos', 'pages.about')->name('about');
-
+Route::view('/how-it-work','pages.work')->name('work');
 
 Route::middleware(['auth', 'role:buyer', 'verified', 'check.status'])->group(function () {
 
@@ -539,6 +552,119 @@ Route::middleware(['auth', 'check.status'])->prefix('admin')->name('admin.')->gr
         Route::resource('categories', CategoryController::class)->except(['create', 'show', 'edit']);
         Route::patch('categories/{category}/toggle-status', [CategoryController::class, 'toggleStatus'])->name('categories.toggle-status');
 });
+
+
+
+
+Route::middleware(['auth', 'verified', 'role:admin', 'check.status'])
+        ->prefix('admin')
+        ->name('admin.')
+        ->group(function () {
+                /*
+    |--------------------------------------------------------------------------
+    | PRODUITS
+    |--------------------------------------------------------------------------
+    */
+                Route::get('/produits', [
+                        AdminProductController::class,
+                        'index'
+                ])->name('products.index');
+
+                Route::get('/produits/moderation', [
+                        AdminProductController::class,
+                        'moderation'
+                ])->name('products.moderation');
+
+                Route::get('/produits/{product}', [
+                        AdminProductController::class,
+                        'show'
+                ])->name('products.show');
+
+                Route::post('/produits/{product}/masquer', [
+                        AdminProductController::class,
+                        'hide'
+                ])->name('products.hide');
+
+                Route::post('/produits/{product}/visible', [
+                        AdminProductController::class,
+                        'unhide'
+                ])->name('products.unhide');
+
+                Route::post('/produits/{product}/bannir', [
+                        AdminProductController::class,
+                        'ban'
+                ])->name('products.ban');
+
+                Route::post('/produits/{product}/rehabiliter', [
+                        AdminProductController::class,
+                        'unban'
+                ])->name('products.unban');
+
+                Route::delete('/produits/{product}', [
+                        AdminProductController::class,
+                        'destroy'
+                ])
+                        ->withTrashed()
+                        ->name('products.destroy');
+
+                Route::post('/produits/{product}/restaurer', [
+                        AdminProductController::class,
+                        'restore'
+                ])
+                        ->withTrashed()
+                        ->name('products.restore');
+
+
+                /*
+    |--------------------------------------------------------------------------
+    | BOUTIQUES
+    |--------------------------------------------------------------------------
+    */
+
+                Route::post('/boutiques/{shop}/suspendre', [
+                        AdminProductController::class,
+                        'suspendShop'
+                ])->name('products.shop.suspend');
+
+                Route::post('/boutiques/{shop}/activer', [
+                        AdminProductController::class,
+                        'activateShop'
+                ])->name('products.shop.activate');
+
+                Route::post('/boutiques/{shop}/bannir', [
+                        AdminProductController::class,
+                        'banShop'
+                ])->name('products.shop.ban');
+
+
+                /*
+    |--------------------------------------------------------------------------
+    | VENDEURS
+    |--------------------------------------------------------------------------
+    */
+
+                Route::post('/vendeurs/{user}/suspendre', [
+                        AdminProductController::class,
+                        'suspendSeller'
+                ])->name('products.seller.suspend');
+
+                Route::post('/vendeurs/{user}/activer', [
+                        AdminProductController::class,
+                        'activateSeller'
+                ])->name('products.seller.activate');
+
+                Route::post('/vendeurs/{user}/bannir', [
+                        AdminProductController::class,
+                        'banSeller'
+                ])->name('products.seller.ban');
+        });
+
+
+
+
+
+
+
 
 
 

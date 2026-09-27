@@ -90,6 +90,18 @@ class Dispute extends Model
             ->where('submitted_by', $this->order->shop->user_id);
     }
 
+    // Messages échangés dans le litige
+    public function messages(): HasMany
+    {
+        return $this->hasMany(DisputeMessage::class)->oldest();
+    }
+
+    // Enregistrement d'arbitrage et dénouement financier
+    public function resolutionRecord()
+    {
+        return $this->hasOne(DisputeResolution::class);
+    }
+
     // ── Helpers ───────────────────────────────────────────────────────
 
     public function isOpen(): bool

@@ -4,7 +4,9 @@
         'presets' => config('product_attributes.presets', []),
         'max_attributes' => 3,
         'max_values' => 12,
+        'max_total_values' => 30,
         'max_combinations' => 36,
+        'max_active_variants' => 36,
         'attributes' => [],
         'variants' => [],
     ];
@@ -21,6 +23,7 @@
         $variantBuilder['variants'] = collect(old('variants', []))->map(function ($variant) {
             $values = array_values($variant['values'] ?? []);
             return [
+                'id'        => $variant['id'] ?? null,
                 'key'       => implode('||', $values),
                 'label'     => implode(' / ', $values),
                 'values'    => $values,
@@ -105,7 +108,7 @@
                         <button type="button" @click="addValue(attrIndex)"
                             class="rounded-xl bg-[#016837] px-3 py-2 text-[11px] font-bold text-white">Ajouter</button>
                     </div>
-                    <p class="mt-1 text-[10px] text-gray-400">Photo optionnelle pour cette valeur (ex. couleur)</p>
+                    <p class="mt-1 text-[10px] text-gray-400">Photo optionnelle pour cette valeur (ex. couleur). Laissez vide pour conserver la photo actuelle.</p>
                     <div class="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-2">
                         <template x-for="(value, valueIndex) in attr.values" :key="'img-' + valueIndex">
                             <label class="block rounded-lg border border-dashed border-gray-200 p-2 text-center">
@@ -129,10 +132,11 @@
         <p class="text-[11px] font-semibold text-slate-600">
             <span x-text="variants.length"></span> combinaison(s) générée(s)
             <span class="text-gray-400">(max <span x-text="maxCombinations"></span>)</span>
+            <span class="ml-2 text-gray-400">• <span x-text="totalValues"></span>/<span x-text="maxTotalValues"></span> valeurs</span>
         </p>
 
         <div x-show="tooMany" class="rounded-xl border border-[#E30613]/20 bg-[#E30613]/10 p-3 text-xs font-semibold text-[#E30613]">
-            Trop de combinaisons. Réduisez le nombre de valeurs.
+            La configuration dépasse une limite administrateur. Réduisez le nombre d'attributs, de valeurs ou de combinaisons.
         </div>
 
         <div x-show="variants.length" class="overflow-x-auto rounded-xl border border-gray-200 bg-white">
@@ -151,6 +155,7 @@
                     <template x-for="(variant, index) in variants" :key="variant.key">
                         <tr class="border-t border-slate-100" :class="!variant.is_active ? 'opacity-50' : ''">
                             <td class="px-3 py-2 font-bold text-slate-800">
+                                <input type="hidden" :name="'variants[' + index + '][id]'" :value="variant.id || ''">
                                 <span x-text="variant.label"></span>
                                 <template x-for="(value, vIndex) in variant.values" :key="vIndex">
                                     <input type="hidden" :name="'variants[' + index + '][values][]'" :value="value">
@@ -198,7 +203,9 @@ function productForm(initial) {
         presets: initial.presets || [],
         maxAttributes: initial.max_attributes || 3,
         maxValues: initial.max_values || 12,
+        maxTotalValues: initial.max_total_values || 30,
         maxCombinations: initial.max_combinations || 36,
+        maxActiveVariants: initial.max_active_variants || 36,
         attributes: (initial.attributes || []).map(attr => ({
             name: attr.name,
             customName: attr.name,
@@ -208,6 +215,10 @@ function productForm(initial) {
         })),
         variants: initial.variants || [],
         tooMany: false,
+
+        get totalValues() {
+            return this.attributes.reduce((total, attr) => total + (attr.values || []).filter(Boolean).length, 0);
+        },
 
         attributeName(attr) {
             if (attr.name === '__custom') return (attr.customName || '').trim();
@@ -234,7 +245,7 @@ function productForm(initial) {
         addValue(attrIndex) {
             const attr = this.attributes[attrIndex];
             const value = (attr.newValue || '').trim();
-            if (!value || attr.values.length >= this.maxValues) return;
+            if (!value || attr.values.length >= this.maxValues || this.totalValues >= this.maxTotalValues) return;
             if (attr.values.some(v => v.toLowerCase() === value.toLowerCase())) {
                 attr.newValue = '';
                 return;
@@ -249,6 +260,16 @@ function productForm(initial) {
             this.attributes[attrIndex].values.splice(valueIndex, 1);
             this.attributes[attrIndex].images.splice(valueIndex, 1);
             this.generateVariants();
+        },
+
+        // Un input file vide ne doit pas être envoyé au serveur.
+        // Cela évite d'envoyer un UploadedFile avec UPLOAD_ERR_NO_FILE.
+        stripEmptyFileInputs(event) {
+            event.currentTarget.querySelectorAll('input[type="file"][name]').forEach(input => {
+                if (!input.files || input.files.length === 0) {
+                    input.removeAttribute('name');
+                }
+            });
         },
 
         cartesian(sets) {
@@ -266,8 +287,11 @@ function productForm(initial) {
                 return;
             }
 
-            const combos = this.cartesian(ready.map(attr => attr.values));
-            this.tooMany = combos.length > this.maxCombinations;
+            const combinationCount = ready.reduce((total, attr) => total * attr.values.length, 1);
+            this.tooMany = combinationCount > this.maxCombinations
+                || this.totalValues > this.maxTotalValues
+                || combinationCount > this.maxActiveVariants;
+            const combos = this.tooMany ? [] : this.cartesian(ready.map(attr => attr.values));
             if (this.tooMany) {
                 this.variants = [];
                 return;
@@ -282,6 +306,7 @@ function productForm(initial) {
                 const key = values.join('||');
                 const existing = previous[key] || {};
                 return {
+                    id: existing.id || null,
                     key,
                     label: values.join(' / '),
                     values,

@@ -287,6 +287,7 @@ class ProductVariantSeeder extends Seeder
         $variants = [];
         foreach ($combos as $index => $values) {
             $price = max(100, (int) $product->price + ($index * 500));
+            $price=round($price/5)*5;
             $skuSuffix = implode('-', array_map(fn ($v) => substr(preg_replace('/[^A-Za-z0-9]/', '', $v) ?: 'VAR', 0, 4), $values));
 
             $variants[] = [
@@ -359,7 +360,7 @@ class ProductVariantSeeder extends Seeder
             'old_price'              => $oldPrice,
             'stock'                  => 0,
             'stock_reserved'         => 0,
-            'min_quantity'           => 1,
+            'min_quantity'           => (int)rand(1,50),
             'shipping_included'      => true,
             'shipping_threshold_qty' => 3,
             'specifications'         => ['Garantie' => '6 mois', 'État' => 'Neuf'],

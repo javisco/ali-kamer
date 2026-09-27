@@ -16,7 +16,9 @@ class CatalogController extends Controller
     // Page d'accueil catalogue
     public function index(Request $request)
     {
-        $query = Product::visible()
+        $query = Product::visible()->whereHas('shop', function ($q) {
+            $q->where('status', \App\Models\Shop::STATUS_ACTIVE);
+        })
             ->with([
                 'shop',
                 'images' => fn($q) => $q->where('is_primary', true),
@@ -60,7 +62,7 @@ class CatalogController extends Controller
             default      => $query->latest(),
         };
 
-        $products   = $query->paginate(20)->withQueryString();
+        $products   = $query->paginate(100)->withQueryString();
         $categories = Category::active()->parents()->get();
 
         return view('buyer.catalog.index', compact('products', 'categories'));

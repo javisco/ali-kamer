@@ -26,5 +26,12 @@ Route::prefix('v1')->group(function () {
         Route::put('/me',               [ApiAuthController::class, 'updateProfile']);
         Route::post('/logout',          [ApiAuthController::class, 'logout']);
         Route::post('/email/resend',    [ApiAuthController::class, 'resendVerification']);
+
+        // ── KYC & Vérification biométrique (Didit Hosted) ──────────────
+        Route::post('/kyc/didit/session', [\App\Http\Controllers\Api\ApiKycController::class, 'startDiditSession']);
+        Route::get('/kyc/status',         [\App\Http\Controllers\Api\ApiKycController::class, 'getKycStatus']);
+
+        // ── Sécurité & Sanctions du compte ────────────────────────────
+        Route::get('/user/sanctions',     [\App\Http\Controllers\Api\ApiKycController::class, 'getSanctionsStatus']);
     });
 });

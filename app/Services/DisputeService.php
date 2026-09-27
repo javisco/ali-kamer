@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\Dispute;
 use App\Models\DisputeEvidence;
+use App\Models\DisputeMessage;
+use App\Models\DisputeResolution;
 use App\Models\Order;
 use App\Models\User;
 use App\Models\WalletTransaction;
@@ -20,8 +22,11 @@ class DisputeService
 {
     public function __construct(
         private ElgiopayService $elgiopay,
-        private WalletService $wallet
-    ) {}
+        private WalletService $wallet,
+        private ?TrustService $trustService = null
+    ) {
+        $this->trustService = $trustService ?? app(TrustService::class);
+    }
 
     // ── OUVRIR UN LITIGE ──────────────────────────────────────────────
     // INCHANGÉ.
@@ -55,6 +60,13 @@ class DisputeService
                 'description'           => $description,
                 'status'                => 'open',
                 'seller_reply_deadline' => now()->addHours(48),
+            ]);
+
+            DisputeMessage::create([
+                'dispute_id' => $dispute->id,
+                'sender_id'  => $initiator->id,
+                'message'    => $description,
+                'type'       => 'MESSAGE',
             ]);
 
             foreach ($files as $file) {
@@ -91,6 +103,13 @@ class DisputeService
                 'description'  => 'Réponse du vendeur',
             ]);
 
+            DisputeMessage::create([
+                'dispute_id' => $dispute->id,
+                'sender_id'  => $seller->id,
+                'message'    => $response,
+                'type'       => 'MESSAGE',
+            ]);
+
             foreach ($files as $file) {
                 $this->addEvidence($dispute, $seller, $file);
             }
@@ -99,8 +118,22 @@ class DisputeService
         });
     }
 
+    // ── ENVOYER UN MESSAGE DE LITIGE ──────────────────────────────────
+    public function sendMessage(
+        Dispute $dispute,
+        User $sender,
+        string $message,
+        string $type = 'MESSAGE'
+    ): DisputeMessage {
+        return DisputeMessage::create([
+            'dispute_id' => $dispute->id,
+            'sender_id'  => $sender->id,
+            'message'    => $message,
+            'type'       => in_array($type, ['MESSAGE', 'SYSTEM', 'ADMIN', 'RESOLUTION']) ? $type : 'MESSAGE',
+        ]);
+    }
+
     // ── RÉSOUDRE ET APPLIQUER ─────────────────────────────────────────
-    // INCHANGÉ.
     public function resolve(
         Dispute $dispute,
         User $admin,
@@ -126,6 +159,51 @@ class DisputeService
             ]);
 
             $this->applyResolution($dispute);
+
+            $order = $dispute->order->fresh(['buyer', 'shop.user']);
+            $buyerAmount = 0;
+            $sellerAmount = 0;
+            $refundAmount = 0;
+            $sellerCompensation = 0;
+
+            match ($resolution) {
+                'refund_buyer', 'return_required' => [
+                    $buyerAmount = $order->subtotal,
+                    $refundAmount = $order->subtotal,
+                    $sellerAmount = 0,
+                ],
+                'pay_seller', 'buyer_bad_faith' => [
+                    $buyerAmount = 0,
+                    $sellerAmount = $order->net_amount,
+                ],
+                'partial_refund' => [
+                    $buyerAmount = $resolutionAmount ?? 0,
+                    $refundAmount = $resolutionAmount ?? 0,
+                    $sellerAmount = max(0, $order->net_amount - ($resolutionAmount ?? 0)),
+                ],
+                default => null,
+            };
+
+            DisputeResolution::create([
+                'dispute_id'          => $dispute->id,
+                'resolved_by'         => $admin->id,
+                'decision'            => strtoupper($resolution),
+                'reason'              => $note,
+                'buyer_amount'        => $buyerAmount,
+                'seller_amount'       => $sellerAmount,
+                'platform_amount'     => 0,
+                'refund_amount'       => $refundAmount,
+                'seller_compensation' => $sellerCompensation,
+                'shipping_decision'   => null,
+            ]);
+
+            DisputeMessage::create([
+                'dispute_id' => $dispute->id,
+                'sender_id'  => $admin->id,
+                'message'    => "Litige résolu [{$resolution}] : {$note}",
+                'type'       => 'RESOLUTION',
+            ]);
+
             //  $dispute->order->buyer->notify(new DisputeResolvedNotification($dispute, 'buyer'));   // ← AJOUT
             //   $dispute->order->shop->user->notify(new DisputeResolvedNotification($dispute, 'seller')); // ← AJOUT
 
@@ -156,40 +234,49 @@ class DisputeService
                 'resolution' => $dispute->resolution
             ]),
         };
-        // Dans applyResolution() — après le paiement
-        // Acheteur avait tort
-        // if (in_array($dispute->resolution, ['pay_seller', 'buyer_bad_faith'])) {
-        //     app(TrustService::class)->record(
-        //         user: $order->buyer,
-        //         type: 'dispute_lost',
-        //         roleContext: 'buyer',
-        //         reason: "Litige perdu — commande {$order->reference}",
-        //         referenceType: 'Order',
-        //         referenceId: $order->id
-        //     );
-        //     app(TrustService::class)->record(
-        //         user: $order->shop->user,
-        //         type: 'dispute_won',
-        //         roleContext: 'seller',
-        //         reason: "Litige gagné — commande {$order->reference}",
-        //         referenceType: 'Order',
-        //         referenceId: $order->id
-        //     );
-        // }
 
+        // Enregistrement des événements de confiance (Trust Events)
+        if ($this->trustService) {
+            // Acheteur de mauvaise foi ou vendeur gagne
+            if (in_array($dispute->resolution, ['pay_seller', 'buyer_bad_faith'])) {
+                $this->trustService->record(
+                    user: $order->buyer,
+                    type: 'dispute_lost',
+                    roleContext: 'buyer',
+                    reason: "Litige perdu — commande {$order->reference}",
+                    referenceType: 'Order',
+                    referenceId: $order->id
+                );
+                $this->trustService->record(
+                    user: $order->shop->user,
+                    type: 'dispute_won',
+                    roleContext: 'seller',
+                    reason: "Litige gagné — commande {$order->reference}",
+                    referenceType: 'Order',
+                    referenceId: $order->id
+                );
+            }
 
-        // Vendeur avait tort
-
-        // if ($dispute->resolution === 'refund_buyer') {
-        //     app(TrustService::class)->record(
-        //         user: $order->shop->user,
-        //         type: 'dispute_lost',
-        //         roleContext: 'seller',
-        //         reason: "Litige perdu — commande {$order->reference}",
-        //         referenceType: 'Order',
-        //         referenceId: $order->id
-        //     );
-        // }
+            // Vendeur avait tort (remboursement acheteur ou retour exigé)
+            if (in_array($dispute->resolution, ['refund_buyer', 'return_required'])) {
+                $this->trustService->record(
+                    user: $order->shop->user,
+                    type: 'dispute_lost',
+                    roleContext: 'seller',
+                    reason: "Litige perdu — commande {$order->reference}",
+                    referenceType: 'Order',
+                    referenceId: $order->id
+                );
+                $this->trustService->record(
+                    user: $order->buyer,
+                    type: 'dispute_won',
+                    roleContext: 'buyer',
+                    reason: "Litige gagné — commande {$order->reference}",
+                    referenceType: 'Order',
+                    referenceId: $order->id
+                );
+            }
+        }
     }
 
     // ── REMBOURSEMENT ACHETEUR (virement Elgiopay direct) ──────────────

@@ -41,9 +41,11 @@ class ProductController extends Controller
         $variantBuilder = [
             'has_variants'     => false,
             'presets'          => $this->variantService->presets(),
-            'max_attributes'   => (int) config('product_attributes.max_attributes', 3),
-            'max_values'       => (int) config('product_attributes.max_values', 12),
-            'max_combinations' => (int) config('product_attributes.max_combinations', 36),
+            'max_attributes'   => $this->variantService->maxAttributes(),
+            'max_values'       => $this->variantService->maxValuesPerAttribute(),
+            'max_total_values' => $this->variantService->maxTotalValues(),
+            'max_combinations' => $this->variantService->maxCombinations(),
+            'max_active_variants' => $this->variantService->maxActiveVariants(),
             'attributes'       => [],
             'variants'         => [],
         ];
