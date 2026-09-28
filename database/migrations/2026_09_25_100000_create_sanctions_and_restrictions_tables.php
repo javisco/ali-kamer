@@ -43,7 +43,7 @@ return new class extends Migration
             $table->foreignId('sanction_id')->constrained('sanctions')->cascadeOnDelete();
 
             $table->timestamp('starts_at')->useCurrent();
-            $table->timestamp('expires_at');
+            $table->timestamp('expires_at')->nullable();
             $table->enum('status', ['active', 'expired', 'lifted'])->default('active');
 
             $table->timestamp('lifted_at')->nullable();
