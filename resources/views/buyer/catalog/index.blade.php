@@ -111,7 +111,6 @@
 
             <div class="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-                    
                     <div class="lg:col-span-7 space-y-6">
                         <div class="inline-flex items-center gap-2 rounded-full bg-emerald-50 border border-emerald-200/80 px-3.5 py-1.5 text-xs font-black text-[#00843D]">
                             <span class="w-2 h-2 rounded-full bg-[#FCD116] ak-pulse-soft"></span>

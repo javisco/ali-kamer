@@ -285,7 +285,7 @@ class DisputeService
     // l'opérateur enregistré sur le paiement d'origine de la commande
     // ($order->payment->payer_operator), puisque l'acheteur n'a pas de
     // wallet ni de profil "opérateur MoMo" dédié comme le vendeur.
-    private function refundBuyer(User $buyer, int $netAmount, Order $order): void
+    private function refundBuyer(User $buyer, int $netAmount, Order $order, $alreadyWidrawal = false): void
     {
 
         $phone = '237' . ltrim($order->payment->payer_phone ?? $order->orderGroup->payment->payer_phone, '0');
@@ -322,9 +322,10 @@ class DisputeService
                     number_format($gatewayFee, 0, ',', ' ')
                 ),
             ]);
-
-            $seller = $order->shop->user;
-            $seller->decrement('wallet_pending',$order->net_amount);
+            if ($alreadyWidrawal === false) {
+                $seller = $order->shop->user;
+                $seller->decrement('wallet_pending', $order->net_amount);
+            }
         } catch (\Exception $e) {
             Log::error('Buyer refund failed', ['error' => $e->getMessage()]);
             throw $e;
@@ -353,9 +354,9 @@ class DisputeService
         $order        = $dispute->order;
         $refundAmount = $dispute->resolution_amount ?? 0;
         $sellerAmount = max(0, $order->net_amount - $refundAmount);
-
+        $alreadyWidrawal = true;
         if ($refundAmount > 0) {
-            $this->refundBuyer($order->buyer, $refundAmount, $order);
+            $this->refundBuyer($order->buyer, $refundAmount, $order, $alreadyWidrawal);
         }
 
         if ($sellerAmount > 0) {
