@@ -23,7 +23,15 @@
             <div class="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-left text-sm font-semibold text-amber-800">{{ $error }}</div>
         @endif
 
-        <a href="{{ route('seller.kyc.pending') }}" class="mt-7 inline-flex rounded-2xl bg-[#006837] px-6 py-3 text-sm font-black text-white hover:bg-[#004d28]">Voir mon dossier</a>
+        @php
+            $targetRoute = match(true) {
+                $kyc?->isApproved() => route('seller.dashboard'),
+                $kyc?->isRejected() => route('seller.kyc.rejected'),
+                default => route('seller.kyc.pending'),
+            };
+        @endphp
+
+        <a href="{{ $targetRoute }}" class="mt-7 inline-flex rounded-2xl bg-[#006837] px-6 py-3 text-sm font-black text-white hover:bg-[#004d28]">Voir mon dossier</a>
     </div>
 </body>
 </html>

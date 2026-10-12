@@ -47,7 +47,7 @@
             {{-- Récapitulatif articles, groupés par boutique --}}
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-5">
                 <h2 class="font-bold text-[#0a1b12] mb-4 flex items-center justify-between">
-                    <span>Articles ({{ $cart->itemsCount() }})</span>
+                    <span>Articles sélectionnés ({{ $selectedItems->sum('quantity') }})</span>
                     @if ($itemsByShop->count() > 1)
                         <span class="text-xs bg-[#F9A01B]/15 text-[#0a1b12] font-bold px-2 py-1 rounded-lg">
                             {{ $itemsByShop->count() }} boutiques
@@ -210,7 +210,7 @@
 
     @push('scripts')
         <script>
-            const cartTotal = {{ $cart->total() }};
+            const cartTotal = {{ $selectedItems->sum(fn($i) => $i->subtotal()) }};
             const protRate = {{ \App\Models\PlatformSetting::getRate('protection_rate') }};
             const collectRate = {{ \App\Models\PlatformSetting::getRate('gateway_collect_rate') }};
             const fixedFee = {{ (int) \App\Models\PlatformSetting::getValue('gateway_fixed_fee', 0) }};

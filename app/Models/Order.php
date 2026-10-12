@@ -141,6 +141,16 @@ class Order extends Model
         return $this->timer_deadline && now()->isAfter($this->timer_deadline);
     }
 
+    public function isEligibleForRepurchase(): bool
+    {
+        return in_array($this->status, [
+            self::STATUS_CANCELLED,
+            self::STATUS_FAILED,
+            self::STATUS_COMPLETED,
+            self::STATUS_AUTO_COMPLETED,
+        ]);
+    }
+
     // Génère la référence : ALK-2026-00001
     public static function generateReference(): string
     {

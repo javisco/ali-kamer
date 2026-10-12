@@ -59,10 +59,22 @@
                 ];
             @endphp
 
-            <span class="flex-shrink-0 px-3 py-1.5 rounded-full text-[10px] sm:text-xs
-                         font-extrabold uppercase tracking-wider {{ $sc['class'] }}">
-                {{ $sc['label'] }}
-            </span>
+            <div class="flex items-center gap-2">
+                @if ($order->isEligibleForRepurchase())
+                    <a href="{{ route('buyer.orders.reorder.view', $order) }}"
+                       class="hidden sm:inline-flex items-center gap-1.5 bg-[#016837] hover:bg-[#01522b] text-white text-xs font-black px-4 py-2 rounded-xl transition shadow-xs">
+                        <svg class="w-3.5 h-3.5 text-[#F9A01B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        <span>Commander à nouveau</span>
+                    </a>
+                @endif
+
+                <span class="flex-shrink-0 px-3 py-1.5 rounded-full text-[10px] sm:text-xs
+                             font-extrabold uppercase tracking-wider {{ $sc['class'] }}">
+                    {{ $sc['label'] }}
+                </span>
+            </div>
 
         </div>
 
@@ -430,11 +442,12 @@
                     <div class="flex items-center gap-3.5 py-3
                                 {{ !$loop->last ? 'border-b border-gray-100' : '' }}">
 
-                        {{-- Visuel Produit / Variante --}}
+                        {{-- Visuel Produit / Variante (Snapshot préservé) --}}
                         @php
-                            $itemImage = ($item->variant && $item->variant->images?->isNotEmpty())
-                                ? $item->variant->images->first()->url
-                                : $item->product?->images->first()?->url;
+                            $itemImage = $item->product_image
+                                ?? (($item->variant && $item->variant->images?->isNotEmpty())
+                                    ? $item->variant->images->first()->url
+                                    : $item->product?->images->first()?->url);
                         @endphp
                         @if ($itemImage)
                             <img src="{{ asset('storage/' . $itemImage) }}"
@@ -855,6 +868,17 @@
 
                 @endif
 
+
+                @if ($order->isEligibleForRepurchase())
+                    <a href="{{ route('buyer.orders.reorder.view', $order) }}"
+                       class="block w-full bg-[#016837] hover:bg-[#01522b] text-white font-extrabold
+                              py-3.5 rounded-2xl transition text-sm text-center shadow-md shadow-[#016837]/20 flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4 text-[#F9A01B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        <span>Commander à nouveau cette commande</span>
+                    </a>
+                @endif
 
                 <a href="{{ route('buyer.orders.index') }}"
                    class="block w-full bg-white

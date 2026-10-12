@@ -294,7 +294,7 @@ class ProductVariantSeeder extends Seeder
                 'values'    => $values,
                 'price'     => $price,
                 'old_price' => $product->old_price && $product->old_price > $price ? $product->old_price : null,
-                'stock'     => rand(5, 25),
+                'stock'     => rand(5, 500),
                 'sku'       => strtoupper(substr($cleanTitle, 0, 3)) . '-' . strtoupper($skuSuffix),
                 'is_active' => true,
             ];
@@ -360,7 +360,7 @@ class ProductVariantSeeder extends Seeder
             'old_price'              => $oldPrice,
             'stock'                  => 0,
             'stock_reserved'         => 0,
-            'min_quantity'           => (int)rand(1,50),
+            'min_quantity'           => (int)rand(1,20),
             'shipping_included'      => true,
             'shipping_threshold_qty' => 3,
             'specifications'         => ['Garantie' => '6 mois', 'État' => 'Neuf'],

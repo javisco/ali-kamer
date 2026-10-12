@@ -210,15 +210,41 @@ class KycService
             $aml,
         ]);
 
+        $frontImage = $idVerification['front_image'] ?? $idVerification['full_front_image'] ?? null;
+        $backImage = $idVerification['back_image'] ?? $idVerification['full_back_image'] ?? null;
+        $selfieImage = $liveness['reference_image'] ?? $idVerification['portrait_image'] ?? null;
+        $videoUrl = $liveness['video_url'] ?? $idVerification['front_video'] ?? null;
+
+        $media = array_filter([
+            'cni_front' => $frontImage,
+            'cni_back' => $backImage,
+            'selfie' => $selfieImage,
+            'video' => $videoUrl,
+        ]);
+
+        $livenessScore = $this->numericValue($liveness['score'] ?? null);
+        $faceMatchScore = $this->numericValue($faceMatch['score'] ?? null);
+        $amlStatus = $this->featureStatus($aml);
+
         $update = [
             'didit_session_status' => $sessionStatus,
             'didit_environment' => $envelope['environment'] ?? $kyc->didit_environment ?? 'sandbox',
             'didit_result' => $this->sanitizeDecision($decisionResponse),
+            'didit_media' => $media,
+            'didit_document_result' => $idVerification,
+            'didit_liveness_result' => $liveness,
+            'didit_face_match_result' => $faceMatch,
+            'didit_ip_result' => $ipAnalysis,
+            'didit_aml_result' => $aml,
+            'didit_review_result' => $this->firstFeature($decision, 'reviews'),
             'document_status' => $documentStatus,
             'ocr_status' => $documentStatus,
             'face_match_status' => $faceStatus,
             'liveness_status' => $livenessStatus,
             'ip_analysis_status' => $ipStatus,
+            'aml_status' => $amlStatus,
+            'liveness_score' => $livenessScore,
+            'face_match_score' => $faceMatchScore,
             'document_number_masked' => $this->maskDocument($documentNumber),
             'full_name' => $fullName,
             'date_of_birth' => $idVerification['date_of_birth'] ?? null,
@@ -233,6 +259,16 @@ class KycService
             'last_webhook_at' => $source !== 'api' ? now() : $kyc->last_webhook_at,
         ];
 
+        if ($frontImage) {
+            $update['cni_front_url'] = $frontImage;
+        }
+        if ($backImage) {
+            $update['cni_back_url'] = $backImage;
+        }
+        if ($selfieImage) {
+            $update['selfie_url'] = $selfieImage;
+        }
+
         // Si Didit demande une nouvelle soumission, le dossier reste traitable.
         if ($sessionStatus === 'Resubmitted') {
             $update['status'] = 'reviewing';
@@ -246,6 +282,7 @@ class KycService
             $update['status'] = 'rejected';
             $update['decision'] = 'REVIEW';
             $update['decision_reason'] = $this->buildDeclineReason($warnings);
+            $update['rejection_reason'] = $this->buildDeclineReason($warnings);
         } elseif (in_array($sessionStatus, ['In Review', 'Abandoned'], true)) {
             $update['status'] = 'reviewing';
             $update['decision'] = 'REVIEW';
@@ -256,6 +293,7 @@ class KycService
             $update['status'] = 'rejected';
             $update['decision'] = 'REVIEW';
             $update['decision_reason'] = 'La session Didit a expiré. Le vendeur peut recommencer.';
+            $update['rejection_reason'] = 'Session Didit expirée.';
         } else {
             // Not Started / In Progress / Awaiting User
             $update['status'] = 'pending';
@@ -265,6 +303,10 @@ class KycService
 
         $kyc->update($update);
         $kyc->refresh();
+
+        if ($sessionStatus === 'Declined') {
+            $this->checkRepeatedKycFailures($user);
+        }
 
         // Une décision Approved n'active pas directement le vendeur :
         // IdentityResolver doit encore vérifier les signaux internes.
@@ -385,13 +427,16 @@ class KycService
     // ACTIONS ADMINISTRATIVES
     // ────────────────────────────────────────────────────────────────
 
-    public function approve(KycDocument $kyc, User $admin): void
+    public function approve(KycDocument $kyc, User $admin, ?string $notes = null): void
     {
-        DB::transaction(function () use ($kyc, $admin) {
+        DB::transaction(function () use ($kyc, $admin, $notes) {
+            $reason = $notes ?? 'Validation manuelle par l’administration.';
             $kyc->update([
                 'status' => 'approved',
+                'admin_decision' => 'APPROVE',
+                'admin_decision_reason' => $reason,
                 'decision' => 'ALLOW',
-                'decision_reason' => 'Validation manuelle par l’administration.',
+                'decision_reason' => $reason,
                 'reviewer_id' => $admin->id,
                 'reviewed_at' => now(),
                 'rejection_reason' => null,
@@ -430,6 +475,8 @@ class KycService
         DB::transaction(function () use ($kyc, $admin, $reason) {
             $kyc->update([
                 'status' => 'rejected',
+                'admin_decision' => 'REJECT',
+                'admin_decision_reason' => $reason,
                 'decision' => 'REVIEW',
                 'decision_reason' => $reason,
                 'rejection_reason' => $reason,
@@ -454,6 +501,121 @@ class KycService
             );
 
             $this->checkRepeatedKycFailures($kyc->user);
+        });
+    }
+
+    public function review(KycDocument $kyc, User $admin, ?string $reason = null): void
+    {
+        DB::transaction(function () use ($kyc, $admin, $reason) {
+            $notes = $reason ?? 'Dossier placé en revue manuelle approfondie.';
+            $kyc->update([
+                'status' => 'reviewing',
+                'admin_decision' => 'REVIEW',
+                'admin_decision_reason' => $notes,
+                'decision' => 'REVIEW',
+                'decision_reason' => $notes,
+                'reviewer_id' => $admin->id,
+                'reviewed_at' => now(),
+            ]);
+
+            AdminLog::record(
+                $admin,
+                'kyc.review',
+                'user',
+                $kyc->user_id,
+                "KYC placé en revue : {$notes}"
+            );
+        });
+    }
+
+    public function challenge(KycDocument $kyc, User $admin, string $reason): void
+    {
+        DB::transaction(function () use ($kyc, $admin, $reason) {
+            $kyc->update([
+                'status' => 'reviewing',
+                'admin_decision' => 'CHALLENGE',
+                'admin_decision_reason' => $reason,
+                'decision' => 'CHALLENGE',
+                'decision_reason' => $reason,
+                'reviewer_id' => $admin->id,
+                'reviewed_at' => now(),
+            ]);
+
+            $kyc->user->update(['prepayment_required' => true]);
+
+            $this->trustService->record(
+                user: $kyc->user,
+                type: 'fake_information',
+                roleContext: 'seller',
+                reason: 'Challenge KYC administratif : ' . $reason,
+                createdBy: $admin,
+            );
+
+            AdminLog::record(
+                $admin,
+                'kyc.challenge',
+                'user',
+                $kyc->user_id,
+                "KYC challenge : {$reason}"
+            );
+        });
+    }
+
+    public function restrict(KycDocument $kyc, User $admin, string $reason): void
+    {
+        DB::transaction(function () use ($kyc, $admin, $reason) {
+            $kyc->update([
+                'status' => 'reviewing',
+                'admin_decision' => 'RESTRICT',
+                'admin_decision_reason' => $reason,
+                'decision' => 'RESTRICT',
+                'decision_reason' => $reason,
+                'reviewer_id' => $admin->id,
+                'reviewed_at' => now(),
+            ]);
+
+            $this->sanctionEngine->restrict(
+                user: $kyc->user,
+                restrictions: ['products_create', 'orders_create'],
+                reason: 'Restriction KYC : ' . $reason,
+                durationMinutes: 1440,
+                reasonCode: 'admin_kyc_restriction',
+                createdBy: $admin
+            );
+
+            AdminLog::record(
+                $admin,
+                'kyc.restricted',
+                'user',
+                $kyc->user_id,
+                "KYC restreint : {$reason}"
+            );
+        });
+    }
+
+    public function block(KycDocument $kyc, User $admin, string $reason): void
+    {
+        DB::transaction(function () use ($kyc, $admin, $reason) {
+            $kyc->update([
+                'status' => 'rejected',
+                'admin_decision' => 'BLOCK',
+                'admin_decision_reason' => $reason,
+                'decision' => 'BLOCK',
+                'decision_reason' => $reason,
+                'rejection_reason' => $reason,
+                'reviewer_id' => $admin->id,
+                'reviewed_at' => now(),
+            ]);
+
+            $this->blacklist($kyc->user, $admin, $reason);
+
+            AdminLog::record(
+                $admin,
+                'kyc.blocked',
+                'user',
+                $kyc->user_id,
+                "KYC bloqué & vendeur blacklisté : {$reason}"
+            );
         });
     }
 
@@ -598,30 +760,23 @@ class KycService
     }
 
     /**
-     * Le résultat Didit peut contenir énormément d'informations. On retire
-     * les URLs/images éventuelles avant de le stocker en base.
+     * Nettoie le résultat Didit avant de le stocker en base (évite les gros payloads base64).
      */
     private function sanitizeDecision(array $value): array
     {
-        $blockedKeys = [
-            'image', 'image_url', 'front_image', 'back_image', 'selfie',
-            'portrait_image', 'document_image', 'raw_image', 'media_url',
-        ];
-
-        $walk = function ($item) use (&$walk, $blockedKeys) {
+        $walk = function ($item) use (&$walk) {
             if (! is_array($item)) {
+                if (is_string($item)) {
+                    if (str_starts_with($item, 'data:') || (strlen($item) > 2000 && ! filter_var($item, FILTER_VALIDATE_URL))) {
+                        return '[base64_truncated]';
+                    }
+                }
                 return $item;
             }
 
             $result = [];
-            foreach ($item as $key => $value) {
-                $lower = strtolower((string) $key);
-
-                if (in_array($lower, $blockedKeys, true) || str_contains($lower, 'image_url')) {
-                    continue;
-                }
-
-                $result[$key] = is_array($value) ? $walk($value) : $value;
+            foreach ($item as $key => $val) {
+                $result[$key] = $walk($val);
             }
 
             return $result;

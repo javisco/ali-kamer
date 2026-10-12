@@ -73,7 +73,7 @@ class CartService
         $cart = $this->getOrCreate($user);
 
         return DB::transaction(function () use (
-            $cart, $product, $variant, $quantity, $price
+            $cart, $product, $variant, $quantity, $price, $availableStock
         ) {
             // Si l'article existe déjà dans le panier — mettre à jour la quantité
             $existing = CartItem::where('cart_id', $cart->id)
@@ -93,18 +93,100 @@ class CartService
                 $existing->update([
                     'quantity'   => $newQuantity,
                     'unit_price' => $price,
+                    'selected_for_checkout' => true,
                 ]);
                 return $existing->fresh();
             }
 
             return CartItem::create([
-                'cart_id'            => $cart->id,
-                'product_id'         => $product->id,
-                'product_variant_id' => $variant?->id,
-                'quantity'           => $quantity,
-                'unit_price'         => $price,
+                'cart_id'               => $cart->id,
+                'product_id'            => $product->id,
+                'product_variant_id'    => $variant?->id,
+                'quantity'              => $quantity,
+                'unit_price'            => $price,
+                'selected_for_checkout' => true,
             ]);
         });
+    }
+
+    // ── Basculer la sélection d'un article ────────────────────────────
+
+    public function toggleSelection(CartItem $item, ?bool $selected = null): bool
+    {
+        $newVal = $selected !== null ? $selected : ! (bool) $item->selected_for_checkout;
+        $item->update(['selected_for_checkout' => $newVal]);
+        return $newVal;
+    }
+
+    // ── Tout sélectionner ou désélectionner ───────────────────────────
+
+    public function selectAll(User $user, bool $selected = true): void
+    {
+        $cart = $this->getOrCreate($user);
+        $cart->items()->update(['selected_for_checkout' => $selected]);
+    }
+
+    // ── Récupérer les articles sélectionnés ───────────────────────────
+
+    public function getSelectedItems(User $user)
+    {
+        $cart = $this->getOrCreate($user);
+        return $cart->items()
+            ->where('selected_for_checkout', true)
+            ->with(['product.images', 'product.shop', 'variant.attributeValues.attribute'])
+            ->get();
+    }
+
+    // ── Total des articles sélectionnés ──────────────────────────────
+
+    public function selectedTotal(User $user): int
+    {
+        $selectedItems = $this->getSelectedItems($user);
+        return $selectedItems->sum(fn ($item) => $item->unit_price * $item->quantity);
+    }
+
+    // ── Nombre d'articles sélectionnés ───────────────────────────────
+
+    public function selectedCount(User $user): int
+    {
+        $selectedItems = $this->getSelectedItems($user);
+        return $selectedItems->sum('quantity');
+    }
+
+    // ── Fusionner un panier de session dans le panier en base ─────────
+
+    public function mergeSessionCart(User $user, array $sessionItems): void
+    {
+        if (empty($sessionItems)) {
+            return;
+        }
+
+        foreach ($sessionItems as $raw) {
+            $productId = $raw['product_id'] ?? null;
+            $quantity  = (int) ($raw['quantity'] ?? 1);
+            $variantId = $raw['variant_id'] ?? ($raw['product_variant_id'] ?? null);
+
+            if (! $productId || $quantity <= 0) {
+                continue;
+            }
+
+            $product = Product::find($productId);
+            if (! $product || ! $product->isVisible()) {
+                continue;
+            }
+
+            $variant = $variantId ? ProductVariant::where('product_id', $product->id)->find($variantId) : null;
+            if ($variant && ! $variant->is_active) {
+                continue;
+            }
+
+            try {
+                $this->addItem($user, $product, $quantity, $variant);
+            } catch (\Throwable $e) {
+                // Stock insuffisant ou contrainte ignorée silencieusement lors de la fusion
+                continue;
+            }
+        }
     }
 
     // ── Mettre à jour la quantité ─────────────────────────────────────

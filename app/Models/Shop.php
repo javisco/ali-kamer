@@ -45,6 +45,15 @@ class Shop extends Model
     {
         return $this->hasMany(Product::class);
     }
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class, 'reviewee_id')->where('reviewee_type', 'shop');
+    }
+
+    public function disputes(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    {
+        return $this->hasManyThrough(Dispute::class, Order::class);
+    }
 
     public function isActive(): bool
     {

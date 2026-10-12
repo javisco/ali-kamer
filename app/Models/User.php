@@ -121,6 +121,16 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(AdminReview::class);
     }
 
+    public function trustEvents(): HasMany
+    {
+        return $this->hasMany(TrustEvent::class);
+    }
+
+    public function blacklistV2(): HasOne
+    {
+        return $this->hasOne(BlacklistV2::class);
+    }
+
     public function ordersAsBuyer(): HasMany
     {
         return $this->hasMany(Order::class, 'buyer_id');

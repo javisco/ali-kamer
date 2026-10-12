@@ -46,12 +46,30 @@ class CartController extends Controller
             return back()->withErrors(['variant' => 'Veuillez choisir une variante.']);
         }
 
-        $this->cartService->addItem(
-            Auth::user(),
-            $product,
-            $request->quantity ?? $quantity,
-            $variant
-        );
+        $qty = (int) ($request->quantity ?? $quantity);
+
+        if (Auth::check()) {
+            $this->cartService->addItem(
+                Auth::user(),
+                $product,
+                $qty,
+                $variant
+            );
+        } else {
+            // Panier en session invité
+            $sessionCart = session()->get('guest_cart', []);
+            $key = $product->id . '_' . ($variant?->id ?? '0');
+            if (isset($sessionCart[$key])) {
+                $sessionCart[$key]['quantity'] += $qty;
+            } else {
+                $sessionCart[$key] = [
+                    'product_id' => $product->id,
+                    'variant_id' => $variant?->id,
+                    'quantity'   => $qty,
+                ];
+            }
+            session()->put('guest_cart', $sessionCart);
+        }
 
         return back()->with('success', 'Article ajouté au panier.');
     }
@@ -80,23 +98,62 @@ class CartController extends Controller
         return back()->with('success', 'Article retiré du panier.');
     }
 
+    // Basculer la sélection d'un article
+    public function toggleItem(Request $request, CartItem $item)
+    {
+        abort_unless($item->cart->user_id === Auth::id(), 403);
+
+        $selected = $request->has('selected') ? $request->boolean('selected') : null;
+        $newVal = $this->cartService->toggleSelection($item, $selected);
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success'        => true,
+                'is_selected'    => $newVal,
+                'selected_total' => $this->cartService->selectedTotal(Auth::user()),
+                'selected_count' => $this->cartService->selectedCount(Auth::user()),
+            ]);
+        }
+
+        return back();
+    }
+
+    // Sélectionner ou désélectionner tout
+    public function selectAll(Request $request)
+    {
+        $selected = $request->boolean('selected', true);
+        $this->cartService->selectAll(Auth::user(), $selected);
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success'        => true,
+                'selected'       => $selected,
+                'selected_total' => $this->cartService->selectedTotal(Auth::user()),
+                'selected_count' => $this->cartService->selectedCount(Auth::user()),
+            ]);
+        }
+
+        return back();
+    }
+
     // Page checkout — passer la commande depuis le panier
     public function checkout()
     {
-        $cart = $this->cartService->getOrCreate(Auth::user());
-        $cart->load('items.product.shop', 'items.variant');
+        $user = Auth::user();
+        $cart = $this->cartService->getOrCreate($user);
+        $selectedItems = $this->cartService->getSelectedItems($user);
 
-        if ($cart->items->isEmpty()) {
+        if ($selectedItems->isEmpty()) {
             return redirect()->route('buyer.cart.index')
-                ->with('error', 'Votre panier est vide.');
+                ->with('error', 'Veuillez sélectionner au moins un article pour passer commande.');
         }
 
-        // Regrouper les articles par boutique pour l'affichage du récapitulatif
-        $itemsByShop = $cart->items->groupBy(fn($item) => $item->product->shop_id);
+        // Regrouper les articles sélectionnés par boutique pour l'affichage du récapitulatif
+        $itemsByShop = $selectedItems->groupBy(fn($item) => $item->product->shop_id);
 
         $cities = $this->agencyService->getActiveCities();
 
-        return view('buyer.cart.checkout', compact('cart', 'itemsByShop', 'cities'));
+        return view('buyer.cart.checkout', compact('cart', 'selectedItems', 'itemsByShop', 'cities'));
     }
 
     // Confirmer la commande depuis le panier
@@ -108,16 +165,20 @@ class CartController extends Controller
             'payer_operator'   => ['required', 'in:mtn,orange'],
         ]);
 
-        $cart = $this->cartService->getOrCreate(Auth::user());
-        $cart->load('items.product', 'items.variant');
+        $user = Auth::user();
+        $selectedCount = $this->cartService->selectedCount($user);
 
-        if ($cart->items->isEmpty()) {
-            return redirect()->route('buyer.cart.index');
+        if ($selectedCount === 0) {
+            return redirect()->route('buyer.cart.index')
+                ->with('error', 'Veuillez sélectionner au moins un article pour passer commande.');
         }
 
-        $result = $this->orderService->createFromCart(Auth::user(), $cart, $validated);
+        $cart = $this->cartService->getOrCreate($user);
 
-        $this->cartService->clear(Auth::user());
+        $result = $this->orderService->createFromCart($user, $cart, $validated);
+
+        // Panier persistant : nous NE vidons PAS le panier.
+        // Les articles commandés restent dans le panier jusqu'à suppression manuelle.
 
         return $result instanceof \App\Models\OrderGroup
             ? redirect()->route('buyer.payment.group.initiate', $result)

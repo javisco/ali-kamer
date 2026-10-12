@@ -13,11 +13,16 @@ class CartItem extends Model
         'product_variant_id',
         'quantity',
         'unit_price',
+        'selected_for_checkout',
     ];
 
     protected function casts(): array
     {
-        return ['unit_price' => 'integer', 'quantity' => 'integer'];
+        return [
+            'unit_price' => 'integer',
+            'quantity' => 'integer',
+            'selected_for_checkout' => 'boolean',
+        ];
     }
 
     public function cart(): BelongsTo

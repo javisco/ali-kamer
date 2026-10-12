@@ -162,4 +162,49 @@ class OrderController extends Controller
             'otp_ready' => $shipment->transport_fee_paid && $order->otp_code !== null,
         ]);
     }
+
+    // ── NOUVELLE FONCTIONNALITÉ : RACHAT DE COMMANDE (REPURCHASE) ──────
+
+    /**
+     * Écran de pré-commande pour recommander à partir d'une commande passée.
+     */
+    public function reorderView(Order $order, \App\Services\OrderRepurchaseService $repurchaseService)
+    {
+        abort_unless($order->buyer_id === Auth::id(), 403);
+        abort_unless($repurchaseService->isEligible($order), 403, 'Cette commande n\'est pas éligible au rachat.');
+
+        $prepared = $repurchaseService->prepare($order);
+
+        return view('buyer.orders.reorder', compact('order', 'prepared'));
+    }
+
+    /**
+     * Exécute le rachat des articles sélectionnés vers le panier.
+     */
+    public function reorder(Request $request, Order $order, \App\Services\OrderRepurchaseService $repurchaseService)
+    {
+        abort_unless($order->buyer_id === Auth::id(), 403);
+        abort_unless($repurchaseService->isEligible($order), 403, 'Cette commande n\'est pas éligible au rachat.');
+
+        $validated = $request->validate([
+            'selected_items'   => ['required', 'array', 'min:1'],
+            'selected_items.*' => ['required', 'integer'],
+        ]);
+
+        $result = $repurchaseService->reorder(Auth::user(), $order, $validated['selected_items']);
+
+        if (! $result['success']) {
+            return back()->with('error', 'Aucun article disponible n\'a pu être ajouté au panier.')
+                ->with('reorder_warnings', $result['warnings']);
+        }
+
+        $msg = $result['added_count'] . ' article(s) de votre ancienne commande ajouté(s) à votre panier au prix actuel.';
+        if (! empty($result['warnings'])) {
+            return redirect()->route('buyer.cart.index')
+                ->with('success', $msg)
+                ->with('reorder_warnings', $result['warnings']);
+        }
+
+        return redirect()->route('buyer.cart.index')->with('success', $msg);
+    }
 }

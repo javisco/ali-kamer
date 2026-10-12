@@ -59,6 +59,10 @@ class AuthController extends Controller
         // Connexion automatique après inscription
         Auth::login($user);
 
+        if ($sessionCart = session()->pull('guest_cart', session()->pull('cart', []))) {
+            app(\App\Services\CartService::class)->mergeSessionCart($user, $sessionCart);
+        }
+
         // Envoyer l'email de vérification via Brevo
         $user->sendEmailVerificationNotification();
 
@@ -151,7 +155,9 @@ class AuthController extends Controller
 
         $user = Auth::user();
 
-       
+        if ($sessionCart = $request->session()->pull('guest_cart', $request->session()->pull('cart', []))) {
+            app(\App\Services\CartService::class)->mergeSessionCart($user, $sessionCart);
+        }
 
         // ── Vérification blacklist à la connexion ─────────────────────
         // Si le numéro a été blacklisté après l'inscription

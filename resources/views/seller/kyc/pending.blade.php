@@ -14,9 +14,17 @@
     </div>
 
     <div class="mt-10 text-center">
-        <div class="mx-auto h-16 w-16 rounded-full border-4 border-[#006837]/15 border-t-[#006837] animate-spin"></div>
-        <h1 class="mt-6 text-2xl font-black">Votre dossier est en cours de traitement</h1>
-        <p class="mt-3 text-sm leading-6 text-slate-500">Didit a reçu votre parcours. Ali-Kamer met à jour automatiquement ce dossier lorsque le résultat est disponible.</p>
+        @if($kyc->isReviewing())
+            <div class="mx-auto h-16 w-16 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl font-black">⏳</div>
+            <h1 class="mt-6 text-2xl font-black">Dossier en cours d’examen</h1>
+            <p class="mt-3 text-sm leading-6 text-slate-500">
+                Vos vérifications Didit ont été reçues. Votre dossier est actuellement en cours de révision par l'administration d'Ali-Kamer.
+            </p>
+        @else
+            <div class="mx-auto h-16 w-16 rounded-full border-4 border-[#006837]/15 border-t-[#006837] animate-spin"></div>
+            <h1 class="mt-6 text-2xl font-black">Votre vérification est en cours</h1>
+            <p class="mt-3 text-sm leading-6 text-slate-500">Didit traite votre parcours. Ali-Kamer met à jour automatiquement votre dossier dès réception des signaux.</p>
+        @endif
     </div>
 
     <div class="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-3">

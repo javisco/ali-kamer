@@ -64,6 +64,11 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->group(fu
         Route::get('/kyc/{kyc}', [KycAdminController::class, 'show'])->name('admin.kyc.show');
         Route::post('/kyc/{kyc}/approuver', [KycAdminController::class, 'approve'])->name('admin.kyc.approve');
         Route::post('/kyc/{kyc}/rejeter', [KycAdminController::class, 'reject'])->name('admin.kyc.reject');
+        Route::post('/kyc/{kyc}/review', [KycAdminController::class, 'review'])->name('admin.kyc.review');
+        Route::post('/kyc/{kyc}/challenge', [KycAdminController::class, 'challenge'])->name('admin.kyc.challenge');
+        Route::post('/kyc/{kyc}/restrict', [KycAdminController::class, 'restrict'])->name('admin.kyc.restrict');
+        Route::post('/kyc/{kyc}/block', [KycAdminController::class, 'block'])->name('admin.kyc.block');
+        Route::get('/kyc/{kyc}/media/{type}', [KycAdminController::class, 'media'])->name('admin.kyc.media');
 
         // Sanctions & Sécurité
         Route::get('/sanctions', [SanctionsAdminController::class, 'index'])->name('admin.sanctions.index');
@@ -75,6 +80,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->group(fu
 Route::middleware(['auth', 'verified', 'role:seller'])->prefix('vendeur')->group(function () {
         Route::get('/boutique/creer', [ShopController::class, 'create'])->name('seller.shop.create');
         Route::post('/boutique', [ShopController::class, 'store'])->name('seller.shop.store');
+        Route::get('/profil', [App\Http\Controllers\Seller\ProfileController::class, 'index'])->name('seller.profile');
 
         Route::middleware(['shop.active'])->group(function () {
                 Route::get('/boutique/modifier', [ShopController::class, 'edit'])->name('seller.shop.edit');
@@ -140,6 +146,8 @@ Route::middleware(['auth', 'verified', 'role:buyer'])->prefix('commandes')->grou
         Route::post('/', [BuyerOrderController::class, 'store'])->name('buyer.orders.store');
         Route::get('/{order}', [BuyerOrderController::class, 'show'])->name('buyer.orders.show');
         Route::post('/{order}/annuler', [BuyerOrderController::class, 'cancel'])->name('buyer.orders.cancel');
+        Route::get('/{order}/recommander', [BuyerOrderController::class, 'reorderView'])->name('buyer.orders.reorder.view');
+        Route::post('/{order}/recommander', [BuyerOrderController::class, 'reorder'])->name('buyer.orders.reorder');
 });
 
 
@@ -474,22 +482,26 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 
 // Routes à ajouter si elles n'existent pas déjà.
 // Adapte uniquement les noms de contrôleurs si ton projet utilise une autre organisation.
-
+Route::view('/word',"pages.word")->name("work");
 Route::view('/aide', 'pages.help')->name('help');
 Route::view('/a-propos', 'pages.about')->name('about');
-Route::view('/how-it-work','pages.work')->name('work');
+Route::post('/panier/{product}/ajouter', [CartController::class, 'add'])
+        ->name('buyer.cart.add');
+
 
 Route::middleware(['auth', 'role:buyer', 'verified'])->group(function () {
 
         // ── Panier ────────────────────────────────────────────────────────
         Route::get('/panier', [CartController::class, 'index'])
                 ->name('buyer.cart.index');
-        Route::post('/panier/{product}/ajouter', [CartController::class, 'add'])
-                ->name('buyer.cart.add');
         Route::patch('/panier/item/{item}/', [CartController::class, 'update'])
                 ->name('buyer.cart.update');
         Route::delete('/panier/item/{item}', [CartController::class, 'remove'])
                 ->name('buyer.cart.remove');
+        Route::post('/panier/item/{item}/toggle', [CartController::class, 'toggleItem'])
+                ->name('buyer.cart.toggle');
+        Route::post('/panier/select-all', [CartController::class, 'selectAll'])
+                ->name('buyer.cart.selectAll');
         Route::get('/panier/checkout', [CartController::class, 'checkout'])
                 ->name('buyer.cart.checkout');
         Route::post('/panier/commander', [CartController::class, 'confirmOrder'])

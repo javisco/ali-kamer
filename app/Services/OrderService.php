@@ -173,11 +173,17 @@ class OrderService
                 'buyer_note' => $data['note'] ?? null,
             ]);
 
+            $productImage = $variant?->images?->first()?->url
+                ?? $product->primaryImage?->first()?->url
+                ?? $product->images?->first()?->url
+                ?? null;
+
             OrderItem::create([
                 'order_id'           => $order->id,
                 'product_id'         => $product->id,
                 'product_variant_id' => $variant?->id,
                 'product_title'      => $product->title,
+                'product_image'      => $productImage,
                 'variant_label'      => $variant?->label(),
                 'variant_snapshot'   => $variant ? app(ProductVariantService::class)->snapshot($variant) : null,
                 'quantity'           => $quantity,
@@ -251,7 +257,17 @@ class OrderService
     {
         return DB::transaction(function () use ($buyer, $cart, $data) {
 
-            $items       = $cart->items->load('product.shop', 'variant.attributeValues.attribute');
+            $itemsQuery = $cart->relationLoaded('items')
+                ? $cart->items->where('selected_for_checkout', true)
+                : $cart->items()->where('selected_for_checkout', true)->get();
+
+            $items = $itemsQuery->loadMissing('product.shop', 'variant.attributeValues.attribute', 'product.images', 'product.primaryImage');
+
+            if ($items->isEmpty()) {
+                throw ValidationException::withMessages([
+                    'cart' => 'Veuillez sélectionner au moins un article pour passer commande.',
+                ]);
+            }
 
             foreach ($items as $item) {
                 if ($item->product->hasVariants() && ! $item->variant) {
@@ -490,12 +506,17 @@ class OrderService
     private function createOrderItemFromCartItem(Order $order, CartItem $item): void
     {
         $variant = $item->variant;
+        $productImage = $variant?->images?->first()?->url
+            ?? $item->product->primaryImage?->first()?->url
+            ?? $item->product->images?->first()?->url
+            ?? null;
 
         OrderItem::create([
             'order_id'           => $order->id,
             'product_id'         => $item->product_id,
             'product_variant_id' => $item->product_variant_id,
             'product_title'      => $item->product->title,
+            'product_image'      => $productImage,
             'variant_label'      => $variant?->label() ?: ($item->variantLabel() ?: null),
             'variant_snapshot'   => $variant ? app(ProductVariantService::class)->snapshot($variant) : null,
             'quantity'           => $item->quantity,

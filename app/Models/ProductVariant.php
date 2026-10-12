@@ -30,6 +30,11 @@ class ProductVariant extends Model
         return $this->belongsTo(Product::class);
     }
 
+    public function images(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(ProductImage::class, 'product_id', 'product_id');
+    }
+
     // Les valeurs d'attributs de cette variante
     // Ex: [Core i5, 8GB]
     public function attributeValues(): BelongsToMany

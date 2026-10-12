@@ -198,7 +198,7 @@ class ProductSeeder extends Seeder
                 'city' => $shop2->city ?? 'Yaoundé',
                 'price' => $price,
                 'old_price' => $hasDiscount ? $price + rand(5, 30) : null,
-                'stock' => rand(10, 100),
+                'stock' => rand(10, 500),
                 'stock_reserved' => 0,
                 'min_quantity' => rand(1,20),
                 'shipping_included' => rand(0, 1),

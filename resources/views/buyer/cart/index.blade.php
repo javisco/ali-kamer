@@ -15,7 +15,7 @@
                     <span class="w-2.5 h-2.5 rounded-full bg-[#E30613]"></span>
                     <span class="w-2.5 h-2.5 rounded-full bg-[#F9A01B]"></span>
                     <span class="text-[11px] font-extrabold uppercase tracking-wider text-[#F9A01B] ml-1">
-                        Mon Panier
+                        Mon Panier Persistant
                     </span>
                 </div>
 
@@ -40,6 +40,18 @@
         @if(session('error'))
             <div class="bg-[#E30613]/10 border border-[#E30613]/20 text-[#E30613] px-4 py-3 rounded-2xl mb-4 text-sm font-bold flex items-center gap-2">
                 <span>⚠️</span> {{ session('error') }}
+            </div>
+        @endif
+        @if(session('reorder_warnings'))
+            <div class="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3.5 rounded-2xl mb-4 text-xs font-medium space-y-1">
+                <p class="font-bold flex items-center gap-1.5">
+                    <span>💡</span> Informations relatives à votre commande renouvelée :
+                </p>
+                <ul class="list-disc list-inside space-y-0.5 text-slate-700">
+                    @foreach(session('reorder_warnings') as $warning)
+                        <li>{{ $warning }}</li>
+                    @endforeach
+                </ul>
             </div>
         @endif
 
@@ -70,12 +82,37 @@
 
         @else
 
+            {{-- Barre de sélection globale --}}
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-xs px-5 py-3 mb-4 flex items-center justify-between">
+                <label class="flex items-center gap-3 cursor-pointer text-xs font-extrabold text-[#0a1b12]">
+                    <input type="checkbox" id="selectAllCheckbox"
+                           {{ $cart->items->every(fn($i) => (bool)$i->selected_for_checkout) ? 'checked' : '' }}
+                           class="w-4 h-4 rounded text-[#016837] focus:ring-[#016837] border-gray-300">
+                    <span>Tout sélectionner (<span id="selectedCountBadge">{{ $cart->items->filter(fn($i) => $i->selected_for_checkout)->sum('quantity') }}</span> / {{ $cart->itemsCount() }} article(s))</span>
+                </label>
+
+                <span class="text-[11px] font-bold text-gray-400">
+                    Les articles commandés restent dans votre panier
+                </span>
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                 {{-- Liste des Articles --}}
                 <div class="lg:col-span-2 space-y-4">
                     @foreach($cart->items as $item)
-                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex gap-4 items-center">
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex gap-4 items-center transition-colors {{ $item->selected_for_checkout ? 'border-emerald-100' : 'bg-slate-50/50 opacity-85' }}"
+                             id="cart-item-row-{{ $item->id }}">
+
+                            {{-- Checkbox de sélection individuelle --}}
+                            <div>
+                                <input type="checkbox"
+                                       class="item-checkbox w-4 h-4 rounded text-[#016837] focus:ring-[#016837] border-gray-300 cursor-pointer"
+                                       data-item-id="{{ $item->id }}"
+                                       data-unit-price="{{ $item->unit_price }}"
+                                       data-quantity="{{ $item->quantity }}"
+                                       {{ $item->selected_for_checkout ? 'checked' : '' }}>
+                            </div>
 
                             {{-- Image Produit / Variante --}}
                             @php
@@ -164,15 +201,15 @@
                 <div>
                     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sticky top-4">
                         <h2 class="font-extrabold text-[#0a1b12] mb-4 flex items-center justify-between border-b border-gray-100 pb-3">
-                            <span>Résumé</span>
-                            <span class="text-xs bg-[#016837]/10 text-[#016837] px-2 py-0.5 rounded-full font-bold">
-                                {{ $cart->itemsCount() }} article(s)
+                            <span>Résumé de commande</span>
+                            <span class="text-xs bg-[#016837]/10 text-[#016837] px-2 py-0.5 rounded-full font-bold" id="summaryCount">
+                                {{ $cart->items->filter(fn($i) => $i->selected_for_checkout)->sum('quantity') }} article(s)
                             </span>
                         </h2>
 
                         <div class="space-y-2.5 text-sm mb-5">
                             <div class="flex justify-between text-gray-600 font-medium">
-                                <span>Sous-total</span>
+                                <span>Sous-total sélectionné</span>
                                 <span class="font-bold text-[#0a1b12]" id="s-subtotal">—</span>
                             </div>
 
@@ -191,7 +228,7 @@
                             </div>
 
                             <div class="border-t border-gray-100 pt-3 mt-3 flex justify-between items-center font-black text-[#0a1b12]">
-                                <span class="text-sm">Total estimé</span>
+                                <span class="text-sm">Total à payer</span>
                                 <span class="text-[#016837] text-lg font-black" id="s-total">
                                     — FCFA
                                 </span>
@@ -199,11 +236,15 @@
                         </div>
 
                         {{-- Bouton d'action Vert avec flèche Jaune --}}
-                        <a href="{{ route('buyer.cart.checkout') }}"
+                        <a href="{{ route('buyer.cart.checkout') }}" id="checkoutBtn"
                            class="w-full bg-[#016837] hover:bg-[#0a542d] text-white font-extrabold py-3.5 rounded-xl text-center transition flex items-center justify-center gap-2 text-sm shadow-md hover:shadow-lg cursor-pointer">
                             <span>Passer la commande</span>
                             <span class="text-[#F9A01B]">→</span>
                         </a>
+
+                        <p id="noSelectionMsg" class="hidden text-center text-xs font-bold text-amber-700 bg-amber-50 p-2.5 rounded-xl border border-amber-200 mt-3">
+                            Veuillez cocher au moins un article pour commander.
+                        </p>
 
                         <a href="{{ route('buyer.home') }}"
                            class="block text-center text-xs font-bold text-gray-400 hover:text-[#016837] transition mt-3">
@@ -221,19 +262,58 @@
 
 @push('scripts')
     <script>
-        const cartTotal = {{ $cart->total() }};
         const protRate = {{ \App\Models\PlatformSetting::getRate('protection_rate') }};
         const collectRate = {{ \App\Models\PlatformSetting::getRate('gateway_collect_rate') }};
         const fixedFee = {{ (int) \App\Models\PlatformSetting::getValue('gateway_fixed_fee', 0) }};
+        const csrfToken = '{{ csrf_token() }}';
 
         function fmt(n) {
             return new Intl.NumberFormat('fr-FR').format(Math.round(n)) + ' FCFA';
         }
 
-        function updateCartSummary() {
-            if (cartTotal <= 0) return;
+        function calculateSelectedSubtotal() {
+            let subtotal = 0;
+            let count = 0;
+            document.querySelectorAll('.item-checkbox').forEach(cb => {
+                if (cb.checked) {
+                    const price = parseFloat(cb.dataset.unitPrice) || 0;
+                    const qty = parseInt(cb.dataset.quantity) || 1;
+                    subtotal += price * qty;
+                    count += qty;
+                }
+            });
+            return { subtotal, count };
+        }
 
-            const subtotal = cartTotal;
+        function updateCartSummary() {
+            const { subtotal, count } = calculateSelectedSubtotal();
+
+            const badge = document.getElementById('selectedCountBadge');
+            const summaryCount = document.getElementById('summaryCount');
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            const noSelectionMsg = document.getElementById('noSelectionMsg');
+
+            if (badge) badge.textContent = count;
+            if (summaryCount) summaryCount.textContent = count + ' article(s)';
+
+            if (count === 0) {
+                if (checkoutBtn) {
+                    checkoutBtn.classList.add('opacity-50', 'pointer-events-none', 'cursor-not-allowed');
+                }
+                if (noSelectionMsg) noSelectionMsg.classList.remove('hidden');
+
+                document.getElementById('s-subtotal').textContent = '0 FCFA';
+                document.getElementById('s-protection').textContent = '0 FCFA';
+                document.getElementById('s-elgiopay').textContent = '0 FCFA';
+                document.getElementById('s-total').textContent = '0 FCFA';
+                return;
+            }
+
+            if (checkoutBtn) {
+                checkoutBtn.classList.remove('opacity-50', 'pointer-events-none', 'cursor-not-allowed');
+            }
+            if (noSelectionMsg) noSelectionMsg.classList.add('hidden');
+
             const protection = Math.ceil(subtotal * protRate);
             const wantNet = subtotal + protection;
 
@@ -255,8 +335,81 @@
             if (totalEl) totalEl.textContent = fmt(total);
         }
 
-        document.addEventListener('DOMContentLoaded', updateCartSummary);
-        updateCartSummary();
+        document.addEventListener('DOMContentLoaded', function () {
+            updateCartSummary();
+
+            // Toggle individual item
+            document.querySelectorAll('.item-checkbox').forEach(cb => {
+                cb.addEventListener('change', function () {
+                    const itemId = this.dataset.itemId;
+                    const isChecked = this.checked;
+                    const row = document.getElementById('cart-item-row-' + itemId);
+
+                    if (row) {
+                        if (isChecked) {
+                            row.classList.add('border-emerald-100');
+                            row.classList.remove('bg-slate-50/50', 'opacity-85');
+                        } else {
+                            row.classList.remove('border-emerald-100');
+                            row.classList.add('bg-slate-50/50', 'opacity-85');
+                        }
+                    }
+
+                    updateCartSummary();
+
+                    // Check master checkbox status
+                    const allCbs = document.querySelectorAll('.item-checkbox');
+                    const allChecked = Array.from(allCbs).every(c => c.checked);
+                    const master = document.getElementById('selectAllCheckbox');
+                    if (master) master.checked = allChecked;
+
+                    // Sync with backend via AJAX
+                    fetch(`/panier/item/${itemId}/toggle`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ selected: isChecked })
+                    }).catch(err => console.error('Error toggling cart item:', err));
+                });
+            });
+
+            // Master Select All checkbox
+            const master = document.getElementById('selectAllCheckbox');
+            if (master) {
+                master.addEventListener('change', function () {
+                    const isChecked = this.checked;
+                    document.querySelectorAll('.item-checkbox').forEach(cb => {
+                        cb.checked = isChecked;
+                        const row = document.getElementById('cart-item-row-' + cb.dataset.itemId);
+                        if (row) {
+                            if (isChecked) {
+                                row.classList.add('border-emerald-100');
+                                row.classList.remove('bg-slate-50/50', 'opacity-85');
+                            } else {
+                                row.classList.remove('border-emerald-100');
+                                row.classList.add('bg-slate-50/50', 'opacity-85');
+                            }
+                        }
+                    });
+
+                    updateCartSummary();
+
+                    // Sync with backend via AJAX
+                    fetch('{{ route("buyer.cart.selectAll") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ selected: isChecked })
+                    }).catch(err => console.error('Error selecting all cart items:', err));
+                });
+            }
+        });
     </script>
 @endpush
 

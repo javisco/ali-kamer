@@ -32,6 +32,14 @@ class KycSellerController extends Controller
             return $this->dashboardService->dashboard($user);
         }
 
+        if ($kyc && ($kyc->isPending() || $kyc->isReviewing())) {
+            return redirect()->route('seller.kyc.pending');
+        }
+
+        if ($kyc && $kyc->isRejected()) {
+            return redirect()->route('seller.kyc.rejected');
+        }
+
         return view('seller.kyc.create', compact('user', 'kyc'));
     }
 
@@ -69,6 +77,10 @@ class KycSellerController extends Controller
             return $this->dashboardService->dashboard(Auth::user());
         }
 
+        if ($kyc->isRejected()) {
+            return redirect()->route('seller.kyc.rejected');
+        }
+
         return view('seller.kyc.pending', compact('kyc'));
     }
 
@@ -77,8 +89,14 @@ class KycSellerController extends Controller
         $user = Auth::user();
         $kyc = $user->kycDocument;
 
-        if (! $kyc?->isRejected()) {
-            return $this->dashboardService->dashboard($user);
+        if (! $kyc || ! $kyc->isRejected()) {
+            if ($kyc?->isApproved()) {
+                return $this->dashboardService->dashboard($user);
+            }
+            if ($kyc && ($kyc->isPending() || $kyc->isReviewing())) {
+                return redirect()->route('seller.kyc.pending');
+            }
+            return redirect()->route('seller.kyc.create');
         }
 
         return view('seller.kyc.rejected', compact('user', 'kyc'));
