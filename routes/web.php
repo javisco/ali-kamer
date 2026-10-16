@@ -521,6 +521,12 @@ Route::middleware(['auth', 'role:buyer', 'verified'])->group(function () {
 
         Route::get('/mon-profil', [BuyerProfileController::class, 'index'])
                 ->name('buyer.profile');
+        Route::get('/mon-profil/modifier', [BuyerProfileController::class, 'edit'])
+                ->name('buyer.profile.edit');
+        Route::put('/mon-profil', [BuyerProfileController::class, 'update'])
+                ->name('buyer.profile.update');
+        Route::put('/mon-profil/mot-de-passe', [BuyerProfileController::class, 'updatePassword'])
+                ->name('buyer.profile.password');
 });
 
 
