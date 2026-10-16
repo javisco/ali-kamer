@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use App\Notifications\Channels\WhatsAppChannel;
+use App\Services\BusinessSettingsService;
 use Illuminate\Support\Facades\Notification;
 
 class AppServiceProvider extends ServiceProvider
@@ -14,7 +15,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(BusinessSettingsService::class);
     }
 
     /**

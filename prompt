@@ -1,0 +1,1220 @@
+limites de produits et parametre modifiable par l'admin dans son dashboad.
+
+
+Tu interviens sur le projet Ali-Kamer, une marketplace développée avec Laravel 12, PHP 8.3+, Blade, Tailwind CSS et MySQL.
+
+Le projet possède déjà plusieurs modules : utilisateurs, acheteurs, vendeurs, produits, variantes, commandes, paiements, remboursements, livraisons, agences, litiges, avis, KYC Didit, IdentityResolver, TrustEngine, DecisionEngine, blacklist, TrustEvent et sanctions.
+
+Le développement est toujours en cours.
+
+L'objectif de cette mission est de rendre les paramètres de la logique métier configurables depuis le dashboard administrateur, afin que l'administrateur puisse faire évoluer le fonctionnement d'Ali-Kamer sans devoir modifier le code à chaque changement de règle.
+
+IMPORTANT :
+Le projet est existant. Il ne faut pas créer une nouvelle application ni réécrire inutilement les modules actuels.
+
+============================================================
+1. OBJECTIF PRINCIPAL
+============================================================
+
+Actuellement, certaines règles métier peuvent être définies directement dans :
+- les contrôleurs ;
+- les services ;
+- les modèles ;
+- les tâches planifiées ;
+- les commandes Artisan ;
+- les jobs ;
+- les middlewares ;
+- les migrations ;
+- les vues Blade.
+
+Cela rend certaines modifications difficiles, car chaque changement de durée, de quantité, de seuil ou de comportement peut nécessiter une modification du code.
+
+L'objectif est de centraliser les paramètres métier modifiables dans un espace dédié du dashboard administrateur.
+
+Exemples :
+- durée avant expiration d'une commande ;
+- délai de préparation d'une commande ;
+- nombre maximal de produits enregistrables par un vendeur ;
+- nombre maximal de variantes ;
+- poids des identifiants de blacklist ;
+- points ajoutés ou retirés après un litige ;
+- durée de réponse à un litige ;
+- nombre de jours avant qu'une action d'annulation soit proposée ;
+- activation ou désactivation d'une fonctionnalité ;
+- seuils de confiance ;
+- pénalités et récompenses ;
+- délais de livraison et de retrait ;
+- paramètres de paiement et de remboursement ;
+- valeurs des événements de confiance.
+
+L'administrateur doit pouvoir gérer ces paramètres depuis une interface claire, sans accéder au code source.
+
+ATTENTION :
+Il ne faut pas supposer que toutes les fonctionnalités citées dans ce prompt sont déjà implémentées.
+
+Il faut commencer par analyser le projet existant et déterminer :
+1. ce qui existe réellement ;
+2. ce qui existe partiellement ;
+3. ce qui n'existe pas ;
+4. ce qui est déjà configurable ;
+5. ce qui est actuellement codé en dur ;
+6. ce qui nécessite une nouvelle fonctionnalité.
+
+Le ZIP disponible peut ne contenir qu'une partie du projet. Ne jamais conclure qu'une fonctionnalité n'existe pas uniquement parce qu'elle est absente de cette archive.
+
+============================================================
+2. AUDIT OBLIGATOIRE AVANT IMPLÉMENTATION
+============================================================
+
+Avant de modifier quoi que ce soit, analyser :
+
+- routes web et API ;
+- contrôleurs ;
+- services ;
+- modèles Eloquent ;
+- migrations ;
+- relations entre modèles ;
+- middleware et policies ;
+- jobs et commandes planifiées ;
+- événements et listeners ;
+- configuration Laravel ;
+- vues Blade ;
+- modules d'administration ;
+- paramètres déjà existants ;
+- tests existants ;
+- variables d'environnement ;
+- logique de paiement et de remboursement ;
+- logique de commande et de livraison ;
+- KYC et TrustEngine ;
+- blacklist et TrustEvent ;
+- catalogue et variantes.
+
+Pour chaque règle métier identifiée, créer un inventaire contenant :
+
+- nom de la règle ;
+- module concerné ;
+- comportement actuel ;
+- valeur actuelle ;
+- emplacement actuel dans le code ;
+- caractère configurable ou non ;
+- conséquences d'une modification ;
+- dépendances ;
+- niveau de risque ;
+- action recommandée.
+
+Ne pas inventer les valeurs actuelles lorsqu'elles ne peuvent pas être établies.
+
+Si certaines informations sont absentes, les signaler.
+
+Avant l'implémentation, présenter un plan de modification organisé par module.
+
+============================================================
+3. MODULE CENTRAL DE CONFIGURATION MÉTIER
+============================================================
+
+Créer ou améliorer un module de configuration métier accessible depuis le dashboard administrateur.
+
+Nom suggéré :
+Administration → Paramètres métier
+
+Organiser les paramètres par catégories.
+
+Exemple :
+
+1. Paramètres généraux
+2. Utilisateurs et comptes
+3. Catalogue et produits
+4. Variantes et attributs
+5. Villes et zones géographiques
+6. Boutiques et agences
+7. Commandes
+8. Paiements et remboursements
+9. Préparation et expédition
+10. Livraison et retrait
+11. Litiges
+12. Notes et évaluations
+13. TrustScore et TrustEngine
+14. Blacklist et identité
+15. KYC et vérification
+16. Sanctions
+17. Notifications et rappels
+18. Limites et quotas
+19. Tâches automatiques
+20. Journal des modifications
+
+Cette liste constitue une organisation cible. Elle doit être adaptée aux modules réellement présents.
+
+L'administrateur doit pouvoir retrouver facilement un paramètre et comprendre son effet.
+
+Chaque paramètre doit comporter, lorsque cela est pertinent :
+
+- nom ;
+- description ;
+- valeur actuelle ;
+- unité ;
+- type de valeur ;
+- module concerné ;
+- activation/désactivation ;
+- valeur minimale et maximale autorisée ;
+- date de dernière modification ;
+- administrateur ayant effectué la modification.
+
+Types possibles :
+- entier ;
+- nombre décimal ;
+- montant monétaire ;
+- durée ;
+- booléen ;
+- texte contrôlé ;
+- liste de valeurs ;
+- objet JSON validé ;
+- référence vers une entité existante.
+
+Ne pas permettre de modifier librement du code PHP depuis l'interface.
+
+Ne pas transformer l'interface en éditeur de code.
+
+============================================================
+4. ARCHITECTURE TECHNIQUE DES PARAMÈTRES
+============================================================
+
+Examiner d'abord si un système de paramètres existe déjà.
+
+Si oui, le réutiliser et le compléter.
+
+Sinon, concevoir un système adapté.
+
+Une table générique de paramètres métier peut être envisagée, par exemple :
+
+business_settings
+
+Champs possibles :
+- id ;
+- key ;
+- value ;
+- type ;
+- category ;
+- description ;
+- is_active ;
+- updated_by ;
+- timestamps.
+
+Les valeurs complexes doivent être stockées et validées de manière appropriée.
+
+Cependant, une table générique ne doit pas remplacer toutes les tables métier.
+
+Par exemple :
+- les villes doivent rester des entités géographiques ;
+- les agences doivent conserver leurs informations propres ;
+- les attributs et variantes doivent rester structurés ;
+- les sanctions doivent conserver leur historique ;
+- les événements de confiance doivent rester traçables.
+
+Les paramètres servent à configurer le comportement de ces modules, pas à les remplacer.
+
+Prévoir un service centralisé, par exemple :
+
+BusinessSettingsService
+
+Responsabilités :
+- lire un paramètre ;
+- retourner sa valeur effective ;
+- appliquer une valeur par défaut documentée ;
+- vérifier le type ;
+- vérifier si la fonctionnalité est active ;
+- gérer le cache ;
+- invalider le cache après modification ;
+- permettre aux autres services d'utiliser les paramètres sans connaître la structure de stockage.
+
+Exemple conceptuel :
+
+$settings->get('orders.auto_complete_after_hours');
+
+$settings->get('orders.allow_late_cancellation');
+
+$settings->get('catalog.max_products_by_seller');
+
+$settings->get('trust.dispute_lost_penalty');
+
+Les noms ci-dessus sont des exemples. Adapter les clés à l'architecture réelle.
+
+Les règles métier ne doivent pas être recopiées dans chaque contrôleur.
+
+============================================================
+5. PARAMÈTRES ACTIVABLES ET DÉSACTIVABLES
+============================================================
+
+Certaines fonctionnalités doivent pouvoir être activées ou désactivées depuis le dashboard.
+
+Exemples :
+- annulation automatique ou optionnelle après un délai ;
+- proposition d'annulation à l'acheteur ;
+- rappel au vendeur ;
+- auto-complétion des commandes ;
+- limitation du nombre de produits ;
+- extension payante du quota de produits ;
+- pénalités automatiques de confiance ;
+- certains contrôles supplémentaires ;
+- notifications automatiques.
+
+Prévoir pour chaque fonctionnalité configurable :
+- état activé/désactivé ;
+- paramètres associés ;
+- comportement lorsque la fonctionnalité est désactivée.
+
+IMPORTANT :
+Désactiver une fonctionnalité ne doit pas supprimer son historique ni modifier rétroactivement les opérations déjà réalisées.
+
+Le système doit définir explicitement si une désactivation concerne :
+- les nouvelles opérations ;
+- les opérations en cours ;
+- les deux.
+
+Par défaut, ne pas annuler rétroactivement des décisions, commandes ou transactions.
+
+============================================================
+6. CONFIGURATION DES PRODUITS ET DU CATALOGUE
+============================================================
+
+L'administrateur doit pouvoir gérer les limites et les règles du catalogue.
+
+Exemples de paramètres :
+- nombre maximal de produits enregistrables par vendeur ;
+- nombre maximal de produits publiés ;
+- taille maximale des images ;
+- formats d'image acceptés ;
+- nombre maximal d'images par produit ;
+- activation de certaines fonctionnalités du catalogue ;
+- limites applicables aux descriptions ;
+- paramètres de modération, si cette fonctionnalité existe.
+
+IMPORTANT :
+Distinguer :
+1. produit enregistré en brouillon ;
+2. produit en attente de validation ;
+3. produit publié ;
+4. produit suspendu ;
+5. produit archivé ou supprimé.
+
+Ne pas confondre le nombre de produits enregistrés avec le nombre de produits publiés.
+
+Le quota doit préciser exactement quels états de produit sont comptabilisés.
+
+L'administrateur doit pouvoir définir ces règles sans modification du code.
+
+============================================================
+7. ATTRIBUTS, VALEURS ET COMBINAISONS DES VARIANTES
+============================================================
+
+Les variantes des produits doivent être configurables.
+
+L'administrateur doit pouvoir gérer :
+
+A. ATTRIBUTS
+
+Exemples :
+- taille ;
+- couleur ;
+- pointure ;
+- matière ;
+- capacité ;
+- modèle.
+
+Il doit pouvoir :
+- créer un attribut ;
+- modifier son nom ;
+- activer ou désactiver un attribut ;
+- définir son type si le système le permet ;
+- définir les catégories de produits auxquelles il s'applique ;
+- définir son ordre d'affichage.
+
+B. VALEURS
+
+Exemples :
+- Taille : S, M, L, XL ;
+- Couleur : noir, blanc, rouge ;
+- Pointure : 38, 39, 40, 41.
+
+L'administrateur doit pouvoir :
+- ajouter une valeur ;
+- modifier une valeur ;
+- désactiver une valeur ;
+- organiser les valeurs ;
+- définir les valeurs autorisées par catégorie.
+
+C. COMBINAISONS
+
+Exemple :
+
+T-shirt :
+- taille M + noir ;
+- taille M + blanc ;
+- taille L + noir.
+
+L'administrateur doit pouvoir définir les règles et limites de création des combinaisons.
+
+Paramètres possibles :
+- nombre maximal d'attributs par produit ;
+- nombre maximal de valeurs par attribut ;
+- nombre maximal de combinaisons générées ;
+- activation des variantes pour certaines catégories ;
+- règles de validation des combinaisons.
+
+Ne pas générer automatiquement toutes les combinaisons possibles sans contrôle des limites.
+
+Préserver les stocks et références des variantes existantes.
+
+Une modification d'attribut ne doit pas supprimer silencieusement les variantes déjà utilisées dans des commandes.
+
+Les références historiques doivent rester consultables.
+
+============================================================
+8. VILLES, ZONES ET AGENCES
+============================================================
+
+Les villes définies dans Ali-Kamer doivent être gérées depuis le dashboard administrateur.
+
+L'administrateur doit pouvoir, selon le fonctionnement existant :
+
+- ajouter une ville ;
+- modifier ses informations ;
+- activer ou désactiver une ville ;
+- gérer son rattachement à une région ;
+- gérer les zones desservies ;
+- définir les possibilités de livraison ou de retrait ;
+- associer les agences concernées.
+
+Les agences doivent être gérées comme des entités métier distinctes.
+
+L'administrateur doit pouvoir, selon les fonctionnalités existantes :
+
+- créer une agence ;
+- modifier ses informations ;
+- définir sa ville ;
+- définir son adresse ;
+- gérer son statut actif/inactif ;
+- gérer ses points de dépôt et de retrait ;
+- configurer les services disponibles ;
+- affecter les secrétaires ou responsables selon les rôles existants.
+
+Ne pas coder en dur la liste des villes et des agences dans les contrôleurs ou les vues.
+
+Si ces données sont déjà stockées en base, utiliser les tables existantes.
+
+Préserver les commandes et livraisons historiques lorsqu'une ville ou une agence est désactivée.
+
+============================================================
+9. PARAMÈTRES DES COMMANDES
+============================================================
+
+Toutes les durées liées au cycle de vie des commandes doivent être identifiées et rendues configurables lorsqu'elles correspondent à des règles métier.
+
+Exemples :
+- durée avant auto-complétion ;
+- durée maximale avant préparation ;
+- durée maximale entre préparation et dépôt en agence ;
+- délai de confirmation de réception ;
+- délai de retrait ;
+- délai avant rappel ;
+- délai avant expiration d'un paiement ;
+- délai de traitement d'une commande ;
+- délais associés aux annulations.
+
+Ces paramètres doivent être modifiables depuis le dashboard.
+
+Ne pas inventer les durées actuellement utilisées.
+
+Commencer par identifier les valeurs actuelles et les documenter.
+
+Chaque délai doit préciser :
+- son point de départ ;
+- son unité ;
+- la condition de déclenchement ;
+- les statuts de commande concernés ;
+- la conséquence ;
+- le comportement lorsque la fonctionnalité est désactivée.
+
+Les tâches planifiées doivent lire les paramètres effectifs au moment de leur exécution, ou utiliser une politique explicite de prise en compte des changements.
+
+Ne pas coder les durées directement dans les jobs ou les commandes Artisan.
+
+============================================================
+10. ANNULATION APRÈS RETARD DE PRÉPARATION
+============================================================
+
+Mettre en place ou adapter la règle suivante.
+
+Situation :
+
+Un acheteur passe une commande.
+
+À partir de la date de création de la commande, un délai configurable s'écoule.
+
+Si, à l'expiration de ce délai, la commande n'est toujours pas marquée comme étant en préparation, le système peut proposer à l'acheteur de l'annuler.
+
+Exemple de règle initiale :
+3 jours après la commande.
+
+Cette durée ne doit pas être codée en dur.
+
+L'administrateur doit pouvoir :
+- activer ou désactiver la règle ;
+- modifier le délai ;
+- définir l'unité ;
+- définir les statuts concernés ;
+- configurer le message envoyé ;
+- activer ou désactiver la notification ;
+- configurer la durée pendant laquelle l'annulation reste possible, si nécessaire.
+
+La proposition d'annulation n'est pas forcément une annulation automatique.
+
+Si l'acheteur accepte :
+- vérifier que la commande est encore annulable ;
+- vérifier son statut ;
+- vérifier son paiement ;
+- lancer le processus de remboursement prévu ;
+- enregistrer la raison de l'annulation ;
+- conserver l'historique.
+
+Si l'acheteur refuse ou ne répond pas :
+- conserver la commande selon les règles métier existantes.
+
+Ne pas annuler automatiquement une commande simplement parce qu'un délai est dépassé, sauf si une règle distincte l'autorise explicitement.
+
+============================================================
+11. ANNULATION APRÈS RETARD DE DÉPÔT EN AGENCE
+============================================================
+
+Mettre en place ou adapter la règle suivante.
+
+Le vendeur marque la commande comme étant en préparation.
+
+À partir de cette date, un délai configurable s'écoule.
+
+Si la commande n'a pas été déposée dans une agence de départ à l'expiration de ce délai, l'acheteur peut se voir proposer l'annulation.
+
+Exemple de règle initiale :
+3 jours après le passage en préparation.
+
+L'administrateur doit pouvoir :
+- activer ou désactiver cette règle ;
+- modifier la durée ;
+- définir le point de départ ;
+- choisir les statuts concernés ;
+- activer ou désactiver les notifications ;
+- configurer les messages ;
+- définir la durée pendant laquelle l'annulation reste possible.
+
+IMPORTANT :
+Le dépôt en agence doit être identifié par un événement réel enregistré dans le système.
+
+Ne pas se baser uniquement sur une date saisie manuellement sans validation.
+
+Si l'acheteur accepte l'annulation :
+- vérifier le statut actuel ;
+- vérifier l'absence de dépôt en agence ;
+- vérifier les paiements ;
+- déclencher le remboursement autorisé ;
+- conserver les traces de l'opération.
+
+Si la commande est déposée dans l'agence avant la validation de l'annulation, la règle doit être réévaluée selon les statuts et la politique configurée.
+
+============================================================
+12. VISIBILITÉ ET VALIDITÉ DU BOUTON D'ANNULATION
+============================================================
+
+Le bouton d'annulation ne doit pas dépendre uniquement de l'affichage de la page.
+
+La décision doit être prise côté serveur.
+
+L'interface doit utiliser une règle centralisée pour déterminer :
+- si la commande peut être annulée ;
+- si le délai est dépassé ;
+- si l'annulation est désactivée ;
+- si le remboursement est possible ;
+- si une autre opération empêche l'annulation.
+
+L'administrateur doit pouvoir désactiver les règles de proposition d'annulation tardive.
+
+Exemple :
+
+Règle activée :
+- à partir du troisième jour ;
+- commande non préparée ;
+- annulation autorisée.
+
+Règle désactivée :
+- cette politique particulière ne s'applique plus ;
+- les autres règles d'annulation restent actives.
+
+IMPORTANT :
+La désactivation de cette règle ne doit pas supprimer les autres possibilités d'annulation déjà prévues.
+
+Il faut distinguer :
+- autorisation d'annulation ;
+- affichage du bouton ;
+- envoi d'une notification ;
+- remboursement associé.
+
+============================================================
+13. REMBOURSEMENT ET FRAIS DE PROTECTION
+============================================================
+
+Pour les deux situations de retard décrites ci-dessus, l'objectif métier est de rembourser intégralement l'acheteur, à l'exception des frais de protection.
+
+L'administrateur doit pouvoir configurer la politique de remboursement lorsque cela est autorisé par les règles financières du projet.
+
+Identifier précisément :
+- montant payé ;
+- frais de protection ;
+- autres frais éventuels ;
+- montant remboursable ;
+- montant déjà remboursé ;
+- statut du paiement ;
+- statut du remboursement.
+
+Ne pas inventer la structure des frais actuelle.
+
+La règle cible est :
+
+Montant remboursé =
+montant effectivement payé
+moins les frais de protection qui ne sont pas remboursables.
+
+Cette formule doit être adaptée à la manière dont Ali-Kamer enregistre réellement les paiements et les frais.
+
+Le calcul doit être effectué côté serveur.
+
+Ne jamais faire confiance à un montant de remboursement envoyé par le navigateur.
+
+Prévoir :
+- idempotence ;
+- transaction de base de données lorsque nécessaire ;
+- référence de remboursement ;
+- journalisation ;
+- gestion des erreurs du fournisseur de paiement ;
+- prévention des doubles remboursements.
+
+Si le fournisseur ne permet pas un remboursement immédiat, enregistrer l'opération et son état réel.
+
+Ne pas afficher « remboursé » tant que le remboursement n'est pas confirmé par le mécanisme fiable utilisé par le projet.
+
+============================================================
+14. CONFIGURATION DES LITIGES
+============================================================
+
+L'administrateur doit pouvoir configurer les paramètres métier des litiges.
+
+Exemples :
+- délai accordé au vendeur pour répondre ;
+- délai accordé à l'acheteur pour fournir des éléments ;
+- durée de traitement cible ;
+- délai de rappel ;
+- durée avant escalade ;
+- règles de fermeture ;
+- sanctions associées ;
+- points ajoutés ou retirés ;
+- notifications ;
+- activation ou désactivation des rappels automatiques.
+
+Pour le délai de réponse du vendeur :
+
+L'administrateur doit pouvoir définir :
+- la durée ;
+- le point de départ ;
+- les statuts de litige concernés ;
+- l'action après expiration ;
+- le nombre de rappels ;
+- l'activation des rappels.
+
+Ne pas décider automatiquement qu'un vendeur perd un litige simplement parce qu'il n'a pas répondu, sauf si une règle explicite le prévoit et que cette règle est compatible avec le fonctionnement juridique et métier du projet.
+
+Toutes les décisions doivent rester traçables.
+
+============================================================
+15. PARAMÈTRES DES NOTES ET DE LA RÉPUTATION
+============================================================
+
+Examiner le système de notes existant.
+
+Identifier :
+- qui peut noter qui ;
+- quand une note peut être déposée ;
+- si une commande est obligatoire ;
+- le nombre de notes autorisées ;
+- les règles de modification ;
+- les règles de modération ;
+- la manière dont les notes moyennes sont calculées.
+
+Rendre configurables les limites et règles métier pertinentes.
+
+Exemples :
+- délai maximal pour laisser une note ;
+- activation ou désactivation des avis ;
+- limites de publication ;
+- durée de modification d'un avis, si autorisée ;
+- paramètres de modération.
+
+Ne pas modifier arbitrairement le fonctionnement des avis existants.
+
+Ne pas créer une deuxième logique de réputation.
+
+============================================================
+16. TRUSTENGINE ET TRUSTEVENT
+============================================================
+
+Le système de confiance doit pouvoir être configuré par l'administrateur.
+
+Analyser tous les événements de confiance réellement présents dans le projet.
+
+Pour chaque TrustEvent, identifier :
+- type ;
+- origine ;
+- rôle concerné ;
+- effet sur le TrustScore ;
+- conditions de déclenchement ;
+- fréquence éventuelle ;
+- caractère automatique ou manuel.
+
+L'administrateur doit pouvoir définir les valeurs associées aux événements configurables.
+
+Exemples :
+- points ajoutés après une commande terminée ;
+- points retirés après un litige perdu ;
+- points ajoutés après un litige gagné ;
+- pénalité après une annulation imputable à un vendeur ;
+- pénalité après une annulation imputable à un acheteur ;
+- récompense après une série de transactions réussies ;
+- pénalité après une sanction confirmée.
+
+Ces exemples ne sont pas des valeurs définitives.
+
+Les points doivent être configurables.
+
+L'interface peut proposer une table :
+
+Événement | Rôle | Points | Activé
+
+Commande terminée | Acheteur | +X | Oui
+Commande terminée | Vendeur | +X | Oui
+Litige perdu | Acheteur | -X | Oui
+Litige perdu | Vendeur | -X | Oui
+
+Les valeurs ci-dessus sont des exemples de présentation, pas des règles à appliquer sans audit.
+
+IMPORTANT :
+- ne pas inventer les TrustEvents existants ;
+- ne pas supprimer les événements historiques ;
+- ne pas réécrire le TrustScore sans analyser son fonctionnement ;
+- ne pas appliquer plusieurs fois la même récompense ;
+- garantir l'idempotence des événements automatiques ;
+- ne pas laisser un administrateur modifier directement le score d'un utilisateur sans trace d'audit.
+
+Le système doit conserver la distinction entre :
+- note moyenne ;
+- TrustScore ;
+- RiskProfile ;
+- décision de confiance ;
+- sanction.
+
+============================================================
+17. BLACKLISTIDENTIFIER : POIDS DES IDENTIFIANTS
+============================================================
+
+Examiner le modèle et la table réellement utilisés par le système de blacklist.
+
+Identifier les types d'identifiants disponibles, par exemple, uniquement s'ils existent :
+- email ;
+- téléphone ;
+- numéro Mobile Money ;
+- IP ;
+- appareil ;
+- visage ;
+- document d'identité ;
+- autres identifiants.
+
+L'administrateur doit pouvoir configurer le poids ou la force de chaque identifiant dans l'analyse du risque, lorsque le moteur actuel prend en charge ce mécanisme.
+
+Exemple d'interface :
+
+Type d'identifiant | Poids | Activé | Commentaire
+
+Email | configurable | Oui
+Téléphone | configurable | Oui
+Mobile Money | configurable | Oui
+Appareil | configurable | Oui
+IP | configurable | Oui
+Visage | configurable | Oui
+
+Les valeurs doivent être établies à partir de l'architecture réelle et non inventées arbitrairement.
+
+IMPORTANT :
+Le poids d'un signal n'est pas nécessairement une preuve de fraude.
+
+Il faut distinguer :
+- identifiant observé ;
+- correspondance probable ;
+- signal de risque ;
+- identité confirmée ;
+- sanction existante.
+
+Les signaux tels que l'IP ou l'appareil peuvent être partagés entre plusieurs personnes.
+
+Le moteur ne doit pas bannir automatiquement un utilisateur uniquement parce qu'un signal faible correspond à celui d'un autre utilisateur.
+
+Le poids doit être consommé par le service qui calcule réellement le risque.
+
+Modifier un poids dans le dashboard doit réellement modifier le comportement du moteur après validation et prise en compte du paramètre.
+
+============================================================
+18. IDENTITÉ, IDENTITYRESOLVER ET DÉCISIONS
+============================================================
+
+Examiner les mécanismes actuels :
+- IdentityResolver ;
+- TrustEngine ;
+- DecisionEngine ;
+- SanctionEngine ;
+- blacklist ;
+- signaux KYC.
+
+Identifier les seuils, poids, conditions et valeurs métier codés en dur.
+
+Rendre configurables les éléments qui doivent pouvoir évoluer sans modification du code.
+
+Exemples :
+- poids des signaux ;
+- seuils de revue ;
+- seuils de restriction ;
+- seuils de blocage ;
+- pénalités de confiance ;
+- règles de combinaison des signaux, lorsque le moteur est conçu pour cela.
+
+Ne pas permettre de modifier librement les classes PHP ou les algorithmes exécutables.
+
+Ne pas considérer qu'un score isolé prouve automatiquement une fraude.
+
+Les décisions doivent conserver :
+- leur raison ;
+- leurs signaux justificatifs ;
+- leur origine ;
+- leur date ;
+- leur auteur lorsqu'une décision est manuelle.
+
+Les valeurs par défaut doivent être documentées et les modifications sensibles auditées.
+
+============================================================
+19. LIMITES DE PRODUITS PAR VENDEUR ET QUOTAS PAYANTS
+============================================================
+
+Le nombre de produits qu'un vendeur peut enregistrer doit être limité.
+
+Objectifs :
+- maîtriser la consommation des ressources serveur ;
+- donner un quota de base aux vendeurs ;
+- accorder des quotas plus élevés aux vendeurs fiables ;
+- permettre d'acheter une extension de quota lorsque le modèle économique sera défini.
+
+IMPORTANT :
+Cette fonctionnalité doit être conçue, mais les règles définitives d'attribution des quotas dépendront de la finalisation et de l'intégration des modules :
+- KYC ;
+- KYC identifiers ;
+- IdentityResolver ;
+- TrustEngine ;
+- DecisionEngine ;
+- blacklist ;
+- sanctions ;
+- notes et litiges.
+
+Ne pas implémenter une formule de confiance définitive avant l'audit et la consolidation de ces modules.
+
+A. QUOTAS DE BASE
+
+L'administrateur doit pouvoir configurer :
+- nombre maximal de produits enregistrés ;
+- nombre maximal de produits publiés ;
+- nombre maximal de brouillons ;
+- nombre maximal de variantes, si nécessaire ;
+- distinction entre quota gratuit et quota supplémentaire.
+
+B. ADAPTATION AU PROFIL DU VENDEUR
+
+Prévoir une architecture permettant d'adapter le quota selon :
+- note moyenne ;
+- TrustScore ;
+- commandes terminées ;
+- taux de commandes réussies ;
+- nombre de litiges ;
+- litiges gagnés ou perdus ;
+- sanctions ;
+- statut KYC ;
+- autres critères validés ultérieurement.
+
+Ne pas attribuer automatiquement des quotas élevés uniquement sur la base d'une note moyenne.
+
+Ne pas créer un second TrustScore.
+
+Le système doit consommer les résultats du moteur de confiance existant.
+
+C. CONFIGURATION ADMIN
+
+L'administrateur doit pouvoir définir :
+- quota de base ;
+- seuils de confiance ;
+- quotas associés à chaque niveau ;
+- activation ou désactivation de l'ajustement automatique ;
+- nombre maximal absolu ;
+- règles d'extension payante, lorsque le paiement sera défini ;
+- limites d'images et de variantes pertinentes.
+
+D. EXTENSION PAYANTE
+
+Préparer une architecture permettant de vendre des extensions de quota.
+
+Mais ne pas inventer :
+- les tarifs ;
+- les forfaits ;
+- la durée de validité ;
+- les moyens de paiement ;
+- les conditions commerciales.
+
+Ces éléments doivent être configurables une fois le modèle économique validé.
+
+E. COMPORTEMENT À L'ATTEINTE DU QUOTA
+
+Lorsque le vendeur atteint sa limite :
+- empêcher la création ou publication supplémentaire selon le quota concerné ;
+- expliquer clairement la limite ;
+- afficher le quota utilisé et le quota disponible ;
+- permettre de consulter les possibilités d'augmentation lorsqu'elles existent.
+
+Une baisse future du quota ne doit pas supprimer automatiquement les produits déjà enregistrés.
+
+Elle doit empêcher les opérations dépassant la nouvelle limite et expliquer la situation au vendeur.
+
+============================================================
+20. PARAMÈTRES DES SANCTIONS
+============================================================
+
+Examiner le système de sanctions existant.
+
+Rendre configurables, lorsqu'ils sont déjà prévus dans l'architecture :
+- durée d'une suspension temporaire ;
+- délais d'expiration ;
+- règles de levée automatique ;
+- conditions de restriction ;
+- notifications ;
+- points de confiance associés ;
+- conséquences sur les produits ou les commandes.
+
+L'administrateur doit pouvoir activer ou désactiver les automatismes concernés.
+
+Ne pas supprimer l'historique des sanctions.
+
+Ne pas transformer une suspension temporaire en bannissement définitif sans règle explicite.
+
+Les sanctions doivent rester traçables et compatibles avec le système de blacklist.
+
+============================================================
+21. AUTO-COMPLÉTION DES COMMANDES
+============================================================
+
+Le délai d'auto-complétion doit être configurable.
+
+L'administrateur doit pouvoir définir :
+- activation/désactivation ;
+- durée ;
+- unité ;
+- statut de départ ;
+- statut attendu ;
+- conditions d'éligibilité ;
+- notifications avant exécution, si prévues.
+
+La tâche planifiée doit lire le paramètre effectif.
+
+Elle doit vérifier les statuts réels de la commande avant de la modifier.
+
+Elle doit être idempotente.
+
+Ne pas auto-compléter une commande qui est en litige, annulée ou dans un état incompatible avec la politique configurée.
+
+Examiner la méthode existante autoCompleteExpired() avant toute modification.
+
+============================================================
+22. AUTRES DURÉES ET QUANTITÉS MÉTIER
+============================================================
+
+Identifier systématiquement les durées et quantités présentes dans le code.
+
+Exemples à vérifier :
+- durée de session ou de vérification, si configurable ;
+- expiration de paiement ;
+- délai de préparation ;
+- délai de dépôt en agence ;
+- délai de confirmation de réception ;
+- délai de retrait ;
+- expiration d'un OTP ;
+- nombre de tentatives ;
+- délai de réponse à un litige ;
+- délai avant rappel ;
+- délai d'expiration d'une sanction ;
+- durée de conservation de certains éléments métier ;
+- nombre maximal d'images ;
+- nombre maximal de variantes ;
+- nombre maximal de produits ;
+- nombre maximal de tentatives ;
+- limites de pagination, lorsque cela relève d'une règle métier.
+
+Ne pas rendre configurables les constantes techniques qui doivent rester fixes pour la sécurité ou le fonctionnement du framework.
+
+Par exemple, ne pas exposer dans le dashboard les secrets, clés cryptographiques ou paramètres internes de sécurité qui ne doivent pas être modifiés par un administrateur métier.
+
+Pour chaque valeur identifiée, décider :
+- configurable par admin ;
+- fixe pour raison technique ou sécurité ;
+- configurable uniquement par super-administrateur ;
+- nécessite une décision métier préalable.
+
+Documenter les choix.
+
+============================================================
+23. INTERFACE DU DASHBOARD ADMIN
+============================================================
+
+Créer une interface cohérente avec le dashboard existant.
+
+Ne pas créer un deuxième dashboard indépendant.
+
+Ajouter une navigation claire vers les paramètres métier.
+
+Pour chaque catégorie :
+- formulaire structuré ;
+- valeurs actuelles ;
+- description des conséquences ;
+- validations ;
+- bouton Enregistrer ;
+- bouton Réinitialiser si autorisé ;
+- état actif/inactif ;
+- confirmation pour les changements sensibles.
+
+Pour les règles de durée :
+- afficher une unité claire ;
+- préciser le point de départ du délai ;
+- afficher les statuts concernés.
+
+Pour les poids et points :
+- préciser si la valeur peut être positive ou négative ;
+- afficher l'événement concerné ;
+- préciser les rôles auxquels la règle s'applique.
+
+Pour les quotas :
+- afficher la limite ;
+- afficher les états de produits comptabilisés ;
+- afficher les critères d'adaptation du quota.
+
+Ne pas présenter des paramètres techniques incompréhensibles sans explication.
+
+============================================================
+24. AUDIT ET HISTORIQUE DES MODIFICATIONS
+============================================================
+
+Les modifications administratives doivent être traçables.
+
+Prévoir un historique contenant, selon les besoins :
+- administrateur ;
+- paramètre modifié ;
+- ancienne valeur ;
+- nouvelle valeur ;
+- date ;
+- motif ;
+- contexte.
+
+Les modifications suivantes doivent être considérées comme sensibles :
+- paramètres de blacklist ;
+- poids de risque ;
+- TrustScore ;
+- sanctions ;
+- remboursements ;
+- délais d'annulation ;
+- quotas ;
+- seuils de décision.
+
+Vérifier les permissions existantes.
+
+Si nécessaire, distinguer :
+- administrateur opérationnel ;
+- administrateur autorisé à modifier la logique métier ;
+- super-administrateur.
+
+Ne pas supposer que tous les utilisateurs ayant le rôle admin doivent avoir les mêmes droits.
+
+Ne jamais stocker des secrets dans le journal en clair.
+
+============================================================
+25. PRISE EN COMPTE DES MODIFICATIONS
+============================================================
+
+Après modification d'un paramètre :
+
+1. valider la nouvelle valeur ;
+2. enregistrer la modification ;
+3. invalider le cache concerné ;
+4. faire en sorte que les services utilisent la valeur effective ;
+5. journaliser l'opération ;
+6. afficher une confirmation.
+
+Le système doit définir le moment où la modification prend effet.
+
+Par défaut :
+- les nouvelles opérations utilisent les nouveaux paramètres ;
+- les opérations déjà terminées ne sont pas recalculées automatiquement ;
+- les opérations en cours suivent une politique explicitement définie.
+
+Exemple :
+Si l'admin modifie aujourd'hui le délai de préparation de 3 jours à 4 jours, il faut définir si cette modification s'applique :
+- uniquement aux nouvelles commandes ;
+- également aux commandes en cours.
+
+Ne pas laisser ce comportement implicite.
+
+============================================================
+26. VALIDATION ET SÉCURITÉ
+============================================================
+
+Utiliser :
+- Form Requests ;
+- Policies et Middleware ;
+- validation serveur ;
+- transactions de base de données ;
+- services métier ;
+- journalisation ;
+- tests.
+
+Empêcher :
+- valeurs négatives non autorisées ;
+- durées nulles ou absurdes ;
+- seuils incohérents ;
+- quotas dépassant les limites techniques ;
+- modifications par un rôle non autorisé ;
+- accès direct aux données privées ;
+- contournement des paramètres par un appel API.
+
+Le dashboard n'est pas l'unique endroit où les règles doivent être appliquées.
+
+Les services backend doivent toujours appliquer les paramètres.
+
+Un utilisateur ne doit jamais pouvoir contourner une limite en appelant directement une route.
+
+============================================================
+27. MIGRATIONS ET COMPATIBILITÉ
+============================================================
+
+Avant toute migration :
+- examiner les tables existantes ;
+- réutiliser les modèles existants ;
+- éviter les doublons ;
+- préserver les données ;
+- identifier les contraintes et clés étrangères.
+
+Les migrations doivent être réversibles autant que possible.
+
+Ne pas supprimer une table de configuration existante avant d'avoir compris ses dépendances.
+
+Ne pas supprimer l'ancien système de blacklist sans plan de migration explicite.
+
+Ne pas fusionner les modules KYC, TrustEngine et blacklist sans vérifier la conception validée.
+
+La consolidation de ces modules doit constituer une étape distincte si elle est nécessaire.
+
+============================================================
+28. TESTS OBLIGATOIRES
+============================================================
+
+Créer ou adapter les tests pour vérifier :
+
+1. un administrateur autorisé peut modifier un paramètre ;
+2. un utilisateur non autorisé ne peut pas le modifier ;
+3. une valeur invalide est rejetée ;
+4. le nouveau paramètre est effectivement utilisé par le service ;
+5. le cache est correctement invalidé ;
+6. les tâches planifiées utilisent les paramètres effectifs ;
+7. une fonctionnalité désactivée n'est plus exécutée ;
+8. les opérations historiques restent cohérentes ;
+9. les modifications sensibles sont journalisées ;
+10. les limites de produits sont appliquées côté serveur ;
+11. les délais d'annulation sont respectés ;
+12. le remboursement ne peut pas être exécuté deux fois ;
+13. les points de confiance ne sont pas ajoutés deux fois ;
+14. les paramètres de blacklist sont utilisés par le moteur concerné ;
+15. la modification des variantes ne casse pas les commandes historiques ;
+16. les quotas payants ne sont pas accordés sans validation du paiement ;
+17. les paramètres ne peuvent pas être contournés par les routes API.
+
+Ne pas affirmer qu'un test a réussi s'il n'a pas été exécuté.
+
+============================================================
+29. LIVRABLES
+============================================================
+
+À la fin du travail, fournir :
+
+A. Audit des règles métier existantes.
+
+B. Liste des règles déjà configurables.
+
+C. Liste des règles auparavant codées en dur.
+
+D. Liste des règles non implémentées.
+
+E. Liste des décisions métier restant à prendre.
+
+F. Liste des fichiers créés.
+
+G. Liste des fichiers modifiés.
+
+H. Liste des migrations créées.
+
+I. Liste des paramètres disponibles dans le dashboard.
+
+J. Valeurs par défaut utilisées, avec leur justification.
+
+K. Liste des fonctionnalités activables/désactivables.
+
+L. Liste des tests exécutés et leurs résultats.
+
+M. Commandes Artisan nécessaires.
+
+N. Variables d'environnement éventuelles.
+
+O. Points restant à intégrer.
+
+P. Plan de consolidation du KYC, IdentityResolver, TrustEngine, DecisionEngine et blacklist.
+
+Q. Plan futur pour le quota adaptatif des vendeurs et les extensions payantes.
+
+============================================================
+30. RÈGLE FINALE
+============================================================
+
+L'objectif n'est pas simplement d'ajouter une page de paramètres.
+
+Il faut que les paramètres modifiés dans le dashboard contrôlent réellement le comportement des modules concernés.
+
+Pour chaque paramètre ajouté :
+- identifier son consommateur ;
+- identifier son effet ;
+- vérifier son application côté serveur ;
+- tester son comportement ;
+- documenter les limites.
+
+Ne pas présenter comme configurable une valeur qui reste codée en dur dans le service.
+
+Ne pas ajouter des paramètres inutilisés.
+
+Ne pas inventer des fonctionnalités prétendument déjà présentes.
+
+Ne pas prendre de décision métier définitive lorsque celle-ci doit encore être validée.
+
+Si une règle est ambiguë, documenter le choix et demander confirmation avant de l'appliquer de manière irréversible.
+
+Le résultat doit permettre à Ali-Kamer d'évoluer sans exiger une modification du code pour chaque ajustement ordinaire de sa logique métier.

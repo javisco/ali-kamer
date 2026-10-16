@@ -15,7 +15,23 @@ class PlatformSetting extends Model
         'description',
         'group',
         'sort_order',
+        'is_active',
+        'unit',
+        'min_value',
+        'max_value',
+        'applies_to',
+        'is_sensitive',
+        'default_value',
+        'updated_by',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'is_active'    => 'boolean',
+            'is_sensitive' => 'boolean',
+        ];
+    }
 
     // ── Récupérer une valeur ──────────────────────────────────────────
 
@@ -31,7 +47,7 @@ class PlatformSetting extends Model
             return match ($setting->type) {
                 'percentage' => (float) $setting->value,
                 'integer'    => (int) $setting->value,
-                'boolean'    => (bool) $setting->value,
+                'boolean'    => filter_var($setting->value, FILTER_VALIDATE_BOOLEAN),
                 default      => $setting->value,
             };
         });
@@ -60,7 +76,7 @@ class PlatformSetting extends Model
         return match ($this->type) {
             'percentage' => (float) $this->value,
             'integer'    => (int) $this->value,
-            'boolean'    => (bool) $this->value,
+            'boolean'    => filter_var($this->value, FILTER_VALIDATE_BOOLEAN),
             default      => $this->value,
         };
     }

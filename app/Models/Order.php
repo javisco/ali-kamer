@@ -52,6 +52,8 @@ class Order extends Model
         'cancelled_at',
         'buyer_note',
         'cancellation_reason',
+        'late_cancel_offered_at',
+        'late_cancel_offer_kind',
     ];
 
     protected function casts(): array
@@ -62,9 +64,12 @@ class Order extends Model
             'otp_used_at'        => 'datetime',
             'timer_deadline'     => 'datetime',
             'paid_at'            => 'datetime',
+            'preparing_at'       => 'datetime',
             'completed_at'       => 'datetime',
             'cancelled_at'       => 'datetime',
-            'shipped_at' => 'datetime',
+            'shipped_at'         => 'datetime',
+            'arrived_at'         => 'datetime',
+            'late_cancel_offered_at' => 'datetime',
         ];
     }
 
@@ -98,6 +103,11 @@ class Order extends Model
     public function dispute(): HasOne
     {
         return $this->hasOne(Dispute::class);
+    }
+
+    public function refunds(): HasMany
+    {
+        return $this->hasMany(OrderRefund::class);
     }
 
     public function orderGroup(): BelongsTo

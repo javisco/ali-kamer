@@ -17,9 +17,10 @@ class TrustService
     // Empêche la construction de tables arc-en-ciel
     private string $pepper;
 
-    public function __construct()
+    public function __construct(private ?BusinessSettingsService $settings = null)
     {
         $this->pepper = config('services.blacklist_pepper', '');
+        $this->settings = $settings ?? (app()->bound(BusinessSettingsService::class) ? app(BusinessSettingsService::class) : null);
     }
 
     // ── ENREGISTRER UN ÉVÉNEMENT TRUST ───────────────────────────────
